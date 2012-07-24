@@ -59,15 +59,15 @@ extern uint8_t HID_GetReport_Value[32+1];
 void write_data_to_flash(uint8_t *data,uint8_t len,uint32_t addr){
 uint16_t i;
 
-   FLASH_Unlock();
-    FLASH_ErasePage(addr);
+  // FLASH_Unlock();
+  //  FLASH_ErasePage(addr);
 	
 	for (i = 0; i < len; i+=2){	
 	uint16_t halfword=(data[i])+(data[i+1]<<8);
 	FLASH_ProgramHalfWord(addr+i, halfword);
 	}
 	
-	FLASH_Lock();
+//	FLASH_Lock();
 
 }
 
@@ -93,19 +93,22 @@ uint32_t get_htop_value(uint64_t counter,uint8_t * secret,uint8_t secret_length,
 /*Get the HOTP counter stored in flash
 addr - counter page address
 */
-uint32_t get_counter_value(uint32_t addr){
+uint64_t get_counter_value(uint32_t addr){
 
 uint16_t i;
-uint32_t counter=0;
+uint64_t counter=0;
 uint8_t *ptr=(uint8_t *)addr;
 
-for (i=0;i<4;i++){
-counter+=*ptr<<(8*i);
-ptr++;
-}
+// for (i=0;i<4;i++){
+// counter+=*ptr<<(8*i);
+// ptr++;
+// }
+
+counter=*((uint64_t *)addr);
+ptr+=8;
 
 i=0;
-while(i<1020){
+while(i<1016){
 if (*ptr==0xff)
 break;
 ptr++;
@@ -124,7 +127,7 @@ addr - counter page address
 uint8_t increment_counter_page(uint32_t addr){
 uint16_t i;
 uint8_t *ptr=(uint8_t *)addr;
-uint32_t counter;
+uint64_t counter;
 FLASH_Status err=FLASH_COMPLETE;
 
 if (ptr[1023]==0x00){
@@ -136,25 +139,32 @@ err=FLASH_ErasePage(BACKUP_PAGE_ADDRESS);
 if (err!=FLASH_COMPLETE) return err;
 err=FLASH_ProgramHalfWord(BACKUP_PAGE_ADDRESS, addr);
 if (err!=FLASH_COMPLETE) return err;
-err=FLASH_ProgramWord(BACKUP_PAGE_ADDRESS+4, counter);
+
+err=FLASH_ProgramWord(BACKUP_PAGE_ADDRESS+4, counter&0xffffffff);
+if (err!=FLASH_COMPLETE) return err;
+err=FLASH_ProgramWord(BACKUP_PAGE_ADDRESS+8, (counter>>32)&0xffffffff);
 if (err!=FLASH_COMPLETE) return err;
 
 
 err=FLASH_ErasePage(addr);
 if (err!=FLASH_COMPLETE) return err;
-err=FLASH_ProgramWord(addr, counter);
+
+err=FLASH_ProgramWord(addr, counter&0xffffffff);
+if (err!=FLASH_COMPLETE) return err;
+err=FLASH_ProgramWord(addr+4,  (counter>>32)&0xffffffff);
 if (err!=FLASH_COMPLETE) return err;
 
-err=FLASH_ProgramHalfWord(BACKUP_PAGE_ADDRESS+8, "OK");
+
+err=FLASH_ProgramHalfWord(BACKUP_PAGE_ADDRESS+12, "OK");
 if (err!=FLASH_COMPLETE) return err;
 
 FLASH_Lock();
 }
 else{
 
-ptr+=4;
+ptr+=8;
 i=0;
-while(i<1020){
+while(i<1016){
 if (*ptr==0xff)
 break;
 ptr++;

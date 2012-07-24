@@ -49,9 +49,13 @@ uint8_t RequestType = 0;
 
 extern int nFlagSendSMCardInserted;
 static uint32_t Max_Lun = 0;		// should not used
-uint8_t HID_SetReport_Value[KEYBOARD_FEATURE_COUNT+1];
-uint8_t HID_GetReport_Value[KEYBOARD_FEATURE_COUNT+1];
-uint8_t message[KEYBOARD_FEATURE_COUNT+1];
+uint8_t HID_SetReport_Value[KEYBOARD_FEATURE_COUNT];
+uint8_t HID_GetReport_Value[KEYBOARD_FEATURE_COUNT];
+
+uint8_t HID_SetReport_Value_tmp[KEYBOARD_FEATURE_COUNT];
+uint8_t HID_GetReport_Value_tmp[KEYBOARD_FEATURE_COUNT];
+
+uint8_t message[KEYBOARD_FEATURE_COUNT];
 
 DEVICE_INFO CCID_Device_Info;
 
@@ -333,9 +337,14 @@ void USB_CCID_Status_In(void)
 	lastLEDState=LEDState;
 	}
 	else if (RequestType==HID_FEATURE){
+	SwitchSmartcardLED(ENABLE);
 	
-	parse_report(HID_SetReport_Value,HID_GetReport_Value);
-	
+	if (device_status==STATUS_READY){	
+	device_status=STATUS_RECEIVED_REPORT;	
+	memcpy(HID_SetReport_Value_tmp,HID_SetReport_Value,KEYBOARD_FEATURE_COUNT);
+	}
+	//parse_report(HID_SetReport_Value,HID_GetReport_Value_tmp);
+	//HID_GetReport_Value_tmp[0]=0xdd;
 	}
 	RequestType=0;
   }
@@ -619,17 +628,20 @@ uint8_t *Keyboard_GetReport_Feature(uint16_t Length)
 
       if (Length == 0)
       {
-        pInformation->Ctrl_Info.Usb_wLength = KEYBOARD_FEATURE_COUNT+1;
+        pInformation->Ctrl_Info.Usb_wLength = KEYBOARD_FEATURE_COUNT;
         return NULL;
       } else {
 
        // HID_GetReport_Value[0] = pInformation->USBwValue0;  // report ID
 	   
-        HID_GetReport_Value[0] = 0xDE;                         
-		HID_GetReport_Value[1] = 0xAD; 
-		HID_GetReport_Value[2] = 0xBE;                         
-		HID_GetReport_Value[3] = 0xEF;
-
+        //HID_GetReport_Value[0] = 0xDE;                         
+		//HID_GetReport_Value[1] = 0xAD; 
+		//HID_GetReport_Value[2] = 0xBE;                         
+		//HID_GetReport_Value[3] = 0xEF;
+		
+		memcpy(HID_GetReport_Value,HID_GetReport_Value_tmp,KEYBOARD_FEATURE_COUNT);
+		//memcpy(HID_GetReport_Value,HID_SetReport_Value,KEYBOARD_FEATURE_COUNT);
+		HID_GetReport_Value[0]=device_status;
         return HID_GetReport_Value;
       }
 }
@@ -643,7 +655,7 @@ uint8_t *Keyboard_SetReport_Feature(uint16_t Length)
   
    if (Length == 0)
       {                      
-        pInformation->Ctrl_Info.Usb_wLength = KEYBOARD_FEATURE_COUNT+1;
+        pInformation->Ctrl_Info.Usb_wLength = KEYBOARD_FEATURE_COUNT;
         return NULL;
       } else {
         return HID_SetReport_Value;

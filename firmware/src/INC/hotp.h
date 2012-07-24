@@ -34,13 +34,15 @@
 
 #define SLOT_TYPE_OFFSET 0x00
 #define SECRET_LENGTH_OFFSET 0x01
-#define SECRET_OFFSET 0x03EB
+#define SECRET_OFFSET 0x03EC
 #define COUNTER_PAGE_OFFSET 0x400
+
+extern uint32_t oath_slots[2];
 
 uint64_t endian_swap (uint64_t x);
 uint32_t dynamic_truncate (uint8_t * hmac_result);
 void write_data_to_flash(uint8_t *data,uint8_t len,uint32_t addr);
 uint32_t get_htop_value(uint64_t counter,uint8_t * secret,uint8_t secret_length,uint8_t len);
-uint32_t get_counter_value(uint32_t addr);
+uint64_t get_counter_value(uint32_t addr);
 uint32_t get_code_from_slot(uint8_t slot);
 uint8_t increment_counter_page(uint32_t addr);

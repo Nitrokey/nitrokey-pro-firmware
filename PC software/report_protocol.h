@@ -22,11 +22,6 @@
 #define CMD_WRITE_TO_SLOT 0x01
 
 
-#define STATUS_READY 0x00
-#define STATUS_BUSY	 0x01
-#define STATUS_ERROR 0x02
-#define STATUS_RECEIVED_REPORT 0x03
-
 /*
 CMD_WRITE_TO_SLOT
 size	offset	description
@@ -39,6 +34,3 @@ size	offset	description
 #define		REPORT_COUNTER_VALUE_OFFSET 2
 #define		REPORT_SECRET_VALUE_OFFSET 10
 
-
-extern uint8_t device_status;
-uint8_t parse_report(uint8_t *report,uint8_t *output);

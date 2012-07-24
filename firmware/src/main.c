@@ -30,13 +30,15 @@
 #include "keyboard.h"
 #include "AccessInterface.h"
 #include "hotp.h"
+#include "report_protocol.h"
+#include "CCIDHID_usb_prop.h"
 
 
 
 int nGlobalStickState = STICK_STATE_SMARTCARD;
 int	nFlagSendSMCardInserted = TRUE;
 uint64_t currentTime=0;
-
+uint8_t device_status=STATUS_READY;
 
 
 jmp_buf jmpRestartUSB;			 									// reentrypoint for USB device change 
@@ -110,6 +112,9 @@ int main(void)
 //SmartCardInitInterface ();
 	USB_Start (); 
 
+//Enable CRC calculator
+RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, ENABLE);
+	
 /* TIM2 clock enable */
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);	
   
@@ -144,10 +149,20 @@ TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 /* Endless loop after USB startup  */
   while (1)
   {
-
+if (device_status==STATUS_RECEIVED_REPORT){
+  device_status=STATUS_BUSY;
+  if (parse_report(HID_SetReport_Value_tmp,HID_GetReport_Value_tmp)==0)
+  device_status=STATUS_READY;
+  else
+  device_status=STATUS_ERROR;
+  }
+  
   if (numLockClicked){
   numLockClicked=0;
-  sendString("NumLock",7);
+  //sendString("NumLock",7);
+   uint32_t code= get_code_from_slot(1);
+  sendNumber(code);
+  sendEnter();
   }
     if (capsLockClicked){
   capsLockClicked=0;

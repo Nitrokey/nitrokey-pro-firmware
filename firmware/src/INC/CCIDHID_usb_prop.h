@@ -23,6 +23,9 @@
 #ifndef __CCID_usb_prop_H
 #define __CCID_usb_prop_H
 /* Includes ------------------------------------------------------------------*/
+
+#include "CCIDHID_usb_desc.h"
+
 /* Exported types ------------------------------------------------------------*/
 typedef enum _HID_REQUESTS
 {
@@ -41,6 +44,10 @@ typedef enum _HID_REPORTS
   HID_OUTPUT  = 2,
   HID_FEATURE = 3
 } HID_REPORTS;
+
+extern uint8_t HID_SetReport_Value_tmp[KEYBOARD_FEATURE_COUNT];
+extern uint8_t HID_GetReport_Value_tmp[KEYBOARD_FEATURE_COUNT];
+
 /* Exported constants --------------------------------------------------------*/
 #define USB_CCID_Storage_GetConfiguration          NOP_Process
 //#define USB_CCID_Storage_SetConfiguration          NOP_Process			 // 

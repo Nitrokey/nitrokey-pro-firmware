@@ -65,7 +65,7 @@
 
 #define STANDARD_ENDPOINT_DESC_SIZE             0x09
 
-#define KEYBOARD_FEATURE_COUNT                32
+#define KEYBOARD_FEATURE_COUNT                64
 
 /* Exported functions ------------------------------------------------------- */
 extern const uint8_t CCID_DeviceDescriptor[CCID_SIZ_DEVICE_DESC];
