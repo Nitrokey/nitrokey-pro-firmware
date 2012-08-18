@@ -33,14 +33,14 @@
      <widget class="QPushButton" name="resetButton">
       <property name="geometry">
        <rect>
-        <x>180</x>
+        <x>190</x>
         <y>540</y>
-        <width>75</width>
+        <width>121</width>
         <height>23</height>
        </rect>
       </property>
       <property name="text">
-       <string>Reset</string>
+       <string>Reload configuration</string>
       </property>
      </widget>
      <widget class="QGroupBox" name="groupBox">
@@ -149,7 +149,7 @@
      <widget class="QPushButton" name="cancelButton">
       <property name="geometry">
        <rect>
-        <x>270</x>
+        <x>450</x>
         <y>540</y>
         <width>75</width>
         <height>23</height>
@@ -410,7 +410,7 @@
        </rect>
       </property>
       <property name="inputMask">
-       <string>NNNNNNNNNNNNNNN; </string>
+       <string>xxxxxxxxxxxxxxx; </string>
       </property>
      </widget>
      <widget class="QGroupBox" name="hotpGroupBox">
@@ -490,7 +490,7 @@
         </rect>
        </property>
        <property name="inputMask">
-        <string>HHHHHHHHHHHHHHHH; </string>
+        <string>hhhhhhhhhhhhhhhh; </string>
        </property>
        <property name="text">
         <string>0000000000000000</string>
@@ -522,6 +522,19 @@
         <string>Set to random</string>
        </property>
       </widget>
+     </widget>
+     <widget class="QPushButton" name="eraseButton">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>620</y>
+        <width>71</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Erase slot</string>
+      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="tab_2">

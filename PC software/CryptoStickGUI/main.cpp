@@ -33,5 +33,6 @@ int main(int argc, char *argv[])
     QTime midnight(0, 0, 0);
     qsrand(midnight.secsTo(QTime::currentTime()));
 
+    a.setQuitOnLastWindowClosed(false);
     return a.exec();
 }

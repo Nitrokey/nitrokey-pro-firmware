@@ -26,6 +26,7 @@
 #include "sleep.h"
 #include "base32.h"
 #include "passworddialog.h"
+#include "hotpdialog.h"
 
 
 #include <QTimer>
@@ -57,8 +58,8 @@ MainWindow::MainWindow(QWidget *parent) :
     restoreAction = new QAction(tr("&Configure"), this);
     connect(restoreAction, SIGNAL(triggered()), this, SLOT(startConfiguration()));
 
-    totp1Action = new QAction(tr("&TOTP Slot 1"), this);
-    connect(totp1Action, SIGNAL(triggered()), this, SLOT(getCode()));
+    //totp1Action = new QAction(tr("&TOTP Slot 1"), this);
+    //connect(totp1Action, SIGNAL(triggered()), this, SLOT(getCode()));
 
     generateMenu();
 
@@ -151,41 +152,37 @@ void MainWindow::generateMenu()
     }
     else{
         if (cryptostick->HOTPSlots[0]->isProgrammed==true){
-            QString action1;
-            action1.append("HOTP slot 1 ");
-            action1.append((char *)cryptostick->HOTPSlots[0]->slotName);
-            trayMenu->addAction(action1);
+            QString actionName("HOTP slot 1 ");
+            trayMenu->addAction(actionName.append((char *)cryptostick->HOTPSlots[0]->slotName),this,SLOT(getHOTP1()));
+
         }
         if (cryptostick->HOTPSlots[1]->isProgrammed==true){
-            QString action2;
-            action2.append("HOTP slot 2 ");
-            action2.append((char *)cryptostick->HOTPSlots[1]->slotName);
-            trayMenu->addAction(action2);
+            QString actionName("HOTP slot 2 ");
+            trayMenu->addAction(actionName.append((char *)cryptostick->HOTPSlots[1]->slotName),this,SLOT(getHOTP2()));
+
 
         }
         if (cryptostick->TOTPSlots[0]->isProgrammed==true){
-            trayMenu->addAction(totp1Action);
+            QString actionName("TOTP slot 1 ");
+            trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[0]->slotName),this,SLOT(getTOTP1()));
 
         }
         if (cryptostick->TOTPSlots[1]->isProgrammed==true){
-            QString action;
-            action.append("TOTP slot 2 ");
-            action.append((char *)cryptostick->TOTPSlots[1]->slotName);
-            trayMenu->addAction(action);
+            QString actionName("TOTP slot 2 ");
+            trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[1]->slotName),this,SLOT(getTOTP2()));
+
 
         }
         if (cryptostick->TOTPSlots[2]->isProgrammed==true){
-            QString action;
-            action.append("TOTP slot 3 ");
-            action.append((char *)cryptostick->TOTPSlots[2]->slotName);
-            trayMenu->addAction(action);
+            QString actionName("TOTP slot 3 ");
+            trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[2]->slotName),this,SLOT(getTOTP3()));
+
 
         }
         if (cryptostick->TOTPSlots[3]->isProgrammed==true){
-            QString action;
-            action.append("TOTP slot 4 ");
-            action.append((char *)cryptostick->TOTPSlots[3]->slotName);
-            trayMenu->addAction(action);
+            QString actionName("TOTP slot 4 ");
+            trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[3]->slotName),this,SLOT(getTOTP4()));
+
 
         }
         trayMenu->addAction(restoreAction);
@@ -265,7 +262,6 @@ void MainWindow::generateTOTPConfig(TOTPSlot *slot)
     //        slot->slotNumber=0x11;
 
     if (selectedSlot>=2&&selectedSlot<=5){
-
         slot->slotNumber=selectedSlot+0x1E;
 
     QByteArray secretFromGUI = QByteArray::fromHex(ui->secretEdit->text().toAscii());
@@ -296,7 +292,15 @@ void MainWindow::generateTOTPConfig(TOTPSlot *slot)
         slot->config+=(1<<2);
 
 
+    }
 }
+
+void MainWindow::generateAllConfigs()
+{
+    cryptostick->initializeConfig();
+    cryptostick->getSlotConfigs();
+    displayCurrentSlotConfig();
+    generateMenu();
 }
 
 void MainWindow::displayCurrentSlotConfig()
@@ -304,7 +308,15 @@ void MainWindow::displayCurrentSlotConfig()
     uint8_t slotNo=ui->slotComboBox->currentIndex();
 
     if (slotNo>=0&&slotNo<=1){
-        ui->hotpGroupBox->show();
+        //ui->hotpGroupBox->show();
+        ui->hotpGroupBox->setTitle("OATH-HOTP Parameters");
+        ui->label_5->setText("HOTP length:");
+        ui->label_6->show();
+        ui->counterEdit->show();
+        ui->setToZeroButton->show();
+        ui->setToRandomButton->show();
+        ui->enterCheckBox->show();
+
         //slotNo=slotNo+0x10;
         ui->nameEdit->setText(QString((char *)cryptostick->HOTPSlots[slotNo]->slotName));
 
@@ -346,6 +358,14 @@ void MainWindow::displayCurrentSlotConfig()
     else if (slotNo>=2&&slotNo<=5){
         slotNo-=2;
         //ui->hotpGroupBox->hide();
+        ui->hotpGroupBox->setTitle("OATH-TOTP Parameters");
+        ui->label_5->setText("TOTP length:");
+        ui->label_6->hide();
+        ui->counterEdit->hide();
+        ui->setToZeroButton->hide();
+        ui->setToRandomButton->hide();
+        ui->enterCheckBox->hide();
+
 
         ui->nameEdit->setText(QString((char *)cryptostick->TOTPSlots[slotNo]->slotName));
 
@@ -426,12 +446,10 @@ void MainWindow::getCode(uint8_t slotNo)
     uint32_t code;
 
 
-     QClipboard *clipboard = QApplication::clipboard();
-
      cryptostick->getCode(slotNo,currentTime/30,result);
-
-     code=result[0]+(result[1]<<8)+(result[2]<<16)+(result[2]<<16);
-     code=code%1000000;
+     //cryptostick->getCode(slotNo,1,result);
+     code=result[0]+(result[1]<<8)+(result[2]<<16)+(result[3]<<24);
+     code=code%100000000;
 
      qDebug() << "Current time:" << currentTime;
      qDebug() << "Counter:" << currentTime/30;
@@ -473,10 +491,7 @@ void MainWindow::on_writeButton_clicked()
         msgBox.exec();
 
         Sleep::msleep(500);
-        cryptostick->initializeConfig();
-        cryptostick->getSlotConfigs();
-        displayCurrentSlotConfig();
-        generateMenu();
+        generateAllConfigs();
 
     }
     else{
@@ -512,7 +527,8 @@ void MainWindow::on_hexRadioButton_toggled(bool checked)
 
         base32_decode(encoded,decoded,20);
 
-        ui->secretEdit->setInputMask("HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH;");
+        //ui->secretEdit->setInputMask("HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH;");
+        ui->secretEdit->setInputMask("hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh;");
         //ui->secretEdit->setInputMask("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH;0");
         //ui->secretEdit->setMaxLength(59);
 
@@ -539,7 +555,8 @@ void MainWindow::on_base32RadioButton_toggled(bool checked)
 
         base32_encode(decoded,secret.length(),encoded,128);
 
-        ui->secretEdit->setInputMask("NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN;");
+        //ui->secretEdit->setInputMask("NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN;");
+        ui->secretEdit->setInputMask("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn;");
         ui->secretEdit->setMaxLength(32);
         ui->secretEdit->setText(QString((char *)encoded));
         //qDebug() << QString((char *)encoded);
@@ -622,4 +639,102 @@ void MainWindow::on_writeGeneralConfigButton_clicked()
         msgBox.exec();
     }
 
+}
+
+void MainWindow::getHOTP1()
+{
+    HOTPDialog dialog(this);
+    dialog.device=cryptostick;
+    dialog.slotNumber=0x10;
+    dialog.title=QString("HOTP slot 1 [").append((char *)cryptostick->HOTPSlots[0]->slotName).append("]");
+    dialog.setToHOTP();
+    dialog.getNextCode();
+    dialog.exec();
+}
+
+void MainWindow::getHOTP2()
+{
+    HOTPDialog dialog(this);
+    dialog.device=cryptostick;
+    dialog.slotNumber=0x11;
+    dialog.title=QString("HOTP slot 2 [").append((char *)cryptostick->HOTPSlots[1]->slotName).append("]");
+    dialog.setToHOTP();
+    dialog.getNextCode();
+    dialog.exec();
+}
+
+void MainWindow::getTOTP1()
+{
+    HOTPDialog dialog(this);
+    dialog.device=cryptostick;
+    dialog.slotNumber=0x20;
+    dialog.title=QString("TOTP slot 1 [").append((char *)cryptostick->TOTPSlots[0]->slotName).append("]");
+    dialog.setToTOTP();
+    dialog.getNextCode();
+    dialog.exec();
+}
+
+void MainWindow::getTOTP2()
+{
+    HOTPDialog dialog(this);
+    dialog.device=cryptostick;
+    dialog.slotNumber=0x21;
+    dialog.title=QString("TOTP slot 2 [").append((char *)cryptostick->TOTPSlots[1]->slotName).append("]");
+    dialog.setToTOTP();
+    dialog.getNextCode();
+    dialog.exec();
+}
+
+void MainWindow::getTOTP3()
+{
+    HOTPDialog dialog(this);
+    dialog.device=cryptostick;
+    dialog.slotNumber=0x22;
+    dialog.title=QString("TOTP slot 3 [").append((char *)cryptostick->TOTPSlots[2]->slotName).append("]");
+    dialog.setToTOTP();
+    dialog.getNextCode();
+    dialog.exec();
+}
+
+void MainWindow::getTOTP4()
+{
+    HOTPDialog dialog(this);
+    dialog.device=cryptostick;
+    dialog.slotNumber=0x23;
+    dialog.title=QString("TOTP slot 4 [").append((char *)cryptostick->TOTPSlots[3]->slotName).append("]");
+    dialog.setToTOTP();
+    dialog.getNextCode();
+    dialog.exec();
+}
+
+void MainWindow::on_eraseButton_clicked()
+{
+    QMessageBox msgBox;
+     msgBox.setText("Are you sure you want to erase the slot?");
+     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+     msgBox.setDefaultButton(QMessageBox::No);
+     int ret = msgBox.exec();
+
+     uint8_t slotNo=ui->slotComboBox->currentIndex();
+     if (slotNo>=0&&slotNo<=1)
+         slotNo=slotNo+0x10;
+     else if (slotNo>=2&&slotNo<=5)
+         slotNo=slotNo+0x1E;
+
+     switch (ret) {
+       case QMessageBox::Yes:
+            cryptostick->eraseSlot(slotNo);
+            Sleep::msleep(1000);
+            generateAllConfigs();
+             msgBox.setText("Slot erased!");
+              msgBox.setStandardButtons(QMessageBox::Ok);
+             msgBox.exec();
+           break;
+       case QMessageBox::No:
+
+           break;
+       default:
+           // should never be reached
+           break;
+     }
 }

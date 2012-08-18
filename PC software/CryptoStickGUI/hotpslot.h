@@ -38,6 +38,7 @@ public:
     bool isProgrammed;
 
 
+
 };
 
 #endif // HOTPSLOT_H

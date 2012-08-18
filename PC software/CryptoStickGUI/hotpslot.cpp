@@ -44,3 +44,5 @@ HOTPSlot::HOTPSlot(uint8_t slotNumber,uint8_t slotName[20],uint8_t secret[20],ui
 }
 
 
+
+

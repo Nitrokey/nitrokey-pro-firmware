@@ -26,6 +26,7 @@
 #define CMD_READ_SLOT 0x03
 #define CMD_GET_CODE 0x04
 #define CMD_WRITE_CONFIG 0x05
+#define CMD_ERASE_SLOT 0x06
 
 
 #define STATUS_READY 0x00
@@ -132,4 +133,5 @@ uint8_t cmd_read_slot_name(uint8_t *report,uint8_t *output);
 uint8_t cmd_read_slot(uint8_t *report,uint8_t *output);
 uint8_t cmd_get_code(uint8_t *report,uint8_t *output);
 uint8_t cmd_write_config(uint8_t *report,uint8_t *output);
+uint8_t cmd_erase_slot(uint8_t *report,uint8_t *output);
 

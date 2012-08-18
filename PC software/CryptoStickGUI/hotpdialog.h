@@ -22,6 +22,7 @@
 #define HOTPDIALOG_H
 
 #include <QDialog>
+#include "device.h"
 
 namespace Ui {
 class HOTPDialog;
@@ -32,11 +33,28 @@ class HOTPDialog : public QDialog
     Q_OBJECT
     
 public:
-    explicit HOTPDialog(QWidget *parent = 0);
+    explicit HOTPDialog(QWidget *parent);
+    Device *device;
+    uint8_t slotNumber;
+    QString title;
+
     ~HOTPDialog();
-    
+
+    void getNextCode();
+    void setToHOTP();
+    void setToTOTP();
+
+
+
+private slots:
+    void on_nextButton_clicked();
+
+    void on_clipboardButton_clicked();
+
 private:
     Ui::HOTPDialog *ui;
+
+
 };
 
 #endif // HOTPDIALOG_H

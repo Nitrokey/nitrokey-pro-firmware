@@ -277,7 +277,7 @@ uint32_t get_code_from_hotp_slot(uint8_t slot){
 //data -data to be backed up
 //len - length of the data
 //addr - original address of the data
-void backup_data(uint8_t *data,uint8_t len, uint32_t addr){
+void backup_data(uint8_t *data,uint16_t len, uint32_t addr){
 
 	FLASH_Unlock();
 	FLASH_ErasePage(BACKUP_PAGE_ADDRESS);
@@ -357,22 +357,39 @@ uint8_t get_hotp_slot_config(uint8_t slot_number){
 	return result;
 }
 
+uint8_t get_totp_slot_config(uint8_t slot_number){
+	uint8_t result=0;
+	if (slot_number>=NUMBER_OF_TOTP_SLOTS)
+	return 0;
+	else{
+		result=((uint8_t *)totp_slots[slot_number])[CONFIG_OFFSET];
+	}
+
+	return result;
+}
+
 
 uint32_t get_code_from_totp_slot(uint8_t slot, uint64_t challenge){
 
 
 	uint32_t result;
 	uint8_t config=0;
+	uint8_t len=6;
 
 	if (slot>=NUMBER_OF_TOTP_SLOTS) return 0;
 
 
-	result=*((uint8_t *)hotp_slots[slot]);
+	result=*((uint8_t *)totp_slots[slot]);
 	if (result==0xFF)//unprogrammed slot
 	return 0;
 
 
-	result= get_hotp_value(challenge,(uint8_t *)(totp_slots[slot]+SECRET_OFFSET),20,8);
+	config=get_totp_slot_config(slot);
+
+	if (config&(1<<SLOT_CONFIG_DIGITS))
+	len=8;
+
+	result= get_hotp_value(challenge,(uint8_t *)(totp_slots[slot]+SECRET_OFFSET),20,len);
 
 
 	return result;

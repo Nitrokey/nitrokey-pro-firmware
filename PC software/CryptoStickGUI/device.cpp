@@ -179,6 +179,38 @@ int Device::getSlotName(uint8_t slotNo){
      return -1;
 }
 
+int Device::eraseSlot(uint8_t slotNo)
+{
+    int res;
+    uint8_t data[1];
+
+    data[0]=slotNo;
+
+
+    if (isConnected){
+    Command *cmd=new Command(CMD_ERASE_SLOT,data,1);
+    res=sendCommand(cmd);
+
+    if (res==-1)
+        return -1;
+    else{  //sending the command was successful
+        //return cmd->crc;
+        Sleep::msleep(100);
+        Response *resp=new Response();
+        resp->getResponse(this);
+
+        qDebug() << cmd->crc;
+        qDebug() << resp->lastCommandCRC;
+
+        }
+
+        return 0;
+    }
+
+    return -1;
+
+}
+
 int Device::writeToHOTPSlot(HOTPSlot *slot)
 {
     qDebug() << "preparing to send";
@@ -331,6 +363,7 @@ int Device::readSlot(uint8_t slotNo)
 
     data[0]=slotNo;
 
+    qDebug()<< "reading slot number:" << slotNo;
 
     if (isConnected){
     Command *cmd=new Command(CMD_READ_SLOT,data,1);
@@ -361,14 +394,21 @@ int Device::readSlot(uint8_t slotNo)
                     TOTPSlots[slotNo&0x0F]->config=resp->data[20];
                     memcpy(TOTPSlots[slotNo&0x0F]->tokenID,resp->data+21,13);
                     TOTPSlots[slotNo&0x0F]->isProgrammed=true;
-                }
 
+                }
+                qDebug() << "programmed";
             }
             else if (resp->lastCommandStatus==CMD_STATUS_SLOT_NOT_PROGRAMMED){
-                if (slotNo>=0x10&&slotNo<=0x11)
-                   HOTPSlots[slotNo&0x0F]->isProgrammed=false;
-                else if (slotNo>=0x20&&slotNo<=0x23)
-                    TOTPSlots[slotNo&0x0F]->isProgrammed=false;
+                if (slotNo>=0x10&&slotNo<=0x11){
+                    HOTPSlots[slotNo&0x0F]=new HOTPSlot();
+                  // HOTPSlots[slotNo&0x0F]->isProgrammed=false;
+                }
+                else if (slotNo>=0x20&&slotNo<=0x23){
+                    TOTPSlots[slotNo&0x0F]=new TOTPSlot();
+                   // TOTPSlots[slotNo&0x0F]->isProgrammed=false;
+                }
+
+                qDebug() << "not programmed";
             }
 
         }

@@ -53,19 +53,20 @@ private:
     QAction *quitAction;
     QAction *restoreAction;
 
-    QAction *totp1Action;
+    //QAction *totp1Action;
 
 
     void generateMenu();
     void generateHOTPConfig(HOTPSlot *slot);
     void generateTOTPConfig(TOTPSlot *slot);
+    void generateAllConfigs();
 
 
 
 private slots:
     void checkConnection();
     void startConfiguration();
-    void getCode(uint8_t slotNo=0x20);
+    void getCode(uint8_t slotNo);
     void on_pushButton_clicked();
     void on_pushButton_2_clicked();
     void on_writeButton_clicked();
@@ -80,6 +81,15 @@ private slots:
     void on_checkBox_2_toggled(bool checked);
     void on_tokenIDCheckBox_toggled(bool checked);
     void on_writeGeneralConfigButton_clicked();
+
+    void getHOTP1();
+    void getHOTP2();
+
+    void getTOTP1();
+    void getTOTP2();
+    void getTOTP3();
+    void getTOTP4();
+    void on_eraseButton_clicked();
 };
 
 #endif // MAINWINDOW_H

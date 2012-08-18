@@ -38,7 +38,6 @@ void Command::generateCRC()
     memset(report,0,sizeof(report));
 
     int i;
-    int err;
 
     report[1]=this->commandType;
 

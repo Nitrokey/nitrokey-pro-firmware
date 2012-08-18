@@ -38,6 +38,7 @@
 #define CMD_READ_SLOT 0x03
 #define CMD_GET_CODE 0x04
 #define CMD_WRITE_CONFIG 0x05
+#define CMD_ERASE_SLOT 0x06
 
 #define STATUS_READY 0x00
 #define STATUS_BUSY	 0x01
@@ -62,6 +63,7 @@ public:
     int sendCommand(Command *cmd);
     void connect();
     int getSlotName(uint8_t slotNo);
+    int eraseSlot(uint8_t slotNo);
     int writeToHOTPSlot(HOTPSlot *slot);
     int writeToTOTPSlot(TOTPSlot *slot);
     int getCode(uint8_t slotNo, uint64_t challenge,uint8_t result[18]);

@@ -91,6 +91,10 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 			cmd_write_config(report,output);
 			break;
 			
+		case CMD_ERASE_SLOT:
+			cmd_erase_slot(report,output);
+			break;
+			
 			//FLASH_Unlock();
 			// FLASH_ErasePage(oath_slots[slot]);
 			//FLASH_ErasePage(oath_slots[slot]+COUNTER_PAGE_OFFSET);
@@ -261,8 +265,8 @@ uint8_t cmd_get_code(uint8_t *report,uint8_t *output){
 		if (is_programmed==0x01){
 			
 			result=get_code_from_hotp_slot(slot_no);
-			memcpy(output+OUTPUT_CMD_RESULT_OFFSET,(uint8_t *)result,4);
-			memcpy(output+OUTPUT_CMD_RESULT_OFFSET+4,(uint8_t *)hotp_slots[slot_no]+TOKEN_ID_OFFSET,13);
+			memcpy(output+OUTPUT_CMD_RESULT_OFFSET,&result,4);
+			memcpy(output+OUTPUT_CMD_RESULT_OFFSET+4,(uint8_t *)hotp_slots[slot_no]+CONFIG_OFFSET,14);
 			
 				
 	
@@ -275,9 +279,9 @@ uint8_t cmd_get_code(uint8_t *report,uint8_t *output){
 		slot_no=slot_no&0x0F;
 		uint8_t is_programmed=*((uint8_t *)(totp_slots[slot_no]));
 		if (is_programmed==0x01){
-			get_code_from_totp_slot(slot_no,challenge);
-			memcpy(output+OUTPUT_CMD_RESULT_OFFSET,(uint8_t *)result,4);
-			memcpy(output+OUTPUT_CMD_RESULT_OFFSET+4,(uint8_t *)totp_slots[slot_no]+TOKEN_ID_OFFSET,13);
+			result=get_code_from_totp_slot(slot_no,challenge);
+			memcpy(output+OUTPUT_CMD_RESULT_OFFSET,&result,4);
+			memcpy(output+OUTPUT_CMD_RESULT_OFFSET+4,(uint8_t *)totp_slots[slot_no]+CONFIG_OFFSET,14);
 			
 		}
 		else
@@ -304,4 +308,35 @@ uint8_t cmd_write_config(uint8_t *report,uint8_t *output){
 	
 	return 0;
 		
+}
+
+
+uint8_t cmd_erase_slot(uint8_t *report,uint8_t *output){
+
+	uint8_t slot_no=report[CMD_WTS_SLOT_NUMBER_OFFSET];
+	uint8_t slot_tmp[64];
+
+	memset(slot_tmp,0xFF,64);
+	
+
+	if (slot_no>=0x10&&slot_no<=0x11){//HOTP slot
+		slot_no=slot_no&0x0F;
+		write_to_slot(slot_tmp, hotp_slot_offsets[slot_no], 64);
+		
+
+	}
+	else if (slot_no>=0x20&&slot_no<=0x23){//TOTP slot
+		slot_no=slot_no&0x0F;	
+		write_to_slot(slot_tmp, totp_slot_offsets[slot_no], 64);
+		
+
+	}
+	else{
+		output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_SLOT;
+
+
+	}
+
+
+	return 0;
 }
