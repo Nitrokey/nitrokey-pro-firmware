@@ -32,13 +32,15 @@
 #include "hotp.h"
 #include "report_protocol.h"
 #include "CCIDHID_usb_prop.h"
+#include "string.h"
+#include "CcidLocalAccess.h"
 
 
 
 int nGlobalStickState = STICK_STATE_SMARTCARD;
 int	nFlagSendSMCardInserted = TRUE;
 uint64_t currentTime=0;
-uint8_t device_status=STATUS_READY;
+__IO uint8_t device_status=STATUS_READY;
 
 
 jmp_buf jmpRestartUSB;			 									// reentrypoint for USB device change 
@@ -109,40 +111,10 @@ int main(void)
 	
 /* Setup befor USB startup */
 
-//SmartCardInitInterface ();
+check_backups();
+
+SmartCardInitInterface ();
 	USB_Start (); 
-
-//Enable CRC calculator
-RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, ENABLE);
-	
-/* TIM2 clock enable */
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);	
-  
-TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-
-/* Time base configuration */
-  TIM_TimeBaseStructure.TIM_Period = 9;          
-  TIM_TimeBaseStructure.TIM_Prescaler = 7200;       
-  TIM_TimeBaseStructure.TIM_ClockDivision = 0x0;    
-  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
-  
-  TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
-  
-/* TIM2 enable counter */
-    TIM_Cmd(TIM2, ENABLE);
-
-    /* Enable TIM2 Update interrupt */
-    TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
-  
-  NVIC_InitTypeDef NVIC_InitStructure;
-  
-    /* Enable the TIM2 Interrupt */
-    NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);
-	
 
 
 		
@@ -151,38 +123,93 @@ TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
   {
 if (device_status==STATUS_RECEIVED_REPORT){
   device_status=STATUS_BUSY;
-  if (parse_report(HID_SetReport_Value_tmp,HID_GetReport_Value_tmp)==0)
+  parse_report(HID_SetReport_Value_tmp,HID_GetReport_Value_tmp);
   device_status=STATUS_READY;
-  else
-  device_status=STATUS_ERROR;
+
   }
   
   if (numLockClicked){
-  numLockClicked=0;
+  numLockClicked=0; 
   //sendString("NumLock",7);
-   uint32_t code= get_code_from_slot(1);
-  sendNumber(code);
-  sendEnter();
+  
+  uint8_t slot_number=((uint8_t *)SLOTS_ADDRESS+GLOBAL_CONFIG_OFFSET)[0];
+  if (slot_number<=1){
+   uint32_t code= get_code_from_hotp_slot(slot_number);
+   uint8_t config =get_hotp_slot_config(slot_number);
+   
+   if (config&(1<<SLOT_CONFIG_TOKENID))
+	   sendString((char *)(hotp_slots[slot_number]+TOKEN_ID_OFFSET),12);
+   
+   if (config&(1<<SLOT_CONFIG_DIGITS))
+   sendNumberN(code,8);
+	else
+    sendNumberN(code,6);	
+	
+   if (config&(1<<SLOT_CONFIG_ENTER))
+   sendEnter();
+   }
+
   }
     if (capsLockClicked){
   capsLockClicked=0;
   //sendString("CapsLock",8);
-  uint32_t code= get_code_from_slot(0);
-  sendNumber(code);
-  sendEnter();
+  
+  uint8_t slot_number=((uint8_t *)SLOTS_ADDRESS+GLOBAL_CONFIG_OFFSET)[1];
+   if (slot_number<=1){
+   uint32_t code= get_code_from_hotp_slot(slot_number);
+   uint8_t config =get_hotp_slot_config(slot_number);
+   
+   if (config&(1<<SLOT_CONFIG_TOKENID))
+	   sendString((char *)(hotp_slots[slot_number]+TOKEN_ID_OFFSET),12);
+   
+   if (config&(1<<SLOT_CONFIG_DIGITS))
+   sendNumberN(code,8);
+	else
+    sendNumberN(code,6);	
+	
+   if (config&(1<<SLOT_CONFIG_ENTER))
+   sendEnter();
+   }
   
   }
     if (scrollLockClicked){
   scrollLockClicked=0;
-  sendString("ScrollLock",10);
+  //sendString("ScrollLock",10);
+  
+  uint8_t slot_number=((uint8_t *)SLOTS_ADDRESS+GLOBAL_CONFIG_OFFSET)[2];
+   if (slot_number<=1){
+   uint32_t code= get_code_from_hotp_slot(slot_number);
+   uint8_t config =get_hotp_slot_config(slot_number);
+   
+   if (config&(1<<SLOT_CONFIG_TOKENID))
+	   sendString((char *)(hotp_slots[slot_number]+TOKEN_ID_OFFSET),12);
+   
+   if (config&(1<<SLOT_CONFIG_DIGITS))
+   sendNumberN(code,8);
+	else
+    sendNumberN(code,6);	
+	
+   if (config&(1<<SLOT_CONFIG_ENTER))
+   sendEnter();
+   }
+  
+  //smartcard test
+  //int result;
+  //result = getAID();
+  
+  //sendString("Verify:",7);
+  //sendNumber(result);
+  //sendEnter();
+
+  
   }
 
-																		 // CCID_CheckUsbCommunication();
-																		 // if (TRUE == nFlagSendSMCardInserted)
-																		 // {
-																			 // CCID_SendCardDetect ();						 			// Send card detect to host
-																			 // nFlagSendSMCardInserted = FALSE;
-																		 // }
+																		  CCID_CheckUsbCommunication();
+																		  if (TRUE == nFlagSendSMCardInserted)
+																		  {
+																			  CCID_SendCardDetect ();						 			// Send card detect to host
+																			  nFlagSendSMCardInserted = FALSE;
+																		 }
 
 	}
 }

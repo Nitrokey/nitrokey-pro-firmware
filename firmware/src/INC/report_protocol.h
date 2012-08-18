@@ -18,8 +18,14 @@
 * along with GPF Crypto Stick. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#define FIRMWARE_VERSION 1
+
 #define CMD_GET_STATUS 0x00
 #define CMD_WRITE_TO_SLOT 0x01
+#define CMD_READ_SLOT_NAME 0x02
+#define CMD_READ_SLOT 0x03
+#define CMD_GET_CODE 0x04
+#define CMD_WRITE_CONFIG 0x05
 
 
 #define STATUS_READY 0x00
@@ -27,18 +33,103 @@
 #define STATUS_ERROR 0x02
 #define STATUS_RECEIVED_REPORT 0x03
 
+#define CMD_STATUS_OK 0
+#define CMD_STATUS_WRONG_CRC 1
+#define CMD_STATUS_WRONG_SLOT 2
+#define CMD_STATUS_SLOT_NOT_PROGRAMMED 3
+
+/*
+Output report
+size	offset	description
+1		0		device status
+1		1		last command's type
+4		2		last command's CRC
+1		6		last command's status
+53		7		last command's output
+4		60		this report's CRC (with device status equal 0)
+*/
+
+#define OUTPUT_CMD_TYPE_OFFSET 1
+#define OUTPUT_CMD_CRC_OFFSET 2
+#define OUTPUT_CMD_STATUS_OFFSET 6
+#define OUTPUT_CMD_RESULT_OFFSET 7
+#define OUTPUT_CRC_OFFSET 60
+
+
+#define CMD_TYPE_OFFSET 0
+
+
 /*
 CMD_WRITE_TO_SLOT
-size	offset	description
-1		0 		command type
-1 		1		slot number
-8		2		counter value
-20		10		secret
+
+1b command type
+1b slot number
+15b slot name
+20b	secret
+1b configuration flags
+12b token id
+1b keyboard layout
+8b counter
 */
-#define		REPORT_SLOT_NUMBER_OFFSET 1
-#define		REPORT_COUNTER_VALUE_OFFSET 2
-#define		REPORT_SECRET_VALUE_OFFSET 10
+
+#define CMD_WTS_SLOT_NUMBER_OFFSET 1
+#define CMD_WTS_SLOT_NAME_OFFSET 2
+#define CMD_WTS_SECRET_OFFSET 17
+#define CMD_WTS_CONFIG_OFFSET 37
+#define CMD_WTS_TOKEN_ID_OFFSET 38
+#define CMD_WTS_COUNTER_OFFSET 51
 
 
-extern uint8_t device_status;
+/*
+CMD_READ_SLOT
+
+1b command type
+1b slot number
+
+*/
+
+#define CMD_RS_SLOT_NUMBER_OFFSET 1
+
+#define	CMD_RS_OUTPUT_COUNTER_OFFSET 34
+
+/*
+CMD_GET_CODE
+
+report:
+1b command type
+1b slot number
+8b challenge (for TOTP slot only)
+
+output:
+4b generated OTP
+1b config flags
+13b tokenID
+	
+*/
+
+#define CMD_GC_SLOT_NUMBER_OFFSET 1
+#define CMD_GC_CHALLENGE_OFFSET 2
+
+/*
+CMD_WRITE_CONFIG	
+
+report:
+1b Numlock slot
+1b Capslock slot
+1b Scrolllock slot
+
+output:
+
+	
+*/
+
+
+__IO extern uint8_t device_status;
 uint8_t parse_report(uint8_t *report,uint8_t *output);
+uint8_t cmd_get_status(uint8_t *report,uint8_t *output);
+uint8_t cmd_write_to_slot(uint8_t *report,uint8_t *output);
+uint8_t cmd_read_slot_name(uint8_t *report,uint8_t *output);
+uint8_t cmd_read_slot(uint8_t *report,uint8_t *output);
+uint8_t cmd_get_code(uint8_t *report,uint8_t *output);
+uint8_t cmd_write_config(uint8_t *report,uint8_t *output);
+

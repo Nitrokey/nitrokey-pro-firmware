@@ -68,10 +68,12 @@ TARGET = crypto
 SRC = 		../../src/main.c                                         \
 			../../src/hw_config.c                                         \
 			../../src/test_code.c                                         \
+			../../src/memory_ops.c			\
 			../../src/CCID/Ccid_usb.c                                         \
 			../../src/CCID/Ifd_protocol.c                                         \
 			../../src/CCID/Crd.c                                         \
 			../../src/CCID/Ifd_ccid.c                                         \
+			../../src/CCID/CcidLocalAccess.c                                         \
 			../../src/CCID/SMARTCARD/smartcard.c                                         \
 			../../src/CCID/CCIDHID_USB/CCIDHID_usb_prop.c                                         \
 			../../src/CCID/CCIDHID_USB/CCIDHID_usb_desc.c                                         \

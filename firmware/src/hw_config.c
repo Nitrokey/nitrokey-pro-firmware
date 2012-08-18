@@ -33,6 +33,8 @@
 #include "CCID_usb_desc.h"
 #include "RAMDISK_usb_desc.h"
 
+#include "CcidLocalAccess.h"
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -133,6 +135,46 @@ void EnableButton (void)
 
 /*******************************************************************************
 
+  EnableTimer2
+
+*******************************************************************************/
+
+void EnableTimer2 (void)
+{
+
+ 	
+/* TIM2 clock enable */
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);	
+  
+TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+
+/* Time base configuration */
+  TIM_TimeBaseStructure.TIM_Period = 9;          
+  TIM_TimeBaseStructure.TIM_Prescaler = 7200;       
+  TIM_TimeBaseStructure.TIM_ClockDivision = 0x0;    
+  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
+  
+  TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
+  
+/* TIM2 enable counter */
+    TIM_Cmd(TIM2, ENABLE);
+
+    /* Enable TIM2 Update interrupt */
+    TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
+  
+  NVIC_InitTypeDef NVIC_InitStructure;
+  
+    /* Enable the TIM2 Interrupt */
+    NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+	
+}
+
+/*******************************************************************************
+
  ReadButton
 
 *******************************************************************************/
@@ -184,13 +226,17 @@ void Set_System(void)
 //  DisableSmartcardLED ();
 	EnableSmartcardLED ();
 
+/*Enable CRC calculator*/
+RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, ENABLE);
+
+/*Enable Timer 2 */	
+ EnableTimer2();
+	
 /* Enable button */	
 	EnableButton();
 	
 /* MAL configuration */
-	
-																  CCID_Init();	// set CCID default values 
-
+	CCID_Init();	// set CCID default values 
 
 }
 
@@ -332,25 +378,44 @@ char HexToAscii (uint8_t nHex)
 * Return         : None.
 *******************************************************************************/
 
+__IO uint32_t cardSerial=0;;
+
 void Get_SerialNum(void)
 {
   uint32_t Device_Serial0, Device_Serial1, Device_Serial2;
 	uint8_t  *SerialString;
-/*
-  Device_Serial0 = *(__IO uint32_t*)(0x1FFFF7E8);			// UNIQUE DEVICE ID
-  Device_Serial1 = *(__IO uint32_t*)(0x1FFFF7EC);
-  Device_Serial2 = *(__IO uint32_t*)(0x1FFFF7F0);
-*/
+
+//  Device_Serial0 = *(__IO uint32_t*)(0x1FFFF7E8);			// UNIQUE DEVICE ID
+//  Device_Serial1 = *(__IO uint32_t*)(0x1FFFF7EC);
+//  Device_Serial2 = *(__IO uint32_t*)(0x1FFFF7F0);
+
 // No device id	
-  Device_Serial0 = 0;			
+//  Device_Serial0 = 0;			
+//  Device_Serial1 = 0;
+//  Device_Serial2 = 0;
+
+
+//device id from smart card
+
+getAID();
+uint8_t b0=getByteOfData(10);
+uint8_t b1=getByteOfData(11);
+uint8_t b2=getByteOfData(12);
+uint8_t b3=getByteOfData(13);
+
+
+  Device_Serial0 = b3+(b2<<8)+(b1<<16)+(b0<<24);	
+  
+  cardSerial=Device_Serial0;
+  
   Device_Serial1 = 0;
   Device_Serial2 = 0;
 
 
-	SerialString = MASS_StringSerial; // default value
+	//SerialString = MASS_StringSerial; // default value
 
 	
-																	SerialString = CCID_StringSerial; 																	
+SerialString = CCID_StringSerial; 																	
 	
 
   if (Device_Serial0 != 0)
@@ -381,7 +446,7 @@ void Get_SerialNum(void)
     SerialString [6] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x00000F00) >>  8));
     SerialString [4] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x000000F0) >>  4));
     SerialString [2] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x0000000F) >>  0));
-  }
+  } 
 }
 
 /*******************************************************************************

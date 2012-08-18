@@ -35,7 +35,7 @@ const uint8_t CCID_DeviceDescriptor[CCID_SIZ_DEVICE_DESC] =
     0x40,   				/* bMaxPacketSize0 0x08 - 0x40 = 64 */
 
   	WBVAL(0x20A0),  /* VID for CCID driver idVendor */
-  	WBVAL(0x4106),  /* PID for CCID driver idProduct */
+  	WBVAL(0x4107),  /* PID for CCID driver idProduct */
 //  	WBVAL(0x0800),  /* Test VID for MS CCID driver idVendor */
 //  	WBVAL(0x0006),  /* Test PID for MS CCID driver idProduct */
 //  	WBVAL(0x08e6),  /* 0x08e6 = idVendor  germalto - for testing */
@@ -45,7 +45,7 @@ const uint8_t CCID_DeviceDescriptor[CCID_SIZ_DEVICE_DESC] =
 
     1,              /* index of string Manufacturer  */
     2,              /* index of string descriptor of product*/
-    0,  //3, RB            /* index of serial number */
+    3,  //3, RB            /* index of serial number */
     0x01    				/*bNumConfigurations */
   };
 
@@ -60,7 +60,7 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
   0x02, 															/* bDescriptorType */
   CCID_SIZ_CONFIG_DESC,
   0x00,
-  0x01,                              /* bNumInterfaces */
+  0x02,                              /* bNumInterfaces */
   0x01,                              /* bConfigurationValue */
   0x00,                              /* iConfiguration CCID = 6 ???? */
   USB_CONFIG_BUS_POWERED,            /* bmAttributes */
@@ -90,7 +90,7 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
 // Endpoint 1 descriptor (Interrupt in SCR)
   0x07,            									/* bLength */
 	0x05,		// bDescriptorType: Endpoint descriptor type
-	0x81,		// bEndpointAddress: Endpoint  1 IN
+	0x84,		// bEndpointAddress: Endpoint  1 IN
 	0x03,		// bmAttributes: Interrupt endpoint
 	0x08,		// wMaxPacketSize(LSB): 8 char max (0x0008)
 	0x00,		// wMaxPacketSize (MSB)
@@ -155,7 +155,7 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
 // Endpoint 4 descriptor (Interrupt in SCR)
   0x07,            									/* bLength */
 	0x05,															// bDescriptorType: Endpoint descriptor type
-	0x84,															// bEndpointAddress: Endpoint  4 IN
+	0x81,															// bEndpointAddress: Endpoint  4 IN
 	0x03,															// bmAttributes: Interrupt endpoint
 	0x40,		// 0x08,	zur sicherheit 0x40  // wMaxPacketSize(LSB): 8 char max (0x0008)
 	0x00,															// wMaxPacketSize (MSB)
@@ -219,7 +219,7 @@ const uint8_t Keyboard_ReportDescriptor[KEYBOARD_SIZ_REPORT_DESC] = {
     0x81, 0x00,                    //   INPUT (Data,Ary,Abs) 
 	0x09, 0x03,						//	USAGE (Keyboard ErrorUndefine)
 	0x75, 0x08,						//  REPORT_SIZE (8)
-	0x95, KEYBOARD_FEATURE_COUNT,						//	REPORT_COUNT (8)
+	0x95, KEYBOARD_FEATURE_COUNT,						//	REPORT_COUNT (64)
 	0xB1, 0x02,					    //	FEATURE (Data,Var,Abs)
 	
     0xc0,                           // END_COLLECTION

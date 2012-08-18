@@ -45,22 +45,8 @@ extern __IO uint8_t PrevXferComplete;
 void EP1_IN_Callback(void)
 {
 
-PrevXferComplete = 1; 
-/* 	switch (nGlobalStickState)
-	{
-		case STICK_STATE_RAMDISK	 :
-  																Mass_Storage_In();
-																	break;
-		case STICK_STATE_SD_DISK	 :
-  																Mass_Storage_In();
-																	break;
+//PrevXferComplete = 1; 
 
-		case STICK_STATE_SMARTCARD :
-																	break;
-
-		case STICK_STATE_COMPOSITE :	
-																	break;
-	}  */
 
 }
 
@@ -74,24 +60,8 @@ PrevXferComplete = 1;
 void EP2_OUT_Callback(void)
 {
 
-
-	switch (nGlobalStickState)
-	{
-		case STICK_STATE_RAMDISK	 :
-  																Mass_Storage_Out();
-																	break;
-
-		case STICK_STATE_SD_DISK	 :
-  																Mass_Storage_Out();
-																	break;
-
-		case STICK_STATE_SMARTCARD :
 																  CCID_BulkOutMessage ();																	
-																	break;
 
-		case STICK_STATE_COMPOSITE :	
-																	break;
-	}
 }
 
 /*******************************************************************************
@@ -104,21 +74,8 @@ void EP2_OUT_Callback(void)
 void EP2_IN_Callback(void)
 {
 
-//PrevXferComplete = 1; 
-	switch (nGlobalStickState)
-	{
-		case STICK_STATE_RAMDISK	 :
-																	break;
-
-		case STICK_STATE_SD_DISK	 :
-																	break;
-
-		case STICK_STATE_SMARTCARD :
 																	CCID_BulkInMessage();
-																	break;
-		case STICK_STATE_COMPOSITE :	
-																	break;
-	}
+
 }
 
 /*******************************************************************************

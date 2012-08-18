@@ -509,3 +509,48 @@ void CcidLocalAccessTest (void)
 
 }
 
+
+int getAID(void){
+
+InitSCTStruct (&tSCT);
+
+unsigned short cRet;
+unsigned char nReturnSize;
+
+CcidSelectOpenPGPApp ();
+cRet = CcidGetData (0x00,0x4F,&nReturnSize);
+
+return nReturnSize;
+}
+
+uint32_t getSerialNumber(void){
+
+uint32_t serial;
+uint8_t buffer[4];
+
+InitSCTStruct (&tSCT);
+
+unsigned short cRet;
+unsigned char nReturnSize;
+
+CcidSelectOpenPGPApp ();
+cRet = CcidGetData (0x00,0x4F,&nReturnSize);
+
+
+
+return 0;
+
+
+}
+
+
+uint8_t getByteOfData(uint8_t x){
+
+
+return tSCT.cAPDU[x];
+}
+
+
+
+
+

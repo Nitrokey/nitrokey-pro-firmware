@@ -75,11 +75,11 @@ void sendKeys(uint8_t* buffer){
       
         PrevXferComplete = 0;
   /* Use the memory interface function to write to the selected endpoint */
-    UserToPMABufferCopy(buffer, ENDP1_TXADDR, 8);
+    UserToPMABufferCopy(buffer, ENDP4_TXADDR, 8);
    
   /* Update the data length in the control register */
-  SetEPTxCount(ENDP1, 8);
-  SetEPTxStatus (ENDP1, EP_TX_VALID);
+  SetEPTxCount(ENDP4, 8);
+  SetEPTxStatus (ENDP4, EP_TX_VALID);
       
     }
 
@@ -107,6 +107,26 @@ number/=10;
 
 for (i=0;i<len;i++)
 sendChar(result[i]+'0');
+
+}
+
+
+void sendNumberN(uint32_t number,uint8_t len){
+uint8_t result[10]={0,0,0,0,0,0,0,0,0,0};
+uint32_t tmp_number=number;
+uint8_t i;
+
+if (len<=10){
+
+for (i=len;i>0;i--){
+result[i-1]=number%10;
+number/=10;
+}
+
+for (i=0;i<len;i++)
+sendChar(result[i]+'0');
+
+}
 
 }
 

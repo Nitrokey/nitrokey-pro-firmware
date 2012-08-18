@@ -29,6 +29,7 @@
 #include "hw_config.h"
 #include "CCIDHID_usb_prop.h"
 #include "CCIDHID_usb.h"
+#include "string.h"
 
 #include "sha1.h"
 #include "hmac-sha1.h"
@@ -298,7 +299,7 @@ uint8_t lastLEDState=0;
 uint64_t lastNumLockChange=0;
 uint64_t lastCapsLockChange=0;
 uint64_t lastScrollLockChange=0;
-extern uint64_t currentTime;
+//extern uint64_t currentTime;
 volatile uint8_t numLockClicked=0;
 volatile uint8_t capsLockClicked=0;
 volatile uint8_t scrollLockClicked=0;
@@ -632,16 +633,21 @@ uint8_t *Keyboard_GetReport_Feature(uint16_t Length)
         return NULL;
       } else {
 
-       // HID_GetReport_Value[0] = pInformation->USBwValue0;  // report ID
+        //HID_GetReport_Value[0] = pInformation->USBwValue0;  // report ID
 	   
         //HID_GetReport_Value[0] = 0xDE;                         
 		//HID_GetReport_Value[1] = 0xAD; 
 		//HID_GetReport_Value[2] = 0xBE;                         
 		//HID_GetReport_Value[3] = 0xEF;
+		//HID_GetReport_Value[63] = 0xFF;
 		
 		memcpy(HID_GetReport_Value,HID_GetReport_Value_tmp,KEYBOARD_FEATURE_COUNT);
 		//memcpy(HID_GetReport_Value,HID_SetReport_Value,KEYBOARD_FEATURE_COUNT);
 		HID_GetReport_Value[0]=device_status;
+		
+		
+		
+		
         return HID_GetReport_Value;
       }
 }

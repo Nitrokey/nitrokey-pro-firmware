@@ -24,6 +24,7 @@
 #include "usb_lib.h"
 #include "usb_istr.h"
 #include "sdcard.h"
+#include "hw_config.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -222,7 +223,7 @@ void SDIO_IRQHandler(void)
 // TIM2 Interrupt Handler
 //=============================================================================
 
-extern uint64_t currentTime;
+
 void TIM2_IRQHandler(void)
 {
 if(TIM2->SR & TIM_SR_UIF) // if UIF flag is set

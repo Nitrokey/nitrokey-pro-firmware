@@ -25,49 +25,63 @@
 #include "sha1.h"
 #include "hmac-sha1.h"
 #include "hotp.h"
+#include "string.h"
+#include "memory_ops.h"
 
+__I uint32_t hotp_slots[NUMBER_OF_HOTP_SLOTS]={SLOTS_ADDRESS+HOTP_SLOT1_OFFSET,SLOTS_ADDRESS+HOTP_SLOT2_OFFSET};
+__I uint32_t hotp_slot_counters[NUMBER_OF_HOTP_SLOTS]={SLOT1_COUNTER_ADDRESS,SLOT2_COUNTER_ADDRESS};
+__I uint32_t hotp_slot_offsets[NUMBER_OF_HOTP_SLOTS]={HOTP_SLOT1_OFFSET,HOTP_SLOT2_OFFSET};
 
-uint32_t oath_slots[2]={SLOT1_ADDRESS,SLOT2_ADDRESS};
+__I uint32_t totp_slots[NUMBER_OF_TOTP_SLOTS]={SLOTS_ADDRESS+TOTP_SLOT1_OFFSET,SLOTS_ADDRESS+TOTP_SLOT2_OFFSET,SLOTS_ADDRESS+TOTP_SLOT3_OFFSET,SLOTS_ADDRESS+TOTP_SLOT4_OFFSET};
+__I uint32_t totp_slot_offsets[NUMBER_OF_TOTP_SLOTS]={TOTP_SLOT1_OFFSET,TOTP_SLOT2_OFFSET,TOTP_SLOT3_OFFSET,TOTP_SLOT4_OFFSET};
 
+uint8_t page_buffer[SLOT_PAGE_SIZE];
 
 uint64_t endian_swap (uint64_t x)
 {
-  x = (x >> 56) |
-    ((x << 40) & 0x00FF000000000000) |
-    ((x << 24) & 0x0000FF0000000000) |
-    ((x << 8) & 0x000000FF00000000) |
-    ((x >> 8) & 0x00000000FF000000) |
-    ((x >> 24) & 0x0000000000FF0000) |
-    ((x >> 40) & 0x000000000000FF00) | (x << 56);
-  return x;
+	x = (x >> 56) |
+	((x << 40) & 0x00FF000000000000) |
+	((x << 24) & 0x0000FF0000000000) |
+	((x << 8) & 0x000000FF00000000) |
+	((x >> 8) & 0x00000000FF000000) |
+	((x >> 24) & 0x0000000000FF0000) |
+	((x >> 40) & 0x000000000000FF00) | (x << 56);
+	return x;
 }
 
 uint32_t dynamic_truncate (uint8_t * hmac_result)
 {
 
-  uint8_t offset = hmac_result[19] & 0xf;
-  uint32_t bin_code = (hmac_result[offset] & 0x7f) << 24
-    | (hmac_result[offset + 1] & 0xff) << 16
-    | (hmac_result[offset + 2] & 0xff) << 8
-    | (hmac_result[offset + 3] & 0xff);
+	uint8_t offset = hmac_result[19] & 0xf;
+	uint32_t bin_code = (hmac_result[offset] & 0x7f) << 24
+	| (hmac_result[offset + 1] & 0xff) << 16
+	| (hmac_result[offset + 2] & 0xff) << 8
+	| (hmac_result[offset + 3] & 0xff);
 
-  return bin_code;
+	return bin_code;
 }
 
 extern uint8_t HID_GetReport_Value[32+1];
 
-void write_data_to_flash(uint8_t *data,uint8_t len,uint32_t addr){
-uint16_t i;
 
-  // FLASH_Unlock();
-  //  FLASH_ErasePage(addr);
+void write_data_to_flash(uint8_t *data,uint16_t len,uint32_t addr){
+	uint16_t i;
+
+	// FLASH_Unlock();
+	//  FLASH_ErasePage(addr);
+	
+	//	for (i = 0; i < len; i++){	
+	//	FLASH_ProgramHalfWord(addr+(i*2), data[i]);
+	//	}
 	
 	for (i = 0; i < len; i+=2){	
-	uint16_t halfword=(data[i])+(data[i+1]<<8);
-	FLASH_ProgramHalfWord(addr+i, halfword);
+		uint16_t halfword=(data[i])+(data[i+1]<<8);
+		FLASH_ProgramHalfWord(addr+i, halfword);
 	}
+
 	
-//	FLASH_Lock();
+	
+	//	FLASH_Lock();
 
 }
 
@@ -77,17 +91,17 @@ secret - pointer to secret stored in memory
 secret_length - length of the secret
 len - length of the truncated result, 6 or 8
 */
-uint32_t get_htop_value(uint64_t counter,uint8_t * secret,uint8_t secret_length,uint8_t len){
-	  uint8_t hmac_result[20];
-	  uint64_t c = endian_swap(counter);
-      hmac_sha1 (hmac_result, secret, secret_length*8, &c, 64);
-      uint32_t hotp_result = dynamic_truncate (hmac_result);
-	  if (len==6)
-      hotp_result = hotp_result % 1000000;
-	  else if (len==8)
-	  hotp_result = hotp_result % 100000000;
-	  else return 0;
-      return hotp_result;
+uint32_t get_hotp_value(uint64_t counter,uint8_t * secret,uint8_t secret_length,uint8_t len){
+	uint8_t hmac_result[20];
+	uint64_t c = endian_swap(counter);
+	hmac_sha1 (hmac_result, secret, secret_length*8, &c, 64);
+	uint32_t hotp_result = dynamic_truncate (hmac_result);
+	if (len==6)
+	hotp_result = hotp_result % 1000000;
+	else if (len==8)
+	hotp_result = hotp_result % 100000000;
+	else return 0;
+	return hotp_result;
 }
 
 /*Get the HOTP counter stored in flash
@@ -95,118 +109,279 @@ addr - counter page address
 */
 uint64_t get_counter_value(uint32_t addr){
 
-uint16_t i;
-uint64_t counter=0;
-uint8_t *ptr=(uint8_t *)addr;
+	uint16_t i;
+	uint64_t counter=0;
+	uint8_t *ptr=(uint8_t *)addr;
 
-// for (i=0;i<4;i++){
-// counter+=*ptr<<(8*i);
-// ptr++;
-// }
+	// for (i=0;i<4;i++){
+	// counter+=*ptr<<(8*i);
+	// ptr++;
+	// }
 
-counter=*((uint64_t *)addr);
-ptr+=8;
+	counter=*((uint64_t *)addr);
+	ptr+=8;
 
-i=0;
-while(i<1016){
-if (*ptr==0xff)
-break;
-ptr++;
-counter++;
-i++;
+	i=0;
+	while(i<1016){
+		if (*ptr==0xff)
+		break;
+		ptr++;
+		counter++;
+		i++;
+	}
+
+	return counter;
 }
 
-return counter;
-}
 
+uint8_t set_counter_value(uint32_t addr, uint64_t counter){
+	FLASH_Status err=FLASH_COMPLETE;
+
+	FLASH_Unlock();
+
+	err=FLASH_ErasePage(addr);
+	if (err!=FLASH_COMPLETE) return err;
+
+	err=FLASH_ProgramWord(addr, counter&0xffffffff);
+	if (err!=FLASH_COMPLETE) return err;
+	err=FLASH_ProgramWord(addr+4,  (counter>>32)&0xffffffff);
+	if (err!=FLASH_COMPLETE) return err;
+
+	FLASH_Lock();
+
+	return 0;
+}
 
 
 /*Increment the HOTP counter stored in flash
 addr - counter page address
 */
 uint8_t increment_counter_page(uint32_t addr){
-uint16_t i;
-uint8_t *ptr=(uint8_t *)addr;
-uint64_t counter;
-FLASH_Status err=FLASH_COMPLETE;
+	uint16_t i;
+	uint8_t *ptr=(uint8_t *)addr;
+	uint64_t counter;
+	FLASH_Status err=FLASH_COMPLETE;
 
-if (ptr[1023]==0x00){
-//Entire page is filled, erase cycle
-counter=get_counter_value(addr)+1;
+	if (ptr[1023]==0x00){
+		//Entire page is filled, erase cycle
+		counter=get_counter_value(addr)+1;
 
-FLASH_Unlock();
+
+		/* 
 err=FLASH_ErasePage(BACKUP_PAGE_ADDRESS);
 if (err!=FLASH_COMPLETE) return err;
+
+//write address to backup page
 err=FLASH_ProgramHalfWord(BACKUP_PAGE_ADDRESS, addr);
 if (err!=FLASH_COMPLETE) return err;
 
 err=FLASH_ProgramWord(BACKUP_PAGE_ADDRESS+4, counter&0xffffffff);
 if (err!=FLASH_COMPLETE) return err;
 err=FLASH_ProgramWord(BACKUP_PAGE_ADDRESS+8, (counter>>32)&0xffffffff);
-if (err!=FLASH_COMPLETE) return err;
+if (err!=FLASH_COMPLETE) return err; */
+
+		FLASH_Unlock();
+		err=FLASH_ErasePage(BACKUP_PAGE_ADDRESS);
+		if (err!=FLASH_COMPLETE) return err;
+
+		//write address to backup page
 
 
-err=FLASH_ErasePage(addr);
-if (err!=FLASH_COMPLETE) return err;
-
-err=FLASH_ProgramWord(addr, counter&0xffffffff);
-if (err!=FLASH_COMPLETE) return err;
-err=FLASH_ProgramWord(addr+4,  (counter>>32)&0xffffffff);
-if (err!=FLASH_COMPLETE) return err;
+		err=FLASH_ProgramWord(BACKUP_PAGE_ADDRESS, counter&0xffffffff);
+		if (err!=FLASH_COMPLETE) return err;
+		err=FLASH_ProgramWord(BACKUP_PAGE_ADDRESS+4, (counter>>32)&0xffffffff);
+		if (err!=FLASH_COMPLETE) return err; 
 
 
-err=FLASH_ProgramHalfWord(BACKUP_PAGE_ADDRESS+12, "OK");
-if (err!=FLASH_COMPLETE) return err;
+		err=FLASH_ProgramWord(BACKUP_PAGE_ADDRESS+BACKUP_ADDRESS_OFFSET, addr);
+		if (err!=FLASH_COMPLETE) return err;
 
-FLASH_Lock();
+		err=FLASH_ProgramWord(BACKUP_PAGE_ADDRESS+BACKUP_LENGTH_OFFSET, 8);
+		if (err!=FLASH_COMPLETE) return err;
+
+
+
+		err=FLASH_ErasePage(addr);
+		if (err!=FLASH_COMPLETE) return err;
+
+		err=FLASH_ProgramWord(addr, counter&0xffffffff);
+		if (err!=FLASH_COMPLETE) return err;
+		err=FLASH_ProgramWord(addr+4,  (counter>>32)&0xffffffff);
+		if (err!=FLASH_COMPLETE) return err;
+
+
+		err=FLASH_ProgramHalfWord(BACKUP_PAGE_ADDRESS+BACKUP_OK_OFFSET, 0x4F4B);
+		if (err!=FLASH_COMPLETE) return err;
+
+		FLASH_Lock();
+	}
+	else{
+
+		ptr+=8;
+		i=0;
+		while(i<1016){
+			if (*ptr==0xff)
+			break;
+			ptr++;
+			i++;
+		}
+
+		FLASH_Unlock();
+
+		if ((uint32_t)ptr%2){ //odd byte
+
+			err=FLASH_ProgramHalfWord((uint32_t)ptr-1, 0x0000);
+
+
+		}
+		else{ //even byte
+
+			err=FLASH_ProgramHalfWord((uint32_t)ptr, 0xff00);
+
+		}
+		FLASH_Lock();
+
+	}
+
+	return err; //no error
 }
-else{
 
-ptr+=8;
-i=0;
-while(i<1016){
-if (*ptr==0xff)
-break;
-ptr++;
-i++;
+
+uint32_t get_code_from_hotp_slot(uint8_t slot){
+	uint32_t result;
+	uint8_t len=6;
+	uint64_t counter;
+	FLASH_Status err;
+	uint8_t config=0;
+
+	if (slot>=NUMBER_OF_HOTP_SLOTS) return 0;
+
+	config=get_hotp_slot_config(slot);
+
+	if (config&(1<<SLOT_CONFIG_DIGITS))
+	len=8;
+
+	result=*((uint8_t *)hotp_slots[slot]);
+	if (result==0xFF)//unprogrammed slot
+	return 0;
+
+	counter=get_counter_value(hotp_slot_counters[slot]);
+	result= get_hotp_value(counter,(uint8_t *)(hotp_slots[slot]+SECRET_OFFSET),20,len);
+	err=increment_counter_page(hotp_slot_counters[slot]);
+	if (err!=FLASH_COMPLETE) return 0;
+
+	return result;
 }
 
-FLASH_Unlock();
+//backup data to the backup page
+//data -data to be backed up
+//len - length of the data
+//addr - original address of the data
+void backup_data(uint8_t *data,uint8_t len, uint32_t addr){
 
-if ((uint32_t)ptr%2){ //odd byte
+	FLASH_Unlock();
+	FLASH_ErasePage(BACKUP_PAGE_ADDRESS);
+	write_data_to_flash(data,len,BACKUP_PAGE_ADDRESS);
+	FLASH_ProgramHalfWord(BACKUP_PAGE_ADDRESS+BACKUP_LENGTH_OFFSET, len);
+	FLASH_ProgramWord(BACKUP_PAGE_ADDRESS+BACKUP_ADDRESS_OFFSET, addr);
 
-err=FLASH_ProgramHalfWord((uint32_t)ptr-1, 0x0000);
- 
+	FLASH_Lock();
+
 
 }
-else{ //even byte
 
-err=FLASH_ProgramHalfWord((uint32_t)ptr, 0xff00);
+void write_to_slot(uint8_t *data, uint16_t offset, uint16_t len){
+
+	//copy entire page to ram
+	uint8_t *page=(uint8_t *)SLOTS_ADDRESS;
+	memcpy(page_buffer,page,SLOT_PAGE_SIZE);
+
+	//make changes to page
+	memcpy(page_buffer+offset,data,len);
+
+
+	//write page to backup location
+	backup_data(page_buffer,SLOT_PAGE_SIZE,SLOTS_ADDRESS);
+
+	//write page to regular location
+
+	FLASH_Unlock();
+	FLASH_ErasePage(SLOTS_ADDRESS);
+	write_data_to_flash(page_buffer,SLOT_PAGE_SIZE,SLOTS_ADDRESS);
+	FLASH_ProgramHalfWord(BACKUP_PAGE_ADDRESS+BACKUP_OK_OFFSET, 0x4F4B);
+	FLASH_Lock();
 
 }
-FLASH_Lock();
+
+
+//check for any data on the backup page
+uint8_t check_backups(){
+
+	uint32_t address=getu32((uint8_t *)BACKUP_PAGE_ADDRESS+BACKUP_ADDRESS_OFFSET);
+	uint16_t ok=getu16((uint8_t *)BACKUP_PAGE_ADDRESS+BACKUP_OK_OFFSET);
+	uint16_t length=getu16((uint8_t *)BACKUP_PAGE_ADDRESS+BACKUP_LENGTH_OFFSET);
+
+	if (ok==0x4F4B)//backed up data was correctly written to its destination
+	return 0;
+	else{
+
+		if (address!=0xffffffff&&length<=1000){
+			FLASH_Unlock();
+
+			FLASH_ErasePage(address);
+			write_data_to_flash((uint8_t *)BACKUP_PAGE_ADDRESS,length,address);
+			FLASH_ErasePage(BACKUP_PAGE_ADDRESS);
+			FLASH_Lock();
+
+
+			return 1; //backed up page restored
+		}
+		else 
+		return 2; //something bad happened, but before the original page was earsed, so we're safe (or there is nothing on the backup page)
+
+
+	}
+
+
 
 }
 
-return err; //no error
+uint8_t get_hotp_slot_config(uint8_t slot_number){
+	uint8_t result=0;
+	if (slot_number>=NUMBER_OF_HOTP_SLOTS)
+	return 0;
+	else{
+		result=((uint8_t *)hotp_slots[slot_number])[CONFIG_OFFSET];
+	}
+
+	return result;
 }
 
 
-uint32_t get_code_from_slot(uint8_t slot){
-uint32_t result;
-uint8_t len=6;
-uint64_t counter;
-FLASH_Status err;
+uint32_t get_code_from_totp_slot(uint8_t slot, uint64_t challenge){
 
-if (slot>=NUMBER_OF_SLOTS) return 0;
 
-counter=get_counter_value(oath_slots[slot]+COUNTER_PAGE_OFFSET);
-result= get_htop_value(counter,(uint8_t *)(oath_slots[slot]+SECRET_OFFSET),20,len);
-err=increment_counter_page(oath_slots[slot]+COUNTER_PAGE_OFFSET);
-if (err!=FLASH_COMPLETE) return 0;
+	uint32_t result;
+	uint8_t config=0;
 
-return counter;
+	if (slot>=NUMBER_OF_TOTP_SLOTS) return 0;
+
+
+	result=*((uint8_t *)hotp_slots[slot]);
+	if (result==0xFF)//unprogrammed slot
+	return 0;
+
+
+	result= get_hotp_value(challenge,(uint8_t *)(totp_slots[slot]+SECRET_OFFSET),20,8);
+
+
+	return result;
+
 }
+
+
+
+
 
 
 

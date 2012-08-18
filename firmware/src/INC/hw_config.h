@@ -50,4 +50,7 @@ uint8_t ReadButton(void);
 
 /* External variables --------------------------------------------------------*/
 
+extern uint64_t currentTime;
+extern __IO uint32_t cardSerial;
+
 #endif  /*__HW_CONFIG_H*/

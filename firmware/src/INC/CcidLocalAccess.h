@@ -47,5 +47,9 @@
 
 void CcidLocalAccessTest (void);
 
+int getAID(void);
+uint32_t getSerialNumber(void);
+uint8_t getByteOfData(uint8_t x);
+
 #endif /* CCID_LOCAL_ACCESS */
 
