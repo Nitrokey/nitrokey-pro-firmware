@@ -134,6 +134,9 @@ if (device_status==STATUS_RECEIVED_REPORT){
   
   uint8_t slot_number=((uint8_t *)SLOTS_ADDRESS+GLOBAL_CONFIG_OFFSET)[0];
   if (slot_number<=1){
+	  uint8_t programmed=*((uint8_t *)hotp_slots[slot_number]);
+	   
+	   if (programmed==0x01){
    uint32_t code= get_code_from_hotp_slot(slot_number);
    uint8_t config =get_hotp_slot_config(slot_number);
    
@@ -147,6 +150,7 @@ if (device_status==STATUS_RECEIVED_REPORT){
 	
    if (config&(1<<SLOT_CONFIG_ENTER))
    sendEnter();
+	   }
    }
 
   }
@@ -156,6 +160,9 @@ if (device_status==STATUS_RECEIVED_REPORT){
   
   uint8_t slot_number=((uint8_t *)SLOTS_ADDRESS+GLOBAL_CONFIG_OFFSET)[1];
    if (slot_number<=1){
+	   uint8_t programmed=*((uint8_t *)hotp_slots[slot_number]);
+	   
+	   if (programmed==0x01){
    uint32_t code= get_code_from_hotp_slot(slot_number);
    uint8_t config =get_hotp_slot_config(slot_number);
    
@@ -169,6 +176,7 @@ if (device_status==STATUS_RECEIVED_REPORT){
 	
    if (config&(1<<SLOT_CONFIG_ENTER))
    sendEnter();
+	   }
    }
   
   }
@@ -178,6 +186,9 @@ if (device_status==STATUS_RECEIVED_REPORT){
   
   uint8_t slot_number=((uint8_t *)SLOTS_ADDRESS+GLOBAL_CONFIG_OFFSET)[2];
    if (slot_number<=1){
+	   uint8_t programmed=*((uint8_t *)hotp_slots[slot_number]);
+	   
+	   if (programmed==0x01){
    uint32_t code= get_code_from_hotp_slot(slot_number);
    uint8_t config =get_hotp_slot_config(slot_number);
    
@@ -191,6 +202,7 @@ if (device_status==STATUS_RECEIVED_REPORT){
 	
    if (config&(1<<SLOT_CONFIG_ENTER))
    sendEnter();
+	   }
    }
   
   //smartcard test

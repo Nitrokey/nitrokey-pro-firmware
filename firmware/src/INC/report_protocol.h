@@ -43,6 +43,7 @@
 #define CMD_STATUS_WRONG_PASSWORD 4
 #define CMD_STATUS_NOT_AUTHORIZED 5
 
+
 /*
 Output report
 size	offset	description
