@@ -39,6 +39,9 @@
 #define CMD_GET_CODE 0x04
 #define CMD_WRITE_CONFIG 0x05
 #define CMD_ERASE_SLOT 0x06
+#define CMD_FIRST_AUTHENTICATE 0x07
+#define CMD_AUTHORIZE 0x08
+
 
 #define STATUS_READY 0x00
 #define STATUS_BUSY	 0x01
@@ -49,6 +52,8 @@
 #define CMD_STATUS_WRONG_CRC 1
 #define CMD_STATUS_WRONG_SLOT 2
 #define CMD_STATUS_SLOT_NOT_PROGRAMMED 3
+#define CMD_STATUS_WRONG_PASSWORD 4
+#define CMD_STATUS_NOT_AUTHORIZED 5
 
 class Device
 {
@@ -73,8 +78,9 @@ public:
     HOTPSlot *HOTPSlots[2];
     TOTPSlot *TOTPSlots[4];
     void getSlotConfigs();
-    uint8_t *password[50];
+    uint8_t *password[25];
     bool validPassword;
+    bool passwordSet;
 
     uint8_t cardSerial[4];
     uint8_t firmwareVersion[2];
@@ -84,6 +90,9 @@ public:
     int getStatus();
     void getGeneralConfig();
     int writeGeneralConfig(uint8_t data[3]);
+
+    int firstAuthenticate(uint8_t cardPassword[25],uint8_t tempPasswrod[25]);
+    int authorize(Command *authorizedCmd);
 
 
 private:

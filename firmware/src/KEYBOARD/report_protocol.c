@@ -33,8 +33,11 @@
 #include "CCIDHID_usb_desc.h"
 #include "string.h"
 #include "memory_ops.h"
+#include "CcidLocalAccess.h"
 
-
+__IO uint8_t temp_password[25];
+__IO uint8_t tmp_password_set=0;
+__IO uint32_t authorized_crc=0xFFFFFFFF;
 
 
 uint8_t parse_report(uint8_t *report,uint8_t *output){
@@ -43,6 +46,7 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 	uint32_t calculated_crc32;
 	uint8_t i;
 
+	uint8_t not_authorized=0;
 
 	//uint64_t counter=*((uint64_t *)(report+REPORT_COUNTER_VALUE_OFFSET));
 
@@ -72,7 +76,10 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 			break;
 
 		case CMD_WRITE_TO_SLOT:
+			if (calculated_crc32==authorized_crc)
 			cmd_write_to_slot(report,output);
+			else
+			not_authorized=1;
 			break;
 
 		case CMD_READ_SLOT_NAME:
@@ -80,7 +87,10 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 			break;
 			
 		case CMD_READ_SLOT:
+			if (calculated_crc32==authorized_crc)
 			cmd_read_slot(report,output);
+			else
+			not_authorized=1;
 			break;
 			
 		case CMD_GET_CODE:
@@ -88,11 +98,25 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 			break;
 			
 		case CMD_WRITE_CONFIG:
+			if (calculated_crc32==authorized_crc)
 			cmd_write_config(report,output);
+			else
+			not_authorized=1;
 			break;
 			
 		case CMD_ERASE_SLOT:
+			if (calculated_crc32==authorized_crc)
 			cmd_erase_slot(report,output);
+			else
+			not_authorized=1;
+			break;
+			
+		case CMD_FIRST_AUTHENTICATE:
+			cmd_first_authenticate(report,output);
+			break;
+			
+		case CMD_AUTHORIZE:
+			cmd_authorize(report,output);
 			break;
 			
 			//FLASH_Unlock();
@@ -109,6 +133,12 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 			break;
 
 		}
+		
+		if (not_authorized)
+		output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_NOT_AUTHORIZED;
+		
+		if (calculated_crc32==authorized_crc)
+		authorized_crc=0xFFFFFFFF;
 
 	}
 	else
@@ -259,7 +289,7 @@ uint8_t cmd_get_code(uint8_t *report,uint8_t *output){
 
 	uint8_t slot_no=report[CMD_GC_SLOT_NUMBER_OFFSET];
 	
-		if (slot_no>=0x10&&slot_no<=0x11){//HOTP slot
+	if (slot_no>=0x10&&slot_no<=0x11){//HOTP slot
 		slot_no=slot_no&0x0F;
 		uint8_t is_programmed=*((uint8_t *)(hotp_slots[slot_no]));
 		if (is_programmed==0x01){
@@ -268,8 +298,8 @@ uint8_t cmd_get_code(uint8_t *report,uint8_t *output){
 			memcpy(output+OUTPUT_CMD_RESULT_OFFSET,&result,4);
 			memcpy(output+OUTPUT_CMD_RESULT_OFFSET+4,(uint8_t *)hotp_slots[slot_no]+CONFIG_OFFSET,14);
 			
-				
-	
+			
+			
 		}
 		else
 		output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_SLOT_NOT_PROGRAMMED;
@@ -307,7 +337,7 @@ uint8_t cmd_write_config(uint8_t *report,uint8_t *output){
 	write_to_slot(slot_tmp,GLOBAL_CONFIG_OFFSET, 3);
 	
 	return 0;
-		
+	
 }
 
 
@@ -340,3 +370,46 @@ uint8_t cmd_erase_slot(uint8_t *report,uint8_t *output){
 
 	return 0;
 }
+
+uint8_t cmd_first_authenticate(uint8_t *report,uint8_t *output){
+	
+	uint8_t res=1;	
+	uint8_t card_password[26];
+	
+
+		
+		memset(card_password,0,26);
+		
+		memcpy(card_password,report+1,25);
+		
+		
+		res=cardAuthenticate(card_password);
+		
+		if (res==0){
+			memcpy(temp_password,report+26,25);
+			tmp_password_set=1;
+			getAID();
+			return 0;
+		}
+		else{
+			output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_PASSWORD;
+			return 1; //wrong card password
+		}
+	
+
+}
+
+
+uint8_t cmd_authorize(uint8_t *report,uint8_t *output){
+	
+	if (tmp_password_set==1){
+	
+	if (memcmp(report+5,temp_password,25)==0)	
+	authorized_crc=getu32(report+1);
+	else	
+	output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_PASSWORD;
+
+	}
+	
+}
+

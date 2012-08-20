@@ -90,6 +90,9 @@ private slots:
     void getTOTP3();
     void getTOTP4();
     void on_eraseButton_clicked();
+    void on_resetGeneralConfigButton_clicked();
+    void on_randomSecretButton_clicked();
+    void on_checkBox_toggled(bool checked);
 };
 
 #endif // MAINWINDOW_H
