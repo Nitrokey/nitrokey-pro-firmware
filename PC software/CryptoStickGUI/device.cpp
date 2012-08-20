@@ -431,8 +431,6 @@ int Device::readSlot(uint8_t slotNo)
 
 void Device::initializeConfig()
 {
-    passwordSet=false;
-    validPassword=false;
     getSlotName(0x10);
     getSlotName(0x11);
     getSlotName(0x20);
