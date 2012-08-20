@@ -385,6 +385,13 @@ void MainWindow::displayCurrentSlotConfig()
     QByteArray mui((char *)cryptostick->TOTPSlots[slotNo]->tokenID+4,8);
     ui->muiEdit->setText(QString(mui));
 
+    if (!cryptostick->TOTPSlots[slotNo]->isProgrammed){
+        ui->ompEdit->setText("CS");
+        ui->ttEdit->setText("01");
+        QByteArray cardSerial = QByteArray((char *) cryptostick->cardSerial).toHex();
+        ui->muiEdit->setText(QString( "%1" ).arg(QString(cardSerial),8,'0'));
+    }
+
     if (cryptostick->TOTPSlots[slotNo]->config&(1<<0))
         ui->digits8radioButton->setChecked(true);
     else ui->digits6radioButton->setChecked(true);
@@ -398,16 +405,23 @@ void MainWindow::displayCurrentSlotConfig()
     else ui->tokenIDCheckBox->setChecked(false);
     }
 
+
+    if (!cryptostick->TOTPSlots[slotNo]->isProgrammed){
+        ui->ompEdit->setText("CS");
+        ui->ttEdit->setText("01");
+        QByteArray cardSerial = QByteArray((char *) cryptostick->cardSerial).toHex();
+        ui->muiEdit->setText(QString( "%1" ).arg(QString(cardSerial),8,'0'));
+    }
 }
 
 void MainWindow::displayCurrentGeneralConfig()
 {
     QByteArray firmware = QByteArray((char *) cryptostick->firmwareVersion).toHex();
     ui->firmwareEdit->setText(QString(firmware));
-    qDebug() << QString(firmware);
+   // qDebug() << QString(firmware);
     QByteArray cardSerial = QByteArray((char *) cryptostick->cardSerial).toHex();
 
-    ui->serialEdit->setText(QString(cardSerial));
+    ui->serialEdit->setText(QString( "%1" ).arg(QString(cardSerial),8,'0'));
 
     ui->numLockComboBox->setCurrentIndex(0);
     ui->capsLockComboBox->setCurrentIndex(0);
@@ -429,6 +443,20 @@ void MainWindow::startConfiguration()
 
     //PasswordDialog pd;
     //pd.exec();
+    bool ok;
+
+    if (!cryptostick->validPassword){
+    QString password = QInputDialog::getText(this, tr("Enter card password"),tr("Password:"), QLineEdit::Password,"", &ok);
+
+    uint8_t tempPassword[25];
+
+    for (int i=0;i<25;i++)
+        tempPassword[i]=qrand()&0xFF;
+
+    cryptostick->firstAuthenticate((uint8_t *)password.toAscii().data(),tempPassword);
+    }
+
+    if (cryptostick->validPassword){
 
     cryptostick->getSlotConfigs();
     displayCurrentSlotConfig();
@@ -437,6 +465,13 @@ void MainWindow::startConfiguration()
     displayCurrentGeneralConfig();
 
     showNormal();
+
+   }
+    else{
+        QMessageBox msgBox;
+         msgBox.setText("Invalid password!");
+         msgBox.exec();
+    }
 }
 
 void MainWindow::getCode(uint8_t slotNo)
@@ -490,7 +525,11 @@ void MainWindow::on_writeButton_clicked()
 
         msgBox.exec();
 
+
+        QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
         Sleep::msleep(500);
+        QApplication::restoreOverrideCursor();
+
         generateAllConfigs();
 
     }
@@ -629,7 +668,9 @@ void MainWindow::on_writeGeneralConfigButton_clicked()
 
         msgBox.exec();
 
+        QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
         Sleep::msleep(500);
+        QApplication::restoreOverrideCursor();
         cryptostick->getStatus();
         displayCurrentGeneralConfig();
 
@@ -724,7 +765,9 @@ void MainWindow::on_eraseButton_clicked()
      switch (ret) {
        case QMessageBox::Yes:
             cryptostick->eraseSlot(slotNo);
+            QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
             Sleep::msleep(1000);
+            QApplication::restoreOverrideCursor();
             generateAllConfigs();
              msgBox.setText("Slot erased!");
               msgBox.setStandardButtons(QMessageBox::Ok);
@@ -738,3 +781,35 @@ void MainWindow::on_eraseButton_clicked()
            break;
      }
 }
+
+void MainWindow::on_resetGeneralConfigButton_clicked()
+{
+    displayCurrentGeneralConfig();
+}
+
+void MainWindow::on_randomSecretButton_clicked()
+{
+
+    int i;
+    uint8_t secret[20];
+
+    for (i=0;i<20;i++)
+        secret[i]=qrand()&0xFF;
+
+    QByteArray secretArray((char *) secret,20);
+    ui->hexRadioButton->setChecked(true);
+    ui->secretEdit->setText(secretArray.toHex());
+
+}
+
+void MainWindow::on_checkBox_toggled(bool checked)
+{
+    if (checked)
+        ui->secretEdit->setEchoMode(QLineEdit::PasswordEchoOnEdit);
+    else
+        ui->secretEdit->setEchoMode(QLineEdit::Normal);
+
+
+}
+
+

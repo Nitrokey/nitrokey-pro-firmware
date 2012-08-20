@@ -27,6 +27,8 @@
 #define CMD_GET_CODE 0x04
 #define CMD_WRITE_CONFIG 0x05
 #define CMD_ERASE_SLOT 0x06
+#define CMD_FIRST_AUTHENTICATE 0x07
+#define CMD_AUTHORIZE 0x08
 
 
 #define STATUS_READY 0x00
@@ -38,6 +40,8 @@
 #define CMD_STATUS_WRONG_CRC 1
 #define CMD_STATUS_WRONG_SLOT 2
 #define CMD_STATUS_SLOT_NOT_PROGRAMMED 3
+#define CMD_STATUS_WRONG_PASSWORD 4
+#define CMD_STATUS_NOT_AUTHORIZED 5
 
 /*
 Output report
@@ -115,6 +119,7 @@ output:
 CMD_WRITE_CONFIG	
 
 report:
+1b command type
 1b Numlock slot
 1b Capslock slot
 1b Scrolllock slot
@@ -123,9 +128,37 @@ output:
 
 	
 */
+	
+	
+/*
+CMD_FIRST_AUTHENTICATE
+
+report:
+1b command type
+25b card password
+25b new temporary password
+
+*/
+
+
+/*
+CMD_AUTHORIZE
+
+report:
+1b command type
+4b authorized crc
+25b temporary password
+
+
+*/
+
 
 
 __IO extern uint8_t device_status;
+extern __IO uint8_t temp_password[25];
+extern __IO uint8_t tmp_password_set;
+extern __IO uint32_t authorized_crc;
+
 uint8_t parse_report(uint8_t *report,uint8_t *output);
 uint8_t cmd_get_status(uint8_t *report,uint8_t *output);
 uint8_t cmd_write_to_slot(uint8_t *report,uint8_t *output);
@@ -134,4 +167,6 @@ uint8_t cmd_read_slot(uint8_t *report,uint8_t *output);
 uint8_t cmd_get_code(uint8_t *report,uint8_t *output);
 uint8_t cmd_write_config(uint8_t *report,uint8_t *output);
 uint8_t cmd_erase_slot(uint8_t *report,uint8_t *output);
+uint8_t cmd_first_authenticate(uint8_t *report,uint8_t *output);
+uint8_t cmd_authorize(uint8_t *report,uint8_t *output);
 

@@ -438,14 +438,14 @@ SerialString = CCID_StringSerial;
     SerialString[20] = HexToAscii ((uint8_t) ((Device_Serial1 & 0x000000F0) >>  4));
     SerialString[18] = HexToAscii ((uint8_t) ((Device_Serial1 & 0x0000000F) >>  0));
 
-    SerialString[16] = HexToAscii ((uint8_t) ((Device_Serial0 & 0xF0000000) >> 28));
-    SerialString[14] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x0F000000) >> 24));
-    SerialString[12] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x00F00000) >> 20));
-    SerialString[10] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x000F0000) >> 16));
-    SerialString [8] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x0000F000) >> 12));
-    SerialString [6] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x00000F00) >>  8));
-    SerialString [4] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x000000F0) >>  4));
-    SerialString [2] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x0000000F) >>  0));
+    SerialString[2] = HexToAscii ((uint8_t) ((Device_Serial0 & 0xF0000000) >> 28));
+    SerialString[4] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x0F000000) >> 24));
+    SerialString[6] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x00F00000) >> 20));
+    SerialString[8] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x000F0000) >> 16));
+    SerialString [10] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x0000F000) >> 12));
+    SerialString [12] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x00000F00) >>  8));
+    SerialString [14] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x000000F0) >>  4));
+    SerialString [16] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x0000000F) >>  0));
   } 
 }
 

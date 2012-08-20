@@ -33,6 +33,8 @@ Device::Device(int vid, int pid)
     this->vid=vid;
     this->pid=pid;
     validPassword=false;
+    passwordSet=false;
+
     memset(password,0,50);
     //handle = hid_open(vid,pid, NULL);
 
@@ -189,6 +191,7 @@ int Device::eraseSlot(uint8_t slotNo)
 
     if (isConnected){
     Command *cmd=new Command(CMD_ERASE_SLOT,data,1);
+    authorize(cmd);
     res=sendCommand(cmd);
 
     if (res==-1)
@@ -237,6 +240,7 @@ int Device::writeToHOTPSlot(HOTPSlot *slot)
         if (isConnected){
         Command *cmd=new Command(CMD_WRITE_TO_SLOT,data,COMMAND_SIZE);
         qDebug() << "sending";
+        authorize(cmd);
         res=sendCommand(cmd);
         qDebug() << "sent";
 
@@ -283,6 +287,7 @@ int Device::writeToTOTPSlot(TOTPSlot *slot)
         if (isConnected){
         Command *cmd=new Command(CMD_WRITE_TO_SLOT,data,COMMAND_SIZE);
         qDebug() << "sending";
+        authorize(cmd);
         res=sendCommand(cmd);
         qDebug() << "sent";
 
@@ -367,6 +372,7 @@ int Device::readSlot(uint8_t slotNo)
 
     if (isConnected){
     Command *cmd=new Command(CMD_READ_SLOT,data,1);
+    authorize(cmd);
     res=sendCommand(cmd);
 
     if (res==-1)
@@ -423,6 +429,8 @@ int Device::readSlot(uint8_t slotNo)
 
 void Device::initializeConfig()
 {
+    passwordSet=false;
+    validPassword=false;
     getSlotName(0x10);
     getSlotName(0x11);
     getSlotName(0x20);
@@ -482,6 +490,7 @@ int Device::writeGeneralConfig(uint8_t data[])
 
     if (isConnected){
     Command *cmd=new Command(CMD_WRITE_CONFIG,data,3);
+    authorize(cmd);
     res=sendCommand(cmd);
 
     if (res==-1)
@@ -501,6 +510,86 @@ int Device::writeGeneralConfig(uint8_t data[])
     return -3;
 
 
+}
+
+int Device::firstAuthenticate(uint8_t cardPassword[], uint8_t tempPasswrod[])
+{
+
+    int res;
+    uint8_t data[50];
+
+    memcpy(data,cardPassword,25);
+    memcpy(data+25,tempPasswrod,25);
+
+
+    if (isConnected){
+    Command *cmd=new Command(CMD_FIRST_AUTHENTICATE,data,50);
+    res=sendCommand(cmd);
+
+    if (res==-1)
+        return -1;
+    else{  //sending the command was successful
+        //return cmd->crc;
+        Sleep::msleep(1000);
+        Response *resp=new Response();
+        resp->getResponse(this);
+
+        if (cmd->crc==resp->lastCommandCRC){ //the response was for the last command
+            if (resp->lastCommandStatus==CMD_STATUS_OK){
+                memcpy(password,tempPasswrod,25);
+                validPassword=true;
+            return 0;
+            }
+            else if (resp->lastCommandStatus==CMD_STATUS_WRONG_PASSWORD){
+            return -3;
+            }
+
+        }
+
+
+    }
+
+   }
+
+    return -2;
+
+
+}
+
+int Device::authorize(Command *authorizedCmd)
+{
+   authorizedCmd->generateCRC();
+   uint32_t crc=authorizedCmd->crc;
+   uint8_t data[29];
+   int res;
+
+   memcpy(data,&crc,4);
+   memcpy(data+4,password,25);
+
+   if (isConnected){
+   Command *cmd=new Command(CMD_AUTHORIZE,data,29);
+   res=sendCommand(cmd);
+
+
+   if (res==-1)
+       return -1;
+   else{
+
+       Sleep::msleep(200);
+       Response *resp=new Response();
+       resp->getResponse(this);
+
+       if (cmd->crc==resp->lastCommandCRC){ //the response was for the last command
+           if (resp->lastCommandStatus==CMD_STATUS_OK){
+               return 0;
+           }
+
+       }
+       return -2;
+   }
+   }
+
+   return -1;
 }
 
 

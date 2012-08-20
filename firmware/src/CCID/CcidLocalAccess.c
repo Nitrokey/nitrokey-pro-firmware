@@ -550,6 +550,25 @@ uint8_t getByteOfData(uint8_t x){
 return tSCT.cAPDU[x];
 }
 
+uint8_t cardAuthenticate(uint8_t *password){
+InitSCTStruct (&tSCT);
+
+unsigned short cRet;
+unsigned char nReturnSize;
+
+CcidSelectOpenPGPApp ();
+cRet = CcidVerifyPin (2,password);
+	
+
+if (APDU_ANSWER_COMMAND_CORRECT != cRet)
+	{
+		return 1;
+	}
+	
+
+return 0;	
+}
+
 
 
 

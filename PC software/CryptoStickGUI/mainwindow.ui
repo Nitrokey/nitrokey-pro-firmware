@@ -105,6 +105,9 @@
        <property name="maxLength">
         <number>59</number>
        </property>
+       <property name="echoMode">
+        <enum>QLineEdit::PasswordEchoOnEdit</enum>
+       </property>
       </widget>
       <widget class="QLabel" name="label_3">
        <property name="geometry">
@@ -143,6 +146,35 @@
        </property>
        <property name="text">
         <string>Send 'enter'as the last keystroke</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="randomSecretButton">
+       <property name="geometry">
+        <rect>
+         <x>444</x>
+         <y>70</y>
+         <width>111</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Random secret</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="checkBox">
+       <property name="geometry">
+        <rect>
+         <x>339</x>
+         <y>70</y>
+         <width>91</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Hide secret</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </widget>
