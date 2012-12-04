@@ -23,10 +23,10 @@
 #include "smartcard.h"
 #include "type.h"
 #include "CCID_Global.h"
-#include "CCID_crd.h"
+#include "CCID_Crd.h"
 #include "CCID_SlotErrorCode.h"
-#include "CCID_ifd_protocol.h"
-#include "CCID_ifd_ccid.h"
+#include "CCID_Ifd_protocol.h"
+#include "CCID_Ifd_ccid.h"
 #include "CCID_usb.h"
 #include "CCID_Macro.h"
 

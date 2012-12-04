@@ -62,6 +62,7 @@ LIBS=-framework IOKit -framework CoreFoundation
 
 unix{
 LIBS  = `pkg-config libusb-1.0 --libs` -lrt -lpthread
+INCLUDEPATH += /usr/include/libusb-1.0
 }
 
 OTHER_FILES +=

@@ -28,7 +28,7 @@
 #include "CCID_Ifd_ccid.h"
 #include "CCID_SlotErrorCode.h"
 #include "CCID_Ifd_protocol.h"
-#include "CCID_crd.h"
+#include "CCID_Crd.h"
 
 const unsigned int FvsFI[]      = {	  0,  372, 558,  744, 1116, 1488, 1860, 0,	 0,  512, 768, 1024, 1536, 2048,    0,  0};
 const unsigned int Dmul64vsDI[] = {	  0,   64, 128,  256,  512, 1024, 2048, 0, 768, 1280,  32,   16,    8,    4,    2,  1};
