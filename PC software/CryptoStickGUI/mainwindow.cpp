@@ -611,7 +611,7 @@ void MainWindow::on_setToZeroButton_clicked()
 
 void MainWindow::on_setToRandomButton_clicked()
 {
-    uint64_t counter=qrand();
+    quint64 counter=qrand();
     counter<<=16;
     counter+=qrand();
     counter<<=16;
