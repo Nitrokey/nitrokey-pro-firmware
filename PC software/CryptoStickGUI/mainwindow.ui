@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>602</width>
-    <height>737</height>
+    <height>550</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -34,20 +34,20 @@
       <property name="geometry">
        <rect>
         <x>190</x>
-        <y>540</y>
+        <y>430</y>
         <width>121</width>
         <height>23</height>
        </rect>
       </property>
       <property name="text">
-       <string>Reload configuration</string>
+       <string>Reload Configuration</string>
       </property>
      </widget>
      <widget class="QGroupBox" name="groupBox">
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>70</y>
+        <y>50</y>
         <width>571</width>
         <height>171</height>
        </rect>
@@ -92,7 +92,7 @@
         <rect>
          <x>80</x>
          <y>30</y>
-         <width>481</width>
+         <width>441</width>
          <height>20</height>
         </rect>
        </property>
@@ -119,7 +119,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Secret key:</string>
+        <string>Secret Key:</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_4">
@@ -151,7 +151,7 @@
       <widget class="QPushButton" name="randomSecretButton">
        <property name="geometry">
         <rect>
-         <x>444</x>
+         <x>410</x>
          <y>70</y>
          <width>111</width>
          <height>23</height>
@@ -164,7 +164,7 @@
       <widget class="QCheckBox" name="checkBox">
        <property name="geometry">
         <rect>
-         <x>339</x>
+         <x>305</x>
          <y>70</y>
          <width>91</width>
          <height>20</height>
@@ -182,7 +182,7 @@
       <property name="geometry">
        <rect>
         <x>450</x>
-        <y>540</y>
+        <y>430</y>
         <width>75</width>
         <height>23</height>
        </rect>
@@ -195,13 +195,13 @@
       <property name="geometry">
        <rect>
         <x>50</x>
-        <y>540</y>
+        <y>430</y>
         <width>111</width>
         <height>23</height>
        </rect>
       </property>
       <property name="text">
-       <string>Write configuration</string>
+       <string>Save Configuration</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_2">
@@ -274,7 +274,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>400</y>
+        <y>320</y>
         <width>571</width>
         <height>111</height>
        </rect>
@@ -449,7 +449,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>250</y>
+        <y>190</y>
         <width>571</width>
         <height>141</height>
        </rect>
@@ -558,14 +558,14 @@
      <widget class="QPushButton" name="eraseButton">
       <property name="geometry">
        <rect>
-        <x>50</x>
-        <y>620</y>
+        <x>350</x>
+        <y>430</y>
         <width>71</width>
         <height>23</height>
        </rect>
       </property>
       <property name="text">
-       <string>Erase slot</string>
+       <string>Erase Slot</string>
       </property>
      </widget>
     </widget>
@@ -787,9 +787,15 @@
      <x>0</x>
      <y>0</y>
      <width>602</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuCrypto_Stick_OTP_TOol">
+    <property name="title">
+     <string>Crypto Stick OTP Tool</string>
+    </property>
+   </widget>
+   <addaction name="menuCrypto_Stick_OTP_TOol"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
