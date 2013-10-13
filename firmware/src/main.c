@@ -100,21 +100,22 @@ void Test1 (void)
 int main(void)
 {
 
-	USB_SetDeviceConfiguration(STICK_STATE_SMARTCARD);
+USB_SetDeviceConfiguration(STICK_STATE_SMARTCARD);
  
   setjmp(jmpRestartUSB);										// entrypoint for the changed USB device
 
   Set_System();
+  //RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+  //RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
 	SysTick_Config (720000);									// set systemtick to 10 ms - for delay ()	
 
-	
-/* Setup befor USB startup */
+
+/* Setup before USB startup */
 
 check_backups();
-
 SmartCardInitInterface ();
-	USB_Start (); 
+USB_Start ();
 
 
 		

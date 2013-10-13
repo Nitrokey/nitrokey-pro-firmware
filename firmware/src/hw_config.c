@@ -41,6 +41,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* Extern variables ----------------------------------------------------------*/
+uint8_t blinkOATHLEDTimes=0;
+uint64_t lastOATHBlinkTime=0;
 /* Private function prototypes -----------------------------------------------*/
 void RCC_Config(void);
 /* Private functions ---------------------------------------------------------*/
@@ -94,7 +96,6 @@ void DisableSmartcardLED (void)
 
   EnableSmartcardLED
 
-	not installed
 
 *******************************************************************************/
 
@@ -110,6 +111,28 @@ void EnableSmartcardLED (void)
   GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(SMARTCARD_LED_PIN_PORT, &GPIO_InitStructure);
+
+}
+
+/*******************************************************************************
+
+  EnableOATHLED
+
+
+*******************************************************************************/
+
+void EnableOATHLED (void)
+{
+  GPIO_InitTypeDef GPIO_InitStructure;
+
+// enable port clock
+  RCC_APB2PeriphClockCmd(OATH_LED_PERIPH, ENABLE);
+
+// set pin modes
+  GPIO_InitStructure.GPIO_Pin   = OATH_LED_PIN;
+  GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(OATH_LED_PIN_PORT, &GPIO_InitStructure);
 
 }
 
@@ -203,6 +226,31 @@ void SwitchSmartcardLED (FunctionalState NewState)
 
 }
 
+/*******************************************************************************
+
+ 	SwitchOATHLED
+
+*******************************************************************************/
+
+void SwitchOATHLED (FunctionalState NewState)
+{
+
+  if (NewState == ENABLE)
+  {
+    GPIO_SetBits(OATH_LED_PIN_PORT, OATH_LED_PIN);
+  }
+  else
+  {
+    GPIO_ResetBits(OATH_LED_PIN_PORT, OATH_LED_PIN);
+  }
+
+}
+
+
+void StartBlinkingOATHLED(uint8_t times){
+blinkOATHLEDTimes=times;
+
+}
 
 /*******************************************************************************
 * Function Name  : Set_System
@@ -222,9 +270,8 @@ void Set_System(void)
 /* Disable firmware download port */
  	DisableFirmwareDownloadPort ();
 
-/* Disable smartcard LED*/
-//  DisableSmartcardLED ();
-	EnableSmartcardLED ();
+EnableSmartcardLED ();
+EnableOATHLED ();
 
 /*Enable CRC calculator*/
 RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, ENABLE);
@@ -339,19 +386,11 @@ void USB_Cable_Config (FunctionalState NewState)
 {
   if (NewState != DISABLE)
   {
-//#ifdef USE_BOARD_STICK_V12
-//    GPIO_SetBits(USB_DISCONNECT, USB_DISCONNECT_PIN);				 	// Stick V12
-//#else
-    GPIO_ResetBits(USB_DISCONNECT, USB_DISCONNECT_PIN);			 	// development board
-//#endif
+    GPIO_SetBits(USB_DISCONNECT, USB_DISCONNECT_PIN);
   }
   else
   {
-//#ifdef USE_BOARD_STICK_V12
-//    GPIO_ResetBits(USB_DISCONNECT, USB_DISCONNECT_PIN);				// Stick V12
-//#else
-   	GPIO_SetBits(USB_DISCONNECT, USB_DISCONNECT_PIN);					// development board
-//#endif
+    GPIO_ResetBits(USB_DISCONNECT, USB_DISCONNECT_PIN);
   }
 }
 
@@ -495,12 +534,7 @@ void USB_Disconnect_Config(void)
   /* USB_DISCONNECT_PIN used as USB pull-up */
   GPIO_InitStructure.GPIO_Pin   = USB_DISCONNECT_PIN;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-
-#ifdef USE_BOARD_STICK_V12
-  GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;					// Stick V12
-#else
-  GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_OD;					// development board
-#endif
+  GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
 
   GPIO_Init(USB_DISCONNECT, &GPIO_InitStructure);
 

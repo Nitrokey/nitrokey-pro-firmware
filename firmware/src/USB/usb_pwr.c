@@ -235,15 +235,16 @@ void Resume(RESUME_STATE eResumeSetVal)
 
 void USB_Start (void) 
 {
-//SwitchSmartcardLED(ENABLE);
 	Set_USBClock();
 
   USB_Interrupts_Config();
-	
+
   USB_Init();
 
   while (bDeviceState != CONFIGURED)
 	{
 	}
+
+
 }
 

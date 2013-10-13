@@ -38,7 +38,7 @@
 
 /* Smartcard Inteface GPIO pins */
 #define EXTI9_5_IRQChannel           ((unsigned char)0x17)  /* External Line [9:5] Interrupts */
-#define USART3_IRQChannel            ((unsigned char)0x27)  /* USART3 global Interrupt */
+#define USART1_IRQChannel            ((unsigned char)0x25)  /* USART3 global Interrupt */
 
 //  #define SC_3_5V                  GPIO_Pin_0  /* GPIOB Pin 0 */
 //  #define SC_CMDVCC                GPIO_Pin_6  /* GPIOC Pin 6  */
@@ -50,13 +50,13 @@
 //  #define RCC_APB2Periph_CMDVCC    RCC_APB2Periph_GPIOC
 //  #define RCC_APB2Periph_OFF       RCC_APB2Periph_GPIOC
 
-#define SC_RESET                 GPIO_Pin_0 									/* GPIOB Pin 0 */
+#define SC_RESET                 GPIO_Pin_3 									/* GPIOB Pin 0 */
 #define GPIO_RESET               GPIOB
 #define RCC_APB2Periph_RESET     RCC_APB2Periph_GPIOB
 
 #define SC_PortSource            	 GPIO_PortSourceGPIOB
-#define SC_PinSource_1             GPIO_PinSource13
-#define SC_PinSource_2             GPIO_PinSource14
+#define SC_PinSource_1             GPIO_PinSource4
+#define SC_PinSource_2             GPIO_PinSource5
 
 #define SC_EXTI                  EXTI_Line7
 #define SC_EXTI_IRQ              EXTI9_5_IRQChannel

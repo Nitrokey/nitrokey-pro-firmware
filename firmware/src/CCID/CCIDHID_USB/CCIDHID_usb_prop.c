@@ -338,7 +338,7 @@ void USB_CCID_Status_In(void)
 	lastLEDState=LEDState;
 	}
 	else if (RequestType==HID_FEATURE){
-	SwitchSmartcardLED(ENABLE);
+	//SwitchSmartcardLED(ENABLE);
 	
 	if (device_status==STATUS_READY){	
 	device_status=STATUS_RECEIVED_REPORT;	

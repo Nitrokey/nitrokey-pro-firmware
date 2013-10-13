@@ -25,6 +25,7 @@
 #include "usb_istr.h"
 #include "sdcard.h"
 #include "hw_config.h"
+#include "platform_config.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -230,6 +231,17 @@ if(TIM2->SR & TIM_SR_UIF) // if UIF flag is set
   {
   TIM2->SR &= ~TIM_SR_UIF; // clear UIF flag
 	currentTime++;
+
+	if (blinkOATHLEDTimes>0){
+		if (currentTime>=(lastOATHBlinkTime+LED_BLINK_INTERVAL)){
+				if (GPIO_ReadInputDataBit(OATH_LED_PIN_PORT,OATH_LED_PIN))
+					SwitchOATHLED(DISABLE);
+				else
+					SwitchOATHLED(ENABLE);
+				lastOATHBlinkTime=currentTime;
+				blinkOATHLEDTimes--;
+		}
+	}
   }
 
 }
