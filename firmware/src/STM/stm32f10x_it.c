@@ -225,24 +225,31 @@ void SDIO_IRQHandler(void)
 //=============================================================================
 
 
-void TIM2_IRQHandler(void)
-{
-if(TIM2->SR & TIM_SR_UIF) // if UIF flag is set
-  {
-  TIM2->SR &= ~TIM_SR_UIF; // clear UIF flag
-	currentTime++;
+void TIM2_IRQHandler(void) {
+	if (TIM2 ->SR & TIM_SR_UIF ) // if UIF flag is set
+	{
+		TIM2 ->SR &= ~TIM_SR_UIF; // clear UIF flag
+		currentTime++;
 
-	if (blinkOATHLEDTimes>0){
-		if (currentTime>=(lastOATHBlinkTime+LED_BLINK_INTERVAL)){
-				if (GPIO_ReadInputDataBit(OATH_LED_PIN_PORT,OATH_LED_PIN))
+		if (blinkOATHLEDTimes > 0) {
+			if (blinkOATHLEDTimes & 1) { //time to turn off the led
+				if (currentTime >= (lastOATHBlinkTime + LED_ON_INTERVAL)) {
 					SwitchOATHLED(DISABLE);
-				else
-					SwitchOATHLED(ENABLE);
-				lastOATHBlinkTime=currentTime;
-				blinkOATHLEDTimes--;
+					lastOATHBlinkTime = currentTime;
+					blinkOATHLEDTimes--;
+				}
+
+			} else {
+				if (currentTime >= (lastOATHBlinkTime + LED_OFF_INTERVAL)) {
+						SwitchOATHLED(ENABLE);
+					lastOATHBlinkTime = currentTime;
+					blinkOATHLEDTimes--;
+				}
+
+			}
+
 		}
 	}
-  }
 
 }
 

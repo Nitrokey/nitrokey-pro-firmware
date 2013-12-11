@@ -248,7 +248,7 @@ void SwitchOATHLED (FunctionalState NewState)
 
 
 void StartBlinkingOATHLED(uint8_t times){
-blinkOATHLEDTimes=times;
+blinkOATHLEDTimes+=times;
 
 }
 

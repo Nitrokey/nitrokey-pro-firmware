@@ -175,7 +175,7 @@ DEBUG = dwarf-2
 
 # List any extra directories to look for include files here.
 #     Each directory must be seperated by a space.
-EXTRAINCDIRS = ../../src/inc                                             \
+EXTRAINCDIRS = ../../src/INC                                             \
                ../../src/STM/Libraries/CMSIS/Core/CM3                    \
 			   ../../src/STM/Libraries/STM32_USB-FS-Device_Driver/inc    \
 			   ../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/inc

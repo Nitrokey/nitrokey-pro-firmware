@@ -101,7 +101,7 @@ uint32_t get_hotp_value(uint64_t counter,uint8_t * secret,uint8_t secret_length,
 	else if (len==8)
 	hotp_result = hotp_result % 100000000;
 	else return 0;
-	StartBlinkingOATHLED(10);
+	StartBlinkingOATHLED(2);
 	return hotp_result;
 }
 
@@ -312,7 +312,7 @@ void write_to_slot(uint8_t *data, uint16_t offset, uint16_t len){
 	FLASH_ProgramHalfWord(BACKUP_PAGE_ADDRESS+BACKUP_OK_OFFSET, 0x4F4B);
 	FLASH_Lock();
 
-	StartBlinkingOATHLED(10);
+	StartBlinkingOATHLED(2);
 }
 
 
