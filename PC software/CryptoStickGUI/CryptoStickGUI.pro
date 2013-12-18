@@ -31,7 +31,7 @@ macx{
  SOURCES +=   hid_mac.c
 }
 
-unix{
+unix:!macx{
   SOURCES +=   hid_libusb.c
 }
 

@@ -1,0 +1,185 @@
+<?xml version="1.0"?>
+<series name="stm32f1">
+  <chip name="stm32f1">
+    <chip_id>0x0000</chip_id>
+    <program_mode>j:JTAG(F)|s:SWD|i:ISP(C)</program_mode>
+    <app_default>0xFF</app_default>
+    <app_addr>0x08000000</app_addr>
+    <app_seg>0</app_seg>
+    <sram_addr>0x20000000</sram_addr>
+  </chip>
+  <chip name="stm32f1_ld">
+    <chip_id>0x0412</chip_id>
+    <program_mode>jsi</program_mode>
+    <app_page_size>1024</app_page_size>
+    <app_page_num>1024</app_page_num>
+    <fuse init="0xFFFFFFFFFFFFFFFF" bytesize="8" mask="0xFFFFFFFFFFFFFFFF" format="%8x">
+      <setting name="RDP" mask="0x00000000000000FF" info="Read protection option byte" checked="0x0000000000000000" unchecked="0x00000000000000A5" />
+      <setting name="WDG_SW" mask="0x0000000000000100" info="WDG_SW">
+        <choice value="0x0000000000000000" text="Hardware watchdog" />
+        <choice value="0x0000000000000100" text="Software watchdog" />
+      </setting>
+      <setting name="nRST_STOP" mask="0x0000000000000200" info="nRST_STOP">
+        <choice value="0x0000000000000000" text="Reset generated when entering Stop mode" />
+        <choice value="0x0000000000000200" text="No reset generated" />
+      </setting>
+      <setting name="nRST_STDBY" mask="0x0000000000000400" info="nRST_STDBY">
+        <choice value="0x0000000000000000" text="Reset generated when entering Standby mode" />
+        <choice value="0x0000000000000400" text="No reset generated" />
+      </setting>
+      <setting name="DATA0" mask="0x0000000000FF0000" info="DATA0" radix="16" shift="16" bytelen="1" format="%1x" />
+      <setting name="DATA1" mask="0x00000000FF000000" info="DATA1" radix="16" shift="24" bytelen="1" format="%1x" />
+      <setting name="WRP0" mask="0x000000FF00000000" info="WRP0" radix="16" shift="32" bytelen="1" format="%1x" />
+      <setting name="WRP1" mask="0x0000FF0000000000" info="WRP1" radix="16" shift="40" bytelen="1" format="%1x" />
+      <setting name="WRP2" mask="0x00FF000000000000" info="WRP2" radix="16" shift="48" bytelen="1" format="%1x" />
+      <setting name="WRP3" mask="0xFF00000000000000" info="WRP3" radix="16" shift="56" bytelen="1" format="%1x" />
+      <setting name="ALL" mask="0xFFFFFFFFFFFFFFFF" info="Option bytes" radix="16" shift="0" bytelen="8" format="%8x" />
+    </fuse>
+    <uid init="0xFF" bytesize="12" mask="0xFFFFFFFF:0xFFFFFFFF:0xFFFFFFFF" format="%4x%4x%4x"></uid>
+  </chip>
+  <chip name="stm32f1_md">
+    <chip_id>0x0410</chip_id>
+    <program_mode>jsi</program_mode>
+    <app_page_size>1024</app_page_size>
+    <app_page_num>1024</app_page_num>
+    <fuse init="0xFFFFFFFFFFFFFFFF" bytesize="8" mask="0xFFFFFFFFFFFFFFFF" format="%8x">
+      <setting name="RDP" mask="0x00000000000000FF" info="Read protection option byte" checked="0x0000000000000000" unchecked="0x00000000000000A5" />
+      <setting name="WDG_SW" mask="0x0000000000000100" info="WDG_SW">
+        <choice value="0x0000000000000000" text="Hardware watchdog" />
+        <choice value="0x0000000000000100" text="Software watchdog" />
+      </setting>
+      <setting name="nRST_STOP" mask="0x0000000000000200" info="nRST_STOP">
+        <choice value="0x0000000000000000" text="Reset generated when entering Stop mode" />
+        <choice value="0x0000000000000200" text="No reset generated" />
+      </setting>
+      <setting name="nRST_STDBY" mask="0x0000000000000400" info="nRST_STDBY">
+        <choice value="0x0000000000000000" text="Reset generated when entering Standby mode" />
+        <choice value="0x0000000000000400" text="No reset generated" />
+      </setting>
+      <setting name="DATA0" mask="0x0000000000FF0000" info="DATA0" radix="16" shift="16" bytelen="1" format="%1x" />
+      <setting name="DATA1" mask="0x00000000FF000000" info="DATA1" radix="16" shift="24" bytelen="1" format="%1x" />
+      <setting name="WRP0" mask="0x000000FF00000000" info="WRP0" radix="16" shift="32" bytelen="1" format="%1x" />
+      <setting name="WRP1" mask="0x0000FF0000000000" info="WRP1" radix="16" shift="40" bytelen="1" format="%1x" />
+      <setting name="WRP2" mask="0x00FF000000000000" info="WRP2" radix="16" shift="48" bytelen="1" format="%1x" />
+      <setting name="WRP3" mask="0xFF00000000000000" info="WRP3" radix="16" shift="56" bytelen="1" format="%1x" />
+      <setting name="ALL" mask="0xFFFFFFFFFFFFFFFF" info="Option bytes" radix="16" shift="0" bytelen="8" format="%8x" />
+    </fuse>
+    <uid init="0xFF" bytesize="12" mask="0xFFFFFFFF:0xFFFFFFFF:0xFFFFFFFF" format="%4x%4x%4x"></uid>
+  </chip>
+  <chip name="stm32f1_hd">
+    <chip_id>0x0414</chip_id>
+    <program_mode>jsi</program_mode>
+    <app_page_size>2048</app_page_size>
+    <app_page_num>512</app_page_num>
+    <fuse init="0xFFFFFFFFFFFFFFFF" bytesize="8" mask="0xFFFFFFFFFFFFFFFF" format="%8x">
+      <setting name="RDP" mask="0x00000000000000FF" info="Read protection option byte" checked="0x0000000000000000" unchecked="0x00000000000000A5" />
+      <setting name="WDG_SW" mask="0x0000000000000100" info="WDG_SW">
+        <choice value="0x0000000000000000" text="Hardware watchdog" />
+        <choice value="0x0000000000000100" text="Software watchdog" />
+      </setting>
+      <setting name="nRST_STOP" mask="0x0000000000000200" info="nRST_STOP">
+        <choice value="0x0000000000000000" text="Reset generated when entering Stop mode" />
+        <choice value="0x0000000000000200" text="No reset generated" />
+      </setting>
+      <setting name="nRST_STDBY" mask="0x0000000000000400" info="nRST_STDBY">
+        <choice value="0x0000000000000000" text="Reset generated when entering Standby mode" />
+        <choice value="0x0000000000000400" text="No reset generated" />
+      </setting>
+      <setting name="DATA0" mask="0x0000000000FF0000" info="DATA0" radix="16" shift="16" bytelen="1" format="%1x" />
+      <setting name="DATA1" mask="0x00000000FF000000" info="DATA1" radix="16" shift="24" bytelen="1" format="%1x" />
+      <setting name="WRP0" mask="0x000000FF00000000" info="WRP0" radix="16" shift="32" bytelen="1" format="%1x" />
+      <setting name="WRP1" mask="0x0000FF0000000000" info="WRP1" radix="16" shift="40" bytelen="1" format="%1x" />
+      <setting name="WRP2" mask="0x00FF000000000000" info="WRP2" radix="16" shift="48" bytelen="1" format="%1x" />
+      <setting name="WRP3" mask="0xFF00000000000000" info="WRP3" radix="16" shift="56" bytelen="1" format="%1x" />
+      <setting name="ALL" mask="0xFFFFFFFFFFFFFFFF" info="Option bytes" radix="16" shift="0" bytelen="8" format="%8x" />
+    </fuse>
+    <uid init="0xFF" bytesize="12" mask="0xFFFFFFFF:0xFFFFFFFF:0xFFFFFFFF" format="%4x%4x%4x"></uid>
+  </chip>
+  <chip name="stm32f1_conn">
+    <chip_id>0x0418</chip_id>
+    <program_mode>jsi</program_mode>
+    <app_page_size>2048</app_page_size>
+    <app_page_num>512</app_page_num>
+    <fuse init="0xFFFFFFFFFFFFFFFF" bytesize="8" mask="0xFFFFFFFFFFFFFFFF" format="%8x">
+      <setting name="RDP" mask="0x00000000000000FF" info="Read protection option byte" checked="0x0000000000000000" unchecked="0x00000000000000A5" />
+      <setting name="WDG_SW" mask="0x0000000000000100" info="WDG_SW">
+        <choice value="0x0000000000000000" text="Hardware watchdog" />
+        <choice value="0x0000000000000100" text="Software watchdog" />
+      </setting>
+      <setting name="nRST_STOP" mask="0x0000000000000200" info="nRST_STOP">
+        <choice value="0x0000000000000000" text="Reset generated when entering Stop mode" />
+        <choice value="0x0000000000000200" text="No reset generated" />
+      </setting>
+      <setting name="nRST_STDBY" mask="0x0000000000000400" info="nRST_STDBY">
+        <choice value="0x0000000000000000" text="Reset generated when entering Standby mode" />
+        <choice value="0x0000000000000400" text="No reset generated" />
+      </setting>
+      <setting name="DATA0" mask="0x0000000000FF0000" info="DATA0" radix="16" shift="16" bytelen="1" format="%1x" />
+      <setting name="DATA1" mask="0x00000000FF000000" info="DATA1" radix="16" shift="24" bytelen="1" format="%1x" />
+      <setting name="WRP0" mask="0x000000FF00000000" info="WRP0" radix="16" shift="32" bytelen="1" format="%1x" />
+      <setting name="WRP1" mask="0x0000FF0000000000" info="WRP1" radix="16" shift="40" bytelen="1" format="%1x" />
+      <setting name="WRP2" mask="0x00FF000000000000" info="WRP2" radix="16" shift="48" bytelen="1" format="%1x" />
+      <setting name="WRP3" mask="0xFF00000000000000" info="WRP3" radix="16" shift="56" bytelen="1" format="%1x" />
+      <setting name="ALL" mask="0xFFFFFFFFFFFFFFFF" info="Option bytes" radix="16" shift="0" bytelen="8" format="%8x" />
+    </fuse>
+    <uid init="0xFF" bytesize="12" mask="0xFFFFFFFF:0xFFFFFFFF:0xFFFFFFFF" format="%4x%4x%4x"></uid>
+  </chip>
+  <chip name="stm32f1_vl">
+    <chip_id>0x0420</chip_id>
+    <program_mode>jsi</program_mode>
+    <app_page_size>1024</app_page_size>
+    <app_page_num>1024</app_page_num>
+    <fuse init="0xFFFFFFFFFFFFFFFF" bytesize="8" mask="0xFFFFFFFFFFFFFFFF" format="%8x">
+      <setting name="RDP" mask="0x00000000000000FF" info="Read protection option byte" checked="0x0000000000000000" unchecked="0x00000000000000A5" />
+      <setting name="WDG_SW" mask="0x0000000000000100" info="WDG_SW">
+        <choice value="0x0000000000000000" text="Hardware watchdog" />
+        <choice value="0x0000000000000100" text="Software watchdog" />
+      </setting>
+      <setting name="nRST_STOP" mask="0x0000000000000200" info="nRST_STOP">
+        <choice value="0x0000000000000000" text="Reset generated when entering Stop mode" />
+        <choice value="0x0000000000000200" text="No reset generated" />
+      </setting>
+      <setting name="nRST_STDBY" mask="0x0000000000000400" info="nRST_STDBY">
+        <choice value="0x0000000000000000" text="Reset generated when entering Standby mode" />
+        <choice value="0x0000000000000400" text="No reset generated" />
+      </setting>
+      <setting name="DATA0" mask="0x0000000000FF0000" info="DATA0" radix="16" shift="16" bytelen="1" format="%1x" />
+      <setting name="DATA1" mask="0x00000000FF000000" info="DATA1" radix="16" shift="24" bytelen="1" format="%1x" />
+      <setting name="WRP0" mask="0x000000FF00000000" info="WRP0" radix="16" shift="32" bytelen="1" format="%1x" />
+      <setting name="WRP1" mask="0x0000FF0000000000" info="WRP1" radix="16" shift="40" bytelen="1" format="%1x" />
+      <setting name="WRP2" mask="0x00FF000000000000" info="WRP2" radix="16" shift="48" bytelen="1" format="%1x" />
+      <setting name="WRP3" mask="0xFF00000000000000" info="WRP3" radix="16" shift="56" bytelen="1" format="%1x" />
+      <setting name="ALL" mask="0xFFFFFFFFFFFFFFFF" info="Option bytes" radix="16" shift="0" bytelen="8" format="%8x" />
+    </fuse>
+    <uid init="0xFF" bytesize="12" mask="0xFFFFFFFF:0xFFFFFFFF:0xFFFFFFFF" format="%4x%4x%4x"></uid>
+  </chip>
+  <chip name="stm32f1_xl">
+    <chip_id>0x0430</chip_id>
+    <program_mode>jsi</program_mode>
+    <app_page_size>2048</app_page_size>
+    <app_page_num>512</app_page_num>
+    <fuse init="0xFFFFFFFFFFFFFFFF" bytesize="8" mask="0xFFFFFFFFFFFFFFFF" format="%8x">
+      <setting name="RDP" mask="0x00000000000000FF" info="Read protection option byte" checked="0x0000000000000000" unchecked="0x00000000000000A5" />
+      <setting name="WDG_SW" mask="0x0000000000000100" info="WDG_SW">
+        <choice value="0x0000000000000000" text="Hardware watchdog" />
+        <choice value="0x0000000000000100" text="Software watchdog" />
+      </setting>
+      <setting name="nRST_STOP" mask="0x0000000000000200" info="nRST_STOP">
+        <choice value="0x0000000000000000" text="Reset generated when entering Stop mode" />
+        <choice value="0x0000000000000200" text="No reset generated" />
+      </setting>
+      <setting name="nRST_STDBY" mask="0x0000000000000400" info="nRST_STDBY">
+        <choice value="0x0000000000000000" text="Reset generated when entering Standby mode" />
+        <choice value="0x0000000000000400" text="No reset generated" />
+      </setting>
+      <setting name="DATA0" mask="0x0000000000FF0000" info="DATA0" radix="16" shift="16" bytelen="1" format="%1x" />
+      <setting name="DATA1" mask="0x00000000FF000000" info="DATA1" radix="16" shift="24" bytelen="1" format="%1x" />
+      <setting name="WRP0" mask="0x000000FF00000000" info="WRP0" radix="16" shift="32" bytelen="1" format="%1x" />
+      <setting name="WRP1" mask="0x0000FF0000000000" info="WRP1" radix="16" shift="40" bytelen="1" format="%1x" />
+      <setting name="WRP2" mask="0x00FF000000000000" info="WRP2" radix="16" shift="48" bytelen="1" format="%1x" />
+      <setting name="WRP3" mask="0xFF00000000000000" info="WRP3" radix="16" shift="56" bytelen="1" format="%1x" />
+      <setting name="ALL" mask="0xFFFFFFFFFFFFFFFF" info="Option bytes" radix="16" shift="0" bytelen="8" format="%8x" />
+    </fuse>
+    <uid init="0xFF" bytesize="12" mask="0xFFFFFFFF:0xFFFFFFFF:0xFFFFFFFF" format="%4x%4x%4x"></uid>
+  </chip>
+</series>

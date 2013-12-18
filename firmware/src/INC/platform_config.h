@@ -70,13 +70,13 @@
 // port for possible smartcard LED
 
 
-#define SMARTCARD_LED_PERIPH							RCC_APB2Periph_GPIOA
-#define SMARTCARD_LED_PIN_PORT						GPIOA
-#define SMARTCARD_LED_PIN									GPIO_Pin_7
+#define SMARTCARD_LED_PERIPH						RCC_APB2Periph_GPIOB
+#define SMARTCARD_LED_PIN_PORT						GPIOB
+#define SMARTCARD_LED_PIN						GPIO_Pin_0
 
-#define OATH_LED_PERIPH							RCC_APB2Periph_GPIOB
-#define OATH_LED_PIN_PORT						GPIOB
-#define OATH_LED_PIN									GPIO_Pin_0
+#define OATH_LED_PERIPH							RCC_APB2Periph_GPIOA
+#define OATH_LED_PIN_PORT						GPIOA
+#define OATH_LED_PIN							GPIO_Pin_7
 
 #endif /* USE_STM3210B_EVAL */
 
