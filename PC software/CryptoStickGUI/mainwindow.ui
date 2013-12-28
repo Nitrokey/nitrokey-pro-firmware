@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -33,9 +33,9 @@
      <widget class="QPushButton" name="resetButton">
       <property name="geometry">
        <rect>
-        <x>190</x>
+        <x>175</x>
         <y>430</y>
-        <width>121</width>
+        <width>161</width>
         <height>23</height>
        </rect>
       </property>
@@ -58,7 +58,7 @@
       <widget class="QRadioButton" name="hexRadioButton">
        <property name="geometry">
         <rect>
-         <x>100</x>
+         <x>120</x>
          <y>70</y>
          <width>82</width>
          <height>17</height>
@@ -68,13 +68,13 @@
         <string>Hex</string>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
       <widget class="QRadioButton" name="base32RadioButton">
        <property name="geometry">
         <rect>
-         <x>150</x>
+         <x>190</x>
          <y>70</y>
          <width>82</width>
          <height>17</height>
@@ -86,18 +86,21 @@
        <property name="checkable">
         <bool>true</bool>
        </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
       </widget>
       <widget class="QLineEdit" name="secretEdit">
        <property name="geometry">
         <rect>
-         <x>80</x>
+         <x>100</x>
          <y>30</y>
          <width>441</width>
          <height>20</height>
         </rect>
        </property>
        <property name="inputMask">
-        <string>HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH; </string>
+        <string>HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH</string>
        </property>
        <property name="text">
         <string>00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00</string>
@@ -114,7 +117,7 @@
         <rect>
          <x>20</x>
          <y>30</y>
-         <width>61</width>
+         <width>81</width>
          <height>21</height>
         </rect>
        </property>
@@ -127,7 +130,7 @@
         <rect>
          <x>20</x>
          <y>70</y>
-         <width>71</width>
+         <width>101</width>
          <height>21</height>
         </rect>
        </property>
@@ -140,7 +143,7 @@
         <rect>
          <x>20</x>
          <y>100</y>
-         <width>191</width>
+         <width>251</width>
          <height>21</height>
         </rect>
        </property>
@@ -153,20 +156,20 @@
         <rect>
          <x>410</x>
          <y>70</y>
-         <width>111</width>
+         <width>161</width>
          <height>23</height>
         </rect>
        </property>
        <property name="text">
-        <string>Random secret</string>
+        <string>Create random secret</string>
        </property>
       </widget>
       <widget class="QCheckBox" name="checkBox">
        <property name="geometry">
         <rect>
-         <x>305</x>
+         <x>300</x>
          <y>70</y>
-         <width>91</width>
+         <width>111</width>
          <height>20</height>
         </rect>
        </property>
@@ -188,15 +191,15 @@
        </rect>
       </property>
       <property name="text">
-       <string>Cancel</string>
+       <string>Close</string>
       </property>
      </widget>
      <widget class="QPushButton" name="writeButton">
       <property name="geometry">
        <rect>
-        <x>50</x>
+        <x>20</x>
         <y>430</y>
-        <width>111</width>
+        <width>141</width>
         <height>23</height>
        </rect>
       </property>
@@ -209,7 +212,7 @@
        <rect>
         <x>270</x>
         <y>10</y>
-        <width>71</width>
+        <width>101</width>
         <height>21</height>
        </rect>
       </property>
@@ -220,7 +223,7 @@
      <widget class="QComboBox" name="slotComboBox">
       <property name="geometry">
        <rect>
-        <x>60</x>
+        <x>50</x>
         <y>10</y>
         <width>191</width>
         <height>22</height>
@@ -260,7 +263,7 @@
      <widget class="QLabel" name="label">
       <property name="geometry">
        <rect>
-        <x>30</x>
+        <x>20</x>
         <y>10</y>
         <width>31</width>
         <height>21</height>
@@ -290,7 +293,7 @@
         <rect>
          <x>10</x>
          <y>20</y>
-         <width>101</width>
+         <width>131</width>
          <height>21</height>
         </rect>
        </property>
@@ -304,14 +307,14 @@
        </property>
        <property name="geometry">
         <rect>
-         <x>40</x>
+         <x>50</x>
          <y>60</y>
          <width>31</width>
          <height>20</height>
         </rect>
        </property>
        <property name="inputMask">
-        <string>NN; </string>
+        <string>NN</string>
        </property>
       </widget>
       <widget class="QLineEdit" name="ttEdit">
@@ -320,14 +323,14 @@
        </property>
        <property name="geometry">
         <rect>
-         <x>100</x>
+         <x>116</x>
          <y>60</y>
          <width>31</width>
          <height>20</height>
         </rect>
        </property>
        <property name="inputMask">
-        <string>NN; </string>
+        <string>NN</string>
        </property>
       </widget>
       <widget class="QLineEdit" name="muiEdit">
@@ -336,14 +339,14 @@
        </property>
        <property name="geometry">
         <rect>
-         <x>170</x>
+         <x>190</x>
          <y>60</y>
          <width>91</width>
          <height>20</height>
         </rect>
        </property>
        <property name="inputMask">
-        <string>HHHHHHHH; </string>
+        <string>HHHHHHHH</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_7">
@@ -351,7 +354,7 @@
         <rect>
          <x>10</x>
          <y>60</y>
-         <width>31</width>
+         <width>41</width>
          <height>16</height>
         </rect>
        </property>
@@ -362,7 +365,7 @@
       <widget class="QLabel" name="label_8">
        <property name="geometry">
         <rect>
-         <x>80</x>
+         <x>90</x>
          <y>60</y>
          <width>21</width>
          <height>16</height>
@@ -375,7 +378,7 @@
       <widget class="QLabel" name="label_9">
        <property name="geometry">
         <rect>
-         <x>140</x>
+         <x>155</x>
          <y>60</y>
          <width>31</width>
          <height>21</height>
@@ -423,26 +426,26 @@
         <rect>
          <x>290</x>
          <y>30</y>
-         <width>91</width>
+         <width>271</width>
          <height>21</height>
         </rect>
        </property>
        <property name="text">
-        <string>Keyboard layout:</string>
+        <string>Keyboard layout (DISABLED FEATURE):</string>
        </property>
       </widget>
      </widget>
      <widget class="QLineEdit" name="nameEdit">
       <property name="geometry">
        <rect>
-        <x>340</x>
+        <x>370</x>
         <y>10</y>
         <width>113</width>
         <height>20</height>
        </rect>
       </property>
       <property name="inputMask">
-       <string>xxxxxxxxxxxxxxx; </string>
+       <string>xxxxxxxxxxxxxxx</string>
       </property>
      </widget>
      <widget class="QGroupBox" name="hotpGroupBox">
@@ -462,7 +465,7 @@
         <rect>
          <x>20</x>
          <y>30</y>
-         <width>71</width>
+         <width>101</width>
          <height>16</height>
         </rect>
        </property>
@@ -473,7 +476,7 @@
       <widget class="QRadioButton" name="digits6radioButton">
        <property name="geometry">
         <rect>
-         <x>90</x>
+         <x>120</x>
          <y>30</y>
          <width>82</width>
          <height>17</height>
@@ -489,7 +492,7 @@
       <widget class="QRadioButton" name="digits8radioButton">
        <property name="geometry">
         <rect>
-         <x>150</x>
+         <x>210</x>
          <y>30</y>
          <width>82</width>
          <height>17</height>
@@ -504,7 +507,7 @@
         <rect>
          <x>20</x>
          <y>60</y>
-         <width>101</width>
+         <width>151</width>
          <height>21</height>
         </rect>
        </property>
@@ -515,14 +518,14 @@
       <widget class="QLineEdit" name="counterEdit">
        <property name="geometry">
         <rect>
-         <x>130</x>
+         <x>170</x>
          <y>60</y>
          <width>241</width>
          <height>20</height>
         </rect>
        </property>
        <property name="inputMask">
-        <string>hhhhhhhhhhhhhhhh; </string>
+        <string>hhhhhhhhhhhhhhhh</string>
        </property>
        <property name="text">
         <string>0000000000000000</string>
@@ -533,7 +536,7 @@
         <rect>
          <x>130</x>
          <y>90</y>
-         <width>75</width>
+         <width>91</width>
          <height>23</height>
         </rect>
        </property>
@@ -544,9 +547,9 @@
       <widget class="QPushButton" name="setToRandomButton">
        <property name="geometry">
         <rect>
-         <x>220</x>
+         <x>230</x>
          <y>90</y>
-         <width>91</width>
+         <width>111</width>
          <height>23</height>
         </rect>
        </property>
@@ -560,7 +563,7 @@
        <rect>
         <x>350</x>
         <y>430</y>
-        <width>71</width>
+        <width>81</width>
         <height>23</height>
        </rect>
       </property>
@@ -578,7 +581,7 @@
        <rect>
         <x>20</x>
         <y>20</y>
-        <width>101</width>
+        <width>131</width>
         <height>21</height>
        </rect>
       </property>
@@ -591,7 +594,7 @@
        <rect>
         <x>20</x>
         <y>50</y>
-        <width>101</width>
+        <width>141</width>
         <height>21</height>
        </rect>
       </property>
@@ -602,7 +605,7 @@
      <widget class="QLineEdit" name="firmwareEdit">
       <property name="geometry">
        <rect>
-        <x>110</x>
+        <x>160</x>
         <y>20</y>
         <width>113</width>
         <height>20</height>
@@ -615,7 +618,7 @@
      <widget class="QLineEdit" name="serialEdit">
       <property name="geometry">
        <rect>
-        <x>120</x>
+        <x>160</x>
         <y>50</y>
         <width>113</width>
         <height>20</height>
@@ -625,138 +628,24 @@
        <bool>true</bool>
       </property>
      </widget>
-     <widget class="QLabel" name="label_13">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>90</y>
-        <width>101</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>NumLock dobletap:</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_14">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>120</y>
-        <width>111</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>CapsLock doubletap:</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_15">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>150</y>
-        <width>111</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>ScrollLock doubletap:</string>
-      </property>
-     </widget>
-     <widget class="QComboBox" name="numLockComboBox">
-      <property name="geometry">
-       <rect>
-        <x>130</x>
-        <y>90</y>
-        <width>131</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <item>
-       <property name="text">
-        <string>Do nothing</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Send HOTP1</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Send HOTP2</string>
-       </property>
-      </item>
-     </widget>
-     <widget class="QComboBox" name="capsLockComboBox">
-      <property name="geometry">
-       <rect>
-        <x>130</x>
-        <y>120</y>
-        <width>131</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <item>
-       <property name="text">
-        <string>Do nothing</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Send HOTP1</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Send HOTP2</string>
-       </property>
-      </item>
-     </widget>
-     <widget class="QComboBox" name="scrollLockComboBox">
-      <property name="geometry">
-       <rect>
-        <x>130</x>
-        <y>150</y>
-        <width>131</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <item>
-       <property name="text">
-        <string>Do nothing</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Send HOTP1</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Send HOTP2</string>
-       </property>
-      </item>
-     </widget>
      <widget class="QPushButton" name="writeGeneralConfigButton">
       <property name="geometry">
        <rect>
-        <x>30</x>
-        <y>200</y>
-        <width>101</width>
+        <x>20</x>
+        <y>230</y>
+        <width>141</width>
         <height>21</height>
        </rect>
       </property>
       <property name="text">
-       <string>Write config</string>
+       <string>Save configuration</string>
       </property>
      </widget>
      <widget class="QPushButton" name="resetGeneralConfigButton">
       <property name="geometry">
        <rect>
-        <x>160</x>
-        <y>200</y>
+        <x>170</x>
+        <y>230</y>
         <width>75</width>
         <height>23</height>
        </rect>
@@ -768,15 +657,142 @@
      <widget class="QPushButton" name="generalCancelButton">
       <property name="geometry">
        <rect>
-        <x>270</x>
-        <y>200</y>
+        <x>260</x>
+        <y>230</y>
         <width>75</width>
         <height>23</height>
        </rect>
       </property>
       <property name="text">
-       <string>Cancel</string>
+       <string>Close</string>
       </property>
+     </widget>
+     <widget class="QGroupBox" name="USBKeyboardGroupBox">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>90</y>
+        <width>571</width>
+        <height>121</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>USB-Keyboard only</string>
+      </property>
+      <widget class="QComboBox" name="capsLockComboBox">
+       <property name="geometry">
+        <rect>
+         <x>180</x>
+         <y>60</y>
+         <width>131</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <item>
+        <property name="text">
+         <string>Do nothing</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Send HOTP1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Send HOTP2</string>
+        </property>
+       </item>
+      </widget>
+      <widget class="QLabel" name="label_14">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>60</y>
+         <width>171</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Double press CapsLock:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_13">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>30</y>
+         <width>171</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Double press NumLock:</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="numLockComboBox">
+       <property name="geometry">
+        <rect>
+         <x>180</x>
+         <y>30</y>
+         <width>131</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <item>
+        <property name="text">
+         <string>Do nothing</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Send HOTP1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Send HOTP2</string>
+        </property>
+       </item>
+      </widget>
+      <widget class="QComboBox" name="scrollLockComboBox">
+       <property name="geometry">
+        <rect>
+         <x>180</x>
+         <y>90</y>
+         <width>131</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <item>
+        <property name="text">
+         <string>Do nothing</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Send HOTP1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Send HOTP2</string>
+        </property>
+       </item>
+      </widget>
+      <widget class="QLabel" name="label_15">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>90</y>
+         <width>171</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Double press ScrollLock:</string>
+       </property>
+      </widget>
      </widget>
     </widget>
    </widget>

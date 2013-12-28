@@ -446,7 +446,7 @@ void MainWindow::startConfiguration()
     bool ok;
 
     if (!cryptostick->validPassword){
-    QString password = QInputDialog::getText(this, tr("Enter card password"),tr("Password:"), QLineEdit::Password,"", &ok);
+    QString password = QInputDialog::getText(this, tr("User Password"),tr("Enter User Password:"), QLineEdit::Password,"", &ok);
 
     uint8_t tempPassword[25];
 
