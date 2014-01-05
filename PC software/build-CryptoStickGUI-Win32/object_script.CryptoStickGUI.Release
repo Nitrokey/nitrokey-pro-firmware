@@ -1,0 +1,16 @@
+INPUT(
+./release/main.o
+./release/mainwindow.o
+./release/hotpslot.o
+./release/device.o
+./release/response.o
+./release/command.o
+./release/crc32.o
+./release/totpslot.o
+./release/base32.o
+./release/hotpdialog.o
+./release/hid_win.o
+./release/moc_mainwindow.o
+./release/moc_hotpdialog.o
+./release/qrc_resources.o
+);
