@@ -25,7 +25,6 @@
 #include "string.h"
 #include "sleep.h"
 #include "base32.h"
-#include "passworddialog.h"
 #include "hotpdialog.h"
 
 
