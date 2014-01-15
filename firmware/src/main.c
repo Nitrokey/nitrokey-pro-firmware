@@ -115,9 +115,8 @@ USB_SetDeviceConfiguration(STICK_STATE_SMARTCARD);
 
 check_backups();
 SmartCardInitInterface ();
+
 USB_Start ();
-
-
 		
 /* Endless loop after USB startup  */
   while (1)

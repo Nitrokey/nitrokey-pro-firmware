@@ -41,6 +41,7 @@
 #define CMD_ERASE_SLOT 0x06
 #define CMD_FIRST_AUTHENTICATE 0x07
 #define CMD_AUTHORIZE 0x08
+#define CMD_GET_PASSWORD_RETRY_COUNT 0x09
 
 
 #define STATUS_READY 0x00
@@ -73,6 +74,7 @@ public:
     int writeToTOTPSlot(TOTPSlot *slot);
     int getCode(uint8_t slotNo, uint64_t challenge,uint8_t result[18]);
     int readSlot(uint8_t slotNo);
+    int getPasswordRetryCount();
     bool newConnection;
     void initializeConfig();
     HOTPSlot *HOTPSlots[2];
@@ -81,6 +83,7 @@ public:
     uint8_t *password[25];
     bool validPassword;
     bool passwordSet;
+    uint8_t passwordRetryCount;
 
     uint8_t cardSerial[4];
     uint8_t firmwareVersion[2];

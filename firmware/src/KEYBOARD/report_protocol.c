@@ -87,10 +87,10 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 			break;
 			
 		case CMD_READ_SLOT:
-			if (calculated_crc32==authorized_crc)
-			cmd_read_slot(report,output);
-			else
-			not_authorized=1;
+			//if (calculated_crc32==authorized_crc)
+			//cmd_read_slot(report,output);
+			//else
+			//not_authorized=1;
 			break;
 			
 		case CMD_GET_CODE:
@@ -118,7 +118,11 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 		case CMD_AUTHORIZE:
 			cmd_authorize(report,output);
 			break;
-			
+		
+		case CMD_GET_PASSWORD_RETRY_COUNT:
+			cmd_get_password_retry_count(report,output);
+			break;
+
 			//FLASH_Unlock();
 			// FLASH_ErasePage(oath_slots[slot]);
 			//FLASH_ErasePage(oath_slots[slot]+COUNTER_PAGE_OFFSET);
@@ -165,11 +169,16 @@ uint8_t cmd_get_status(uint8_t *report,uint8_t *output){
 	output[OUTPUT_CMD_RESULT_OFFSET+5]=(cardSerial>>24)&0xFF;
 	memcpy(output+OUTPUT_CMD_RESULT_OFFSET+6,(uint8_t *)SLOTS_ADDRESS+GLOBAL_CONFIG_OFFSET,3);
 
-
-
 	return 0;
 }
 
+
+uint8_t cmd_get_password_retry_count(uint8_t *report,uint8_t *output){
+
+	output[OUTPUT_CMD_RESULT_OFFSET]=getPasswordRetryCount();
+
+	return 0;
+}
 
 uint8_t cmd_write_to_slot(uint8_t *report,uint8_t *output){
 
@@ -241,7 +250,8 @@ uint8_t cmd_read_slot_name(uint8_t *report,uint8_t *output){
 
 
 uint8_t cmd_read_slot(uint8_t *report,uint8_t *output){
-
+/* Removed for security
+ 
 	uint8_t slot_no=report[CMD_RS_SLOT_NUMBER_OFFSET];
 
 
@@ -276,7 +286,7 @@ uint8_t cmd_read_slot(uint8_t *report,uint8_t *output){
 	else{
 		output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_SLOT;
 	}
-
+*/
 	return 0;
 }
 

@@ -446,7 +446,12 @@ void MainWindow::startConfiguration()
     bool ok;
 
     if (!cryptostick->validPassword){
-    QString password = QInputDialog::getText(this, tr("Enter card password"),tr("Password:"), QLineEdit::Password,"", &ok);
+        cryptostick->getPasswordRetryCount();
+
+
+        QString password = QInputDialog::getText(this, tr("Enter card admin password"),tr("Admin password: ")+tr("(Tries left: ")+QString::number(cryptostick->passwordRetryCount)+")", QLineEdit::Password,"", &ok);
+
+    if (ok){
 
     uint8_t tempPassword[25];
 
@@ -454,8 +459,9 @@ void MainWindow::startConfiguration()
         tempPassword[i]=qrand()&0xFF;
 
     cryptostick->firstAuthenticate((uint8_t *)password.toAscii().data(),tempPassword);
-    }
 
+    }
+    }
     if (cryptostick->validPassword){
 
     cryptostick->getSlotConfigs();
@@ -467,11 +473,13 @@ void MainWindow::startConfiguration()
     showNormal();
 
    }
-    else{
+    else if (ok){
         QMessageBox msgBox;
          msgBox.setText("Invalid password!");
          msgBox.exec();
     }
+
+
 }
 
 void MainWindow::getCode(uint8_t slotNo)

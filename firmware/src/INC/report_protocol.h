@@ -29,6 +29,7 @@
 #define CMD_ERASE_SLOT 0x06
 #define CMD_FIRST_AUTHENTICATE 0x07
 #define CMD_AUTHORIZE 0x08
+#define CMD_GET_PASSWORD_RETRY_COUNT 0x09
 
 
 #define STATUS_READY 0x00
@@ -117,6 +118,14 @@ output:
 #define CMD_GC_CHALLENGE_OFFSET 2
 
 /*
+ * CMD_GET_PASSWORD_RETRY_COUNT
+ *
+ * output:
+ * 1b number of password tries left
+ */
+
+
+/*
 CMD_WRITE_CONFIG	
 
 report:
@@ -170,4 +179,5 @@ uint8_t cmd_write_config(uint8_t *report,uint8_t *output);
 uint8_t cmd_erase_slot(uint8_t *report,uint8_t *output);
 uint8_t cmd_first_authenticate(uint8_t *report,uint8_t *output);
 uint8_t cmd_authorize(uint8_t *report,uint8_t *output);
+uint8_t cmd_get_password_retry_count(uint8_t *report,uint8_t *output);
 

@@ -441,12 +441,13 @@ void Device::initializeConfig()
 
 void Device::getSlotConfigs()
 {
+ /* Removed from firmware
     readSlot(0x10);
     readSlot(0x11);
     readSlot(0x20);
     readSlot(0x21);
     readSlot(0x22);
-    readSlot(0x23);
+    readSlot(0x23);*/
 }
 
 int Device::getStatus()
@@ -475,6 +476,31 @@ int Device::getStatus()
         }
     }
     return 0;
+    }
+    return -2;
+}
+
+int Device::getPasswordRetryCount()
+{
+    int res;
+    uint8_t data[1];
+
+
+    if (isConnected){
+    Command *cmd=new Command(CMD_GET_PASSWORD_RETRY_COUNT,data,0);
+    res=sendCommand(cmd);
+
+    if (res==-1)
+        return -1;
+    else{  //sending the command was successful
+        Sleep::msleep(100);
+        Response *resp=new Response();
+        resp->getResponse(this);
+
+        if (cmd->crc==resp->lastCommandCRC){
+            passwordRetryCount=resp->data[0];
+        }
+    }
     }
     return -2;
 }

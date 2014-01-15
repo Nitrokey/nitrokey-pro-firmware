@@ -551,16 +551,16 @@ return tSCT.cAPDU[x];
 }
 
 uint8_t cardAuthenticate(uint8_t *password){
-InitSCTStruct (&tSCT);
+	InitSCTStruct (&tSCT);
 
-unsigned short cRet;
-unsigned char nReturnSize;
+	unsigned short cRet;
+	unsigned char nReturnSize;
 
-CcidSelectOpenPGPApp ();
-cRet = CcidVerifyPin (2,password);
+	CcidSelectOpenPGPApp ();
+	cRet = CcidVerifyPin (3,password);
 	
 
-if (APDU_ANSWER_COMMAND_CORRECT != cRet)
+	if (APDU_ANSWER_COMMAND_CORRECT != cRet)
 	{
 		return 1;
 	}
@@ -569,7 +569,23 @@ if (APDU_ANSWER_COMMAND_CORRECT != cRet)
 return 0;	
 }
 
+uint8_t getPasswordRetryCount(){
+	
+	InitSCTStruct (&tSCT);
 
+	unsigned short cRet;
+	unsigned char nReturnSize;
+
+
+	CcidSelectOpenPGPApp ();
+	cRet = CcidGetData (0x00,0xC4,&nReturnSize);
+ 	if (APDU_ANSWER_COMMAND_CORRECT != cRet)
+	{
+		return (0xFF);
+	}
+
+	return tSCT.cAPDU[6];
+}
 
 
 
