@@ -25,7 +25,6 @@
 #include "string.h"
 #include "sleep.h"
 #include "base32.h"
-#include "passworddialog.h"
 #include "hotpdialog.h"
 
 
@@ -447,7 +446,6 @@ void MainWindow::startConfiguration()
 
     if (!cryptostick->validPassword){
         cryptostick->getPasswordRetryCount();
-
 
         QString password = QInputDialog::getText(this, tr("Enter card admin password"),tr("Admin password: ")+tr("(Tries left: ")+QString::number(cryptostick->passwordRetryCount)+")", QLineEdit::Password,"", &ok);
 

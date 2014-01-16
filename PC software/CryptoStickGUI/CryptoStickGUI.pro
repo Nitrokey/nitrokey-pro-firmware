@@ -19,7 +19,6 @@ SOURCES += main.cpp\
     crc32.cpp \
     totpslot.cpp \
     base32.cpp \
-    passworddialog.cpp \
     hotpdialog.cpp
 
 win32 {
@@ -45,11 +44,9 @@ HEADERS  += mainwindow.h \
     sleep.h \
     totpslot.h \
     base32.h \
-    passworddialog.h \
     hotpdialog.h
 
 FORMS    += mainwindow.ui \
-    passworddialog.ui \
     hotpdialog.ui
 
 win32{
