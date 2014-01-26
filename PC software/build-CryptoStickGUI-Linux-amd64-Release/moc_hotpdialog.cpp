@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'hotpdialog.h'
 **
-** Created: Sun Jan 5 13:35:19 2014
+** Created: Sun Jan 26 18:23:22 2014
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.4)
 **
 ** WARNING! All changes made in this file will be lost!
