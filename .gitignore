@@ -1,3 +1,5 @@
 CryptoStickGUI.pro.user
 build-*-Debug
 *~
+*.o
+*.lst
