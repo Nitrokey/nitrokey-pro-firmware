@@ -41,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->statusBar->showMessage("Device disconnected.");
 
-    cryptostick =  new Device(0x20a0, 0x4107);
+    cryptostick =  new Device(0x20a0, 0x4108);
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(checkConnection()));

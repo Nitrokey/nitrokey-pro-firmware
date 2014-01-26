@@ -35,7 +35,7 @@ const uint8_t CCID_DeviceDescriptor[CCID_SIZ_DEVICE_DESC] =
     0x40,   				/* bMaxPacketSize0 0x08 - 0x40 = 64 */
 
   	WBVAL(0x20A0),  /* VID for CCID driver idVendor */
-  	WBVAL(0x4107),  /* PID for CCID driver idProduct */
+  	WBVAL(0x4108),  /* PID for CCID driver idProduct */
 //  	WBVAL(0x0800),  /* Test VID for MS CCID driver idVendor */
 //  	WBVAL(0x0006),  /* Test PID for MS CCID driver idProduct */
 //  	WBVAL(0x08e6),  /* 0x08e6 = idVendor  germalto - for testing */
@@ -241,11 +241,9 @@ const uint8_t CCID_StringVendor[CCID_SIZ_STRING_VENDOR] =
   {
     CCID_SIZ_STRING_VENDOR, 		/* Size of manufaturer string */
     0x03,           						/* bDescriptorType = String descriptor */
-    /* Manufacturer: "German Privacy Foundation" */
-    'G', 0, 'e', 0, 'r', 0, 'm', 0, 'a', 0, 'n', 0, ' ', 0, 'P', 0,
-    'r', 0, 'i', 0, 'v', 0, 'a', 0, 'c', 0, 'y', 0, ' ', 0, 'F', 0,
-  	'o', 0, 'u', 0, 'n', 0, 'd', 0, 'a', 0, 't', 0, 'i', 0, 'o', 0, 
-		'n', 0
+    /* Manufacturer: "Crypto Stick" */
+    'C', 0, 'r', 0, 'y', 0, 'p', 0, 't', 0, 'o', 0, ' ', 0, 'S', 0,
+    't', 0, 'i', 0, 'c', 0, 'k', 0
 
   };
 
@@ -254,10 +252,10 @@ const uint8_t CCID_StringProduct[CCID_SIZ_STRING_PRODUCT] =
   {
     CCID_SIZ_STRING_PRODUCT,
     0x03,
-    /* Product name: "Crypto Stick v1.2" */
+    /* Product name: "Crypto Stick v1.4" */
     'C', 0, 'r', 0, 'y', 0, 'p', 0, 't', 0, 'o', 0, ' ', 0, 'S', 0,
     't', 0, 'i', 0, 'c', 0, 'k', 0, ' ', 0, 'v', 0, '1', 0, '.', 0,
-	  '2', 0
+	  '4', 0
 
   };
 
