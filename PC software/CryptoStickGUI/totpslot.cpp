@@ -21,6 +21,32 @@
 #include "totpslot.h"
 #include "string.h"
 
+
+/*******************************************************************************
+
+ Local defines
+
+*******************************************************************************/
+
+/*******************************************************************************
+
+ External declarations
+
+*******************************************************************************/
+
+
+/*******************************************************************************
+
+  TOTPSlot
+
+  Constructor TOTPSlot
+
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
+
+*******************************************************************************/
+
 TOTPSlot::TOTPSlot()
 {
     isProgrammed=false;
@@ -29,8 +55,19 @@ TOTPSlot::TOTPSlot()
     memset(tokenID,0,sizeof(tokenID));
     config=0;
     slotNumber=0;
-
 }
+
+/*******************************************************************************
+
+  TOTPSlot
+
+  Constructor TOTPSlot
+
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
+
+*******************************************************************************/
 
 TOTPSlot::TOTPSlot(uint8_t slotNumber, uint8_t slotName[], uint8_t secret[], uint8_t config)
 {

@@ -19,7 +19,16 @@ SOURCES += main.cpp\
     crc32.cpp \
     totpslot.cpp \
     base32.cpp \
-    hotpdialog.cpp
+    passworddialog.cpp \
+    hotpdialog.cpp \
+    stick20dialog.cpp \
+    stick20responsedialog.cpp \
+    stick20setup.cpp \
+    stick20debugdialog.cpp \
+    stick20matrixpassworddialog.cpp \
+    stick20hid.c \
+    stick20updatedialog.cpp \
+    stick20changepassworddialog.cpp
 
 win32 {
 
@@ -44,10 +53,27 @@ HEADERS  += mainwindow.h \
     sleep.h \
     totpslot.h \
     base32.h \
-    hotpdialog.h
+    passworddialog.h \
+    hotpdialog.h \
+    stick20dialog.h \
+    stick20responsedialog.h \
+    stick20setup.h \
+    stick20debugdialog.h \
+    stick20matrixpassworddialog.h \
+    stick20hid.h \
+    stick20updatedialog.h \
+    stick20changepassworddialog.h
 
 FORMS    += mainwindow.ui \
-    hotpdialog.ui
+    passworddialog.ui \
+    hotpdialog.ui \
+    stick20dialog.ui \
+    stick20responsedialog.ui \
+    stick20setup.ui \
+    stick20debugdialog.ui \
+    stick20matrixpassworddialog.ui \
+    stick20updatedialog.ui \
+    stick20changepassworddialog.ui
 
 win32{
 LIBS= -lsetupapi
@@ -60,6 +86,11 @@ LIBS=-framework IOKit -framework CoreFoundation
 unix:!macx{
 LIBS  = `pkg-config libusb-1.0 --libs` -lrt -lpthread
 INCLUDEPATH += /usr/include/libusb-1.0
+INCLUDEPATH += /usr/include/qt4
+INCLUDEPATH += /usr/include/qt4/QtWidgets
+INCLUDEPATH += /usr/include/qt4/QtGui
+INCLUDEPATH += /usr/include/qt4/QtCore
+
 }
 
 OTHER_FILES +=

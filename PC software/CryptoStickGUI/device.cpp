@@ -24,16 +24,45 @@
 #include "crc32.h"
 #include "sleep.h"
 
+/*******************************************************************************
+
+ External declarations
+
+*******************************************************************************/
 
 
-Device::Device(int vid, int pid)
+/*******************************************************************************
+
+ Local defines
+
+*******************************************************************************/
+
+//#define LOCAL_DEBUG                               // activate for debugging
+
+/*******************************************************************************
+
+  Device
+
+  Constructor Device
+
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
+
+*******************************************************************************/
+
+Device::Device(int vid, int pid,int vidStick20, int pidStick20)
 {
     handle=NULL;
     isConnected=false;
+
     this->vid=vid;
     this->pid=pid;
-    validPassword=false;
-    passwordSet=false;
+
+    validPassword    =false;
+    passwordSet      =false;
+
+
 
     memset(password,0,50);
     //handle = hid_open(vid,pid, NULL);
@@ -56,16 +85,38 @@ Device::Device(int vid, int pid)
 
     newConnection=true;
 
+// Init data for stick 20
 
+   this->vidStick20   = vidStick20;
+   this->pidStick20   = pidStick20;
+
+//    this->vidStick20   = 0x046d;
+//    this->pidStick20   = 0xc315;
+
+    activStick20       = false;
+    waitForAckStick20  = false;
+    lastBlockNrStick20 = 0;
 
 
 }
 
-int Device::checkConnection(){
+/*******************************************************************************
+
+  checkConnection
+
+  Check the presents of stick 1.0 or 2.0
+
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
+
+*******************************************************************************/
+
+int Device::checkConnection()
+{
     uint8_t buf[65];
     buf[0]=0;
     int res;
-
 
     //handle = hid_open(vid,pid, NULL);
 
@@ -76,20 +127,24 @@ int Device::checkConnection(){
     }
     else{
         res = hid_get_feature_report (handle, buf, 65);
-            if (res < 0){
+        if (res < 0){
             isConnected=false;
             newConnection=true;
             return -1;
-            }
+        }
 
         if (newConnection){
+            isConnected=true;
+            newConnection=false;
+            passwordSet=false;
+            validPassword=false;
 
-        isConnected=true;
-        newConnection=false;
-        passwordSet=false;
-        validPassword=false;
-        initializeConfig();
-        return 1;
+            // stick 20 with no OTP
+            if (false == activStick20)
+            {
+               initializeConfig();          // init data for OTP
+            }
+            return 1;
         }
         return 0;
 
@@ -97,40 +152,91 @@ int Device::checkConnection(){
 
 }
 
-void Device::connect(){
+/*******************************************************************************
+
+  connect
+
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
+
+*******************************************************************************/
+
+void Device::connect()
+{
+    // Disable stick 20
+    activStick20 = false;
+
     handle = hid_open(vid,pid, NULL);
+
+    // Check for stick 20
+    if (NULL == handle)
+    {
+        handle = hid_open(vidStick20,pidStick20, NULL);
+        if (NULL != handle)
+        {
+            // Stick 20 found
+            activStick20 = true;
+        }
+    }
 }
 
+/*******************************************************************************
+
+  sendCommand
+
+  Send a command to the stick via the send feature report HID message
+
+  Report size is 64 byte
+
+  Command data size COMMAND_SIZE = 59 byte (should 58 ???)
+
+  Byte  0       = 0
+  Byte  1       = cmd type
+  Byte  2-59    = payload       (To do check lenght)
+  Byte 60-63    = CRC 32 from byte 0-59 = 15 long words
 
 
-int Device::sendCommand(Command *cmd){
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
 
+*******************************************************************************/
+
+int Device::sendCommand(Command *cmd)
+{
     uint8_t report[REPORT_SIZE+1];
-    memset(report,0,sizeof(report));
-
     int i;
     int err;
 
+    memset(report,0,sizeof(report));
     report[1]=cmd->commandType;
 
 
-        memcpy(report+2,cmd->data,COMMAND_SIZE);
+    memcpy(report+2,cmd->data,COMMAND_SIZE);
 
-        uint32_t crc=0xffffffff;
-        for (i=0;i<15;i++){
-            crc=Crc32(crc,((uint32_t *)(report+1))[i]);
-        }
-        ((uint32_t *)(report+1))[15]=crc;
+    uint32_t crc=0xffffffff;
+    for (i=0;i<15;i++){
+        crc=Crc32(crc,((uint32_t *)(report+1))[i]);
+    }
+    ((uint32_t *)(report+1))[15]=crc;
 
-        cmd->crc=crc;
+    cmd->crc=crc;
 
-        err = hid_send_feature_report(handle, report, sizeof(report));
+    err = hid_send_feature_report(handle, report, sizeof(report));
 
-        return err;
-
-
+    return err;
 }
 
+/*******************************************************************************
+
+  getSlotName
+
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
+
+*******************************************************************************/
 
 int Device::getSlotName(uint8_t slotNo){
      int res;
@@ -183,6 +289,16 @@ int Device::getSlotName(uint8_t slotNo){
      return -1;
 }
 
+/*******************************************************************************
+
+  eraseSlot
+
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
+
+*******************************************************************************/
+
 int Device::eraseSlot(uint8_t slotNo)
 {
     int res;
@@ -215,6 +331,16 @@ int Device::eraseSlot(uint8_t slotNo)
     return -1;
 
 }
+
+/*******************************************************************************
+
+  writeToHOTPSlot
+
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
+
+*******************************************************************************/
 
 int Device::writeToHOTPSlot(HOTPSlot *slot)
 {
@@ -270,6 +396,16 @@ int Device::writeToHOTPSlot(HOTPSlot *slot)
     return -1;
 }
 
+/*******************************************************************************
+
+  writeToTOTPSlot
+
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
+
+*******************************************************************************/
+
 int Device::writeToTOTPSlot(TOTPSlot *slot)
 {
     if (slot->slotNumber>=0x20&&slot->slotNumber<=0x23){
@@ -318,6 +454,15 @@ int Device::writeToTOTPSlot(TOTPSlot *slot)
 
 
 }
+/*******************************************************************************
+
+  getCode
+
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
+
+*******************************************************************************/
 
 int Device::getCode(uint8_t slotNo, uint64_t challenge,uint8_t result[18])
 {
@@ -362,6 +507,15 @@ int Device::getCode(uint8_t slotNo, uint64_t challenge,uint8_t result[18])
     return -1;
 
 }
+/*******************************************************************************
+
+  readSlot
+
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
+
+*******************************************************************************/
 
 int Device::readSlot(uint8_t slotNo)
 {
@@ -428,6 +582,15 @@ int Device::readSlot(uint8_t slotNo)
 
     return -1;
 }
+/*******************************************************************************
+
+  initializeConfig
+
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
+
+*******************************************************************************/
 
 void Device::initializeConfig()
 {
@@ -436,8 +599,18 @@ void Device::initializeConfig()
     getSlotName(0x20);
     getSlotName(0x21);
     getSlotName(0x22);
-     getSlotName(0x23);
+    getSlotName(0x23);
 }
+
+/*******************************************************************************
+
+  getSlotConfigs
+
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
+
+*******************************************************************************/
 
 void Device::getSlotConfigs()
 {
@@ -449,6 +622,15 @@ void Device::getSlotConfigs()
     readSlot(0x22);
     readSlot(0x23);*/
 }
+/*******************************************************************************
+
+  getStatus
+
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
+
+*******************************************************************************/
 
 int Device::getStatus()
 {
@@ -480,6 +662,15 @@ int Device::getStatus()
     return -2;
 }
 
+/*******************************************************************************
+
+  getPasswordRetryCount
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
 int Device::getPasswordRetryCount()
 {
     int res;
@@ -505,9 +696,30 @@ int Device::getPasswordRetryCount()
     return -2;
 }
 
+
+/*******************************************************************************
+
+  getGeneralConfig
+
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
+
+*******************************************************************************/
+
 void Device::getGeneralConfig()
 {
 }
+
+/*******************************************************************************
+
+  writeGeneralConfig
+
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
+
+*******************************************************************************/
 
 int Device::writeGeneralConfig(uint8_t data[])
 {
@@ -537,6 +749,15 @@ int Device::writeGeneralConfig(uint8_t data[])
 
 
 }
+/*******************************************************************************
+
+  firstAuthenticate
+
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
+
+*******************************************************************************/
 
 int Device::firstAuthenticate(uint8_t cardPassword[], uint8_t tempPasswrod[])
 {
@@ -581,6 +802,15 @@ int Device::firstAuthenticate(uint8_t cardPassword[], uint8_t tempPasswrod[])
 
 
 }
+/*******************************************************************************
+
+  authorize
+
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
+
+*******************************************************************************/
 
 int Device::authorize(Command *authorizedCmd)
 {
@@ -618,4 +848,502 @@ int Device::authorize(Command *authorizedCmd)
    return -1;
 }
 
+/*******************************************************************************
 
+    Here starts the new commands for stick 2.0
+
+*******************************************************************************/
+
+/*******************************************************************************
+
+  stick20EnableCryptedPartition
+
+  Send the command
+
+    STICK20_CMD_ENABLE_CRYPTED_PARI
+
+  with the password to cryptostick 2.0
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+#define CS20_MAX_PASSWORD_LEN       30
+
+bool Device::stick20EnableCryptedPartition  (uint8_t *password)
+{
+    uint8_t n;
+    int     res;
+    Command *cmd;
+
+    // Check password length
+    n = strlen ((const char*)password);
+    if (CS20_MAX_PASSWORD_LEN <= n)
+    {
+        return (false);
+    }
+
+    cmd = new Command(STICK20_CMD_ENABLE_CRYPTED_PARI,password,n);
+    res = sendCommand(cmd);
+
+    return (true);
+}
+/*******************************************************************************
+
+  stick20DisableCryptedPartition
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+bool Device::stick20DisableCryptedPartition  (void)
+{
+    int      res;
+    Command *cmd;
+
+    cmd = new Command(STICK20_CMD_DISABLE_CRYPTED_PARI,NULL,0);
+    res = sendCommand(cmd);
+
+    return (true);
+}
+
+/*******************************************************************************
+
+  stick20EnableHiddenCryptedPartition
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+bool Device::stick20EnableHiddenCryptedPartition  (uint8_t *password)
+{
+    uint8_t n;
+    int     res;
+    Command *cmd;
+
+    // Check password length
+    n = strlen ((const char*)password);
+
+    if (CS20_MAX_PASSWORD_LEN <= n)
+    {
+        return (false);
+    }
+
+    cmd = new Command(STICK20_CMD_ENABLE_HIDDEN_CRYPTED_PARI,password,n);
+    res = sendCommand(cmd);
+
+    return (true);
+}
+
+/*******************************************************************************
+
+  stick20DisableHiddenCryptedPartition
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+bool Device::stick20DisableHiddenCryptedPartition  (void)
+{
+    int      res;
+    Command *cmd;
+
+    cmd = new Command(STICK20_CMD_DISABLE_HIDDEN_CRYPTED_PARI,NULL,0);
+    res = sendCommand(cmd);
+
+    return (true);
+}
+
+/*******************************************************************************
+
+  stick20EnableFirmwareUpdate
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+bool Device::stick20EnableFirmwareUpdate (uint8_t *password)
+{
+    uint8_t n;
+    int     res;
+    Command *cmd;
+
+    // Check password length
+    n = strlen ((const char*)password);
+    if (CS20_MAX_PASSWORD_LEN <= n)
+    {
+        return (false);
+    }
+
+    cmd = new Command(STICK20_CMD_ENABLE_FIRMWARE_UPDATE,password,n);
+    res = sendCommand(cmd);
+
+    return (true);
+}
+
+/*******************************************************************************
+
+  stick20ExportFirmware
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+bool Device::stick20ExportFirmware (uint8_t *password)
+{
+    uint8_t n;
+    int     res;
+    Command *cmd;
+
+    // Check password length
+    n = strlen ((const char*)password);
+    if (CS20_MAX_PASSWORD_LEN <= n)
+    {
+        return (false);
+    }
+
+    cmd = new Command(STICK20_CMD_EXPORT_FIRMWARE_TO_FILE,password,n);
+    res = sendCommand(cmd);
+
+    return (true);
+}
+
+/*******************************************************************************
+
+  stick20CreateNewKeys
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+bool Device::stick20CreateNewKeys (uint8_t *password)
+{
+    uint8_t n;
+    int     res;
+    Command *cmd;
+
+    // Check password length
+    n = strlen ((const char*)password);
+    if (CS20_MAX_PASSWORD_LEN <= n)
+    {
+        return (false);
+    }
+
+    cmd = new Command(STICK20_CMD_GENERATE_NEW_KEYS,password,n);
+    res = sendCommand(cmd);
+
+    return (true);
+}
+
+/*******************************************************************************
+
+  writeToHOTPSlot
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+bool Device::stick20FillSDCardWithRandomChars (uint8_t *password)
+{
+    uint8_t n;
+    int     res;
+    Command *cmd;
+
+    // Check password length
+    n = strlen ((const char*)password);
+    if (CS20_MAX_PASSWORD_LEN <= n)
+    {
+        return (false);
+    }
+
+    cmd = new Command(STICK20_CMD_FILL_SD_CARD_WITH_RANDOM_CHARS,password,n);
+    res = sendCommand(cmd);
+
+    return (true);
+}
+
+/*******************************************************************************
+
+  stick20SetupHiddenVolume
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+bool Device::stick20SetupHiddenVolume (void)
+{
+//    uint8_t n;
+    int     res;
+    Command *cmd;
+//    Response *resp;
+
+    cmd = new Command(STICK20_CMD_SEND_HIDDEN_VOLUME_SETUP,NULL,0);
+    res = sendCommand(cmd);
+
+
+/*
+    Sleep::msleep(200);
+    Response *resp=new Response();
+    resp->getResponse(this);
+
+    if (cmd->crc==resp->lastCommandCRC)
+    { //the response was for the last command
+        if (resp->lastCommandStatus!=CMD_STATUS_OK){
+            return (FALSE);
+        }
+    }
+*/
+
+    return (true);
+}
+
+/*******************************************************************************
+
+  stick20GetPasswordMatrix
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+bool Device::stick20GetPasswordMatrix (void)
+{
+//    uint8_t n;
+    int     res;
+    Command *cmd;
+//    Response *resp;
+
+    cmd = new Command(STICK20_CMD_SEND_PASSWORD_MATRIX,NULL,0);
+    res = sendCommand(cmd);
+
+/*
+
+    Sleep::msleep(200);
+    Response *resp=new Response();
+    resp->getResponse(this);
+
+    if (cmd->crc==resp->lastCommandCRC)
+    { //the response was for the last command
+        if (resp->lastCommandStatus==CMD_STATUS_OK){
+            return 0;
+        }
+    }
+*/
+
+    return (true);
+}
+
+/*******************************************************************************
+
+  stick20SendPasswordMatrixPinData
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+bool Device::stick20SendPasswordMatrixPinData (uint8_t *Pindata)
+{
+    uint8_t n;
+    int     res;
+    Command *cmd;
+//    Response *resp;
+
+    // Check pin data length
+    n = strlen ((const char*)Pindata);
+    if (STICK20_PASSOWRD_LEN + 2 <= n)      // Kind byte + End byte 0
+    {
+        return (false);
+    }
+
+    cmd = new Command(STICK20_CMD_SEND_PASSWORD_MATRIX_PINDATA,Pindata,n);
+    res = sendCommand(cmd);
+
+    return (true);
+}
+
+/*******************************************************************************
+
+  stick20SendPasswordMatrixSetup
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+bool Device::stick20SendPasswordMatrixSetup (uint8_t *Setupdata)
+{
+    uint8_t n;
+    int     res;
+    Command *cmd;
+
+    // Check pin data length
+    n = strlen ((const char*)Setupdata);
+    if (STICK20_PASSOWRD_LEN + 1 <= n)
+    {
+        return (false);
+    }
+
+    cmd = new Command(STICK20_CMD_SEND_PASSWORD_MATRIX_SETUP,Setupdata,n);
+    res = sendCommand(cmd);
+
+    return (true);
+}
+
+/*******************************************************************************
+
+  stick20GetStatusData
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+bool Device::stick20GetStatusData ()
+{
+    int     res;
+    Command *cmd;
+
+    cmd = new Command(STICK20_CMD_GET_DEVICE_STATUS,NULL,0);
+    res = sendCommand(cmd);
+
+    return (true);
+}
+
+/*******************************************************************************
+
+  stick20SendPassword
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+int Device::stick20SendPassword (uint8_t *Pindata)
+{
+    uint8_t n;
+    int     res;
+    Command *cmd;
+
+    // Check pin data length
+    n = strlen ((const char*)Pindata);
+    if (STICK20_PASSOWRD_LEN + 2 <= n)      // Kind byte + End byte 0
+    {
+        return (false);
+    }
+
+    cmd = new Command(STICK20_CMD_SEND_PASSWORD,Pindata,n);
+    res = sendCommand(cmd);
+
+    return (true);
+}
+
+/*******************************************************************************
+
+  stick20SendNewPassword
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+int Device::stick20SendNewPassword (uint8_t *NewPindata)
+{
+    uint8_t n;
+    int     res;
+    Command *cmd;
+
+    // Check pin data length
+    n = strlen ((const char*)NewPindata);
+    if (STICK20_PASSOWRD_LEN + 2 <= n)      // Kind byte + End byte 0
+    {
+        return (false);
+    }
+
+    cmd = new Command(STICK20_CMD_SEND_NEW_PASSWORD,NewPindata,n);
+    res = sendCommand(cmd);
+
+    return (true);
+}
+
+/*******************************************************************************
+
+  stick20SendSetReadonlyToUncryptedVolume
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+int Device::stick20SendSetReadonlyToUncryptedVolume (uint8_t *Pindata)
+{
+    uint8_t n;
+    int     res;
+    Command *cmd;
+
+    // Check pin data length
+    n = strlen ((const char*)Pindata);
+    if (STICK20_PASSOWRD_LEN + 2 <= n)      // Kind byte + End byte 0
+    {
+        return (false);
+    }
+
+    cmd = new Command(STICK20_CMD_ENABLE_READONLY_UNCRYPTED_LUN,Pindata,n);
+    res = sendCommand(cmd);
+
+    return (true);
+}
+
+/*******************************************************************************
+
+  stick20SendSetReadwriteToUncryptedVolume
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+int Device::stick20SendSetReadwriteToUncryptedVolume (uint8_t *Pindata)
+{
+    uint8_t n;
+    int     res;
+    Command *cmd;
+
+    // Check pin data length
+    n = strlen ((const char*)Pindata);
+    if (STICK20_PASSOWRD_LEN + 2 <= n)      // Kind byte + End byte 0
+    {
+        return (false);
+    }
+
+    cmd = new Command(STICK20_CMD_ENABLE_READWRITE_UNCRYPTED_LUN,Pindata,n);
+    res = sendCommand(cmd);
+
+    return (true);
+}

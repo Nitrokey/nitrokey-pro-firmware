@@ -21,7 +21,12 @@
 #ifndef TOTPSLOT_H
 #define TOTPSLOT_H
 
-#include <inttypes.h>
+#ifdef _MSC_VER
+    #define uint8_t unsigned char
+#else
+    #include "inttypes.h"
+#endif
+
 
 class TOTPSlot
 {

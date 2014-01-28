@@ -1,6 +1,6 @@
 /*
 * Author: Copyright (C) Andrzej Surowiec 2012
-*
+*						Parts Rudolf Boeddeker  Date: 2013-08-13
 *
 * This file is part of GPF Crypto Stick.
 *

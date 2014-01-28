@@ -1,6 +1,6 @@
 /*
 * Author: Copyright (C) Andrzej Surowiec 2012
-*						Parts Rudolf Boeddeker  Date: 2013-08-13
+*
 *
 * This file is part of GPF Crypto Stick.
 *
@@ -18,14 +18,28 @@
 * along with GPF Crypto Stick. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "command.h"
-#include "string.h"
-#include "crc32.h"
-#include "device.h"
+#include "passworddialog.h"
+#include "ui_passworddialog.h"
+
 
 /*******************************************************************************
 
-  Command
+ External declarations
+
+*******************************************************************************/
+
+/*******************************************************************************
+
+ Local defines
+
+*******************************************************************************/
+
+
+/*******************************************************************************
+
+  PasswordDialog
+
+  Constructor PasswordDialog
 
   Reviews
   Date      Reviewer        Info
@@ -33,28 +47,18 @@
 
 *******************************************************************************/
 
-Command::Command(uint8_t commandType, uint8_t *data, uint8_t len)
+PasswordDialog::PasswordDialog(QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::PasswordDialog)
 {
-    this->commandType = commandType;
-
-    memset(this->data,0,COMMAND_SIZE);
-
-    if (COMMAND_SIZE < len)
-    {
-        len = COMMAND_SIZE;
-    }
-
-    if ((0 != len) && (NULL != data))
-    {
-        memcpy(this->data,data,len);
-    }
+    ui->setupUi(this);
 }
 
 /*******************************************************************************
 
-  generateCRC
+  PasswordDialog
 
-  Todo: Check length of COMMAND_SIZE (2+59 = 61 not 60 !!!)
+  Destructor PasswordDialog
 
   Reviews
   Date      Reviewer        Info
@@ -62,24 +66,25 @@ Command::Command(uint8_t commandType, uint8_t *data, uint8_t len)
 
 *******************************************************************************/
 
-void Command::generateCRC()
+PasswordDialog::~PasswordDialog()
 {
-    int i;
-    uint8_t report[REPORT_SIZE+1];
-    uint32_t crc=0xffffffff;
+    delete ui;
+}
 
-    memset(report,0,sizeof(report));
+/*******************************************************************************
 
-    report[1]=this->commandType;
+  on_checkBox_toggled
 
-    memcpy(report+2,this->data,COMMAND_SIZE); // (2+59 = 61 not 60 !!!)
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
 
-    for (i=0;i<15;i++)
-    {
-        crc=Crc32(crc,((uint32_t *)(report+1))[i]);
-    }
+*******************************************************************************/
 
-    ((uint32_t *)(report+1))[15]=crc;
-
-    this->crc=crc;
+void PasswordDialog::on_checkBox_toggled(bool checked)
+{
+    if (checked)
+        ui->lineEdit->setEchoMode(QLineEdit::Normal);
+    else
+        ui->lineEdit->setEchoMode(QLineEdit::Password);
 }

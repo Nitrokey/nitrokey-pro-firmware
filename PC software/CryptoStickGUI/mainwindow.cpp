@@ -1,6 +1,6 @@
 /*
 * Author: Copyright (C) Andrzej Surowiec 2012
-*
+*						Parts Rudolf Boeddeker  Date: 2013-08-13
 *
 * This file is part of GPF Crypto Stick.
 *
@@ -25,8 +25,16 @@
 #include "string.h"
 #include "sleep.h"
 #include "base32.h"
+#include "passworddialog.h"
 #include "hotpdialog.h"
+#include "stick20dialog.h"
+#include "stick20debugdialog.h"
 
+#include "device.h"
+#include "response.h"
+#include "stick20responsedialog.h"
+#include "stick20matrixpassworddialog.h"
+#include "stick20setup.h"
 
 #include <QTimer>
 #include <QMenu>
@@ -34,17 +42,57 @@
 #include <QDateTime>
 
 
+/*******************************************************************************
+
+ External declarations
+
+*******************************************************************************/
+
+extern "C" char DebugText_Stick20[600000];
+
+/*******************************************************************************
+
+ Local defines
+
+*******************************************************************************/
+
+#define VID_STICK_OTP 0x20A0
+#define PID_STICK_OTP 0x4108
+
+#define VID_STICK_20  0x20A0
+#define PID_STICK_20  0x4109 // MSD + CCID + HID production id
+
+//#define PID_STICK_20    0x220D // MSD + CCID + HID test id
+//#define PID_STICK_20    0x2309 // MSD + HID test id
+//#define PID_STICK_20    0x220B // HID test id
+
+/*******************************************************************************
+
+  MainWindow
+
+  Constructor MainWindow
+
+  Init the debug output dialog
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    bool ret;
+
     ui->setupUi(this);
     ui->statusBar->showMessage("Device disconnected.");
 
-    cryptostick =  new Device(0x20a0, 0x4107);
+    cryptostick =  new Device(VID_STICK_OTP, PID_STICK_OTP,VID_STICK_20,PID_STICK_20);
 
     QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(checkConnection()));
+    ret = connect(timer, SIGNAL(timeout()), this, SLOT(checkConnection()));
     timer->start(1000);
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setIcon(QIcon(":/images/CS_icon.png"));
@@ -57,6 +105,25 @@ MainWindow::MainWindow(QWidget *parent) :
     restoreAction = new QAction(tr("&Configure"), this);
     connect(restoreAction, SIGNAL(triggered()), this, SLOT(startConfiguration()));
 
+    Stick20Action = new QAction(tr("&Stick 20"), this);
+    connect(Stick20Action, SIGNAL(triggered()), this, SLOT(startStick20Configuration()));
+
+    DebugAction = new QAction(tr("&Debug"), this);
+    connect(DebugAction, SIGNAL(triggered()), this, SLOT(startStickDebug()));
+
+
+    SecPasswordAction = new QAction(tr("&SecPassword"), this);
+    connect(SecPasswordAction, SIGNAL(triggered()), this, SLOT(startMatrixPasswordDialog()));
+
+    Stick20SetupAction = new QAction(tr("&Stick 20 Setup"), this);
+    connect(Stick20SetupAction, SIGNAL(triggered()), this, SLOT(startStick20Setup()));
+
+
+    DebugText = "Start Debug\n";
+
+ //   DebugText.append("test 1\n");
+
+
     //totp1Action = new QAction(tr("&TOTP Slot 1"), this);
     //connect(totp1Action, SIGNAL(triggered()), this, SLOT(getCode()));
 
@@ -64,41 +131,98 @@ MainWindow::MainWindow(QWidget *parent) :
 
 }
 
-void MainWindow::checkConnection(){
+/*******************************************************************************
 
-    currentTime= QDateTime::currentDateTime().toTime_t();
+  checkConnection
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+void MainWindow::checkConnection()
+{
+    currentTime = QDateTime::currentDateTime().toTime_t();
 
     int result = cryptostick->checkConnection();
     if (result==0)
-        ui->statusBar->showMessage("Device connected.");
+    {
+        if (false == cryptostick->activStick20) {
+            ui->statusBar->showMessage("Device connected.");
+        } else {
+            ui->statusBar->showMessage("Device Stick 2.0 connected.");
+        }
+    }
     else if (result==-1){
         ui->statusBar->showMessage("Device disconnected.");
         generateMenu();
         cryptostick->connect();
     }
     else if (result==1){ //recreate the settings and menus
-        ui->statusBar->showMessage("Device connected.");
+        if (false == cryptostick->activStick20) {
+            ui->statusBar->showMessage("Device connected.");
+        } else {
+            ui->statusBar->showMessage("Device Stick 2.0 connected.");
+        }
         generateMenu();
     }
 }
 
+/*******************************************************************************
 
-void MainWindow::startTimer(){
+  startTimer
 
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
 
+*******************************************************************************/
 
+void MainWindow::startTimer()
+{
 }
+
+/*******************************************************************************
+
+  ~MainWindow
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
+/*******************************************************************************
+
+  closeEvent
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     this->hide();
     event->ignore();
 }
+
+/*******************************************************************************
+
+  on_pushButton_clicked
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
 
 void MainWindow::on_pushButton_clicked()
 {
@@ -124,69 +248,115 @@ void MainWindow::on_pushButton_clicked()
     }
 }
 
+/*******************************************************************************
+
+  on_pushButton_2_clicked
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
 void MainWindow::on_pushButton_2_clicked()
 {
-
-
-
-
 }
 
-void MainWindow::getSlotNames(){
+/*******************************************************************************
 
+  getSlotNames
 
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
 
+*******************************************************************************/
 
+void MainWindow::getSlotNames()
+{
 }
+
+/*******************************************************************************
+
+  generateMenu
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
 
 void MainWindow::generateMenu()
 {
-
     trayMenu = new QMenu();
 
     if (cryptostick->isConnected==false){
         trayMenu->addAction("Crypto Stick not connected");
 
-        //
     }
     else{
-        if (cryptostick->HOTPSlots[0]->isProgrammed==true){
-            QString actionName("HOTP slot 1 ");
-            trayMenu->addAction(actionName.append((char *)cryptostick->HOTPSlots[0]->slotName),this,SLOT(getHOTP1()));
+        if (false == cryptostick->activStick20)
+        {
+            // Stick OTP ist connected
+            if (cryptostick->HOTPSlots[0]->isProgrammed==true){
+                QString actionName("HOTP slot 1 ");
+                trayMenu->addAction(actionName.append((char *)cryptostick->HOTPSlots[0]->slotName),this,SLOT(getHOTP1()));
 
+            }
+            if (cryptostick->HOTPSlots[1]->isProgrammed==true){
+                QString actionName("HOTP slot 2 ");
+                trayMenu->addAction(actionName.append((char *)cryptostick->HOTPSlots[1]->slotName),this,SLOT(getHOTP2()));
+
+
+            }
+            if (cryptostick->TOTPSlots[0]->isProgrammed==true){
+                QString actionName("TOTP slot 1 ");
+                trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[0]->slotName),this,SLOT(getTOTP1()));
+
+            }
+            if (cryptostick->TOTPSlots[1]->isProgrammed==true){
+                QString actionName("TOTP slot 2 ");
+                trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[1]->slotName),this,SLOT(getTOTP2()));
+
+
+            }
+            if (cryptostick->TOTPSlots[2]->isProgrammed==true){
+                QString actionName("TOTP slot 3 ");
+                trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[2]->slotName),this,SLOT(getTOTP3()));
+
+
+            }
+            if (cryptostick->TOTPSlots[3]->isProgrammed==true){
+                QString actionName("TOTP slot 4 ");
+                trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[3]->slotName),this,SLOT(getTOTP4()));
+
+
+            }
+            trayMenu->addAction(restoreAction);
         }
-        if (cryptostick->HOTPSlots[1]->isProgrammed==true){
-            QString actionName("HOTP slot 2 ");
-            trayMenu->addAction(actionName.append((char *)cryptostick->HOTPSlots[1]->slotName),this,SLOT(getHOTP2()));
-
-
+        else {
+            // Stick 20 ist connected
+            trayMenu->addAction(Stick20Action);
         }
-        if (cryptostick->TOTPSlots[0]->isProgrammed==true){
-            QString actionName("TOTP slot 1 ");
-            trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[0]->slotName),this,SLOT(getTOTP1()));
-
-        }
-        if (cryptostick->TOTPSlots[1]->isProgrammed==true){
-            QString actionName("TOTP slot 2 ");
-            trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[1]->slotName),this,SLOT(getTOTP2()));
-
-
-        }
-        if (cryptostick->TOTPSlots[2]->isProgrammed==true){
-            QString actionName("TOTP slot 3 ");
-            trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[2]->slotName),this,SLOT(getTOTP3()));
-
-
-        }
-        if (cryptostick->TOTPSlots[3]->isProgrammed==true){
-            QString actionName("TOTP slot 4 ");
-            trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[3]->slotName),this,SLOT(getTOTP4()));
-
-
-        }
-        trayMenu->addAction(restoreAction);
     }
+
+
+
+    // Add secure password dialog test
+/*
+    trayMenu->addAction(SecPasswordAction);
+*/
+    if ((int)true == cryptostick->activStick20)
+    {
+        // Add stick 20 setup
+        trayMenu->addAction(Stick20SetupAction);
+        // Add debug window
+        trayMenu->addAction(DebugAction);
+    }
+    // Add debug window
+    trayMenu->addAction(DebugAction);
     trayMenu->addSeparator();
+
     trayMenu->addAction(quitAction);
     trayIcon->setContextMenu(trayMenu);
 
@@ -198,6 +368,15 @@ void MainWindow::generateMenu()
     ui->slotComboBox->setItemText(5,QString("TOTP slot 4 [").append((char *)cryptostick->TOTPSlots[3]->slotName).append("]"));
 }
 
+/*******************************************************************************
+
+  generateHOTPConfig
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
 
 void MainWindow::generateHOTPConfig(HOTPSlot *slot)
 {
@@ -251,6 +430,16 @@ void MainWindow::generateHOTPConfig(HOTPSlot *slot)
 
 }
 
+/*******************************************************************************
+
+  generateTOTPConfig
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
 void MainWindow::generateTOTPConfig(TOTPSlot *slot)
 {
     int selectedSlot=ui->slotComboBox->currentIndex();
@@ -294,6 +483,16 @@ void MainWindow::generateTOTPConfig(TOTPSlot *slot)
     }
 }
 
+/*******************************************************************************
+
+  generateAllConfigs
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
 void MainWindow::generateAllConfigs()
 {
     cryptostick->initializeConfig();
@@ -301,6 +500,16 @@ void MainWindow::generateAllConfigs()
     displayCurrentSlotConfig();
     generateMenu();
 }
+
+/*******************************************************************************
+
+  displayCurrentSlotConfig
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
 
 void MainWindow::displayCurrentSlotConfig()
 {
@@ -413,6 +622,17 @@ void MainWindow::displayCurrentSlotConfig()
     }
 }
 
+/*******************************************************************************
+
+  displayCurrentGeneralConfig
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+
 void MainWindow::displayCurrentGeneralConfig()
 {
     QByteArray firmware = QByteArray((char *) cryptostick->firmwareVersion).toHex();
@@ -436,6 +656,16 @@ void MainWindow::displayCurrentGeneralConfig()
 
 
 }
+
+/*******************************************************************************
+
+  startConfiguration
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
 
 void MainWindow::startConfiguration()
 {
@@ -476,9 +706,103 @@ void MainWindow::startConfiguration()
          msgBox.setText("Invalid password!");
          msgBox.exec();
     }
-
-
 }
+
+/*******************************************************************************
+
+  startStick20Configuration
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+void MainWindow::startStick20Configuration()
+{
+    Stick20Dialog dialog(this);
+
+    dialog.cryptostick=cryptostick;
+
+    dialog.exec();
+}
+
+/*******************************************************************************
+
+  startStickDebug
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+void MainWindow::startStickDebug()
+{
+    DebugDialog dialog(this);
+
+    dialog.cryptostick=cryptostick;
+
+    dialog.SetNewText (DebugText_Stick20);
+
+    dialog.exec();
+}
+
+/*******************************************************************************
+
+  startStick20Setup
+
+  For testing only
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+void MainWindow::startStick20Setup()
+{
+    Stick20Setup dialog(this);
+
+    dialog.cryptostick=cryptostick;
+
+    dialog.exec();
+}
+
+/*******************************************************************************
+
+  startMatrixPasswordDialog
+
+  For testing only
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+void MainWindow::startMatrixPasswordDialog()
+{
+    MatrixPasswordDialog dialog(this);
+
+    dialog.cryptostick=cryptostick;
+    dialog.PasswordLen=6;
+    dialog.SetupInterfaceFlag = FALSE;
+
+    dialog.InitSecurePasswordDialog ();
+
+    dialog.exec();
+}
+
+/*******************************************************************************
+
+  getCode
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
 
 void MainWindow::getCode(uint8_t slotNo)
 {
@@ -498,6 +822,15 @@ void MainWindow::getCode(uint8_t slotNo)
 
 }
 
+/*******************************************************************************
+
+  on_writeButton_clicked
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
 
 void MainWindow::on_writeButton_clicked()
 {
@@ -545,15 +878,47 @@ void MainWindow::on_writeButton_clicked()
     }
 }
 
+/*******************************************************************************
+
+  on_slotComboBox_currentIndexChanged
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
 void MainWindow::on_slotComboBox_currentIndexChanged(int index)
 {
+    index = index;      // avoid warning
+
     displayCurrentSlotConfig();
 }
+
+/*******************************************************************************
+
+  on_resetButton_clicked
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
 
 void MainWindow::on_resetButton_clicked()
 {
     displayCurrentSlotConfig();
 }
+
+/*******************************************************************************
+
+  on_hexRadioButton_toggled
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
 
 
 void MainWindow::on_hexRadioButton_toggled(bool checked)
@@ -585,6 +950,16 @@ void MainWindow::on_hexRadioButton_toggled(bool checked)
     }
 }
 
+/*******************************************************************************
+
+  on_base32RadioButton_toggled
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
 void MainWindow::on_base32RadioButton_toggled(bool checked)
 {
     if (checked){
@@ -610,10 +985,31 @@ void MainWindow::on_base32RadioButton_toggled(bool checked)
 
 }
 
+/*******************************************************************************
+
+  on_setToZeroButton_clicked
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+
 void MainWindow::on_setToZeroButton_clicked()
 {
     ui->counterEdit->setText("0");
 }
+
+/*******************************************************************************
+
+  on_setToRandomButton_clicked
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
 
 void MainWindow::on_setToRandomButton_clicked()
 {
@@ -628,11 +1024,30 @@ void MainWindow::on_setToRandomButton_clicked()
     ui->counterEdit->setText(QString(QByteArray::number(counter,16)));
 }
 
+/*******************************************************************************
+
+  on_checkBox_2_toggled
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
 void MainWindow::on_checkBox_2_toggled(bool checked)
 {
-
-
+    checked = checked;      // avoid warning
 }
+
+/*******************************************************************************
+
+  on_tokenIDCheckBox_toggled
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
 
 void MainWindow::on_tokenIDCheckBox_toggled(bool checked)
 {
@@ -652,6 +1067,16 @@ void MainWindow::on_tokenIDCheckBox_toggled(bool checked)
 
     }
 }
+
+/*******************************************************************************
+
+  on_writeGeneralConfigButton_clicked
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
 
 void MainWindow::on_writeGeneralConfigButton_clicked()
 {
@@ -688,6 +1113,16 @@ void MainWindow::on_writeGeneralConfigButton_clicked()
 
 }
 
+/*******************************************************************************
+
+  getHOTP1
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
 void MainWindow::getHOTP1()
 {
     HOTPDialog dialog(this);
@@ -698,6 +1133,16 @@ void MainWindow::getHOTP1()
     dialog.getNextCode();
     dialog.exec();
 }
+
+/*******************************************************************************
+
+  getHOTP2
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
 
 void MainWindow::getHOTP2()
 {
@@ -710,6 +1155,16 @@ void MainWindow::getHOTP2()
     dialog.exec();
 }
 
+/*******************************************************************************
+
+  getTOTP1
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
 void MainWindow::getTOTP1()
 {
     HOTPDialog dialog(this);
@@ -720,6 +1175,16 @@ void MainWindow::getTOTP1()
     dialog.getNextCode();
     dialog.exec();
 }
+
+/*******************************************************************************
+
+  getTOTP2
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
 
 void MainWindow::getTOTP2()
 {
@@ -732,6 +1197,16 @@ void MainWindow::getTOTP2()
     dialog.exec();
 }
 
+/*******************************************************************************
+
+  getTOTP3
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
 void MainWindow::getTOTP3()
 {
     HOTPDialog dialog(this);
@@ -743,6 +1218,16 @@ void MainWindow::getTOTP3()
     dialog.exec();
 }
 
+/*******************************************************************************
+
+  getTOTP4
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
 void MainWindow::getTOTP4()
 {
     HOTPDialog dialog(this);
@@ -753,6 +1238,16 @@ void MainWindow::getTOTP4()
     dialog.getNextCode();
     dialog.exec();
 }
+
+/*******************************************************************************
+
+  on_eraseButton_clicked
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
 
 void MainWindow::on_eraseButton_clicked()
 {
@@ -788,10 +1283,30 @@ void MainWindow::on_eraseButton_clicked()
      }
 }
 
+/*******************************************************************************
+
+  on_resetGeneralConfigButton_clicked
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
 void MainWindow::on_resetGeneralConfigButton_clicked()
 {
     displayCurrentGeneralConfig();
 }
+
+/*******************************************************************************
+
+  on_randomSecretButton_clicked
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
 
 void MainWindow::on_randomSecretButton_clicked()
 {
@@ -807,6 +1322,16 @@ void MainWindow::on_randomSecretButton_clicked()
     ui->secretEdit->setText(secretArray.toHex());
 
 }
+
+/*******************************************************************************
+
+  on_checkBox_toggled
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
 
 void MainWindow::on_checkBox_toggled(bool checked)
 {

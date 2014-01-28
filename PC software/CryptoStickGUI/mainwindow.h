@@ -1,6 +1,6 @@
 /*
 * Author: Copyright (C) Andrzej Surowiec 2012
-*
+*						Parts Rudolf Boeddeker  Date: 2013-08-13
 *
 * This file is part of GPF Crypto Stick.
 *
@@ -52,6 +52,12 @@ private:
 
     QAction *quitAction;
     QAction *restoreAction;
+    QAction *Stick20Action;
+    QAction *DebugAction;
+    QAction *SecPasswordAction;
+    QAction *Stick20SetupAction;
+
+    QString DebugText;
 
     //QAction *totp1Action;
 
@@ -93,6 +99,11 @@ private slots:
     void on_resetGeneralConfigButton_clicked();
     void on_randomSecretButton_clicked();
     void on_checkBox_toggled(bool checked);
+
+    void startStick20Configuration();
+    void startStickDebug();
+    void startMatrixPasswordDialog();
+    void startStick20Setup() ;
 };
 
 #endif // MAINWINDOW_H

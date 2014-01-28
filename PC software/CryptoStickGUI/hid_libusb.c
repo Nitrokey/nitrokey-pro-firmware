@@ -63,6 +63,9 @@ extern "C" {
 #define DETACH_KERNEL_DRIVER
 #endif
 
+#define STICK20_DEBUG
+//#define STICK20_DEBUG_ALL
+
 /* Uncomment to enable the retrieval of Usage and Usage Page in
 hid_enumerate(). Warning, on platforms different from FreeBSD
 this is very invasive as it requires the detach
@@ -393,7 +396,7 @@ err:
 static char *make_path(libusb_device *dev, int interface_number)
 {
 	char str[64];
-	snprintf(str, sizeof(str), "%04x:%04x:%02x",
+    snprintf(str, sizeof(str), "%04x:%04x:%02x",
 		libusb_get_bus_number(dev),
 		libusb_get_device_address(dev),
 		interface_number);
@@ -436,17 +439,30 @@ struct hid_device_info  HID_API_EXPORT *hid_enumerate(unsigned short vendor_id, 
 	libusb_device **devs;
 	libusb_device *dev;
 	libusb_device_handle *handle;
-	ssize_t num_devs;
+    ssize_t num_devs;
 	int i = 0;
 	
 	struct hid_device_info *root = NULL; // return object
 	struct hid_device_info *cur_dev = NULL;
-	
+
+#ifdef STICK20_DEBUG
+    { // For debugging
+        char text[1000];
+        sprintf(text,"hid_enumerate: Start VID %04x PID %04x\n", vendor_id,product_id);
+        DebugAppendText (text);
+    }
+#endif
+
 	hid_init();
 
 	num_devs = libusb_get_device_list(usb_context, &devs);
 	if (num_devs < 0)
 		return NULL;
+
+#ifdef STICK20_DEBUG_ALL
+    DebugAppendText ("hid_enumerate: 2\n");
+#endif
+
 	while ((dev = devs[i++]) != NULL) {
 		struct libusb_device_descriptor desc;
 		struct libusb_config_descriptor *conf_desc = NULL;
@@ -457,20 +473,39 @@ struct hid_device_info  HID_API_EXPORT *hid_enumerate(unsigned short vendor_id, 
 		unsigned short dev_vid = desc.idVendor;
 		unsigned short dev_pid = desc.idProduct;
 		
+#ifdef STICK20_DEBUG
+        { // For debugging
+            char text[1000];
+//            sprintf(text,"Check Product-Vendor: Start VID %04x PID %04x\n",dev_vid, dev_pid);
+//            DebugAppendText (text);
+            if ((dev_vid == 0x20A0) && (dev_pid == 0x4109)&& (dev_pid == product_id))
+            {
+                sprintf(text,"*** STICK FOUND\n");
+                DebugAppendText (text);
+            }
+        }
+#endif
 		/* HID's are defined at the interface level. */
 		if (desc.bDeviceClass != LIBUSB_CLASS_PER_INTERFACE)
 			continue;
 
 		res = libusb_get_active_config_descriptor(dev, &conf_desc);
+
 		if (res < 0)
 			libusb_get_config_descriptor(dev, 0, &conf_desc);
+
 		if (conf_desc) {
 			for (j = 0; j < conf_desc->bNumInterfaces; j++) {
+
 				const struct libusb_interface *intf = &conf_desc->interface[j];
+
 				for (k = 0; k < intf->num_altsetting; k++) {
+
 					const struct libusb_interface_descriptor *intf_desc;
 					intf_desc = &intf->altsetting[k];
-					if (intf_desc->bInterfaceClass == LIBUSB_CLASS_HID) {
+
+                    if (intf_desc->bInterfaceClass == LIBUSB_CLASS_HID)
+                    {
 						interface_num = intf_desc->bInterfaceNumber;
 
 						/* Check the VID/PID against the arguments */
@@ -493,7 +528,16 @@ struct hid_device_info  HID_API_EXPORT *hid_enumerate(unsigned short vendor_id, 
 							cur_dev->path = make_path(dev, interface_num);
 							
 							res = libusb_open(dev, &handle);
+#ifdef STICK20_DEBUG
+{ // For debugging
+    if (res < 0) {
+        char text[1000];
+        sprintf(text,"libusb_open: ERROR : ret= %d - %s\n",res,  libusb_error_name(res));
+        DebugAppendText (text);
+     }
 
+}
+#endif
 							if (res >= 0) {
 								/* Serial Number */
 								if (desc.iSerialNumber > 0)
@@ -613,7 +657,15 @@ hid_device * hid_open(unsigned short vendor_id, unsigned short product_id, const
 	struct hid_device_info *devs, *cur_dev;
 	const char *path_to_open = NULL;
 	hid_device *handle = NULL;
-	
+
+#ifdef STICK20_DEBUG
+    { // For debugging
+        char text[1000];
+        sprintf(text,"hid_open: VID %04x PID %04x\n", vendor_id,product_id);
+        DebugAppendText (text);
+    }
+#endif
+
 	devs = hid_enumerate(vendor_id, product_id);
 	cur_dev = devs;
 	while (cur_dev) {
@@ -807,7 +859,7 @@ hid_device * HID_API_EXPORT hid_open_path(const char *path)
 			for (k = 0; k < intf->num_altsetting; k++) {
 				const struct libusb_interface_descriptor *intf_desc;
 				intf_desc = &intf->altsetting[k];
-				if (intf_desc->bInterfaceClass == LIBUSB_CLASS_HID) {
+                if (intf_desc->bInterfaceClass == LIBUSB_CLASS_HID) {
 					char *dev_path = make_path(usb_dev, intf_desc->bInterfaceNumber);
 					if (!strcmp(dev_path, path)) {
 						/* Matched Paths. Open this device */
@@ -1117,6 +1169,10 @@ int HID_API_EXPORT hid_get_feature_report(hid_device *dev, unsigned char *data, 
 	int res = -1;
 	int skipped_report_id = 0;
 	int report_number = data[0];
+    static int CallCounter =0;
+    int i;
+
+    CallCounter++;
 
 	if (report_number == 0x0) {
 		/* Offset the return buffer by 1, so that the report ID
@@ -1125,20 +1181,33 @@ int HID_API_EXPORT hid_get_feature_report(hid_device *dev, unsigned char *data, 
 		length--;
 		skipped_report_id = 1;
 	}
-	res = libusb_control_transfer(dev->device_handle,
-		LIBUSB_REQUEST_TYPE_CLASS|LIBUSB_RECIPIENT_INTERFACE|LIBUSB_ENDPOINT_IN,
-		0x01/*HID get_report*/,
-		(3/*HID feature*/ << 8) | report_number,
-		dev->interface,
-		(unsigned char *)data, length,
-		1000/*timeout millis*/);
-	
+
+    res = libusb_control_transfer(dev->device_handle,
+        LIBUSB_REQUEST_TYPE_CLASS|LIBUSB_RECIPIENT_INTERFACE|LIBUSB_ENDPOINT_IN,
+        0x01/*HID get_report*/,
+        (3/*HID feature*/ << 8) | report_number,
+        dev->interface,
+        (unsigned char *)data, length,
+        1000/*timeout millis*/);
+
 	if (res < 0)
-		return -1;
+    {
+#ifdef STICK20_DEBUG
+        {
+            char text[1000];
+            sprintf(text,"hid_get_feature_report: ERROR %d : ret= %d - %s\n",CallCounter,res,  libusb_error_name(res));
+            DebugAppendText (text);
+        }
+#endif
+        return -1;
+    }
 
 	if (skipped_report_id)
 		res++;
-	
+
+    // Get HID Stick messages
+    HID_GetStick20ReceiveData (data);
+
 	return res;
 }
 

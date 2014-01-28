@@ -1,10 +1,9 @@
 /*
-* Author: Copyright (C) Andrzej Surowiec 2012
+* Author: Copyright (C) Rudolf Boeddeker  Date: 2013-08-13
 *
+* This file is part of GPF Crypto Stick 2
 *
-* This file is part of GPF Crypto Stick.
-*
-* GPF Crypto Stick is free software: you can redistribute it and/or modify
+* GPF Crypto Stick 2  is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation, either version 3 of the License, or
 * any later version.
@@ -18,15 +17,25 @@
 * along with GPF Crypto Stick. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CRC32_H
-#define CRC32_H
+#ifndef UPDATEDIALOG_H
+#define UPDATEDIALOG_H
 
-#ifdef _MSC_VER
-    #define uint32_t unsigned long
-#else
-    #include "inttypes.h"
-#endif
+#include <QDialog>
 
-uint32_t Crc32(uint32_t Crc, uint32_t Data);
+namespace Ui {
+class UpdateDialog;
+}
 
-#endif // CRC32_H
+class UpdateDialog : public QDialog
+{
+    Q_OBJECT
+    
+public:
+    explicit UpdateDialog(QWidget *parent = 0);
+    ~UpdateDialog();
+    
+private:
+    Ui::UpdateDialog *ui;
+};
+
+#endif // UPDATEDIALOG_H

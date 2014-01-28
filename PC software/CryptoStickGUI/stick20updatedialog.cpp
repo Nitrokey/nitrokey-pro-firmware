@@ -1,10 +1,9 @@
 /*
-* Author: Copyright (C) Andrzej Surowiec 2012
+* Author: Copyright (C) Rudolf Boeddeker  Date: 2013-08-13
 *
+* This file is part of GPF Crypto Stick 2
 *
-* This file is part of GPF Crypto Stick.
-*
-* GPF Crypto Stick is free software: you can redistribute it and/or modify
+* GPF Crypto Stick 2  is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation, either version 3 of the License, or
 * any later version.
@@ -18,9 +17,15 @@
 * along with GPF Crypto Stick. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QtGui/QApplication>
-#include "mainwindow.h"
+#include "stick20updatedialog.h"
+#include "ui_stick20updatedialog.h"
 
+
+/*******************************************************************************
+
+ Local defines
+
+*******************************************************************************/
 
 /*******************************************************************************
 
@@ -31,31 +36,36 @@
 
 /*******************************************************************************
 
- Local defines
+  UpdateDialog
 
-*******************************************************************************/
-
-
-/*******************************************************************************
-
-  main
+  Constructor UpdateDialog
 
   Reviews
   Date      Reviewer        Info
-  12.08.13  RB              First review
+  13.08.13  RB              First review
 
 *******************************************************************************/
 
-
-int main(int argc, char *argv[])
+UpdateDialog::UpdateDialog(QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::UpdateDialog)
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    //w.show();
+    ui->setupUi(this);
+}
 
-    QTime midnight(0, 0, 0);
-    qsrand(midnight.secsTo(QTime::currentTime()));
+/*******************************************************************************
 
-    a.setQuitOnLastWindowClosed(false);
-    return a.exec();
+  UpdateDialog
+
+  Destructor UpdateDialog
+
+  Reviews
+  Date      Reviewer        Info
+  13.08.13  RB              First review
+
+*******************************************************************************/
+
+UpdateDialog::~UpdateDialog()
+{
+    delete ui;
 }

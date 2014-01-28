@@ -18,32 +18,28 @@
 * along with GPF Crypto Stick. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef HOTPSLOT_H
-#define HOTPSLOT_H
+#ifndef PASSWORDDIALOG_H
+#define PASSWORDDIALOG_H
 
-#ifdef _MSC_VER
-    #define uint8_t unsigned char
-    #define uint32_t unsigned long
-#else
-    #include "inttypes.h"
-#endif
+#include <QDialog>
 
+namespace Ui {
+class PasswordDialog;
+}
 
-class HOTPSlot
+class PasswordDialog : public QDialog
 {
+    Q_OBJECT
+    
 public:
-    HOTPSlot();
-    HOTPSlot(uint8_t slotNumber,uint8_t slotName[20],uint8_t secret[20],uint8_t counter[8],uint8_t config);
-    uint8_t slotNumber;
-    uint8_t slotName[15];
-    uint8_t secret[20];
-    uint8_t counter[8];
-    uint8_t config;
-    uint8_t tokenID[13];
-    bool isProgrammed;
+    explicit PasswordDialog(QWidget *parent = 0);
+    ~PasswordDialog();
+    
+private slots:
+    void on_checkBox_toggled(bool checked);
 
-
-
+private:
+    Ui::PasswordDialog *ui;
 };
 
-#endif // HOTPSLOT_H
+#endif // PASSWORDDIALOG_H

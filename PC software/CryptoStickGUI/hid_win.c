@@ -62,6 +62,16 @@ extern "C" {
 
 #include "hidapi.h"
 
+// Only for debugging
+//#include "device.h"
+#define STICK20_DEBUG
+//#define STICK20_DEBUG_ALL
+
+void DebugClearText (void);
+void DebugAppendText (char *Text);
+
+
+
 #ifdef _MSC_VER
 	// Thanks Microsoft, but I know how to use strncpy().
 	#pragma warning(disable:4996)
@@ -122,33 +132,34 @@ extern "C" {
 	static BOOLEAN initialized = FALSE;
 #endif // HIDAPI_USE_DDK
 
+
 struct hid_device_ {
-		HANDLE device_handle;
-		BOOL blocking;
-		USHORT output_report_length;
-		size_t input_report_length;
-		void *last_error_str;
-		DWORD last_error_num;
-		BOOL read_pending;
-		char *read_buf;
-		OVERLAPPED ol;
+        HANDLE device_handle;
+        BOOL blocking;
+        USHORT output_report_length;
+        size_t input_report_length;
+        void *last_error_str;
+        DWORD last_error_num;
+        BOOL read_pending;
+        char *read_buf;
+        OVERLAPPED ol;
 };
 
 static hid_device *new_hid_device()
 {
-	hid_device *dev = (hid_device*) calloc(1, sizeof(hid_device));
-	dev->device_handle = INVALID_HANDLE_VALUE;
-	dev->blocking = TRUE;
-	dev->output_report_length = 0;
-	dev->input_report_length = 0;
-	dev->last_error_str = NULL;
-	dev->last_error_num = 0;
-	dev->read_pending = FALSE;
-	dev->read_buf = NULL;
-	memset(&dev->ol, 0, sizeof(dev->ol));
-	dev->ol.hEvent = CreateEvent(NULL, FALSE, FALSE /*inital state f=nonsignaled*/, NULL);
+    hid_device *dev = (hid_device*) calloc(1, sizeof(hid_device));
+    dev->device_handle = INVALID_HANDLE_VALUE;
+    dev->blocking = TRUE;
+    dev->output_report_length = 0;
+    dev->input_report_length = 0;
+    dev->last_error_str = NULL;
+    dev->last_error_num = 0;
+    dev->read_pending = FALSE;
+    dev->read_buf = NULL;
+    memset(&dev->ol, 0, sizeof(dev->ol));
+    dev->ol.hEvent = CreateEvent(NULL, FALSE, FALSE /*inital state f=nonsignaled*/, NULL);
 
-	return dev;
+    return dev;
 }
 
 
@@ -231,11 +242,15 @@ int HID_API_EXPORT hid_init(void)
 {
 #ifndef HIDAPI_USE_DDK
 	if (!initialized) {
-		if (lookup_functions() < 0) {
+        DebugClearText ();
+        if (lookup_functions() < 0) {
 			hid_exit();
-			return -1;
+            DebugAppendText ("initialized FAILED\n");
+
+            return -1;
 		}
 		initialized = TRUE;
+        DebugAppendText ("initialized = TRUE;\n");
 	}
 #endif
 	return 0;
@@ -266,9 +281,17 @@ struct hid_device_info HID_API_EXPORT * HID_API_CALL hid_enumerate(unsigned shor
 	HDEVINFO device_info_set = INVALID_HANDLE_VALUE;
 	int device_index = 0;
 	int i;
-
+#ifdef STICK20_DEBUG
+    { // For debugging
+        char text[1000];
+        sprintf(text,"hid_enumerate: Start VID %04x PID %04x\n", vendor_id,product_id);
+        DebugAppendText (text);
+    }
+#endif
 	if (hid_init() < 0)
 		return NULL;
+
+//    DebugAppendText ("hid_enumerate: 2\n");
 
 	// Initialize the Windows objects.
 	memset(&devinfo_data, 0x0, sizeof(devinfo_data));
@@ -276,8 +299,11 @@ struct hid_device_info HID_API_EXPORT * HID_API_CALL hid_enumerate(unsigned shor
 	device_interface_data.cbSize = sizeof(SP_DEVICE_INTERFACE_DATA);
 
 	// Get information for all the devices belonging to the HID class.
-	device_info_set = SetupDiGetClassDevsA(&InterfaceClassGuid, NULL, NULL, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
-	
+    device_info_set = SetupDiGetClassDevsA(&InterfaceClassGuid, NULL, NULL, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
+//    device_info_set = SetupDiGetClassDevsA(NULL, NULL, NULL, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
+
+
+
 	// Iterate over each device in the HID class, looking for the right one.
 	
 	for (;;) {
@@ -334,6 +360,7 @@ struct hid_device_info HID_API_EXPORT * HID_API_CALL hid_enumerate(unsigned shor
 
 			// Populate devinfo_data. This function will return failure
 			// when there are no more interfaces left.
+
 			res = SetupDiEnumDeviceInfo(device_info_set, i, &devinfo_data);
 			if (!res)
 				goto cont;
@@ -342,18 +369,30 @@ struct hid_device_info HID_API_EXPORT * HID_API_CALL hid_enumerate(unsigned shor
 			               SPDRP_CLASS, NULL, (PBYTE)driver_name, sizeof(driver_name), NULL);
 			if (!res)
 				goto cont;
-
-			if (strcmp(driver_name, "HIDClass") == 0) {
+#ifdef STICK20_DEBUG_ALL
+            {
+                    char text[1000];
+                sprintf(text,"HandleName: 4c %s\n", driver_name);
+                 DebugAppendText (text);
+            }
+#endif
+            if ((strcmp(driver_name, "HIDClass") == 0) || (strcmp(driver_name, "Keyboard") == 0)) {
 				// See if there's a driver bound.
 				res = SetupDiGetDeviceRegistryPropertyA(device_info_set, &devinfo_data,
 				           SPDRP_DRIVER, NULL, (PBYTE)driver_name, sizeof(driver_name), NULL);
 				if (res)
+                {
 					break;
+                }
 			}
-		}
-
-		//wprintf(L"HandleName: %s\n", device_interface_detail_data->DevicePath);
-
+        }
+#ifdef STICK20_DEBUG_ALL
+    {
+            char text[1000];
+        sprintf(text,"HandleName: %s\n", device_interface_detail_data->DevicePath);
+        DebugAppendText (text);
+    }
+#endif
 		// Open a handle to the device
 		write_handle = open_device(device_interface_detail_data->DevicePath, TRUE);
 
@@ -369,6 +408,19 @@ struct hid_device_info HID_API_EXPORT * HID_API_CALL hid_enumerate(unsigned shor
 		attrib.Size = sizeof(HIDD_ATTRIBUTES);
 		HidD_GetAttributes(write_handle, &attrib);
 		//wprintf(L"Product/Vendor: %x %x\n", attrib.ProductID, attrib.VendorID);
+#ifdef STICK20_DEBUG
+        { // For debugging
+            char text[1000];
+//            sprintf(text,"Check Product-Vendor: Start VID %04x PID %04x\n",attrib.ProductID, attrib.VendorID);
+//            DebugAppendText (text);
+            if ((attrib.VendorID == 0x20A0) && (attrib.ProductID == 0x4109) && (attrib.ProductID == product_id))
+            {
+                sprintf(text,"*** STICK FOUND\n");
+                DebugAppendText (text);
+            }
+        }
+#endif
+
 
 		// Check the VID/PID to see if we should add this
 		// device to the enumeration list.
@@ -505,8 +557,16 @@ HID_API_EXPORT hid_device * HID_API_CALL hid_open(unsigned short vendor_id, unsi
 	// TODO: Merge this functions with the Linux version. This function should be platform independent.
 	struct hid_device_info *devs, *cur_dev;
 	const char *path_to_open = NULL;
-	hid_device *handle = NULL;
-	
+    hid_device *handle = NULL;
+
+#ifdef STICK20_DEBUG
+{ // For debugging
+    char text[1000];
+    sprintf(text,"hid_open: VID %04x PID %04x\n", vendor_id,product_id);
+    DebugAppendText (text);
+}
+#endif
+
 	devs = hid_enumerate(vendor_id, product_id);
 	cur_dev = devs;
 	while (cur_dev) {
@@ -736,6 +796,8 @@ int HID_API_EXPORT HID_API_CALL hid_send_feature_report(hid_device *dev, const u
 	return length;
 }
 
+extern int HID_GetStick20ReceiveData (unsigned char *data);
+
 
 int HID_API_EXPORT HID_API_CALL hid_get_feature_report(hid_device *dev, unsigned char *data, size_t length)
 {
@@ -775,8 +837,14 @@ int HID_API_EXPORT HID_API_CALL hid_get_feature_report(hid_device *dev, unsigned
 		register_error(dev, "Send Feature Report GetOverLappedResult");
 		return -1;
 	}
-	return bytes_returned;
+
+    // Get HID Stick messages
+    HID_GetStick20ReceiveData (data);
+
+    return bytes_returned;
 #endif
+
+
 }
 
 void HID_API_EXPORT HID_API_CALL hid_close(hid_device *dev)

@@ -3,6 +3,7 @@
 *
 *
 * This file is part of GPF Crypto Stick.
+*						Parts Rudolf Boeddeker  Date: 2013-08-13
 *
 * GPF Crypto Stick is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,9 +22,8 @@
 #ifndef RESPONSE_H
 #define RESPONSE_H
 
+#include "stick20hid.h"
 #include "device.h"
-
-
 
 class Response
 {
@@ -39,6 +39,7 @@ public:
     uint8_t reportBuffer[REPORT_SIZE+1];
 
 
+    HID_Stick20Status_est HID_Stick20Status_st;
 };
 
 #endif // RESPONSE_H
