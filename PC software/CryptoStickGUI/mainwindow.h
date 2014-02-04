@@ -34,9 +34,11 @@ class MainWindow : public QMainWindow
     Q_OBJECT
     
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(bool FlagDebugWindowActive,QWidget *parent = 0);
     void startTimer();
     ~MainWindow();
+
+    bool DebugWindowActive;
 
 protected:
      void closeEvent(QCloseEvent *event);
@@ -57,16 +59,33 @@ private:
     QAction *SecPasswordAction;
     QAction *Stick20SetupAction;
 
+
+    QAction *Stick20ActionEnableCryptedVolume;
+    QAction *Stick20ActionDisableCryptedVolume;
+    QAction *Stick20ActionEnableHiddenVolume;
+    QAction *Stick20ActionDisableHiddenVolume;
+    QAction *Stick20ActionEnableFirmwareUpdate;
+    QAction *Stick20ActionExportFirmwareToFile;
+    QAction *Stick20ActionDestroyCryptedVolume;
+    QAction *Stick20ActionFillSDCardWithRandomChars;
+    QAction *Stick20ActionGetStickStatus;
+    QAction *Stick20ActionSetReadonlyUncryptedVolume;
+    QAction *Stick20ActionSetReadWriteUncryptedVolume;
+
+
     QString DebugText;
 
-    //QAction *totp1Action;
+    void initActionsForStick20();
+    int  stick20SendCommand (uint8_t stick20Command, uint8_t *password);
 
+    //QAction *totp1Action;
 
     void generateMenu();
     void generateHOTPConfig(HOTPSlot *slot);
     void generateTOTPConfig(TOTPSlot *slot);
     void generateAllConfigs();
 
+    void generateMenuForStick20();
 
 
 private slots:
@@ -88,6 +107,10 @@ private slots:
     void on_tokenIDCheckBox_toggled(bool checked);
     void on_writeGeneralConfigButton_clicked();
 
+bool eventFilter (QObject *obj, QEvent *event);
+void iconActivated(QSystemTrayIcon::ActivationReason reason);
+
+
     void getHOTP1();
     void getHOTP2();
 
@@ -104,6 +127,24 @@ private slots:
     void startStickDebug();
     void startMatrixPasswordDialog();
     void startStick20Setup() ;
+
+
+
+    void startStick20EnableCryptedVolume();
+    void startStick20DisableCryptedVolume();
+    void startStick20EnableHiddenVolume();
+    void startStick20DisableHiddenVolume();
+    void startStick20EnableFirmwareUpdate();
+    void startStick20ExportFirmwareToFile();
+    void startStick20DestroyCryptedVolume();
+    void startStick20FillSDCardWithRandomChars();
+    void startStick20GetStickStatus();
+    void startStick20SetReadonlyUncryptedVolume();
+    void startStick20SetReadWriteUncryptedVolume();
+
+
+
+
 };
 
 #endif // MAINWINDOW_H

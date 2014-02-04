@@ -6,18 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>257</height>
+    <width>381</width>
+    <height>207</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Stick response</string>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>110</x>
-     <y>210</y>
+     <x>100</x>
+     <y>160</y>
      <width>161</width>
      <height>32</height>
     </rect>
@@ -32,9 +32,9 @@
   <widget class="QProgressBar" name="progressBar">
    <property name="geometry">
     <rect>
-     <x>80</x>
-     <y>170</y>
-     <width>251</width>
+     <x>40</x>
+     <y>120</y>
+     <width>301</width>
      <height>23</height>
     </rect>
    </property>
@@ -46,9 +46,9 @@
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>70</y>
+     <y>50</y>
      <width>281</width>
-     <height>81</height>
+     <height>61</height>
     </rect>
    </property>
    <property name="text">
@@ -64,14 +64,24 @@
   <widget class="QLabel" name="HeaderText">
    <property name="geometry">
     <rect>
-     <x>60</x>
+     <x>30</x>
      <y>20</y>
-     <width>261</width>
+     <width>331</width>
      <height>20</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
    <property name="text">
-    <string>TextLabel</string>
+    <string>HeaderLabel</string>
+   </property>
+   <property name="textFormat">
+    <enum>Qt::PlainText</enum>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>

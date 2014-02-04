@@ -33,6 +33,7 @@ extern "C" {
 #endif
     extern char DebugText_Stick20[STICK20_DEBUG_TEXT_LEN];
     extern unsigned long DebugTextlen_Stick20;
+    extern int DebugingActive;
 
     void DebugAppendText (char *Text);
 #ifdef __cplusplus

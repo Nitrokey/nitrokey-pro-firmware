@@ -35,12 +35,15 @@
 #include "stick20responsedialog.h"
 #include "stick20matrixpassworddialog.h"
 #include "stick20setup.h"
+#include "stick20updatedialog.h"
 
 #include <QTimer>
 #include <QMenu>
+#include <QDialog>
 #include <QtGui>
 #include <QDateTime>
 
+enum DialogCode { Rejected, Accepted };     // Why not found ?
 
 /*******************************************************************************
 
@@ -80,11 +83,18 @@ extern "C" char DebugText_Stick20[600000];
 
 *******************************************************************************/
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(bool FlagDebugWindowActive,QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     bool ret;
+
+    DebugWindowActive = FALSE;
+    if (TRUE == FlagDebugWindowActive)
+    {
+        DebugWindowActive = TRUE;
+        DebugingActive    = TRUE;
+    }
 
     ui->setupUi(this);
     ui->statusBar->showMessage("Device disconnected.");
@@ -94,10 +104,31 @@ MainWindow::MainWindow(QWidget *parent) :
     QTimer *timer = new QTimer(this);
     ret = connect(timer, SIGNAL(timeout()), this, SLOT(checkConnection()));
     timer->start(1000);
+
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setIcon(QIcon(":/images/CS_icon.png"));
 
+//trayIcon->installEventFilter(this);
+
+    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+            this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+/*
+    connect(trayIcon, SIGNAL(activated (QMouseEvent: (QSystemTrayIcon::ActivationReason)),
+            this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+*/
+
     trayIcon->show();
+
+    if (TRUE == trayIcon->supportsMessages ())
+    {
+        trayIcon->showMessage ("Cryptostick GUI","active");
+    }
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Cryptostick GUI active");
+        msgBox.exec();
+    }
 
     quitAction = new QAction(tr("&Quit"), this);
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
@@ -105,23 +136,14 @@ MainWindow::MainWindow(QWidget *parent) :
     restoreAction = new QAction(tr("&Configure"), this);
     connect(restoreAction, SIGNAL(triggered()), this, SLOT(startConfiguration()));
 
-    Stick20Action = new QAction(tr("&Stick 20"), this);
-    connect(Stick20Action, SIGNAL(triggered()), this, SLOT(startStick20Configuration()));
-
     DebugAction = new QAction(tr("&Debug"), this);
     connect(DebugAction, SIGNAL(triggered()), this, SLOT(startStickDebug()));
 
 
-    SecPasswordAction = new QAction(tr("&SecPassword"), this);
-    connect(SecPasswordAction, SIGNAL(triggered()), this, SLOT(startMatrixPasswordDialog()));
+    initActionsForStick20 ();
 
-    Stick20SetupAction = new QAction(tr("&Stick 20 Setup"), this);
-    connect(Stick20SetupAction, SIGNAL(triggered()), this, SLOT(startStick20Setup()));
-
-
+    // Init debug text
     DebugText = "Start Debug\n";
-
- //   DebugText.append("test 1\n");
 
 
     //totp1Action = new QAction(tr("&TOTP Slot 1"), this);
@@ -129,6 +151,72 @@ MainWindow::MainWindow(QWidget *parent) :
 
     generateMenu();
 
+}
+
+
+/*******************************************************************************
+
+  iconActivated
+
+  Changes
+  Date      Author        Info
+  31.01.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+
+*******************************************************************************/
+
+void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    switch (reason) {
+    case QSystemTrayIcon::Context:
+//        trayMenu->hide();
+//        trayMenu->close();
+        break;
+    case QSystemTrayIcon::Trigger:
+        trayMenu->popup(QCursor::pos());
+        break;
+    case QSystemTrayIcon::DoubleClick:
+        break;
+    case QSystemTrayIcon::MiddleClick:
+        break;
+    default:
+        ;
+    }
+}
+
+/*******************************************************************************
+
+  eventFilter
+
+  Changes
+  Date      Author        Info
+  31.01.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+
+*******************************************************************************/
+
+bool MainWindow::eventFilter (QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::MouseButtonPress)
+    {
+      QMouseEvent *mEvent = static_cast<QMouseEvent *>(event);
+      if(mEvent->button() == Qt::LeftButton)
+      {
+/*
+        QMouseEvent my_event = new QMouseEvent ( mEvent->type(), mEvent->pos(), Qt::Rightbutton ,
+        mEvent->buttons(), mEvent->modifiers() );
+        QCoreApplication::postEvent ( trayIcon, my_event );
+*/
+        return true;
+      }
+    }
+    return QObject::eventFilter(obj, event);
 }
 
 /*******************************************************************************
@@ -335,26 +423,17 @@ void MainWindow::generateMenu()
             trayMenu->addAction(restoreAction);
         }
         else {
-            // Stick 20 ist connected
-            trayMenu->addAction(Stick20Action);
+            // Stick 20 is connected
+            generateMenuForStick20 ();
+
         }
     }
 
-
-
-    // Add secure password dialog test
-/*
-    trayMenu->addAction(SecPasswordAction);
-*/
-    if ((int)true == cryptostick->activStick20)
+    // Add debug window ?
+    if (TRUE == DebugWindowActive)
     {
-        // Add stick 20 setup
-        trayMenu->addAction(Stick20SetupAction);
-        // Add debug window
         trayMenu->addAction(DebugAction);
     }
-    // Add debug window
-    trayMenu->addAction(DebugAction);
     trayMenu->addSeparator();
 
     trayMenu->addAction(quitAction);
@@ -367,6 +446,109 @@ void MainWindow::generateMenu()
     ui->slotComboBox->setItemText(4,QString("TOTP slot 3 [").append((char *)cryptostick->TOTPSlots[2]->slotName).append("]"));
     ui->slotComboBox->setItemText(5,QString("TOTP slot 4 [").append((char *)cryptostick->TOTPSlots[3]->slotName).append("]"));
 }
+
+
+/*******************************************************************************
+
+  initActionsForStick20
+
+  Changes
+  Date      Author        Info
+  03.02.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void MainWindow::initActionsForStick20()
+{
+    SecPasswordAction = new QAction(tr("&SecPassword"), this);
+    connect(SecPasswordAction, SIGNAL(triggered()), this, SLOT(startMatrixPasswordDialog()));
+
+    Stick20Action = new QAction(tr("&Stick 20"), this);
+    connect(Stick20Action, SIGNAL(triggered()), this, SLOT(startStick20Configuration()));
+
+    Stick20SetupAction = new QAction(tr("&Stick 20 Setup"), this);
+    connect(Stick20SetupAction, SIGNAL(triggered()), this, SLOT(startStick20Setup()));
+
+    Stick20ActionEnableCryptedVolume = new QAction(tr("&Enable crypted volume"), this);
+    connect(Stick20ActionEnableCryptedVolume, SIGNAL(triggered()), this, SLOT(startStick20EnableCryptedVolume()));
+
+    Stick20ActionDisableCryptedVolume = new QAction(tr("&Disable crypted volume"), this);
+    connect(Stick20ActionDisableCryptedVolume, SIGNAL(triggered()), this, SLOT(startStick20DisableCryptedVolume()));
+
+    Stick20ActionEnableHiddenVolume = new QAction(tr("&Enable hidden crypted volume"), this);
+    connect(Stick20ActionEnableHiddenVolume, SIGNAL(triggered()), this, SLOT(startStick20EnableHiddenVolume()));
+
+    Stick20ActionDisableHiddenVolume = new QAction(tr("&Disable hidden crypted volume"), this);
+    connect(Stick20ActionDisableHiddenVolume, SIGNAL(triggered()), this, SLOT(startStick20DisableHiddenVolume()));
+
+    Stick20ActionEnableFirmwareUpdate = new QAction(tr("&Enable firmware update"), this);
+    connect(Stick20ActionEnableFirmwareUpdate, SIGNAL(triggered()), this, SLOT(startStick20EnableFirmwareUpdate()));
+
+    Stick20ActionExportFirmwareToFile = new QAction(tr("&Export firmware to file"), this);
+    connect(Stick20ActionExportFirmwareToFile, SIGNAL(triggered()), this, SLOT(startStick20ExportFirmwareToFile()));
+
+    Stick20ActionDestroyCryptedVolume = new QAction(tr("&Destroy crypted volume"), this);
+    connect(Stick20ActionDestroyCryptedVolume, SIGNAL(triggered()), this, SLOT(startStick20DestroyCryptedVolume()));
+
+    Stick20ActionFillSDCardWithRandomChars = new QAction(tr("&Fill SD card with random chars"), this);
+    connect(Stick20ActionFillSDCardWithRandomChars, SIGNAL(triggered()), this, SLOT(startStick20FillSDCardWithRandomChars()));
+
+    Stick20ActionGetStickStatus = new QAction(tr("&Get stick status"), this);
+    connect(Stick20ActionGetStickStatus, SIGNAL(triggered()), this, SLOT(startStick20GetStickStatus()));
+
+    Stick20ActionSetReadonlyUncryptedVolume = new QAction(tr("&Set readonly uncrypted volume"), this);
+    connect(Stick20ActionSetReadonlyUncryptedVolume, SIGNAL(triggered()), this, SLOT(startStick20SetReadonlyUncryptedVolume()));
+
+    Stick20ActionSetReadWriteUncryptedVolume = new QAction(tr("&Set readwrite uncrypted volume"), this);
+    connect(Stick20ActionSetReadWriteUncryptedVolume, SIGNAL(triggered()), this, SLOT(startStick20SetReadWriteUncryptedVolume()));
+
+}
+
+/*******************************************************************************
+
+  generateMenuForStick20
+
+  Changes
+  Date      Author        Info
+  03.02.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void MainWindow::generateMenuForStick20()
+{
+    trayMenu->addAction(Stick20Action);
+    trayMenu->addSeparator();
+
+    trayMenu->addAction(Stick20ActionEnableCryptedVolume        );
+    trayMenu->addAction(Stick20ActionDisableCryptedVolume       );
+    trayMenu->addAction(Stick20ActionEnableHiddenVolume         );
+    trayMenu->addAction(Stick20ActionDisableHiddenVolume        );
+    trayMenu->addAction(Stick20ActionEnableFirmwareUpdate       );
+    trayMenu->addAction(Stick20ActionExportFirmwareToFile       );
+    trayMenu->addAction(Stick20ActionDestroyCryptedVolume       );
+    trayMenu->addAction(Stick20ActionFillSDCardWithRandomChars  );
+    trayMenu->addAction(Stick20ActionGetStickStatus             );
+    trayMenu->addAction(Stick20ActionSetReadonlyUncryptedVolume );
+    trayMenu->addAction(Stick20ActionSetReadWriteUncryptedVolume);
+
+    // Add stick 20 setup - yet not used
+//        trayMenu->addAction(Stick20SetupAction);
+
+    // Add secure password dialog test
+//    trayMenu->addAction(SecPasswordAction);
+
+    trayMenu->addSeparator();
+
+    trayMenu->addAction(quitAction);
+
+}
+
 
 /*******************************************************************************
 
@@ -679,26 +861,26 @@ void MainWindow::startConfiguration()
 
         QString password = QInputDialog::getText(this, tr("Enter card admin password"),tr("Admin password: ")+tr("(Tries left: ")+QString::number(cryptostick->passwordRetryCount)+")", QLineEdit::Password,"", &ok);
 
-    if (ok){
+        if (ok){
 
-    uint8_t tempPassword[25];
+            uint8_t tempPassword[25];
 
-    for (int i=0;i<25;i++)
-        tempPassword[i]=qrand()&0xFF;
+            for (int i=0;i<25;i++)
+                tempPassword[i]=qrand()&0xFF;
 
-    cryptostick->firstAuthenticate((uint8_t *)password.toAscii().data(),tempPassword);
+            cryptostick->firstAuthenticate((uint8_t *)password.toAscii().data(),tempPassword);
 
-    }
+        }
     }
     if (cryptostick->validPassword){
 
-    cryptostick->getSlotConfigs();
-    displayCurrentSlotConfig();
+        cryptostick->getSlotConfigs();
+        displayCurrentSlotConfig();
 
-    cryptostick->getStatus();
-    displayCurrentGeneralConfig();
+        cryptostick->getStatus();
+        displayCurrentGeneralConfig();
 
-    showNormal();
+        showNormal();
 
    }
     else if (ok){
@@ -793,6 +975,511 @@ void MainWindow::startMatrixPasswordDialog()
 
     dialog.exec();
 }
+
+
+/*******************************************************************************
+
+  startStick20EnableCryptedVolume
+
+  Changes
+  Date      Author        Info
+  04.02.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void MainWindow::startStick20EnableCryptedVolume()
+{
+    uint8_t password[40];
+    bool    ret;
+
+    PasswordDialog dialog(this);
+    dialog.init("Enter user password");
+    ret = dialog.exec();
+
+    if (Accepted == ret)
+    {
+        password[0] = 'P';
+        dialog.getPassword ((char*)&password[1]);
+
+        stick20SendCommand (STICK20_CMD_ENABLE_CRYPTED_PARI,password);
+    }
+}
+
+/*******************************************************************************
+
+  startStick20DisableCryptedVolume
+
+  Changes
+  Date      Author        Info
+  04.02.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void MainWindow::startStick20DisableCryptedVolume()
+{
+    uint8_t password[40];
+
+    password[0] = 0;
+    stick20SendCommand (STICK20_CMD_DISABLE_CRYPTED_PARI,password);
+}
+
+/*******************************************************************************
+
+  startStick20EnableHiddenVolume
+
+  Changes
+  Date      Author        Info
+  04.02.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void MainWindow::startStick20EnableHiddenVolume()
+{
+    uint8_t password[40];
+    bool    ret;
+
+    PasswordDialog dialog(this);
+    dialog.init("Enter hidden password");
+    ret = dialog.exec();
+
+    if (Accepted == ret)
+    {
+        password[0] = 'P';
+        dialog.getPassword ((char*)&password[1]);
+
+        stick20SendCommand (STICK20_CMD_ENABLE_HIDDEN_CRYPTED_PARI,password);
+    }
+}
+
+/*******************************************************************************
+
+  startStick20DisableHiddenVolume
+
+  Changes
+  Date      Author        Info
+  04.02.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void MainWindow::startStick20DisableHiddenVolume()
+{
+    uint8_t password[40];
+
+    password[0] = 0;
+    stick20SendCommand (STICK20_CMD_DISABLE_HIDDEN_CRYPTED_PARI,password);
+
+}
+
+
+/*******************************************************************************
+
+  startStick20EnableCryptedVolume
+
+  Changes
+  Date      Author        Info
+  04.02.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void MainWindow::startStick20EnableFirmwareUpdate()
+{
+    uint8_t password[40];
+    bool    ret;
+
+    PasswordDialog dialog(this);
+    dialog.init("Enter admin password");
+    ret = dialog.exec();
+
+    if (Accepted == ret)
+    {
+        password[0] = 'P';
+        dialog.getPassword ((char*)&password[1]);
+
+        stick20SendCommand (STICK20_CMD_ENABLE_FIRMWARE_UPDATE,password);
+    }
+}
+
+/*******************************************************************************
+
+  startStick20ExportFirmwareToFile
+
+  Changes
+  Date      Author        Info
+  04.02.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void MainWindow::startStick20ExportFirmwareToFile()
+{
+    uint8_t password[40];
+    bool    ret;
+
+    PasswordDialog dialog(this);
+    dialog.init("Enter admin password");
+    ret = dialog.exec();
+
+    if (Accepted == ret)
+    {
+        password[0] = 'P';
+        dialog.getPassword ((char*)&password[1]);
+
+        stick20SendCommand (STICK20_CMD_EXPORT_FIRMWARE_TO_FILE,password);
+    }
+}
+
+/*******************************************************************************
+
+  startStick20DestroyCryptedVolume
+
+  Changes
+  Date      Author        Info
+  04.02.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void MainWindow::startStick20DestroyCryptedVolume()
+{
+    uint8_t password[40];
+    bool    ret;
+
+    PasswordDialog dialog(this);
+    dialog.init("Enter admin password");
+    ret = dialog.exec();
+
+    if (Accepted == ret)
+    {
+        password[0] = 'P';
+        dialog.getPassword ((char*)&password[1]);
+
+        stick20SendCommand (STICK20_CMD_GENERATE_NEW_KEYS,password);
+    }
+
+}
+
+/*******************************************************************************
+
+  startStick20EnableCryptedVolume
+
+  Changes
+  Date      Author        Info
+  04.02.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void MainWindow::startStick20FillSDCardWithRandomChars()
+{
+    uint8_t password[40];
+    bool    ret;
+
+    PasswordDialog dialog(this);
+    dialog.init("Enter admin password");
+    ret = dialog.exec();
+
+    if (Accepted == ret)
+    {
+        password[0] = 'P';
+        dialog.getPassword ((char*)&password[1]);
+
+        stick20SendCommand (STICK20_CMD_FILL_SD_CARD_WITH_RANDOM_CHARS,password);
+    }
+}
+
+
+/*******************************************************************************
+
+  startStick20GetStickStatus
+
+  Changes
+  Date      Author        Info
+  04.02.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void MainWindow::startStick20GetStickStatus()
+{
+    uint8_t password[40];
+    bool    ret;
+
+    PasswordDialog dialog(this);
+    dialog.init("Enter admin password");
+    ret = dialog.exec();
+
+    if (Accepted == ret)
+    {
+        password[0] = 'P';
+        dialog.getPassword ((char*)&password[1]);
+
+//        stick20SendCommand (STICK20_CMD_GET_DEVICE_STATUS,password);
+    }
+
+}
+
+/*******************************************************************************
+
+  startStick20SetReadonlyUncryptedVolume
+
+  Changes
+  Date      Author        Info
+  04.02.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void MainWindow::startStick20SetReadonlyUncryptedVolume()
+{
+    uint8_t password[40];
+    bool    ret;
+
+    PasswordDialog dialog(this);
+    dialog.init("Enter admin password");
+    ret = dialog.exec();
+
+    if (Accepted == ret)
+    {
+        password[0] = 'P';
+        dialog.getPassword ((char*)&password[1]);
+
+        stick20SendCommand (STICK20_CMD_ENABLE_READONLY_UNCRYPTED_LUN,password);
+    }
+
+}
+
+/*******************************************************************************
+
+  startStick20SetReadWriteUncryptedVolume
+
+  Changes
+  Date      Author        Info
+  04.02.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void MainWindow::startStick20SetReadWriteUncryptedVolume()
+{
+    uint8_t password[40];
+    bool    ret;
+
+    PasswordDialog dialog(this);
+    dialog.init("Enter admin password");
+    ret = dialog.exec();
+
+    if (Accepted == ret)
+    {
+        password[0] = 'P';
+        dialog.getPassword ((char*)&password[1]);
+
+        stick20SendCommand (STICK20_CMD_ENABLE_READWRITE_UNCRYPTED_LUN,password);
+    }
+
+}
+
+
+
+/*******************************************************************************
+
+  stick20SendCommand
+
+  Changes
+  Date      Author        Info
+  04.02.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+int MainWindow::stick20SendCommand (uint8_t stick20Command, uint8_t *password)
+{
+    bool        ret;
+    bool        waitForAnswerFromStick20;
+    QByteArray  passwordString;
+    QMessageBox msgBox;
+
+    waitForAnswerFromStick20 = FALSE;
+
+    switch (stick20Command)
+    {
+        case STICK20_CMD_ENABLE_CRYPTED_PARI            :
+            ret = cryptostick->stick20EnableCryptedPartition (password);
+            if (TRUE == ret)
+            {
+                waitForAnswerFromStick20 = TRUE;
+            }
+            break;
+        case STICK20_CMD_DISABLE_CRYPTED_PARI           :
+            ret = cryptostick->stick20DisableCryptedPartition ();
+            if (TRUE == ret)
+            {
+                waitForAnswerFromStick20 = TRUE;
+            }
+            break;
+        case STICK20_CMD_ENABLE_HIDDEN_CRYPTED_PARI     :
+            ret = cryptostick->stick20EnableHiddenCryptedPartition (password);
+            if (TRUE == ret)
+            {
+                waitForAnswerFromStick20 = TRUE;
+            }
+            break;
+        case STICK20_CMD_DISABLE_HIDDEN_CRYPTED_PARI    :
+            ret = cryptostick->stick20DisableHiddenCryptedPartition ();
+            if (TRUE == ret)
+            {
+                waitForAnswerFromStick20 = TRUE;
+            }
+            break;
+        case STICK20_CMD_ENABLE_FIRMWARE_UPDATE         :
+            {
+                UpdateDialog dialog(this);
+                ret = dialog.exec();
+                if (Accepted == ret)
+                {
+                    ret = cryptostick->stick20EnableFirmwareUpdate (password);
+                    if (TRUE == ret)
+                    {
+                        waitForAnswerFromStick20 = TRUE;
+                    }
+                }
+            }
+            break;
+        case STICK20_CMD_EXPORT_FIRMWARE_TO_FILE        :
+            ret = cryptostick->stick20ExportFirmware (password);
+            if (TRUE == ret)
+            {
+                waitForAnswerFromStick20 = TRUE;
+            }
+            break;
+        case STICK20_CMD_GENERATE_NEW_KEYS              :
+            {
+                msgBox.setText("The generation of new AES keys will destroy the crypted volume!");
+                msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+                msgBox.setDefaultButton(QMessageBox::No);
+                ret = msgBox.exec();
+                if (Accepted == ret)
+                {
+                    ret = cryptostick->stick20CreateNewKeys (password);
+                    if (TRUE == ret)
+                    {
+                        waitForAnswerFromStick20 = TRUE;
+                    }
+                }
+            }
+            break;
+        case STICK20_CMD_FILL_SD_CARD_WITH_RANDOM_CHARS :
+            {
+                msgBox.setText("This command fills the hole sd card with random chars. This will destroy all volumes!");
+                msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+                msgBox.setDefaultButton(QMessageBox::No);
+                ret = msgBox.exec();
+                if (Accepted == ret)
+                {
+                    ret = cryptostick->stick20FillSDCardWithRandomChars (password);
+                    if (TRUE == ret)
+                    {
+                        waitForAnswerFromStick20 = TRUE;
+                    }
+                }
+            }
+            break;
+         case STICK20_CMD_WRITE_STATUS_DATA        :
+            msgBox.setText("Not implemented");
+            ret = msgBox.exec();
+            break;
+        case STICK20_CMD_ENABLE_READONLY_UNCRYPTED_LUN :
+            ret = cryptostick->stick20SendSetReadonlyToUncryptedVolume (password);
+            if (TRUE == ret)
+            {
+                waitForAnswerFromStick20 = TRUE;
+            }
+            break;
+        case STICK20_CMD_ENABLE_READWRITE_UNCRYPTED_LUN :
+            ret = cryptostick->stick20SendSetReadwriteToUncryptedVolume (password);
+            if (TRUE == ret)
+            {
+                waitForAnswerFromStick20 = TRUE;
+            }
+            break;
+        case STICK20_CMD_SEND_PASSWORD_MATRIX        :
+            ret = cryptostick->stick20GetPasswordMatrix ();
+            if (TRUE == ret)
+            {
+                waitForAnswerFromStick20 = TRUE;
+            }
+            break;
+        case STICK20_CMD_SEND_PASSWORD_MATRIX_PINDATA        :
+            ret = cryptostick->stick20SendPasswordMatrixPinData (password);
+            if (TRUE == ret)
+            {
+                waitForAnswerFromStick20 = TRUE;
+            }
+            break;
+
+        case STICK20_CMD_GET_DEVICE_STATUS        :
+            ret = cryptostick->stick20GetStatusData ();
+            if (TRUE == ret)
+            {
+                waitForAnswerFromStick20 = TRUE;
+            }
+            break;
+
+        default :
+            msgBox.setText("Stick20Dialog: Wrong combobox value! ");
+            msgBox.exec();
+            break;
+
+    }
+
+    if (TRUE == waitForAnswerFromStick20)
+    {
+        Stick20ResponseDialog ResponseDialog(this);
+
+        ResponseDialog.NoStopWhenStatusOK ();
+        ResponseDialog.cryptostick=cryptostick;
+
+        ResponseDialog.exec();
+    }
+    return (true);
+}
+
+
+
+
+
+
+
+
+
 
 /*******************************************************************************
 

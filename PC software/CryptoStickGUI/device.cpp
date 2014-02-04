@@ -1347,3 +1347,5 @@ int Device::stick20SendSetReadwriteToUncryptedVolume (uint8_t *Pindata)
 
     return (true);
 }
+
+

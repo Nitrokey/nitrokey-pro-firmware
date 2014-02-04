@@ -37,7 +37,7 @@
 
 extern "C" char DebugText_Stick20[600000];          // todo move to header
 extern "C" unsigned long DebugTextlen_Stick20;      // todo move to header
-
+extern "C" int DebugingActive;                     // todo move to header
 
 /*******************************************************************************
 

@@ -50,17 +50,17 @@ typedef struct {
 
 typeOptionsComboboxStick20 tOptionsComboboxStick20[] =
 {
-    "Enable Crypted Partition",             STICK20_CMD_ENABLE_CRYPTED_PARI,
-    "Disable Crypted Partition",            STICK20_CMD_DISABLE_CRYPTED_PARI,
-    "Enable Hidden Crypted Partition",      STICK20_CMD_ENABLE_HIDDEN_CRYPTED_PARI,
-    "Disable Hidden Crypted Partition",     STICK20_CMD_DISABLE_HIDDEN_CRYPTED_PARI,
-    "Enable Firmware Update",               STICK20_CMD_ENABLE_FIRMWARE_UPDATE,
-    "Export Firmware To File",              STICK20_CMD_EXPORT_FIRMWARE_TO_FILE,
-    "Generate New Keys",                    STICK20_CMD_GENERATE_NEW_KEYS,
-    "Fill SD Card With Random Chars",       STICK20_CMD_FILL_SD_CARD_WITH_RANDOM_CHARS,
-    "Get Stick Status - Todo",              STICK20_CMD_GET_DEVICE_STATUS,
-    "Set readonly Uncrypted Partition",     STICK20_CMD_ENABLE_READONLY_UNCRYPTED_LUN,
-    "Set readwrite Uncrypted Partition",    STICK20_CMD_ENABLE_READWRITE_UNCRYPTED_LUN,
+    "Enable crypted volume",                STICK20_CMD_ENABLE_CRYPTED_PARI,
+    "Disable crypted volume",               STICK20_CMD_DISABLE_CRYPTED_PARI,
+    "Enable hidden crypted volume",         STICK20_CMD_ENABLE_HIDDEN_CRYPTED_PARI,
+//    "Disable hidden crypted volume",     STICK20_CMD_DISABLE_HIDDEN_CRYPTED_PARI,
+    "Enable firmware update",               STICK20_CMD_ENABLE_FIRMWARE_UPDATE,
+    "Export firmware to file",              STICK20_CMD_EXPORT_FIRMWARE_TO_FILE,
+    "Generate new AES keys",                STICK20_CMD_GENERATE_NEW_KEYS,
+    "Fill SD card with random chars",       STICK20_CMD_FILL_SD_CARD_WITH_RANDOM_CHARS,
+    "Get stick status - Todo",              STICK20_CMD_GET_DEVICE_STATUS,
+    "Set readonly uncrypted volume",        STICK20_CMD_ENABLE_READONLY_UNCRYPTED_LUN,
+    "Set readwrite uncrypted volume",       STICK20_CMD_ENABLE_READWRITE_UNCRYPTED_LUN,
     NULL, 0
 };
 
@@ -162,6 +162,16 @@ void Stick20Dialog::on_buttonBox_accepted()
         return;
     }
 
+    if (false == ui->PasswordEdit->isHidden())
+    {
+        passwordString = ui->PasswordEdit->text().toAscii();
+        // No password entered ?
+        if (0 == passwordString.size()){
+            msgBox.setText("Please enter a password");
+            msgBox.exec();
+            return;
+        }
+    }
 
     if (false == ui->checkBox_Matrix->isChecked())
     {
@@ -264,7 +274,7 @@ void Stick20Dialog::on_buttonBox_accepted()
             break;
         case STICK20_CMD_GENERATE_NEW_KEYS              :   
             {
-                msgBox.setText("The generating of new keys will destroy the crypted partition!");
+                msgBox.setText("The generation of new AES keys will destroy the crypted volume!");
                 msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
                 msgBox.setDefaultButton(QMessageBox::No);
                 ret = msgBox.exec();
@@ -280,7 +290,7 @@ void Stick20Dialog::on_buttonBox_accepted()
             break;
         case STICK20_CMD_FILL_SD_CARD_WITH_RANDOM_CHARS :
             {
-                msgBox.setText("This command fills the sd card with random chars. This will destroy the crypted und uncrypted partitions!");
+                msgBox.setText("This command fills the hole sd card with random chars. This will destroy all volumes!");
                 msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
                 msgBox.setDefaultButton(QMessageBox::No);
                 ret = msgBox.exec();
@@ -347,6 +357,7 @@ void Stick20Dialog::on_buttonBox_accepted()
     {
         Stick20ResponseDialog ResponseDialog(this);
 
+        ResponseDialog.NoStopWhenStatusOK ();
         ResponseDialog.cryptostick=cryptostick;
 
         ResponseDialog.exec();
@@ -392,10 +403,14 @@ void Stick20Dialog::InitEnterPasswordGui(char *PasswordKind)
     ui->label->setText(PasswordKind);
     ui->PasswordEdit->show();
     ui->label->show();
-    ui->checkBox_Matrix->setChecked(false);
+    ui->checkBox->setChecked(false);
     ui->checkBox->show();
-    ui->checkBox_Matrix->setChecked(false);
-    ui->checkBox_Matrix->show();
+
+    ui->checkBox_Matrix->hide();                // Feature not used
+
+//    ui->checkBox_Matrix->setChecked(false);
+//    ui->checkBox_Matrix->show();
+
 }
 
 /*******************************************************************************
@@ -437,27 +452,43 @@ void Stick20Dialog::on_comboBox_currentIndexChanged(int index)
     {
         case STICK20_CMD_ENABLE_CRYPTED_PARI            :
             InitEnterPasswordGui ("User-Password");
+            ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
             break;
         case STICK20_CMD_DISABLE_CRYPTED_PARI           :
             InitNoPasswordGui ();
+            ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
             break;
         case STICK20_CMD_ENABLE_HIDDEN_CRYPTED_PARI     :
             InitEnterPasswordGui ("User-Password");
+            ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
             break;
         case STICK20_CMD_DISABLE_HIDDEN_CRYPTED_PARI    :
             InitNoPasswordGui ();
+            ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
             break;
         case STICK20_CMD_ENABLE_FIRMWARE_UPDATE         :
             InitEnterPasswordGui ("Admin-Password");
+            ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
             break;
         case STICK20_CMD_EXPORT_FIRMWARE_TO_FILE        :
             InitEnterPasswordGui ("Admin-Password");
+            ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
             break;
         case STICK20_CMD_GENERATE_NEW_KEYS              :
             InitEnterPasswordGui ("Admin-Password");
+            ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
             break;
         case STICK20_CMD_FILL_SD_CARD_WITH_RANDOM_CHARS :
             InitEnterPasswordGui ("Admin-Password");
+            ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+            break;
+        case STICK20_CMD_ENABLE_READONLY_UNCRYPTED_LUN :
+            InitEnterPasswordGui ("Admin-Password");
+            ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+            break;
+        case STICK20_CMD_ENABLE_READWRITE_UNCRYPTED_LUN :
+            InitEnterPasswordGui ("Admin-Password");
+            ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
             break;
         default :
             break;
@@ -488,4 +519,30 @@ void Stick20Dialog::on_checkBox_Matrix_toggled(bool checked)
         ui->PasswordEdit->setEnabled(true);
         ui->checkBox->setEnabled(true);
     }
+}
+
+/*******************************************************************************
+
+  on_PasswordEdit_textChanged
+
+  Changes
+  Date      Author        Info
+  03.02.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void Stick20Dialog::on_PasswordEdit_textChanged(const QString &arg1)
+{
+    if (0 ==  ui->PasswordEdit->text().size())
+    {
+        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+    }
+    else
+    {
+        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+    }
+
 }

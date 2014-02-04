@@ -73,6 +73,43 @@ PasswordDialog::~PasswordDialog()
 
 /*******************************************************************************
 
+  init
+
+  Changes
+  Date      Author        Info
+  04.02.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void PasswordDialog::init(char *text)
+{
+    ui->label->setText(tr(text));
+}
+
+/*******************************************************************************
+
+  getPassword
+
+  Changes
+  Date      Author        Info
+  04.02.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void PasswordDialog::getPassword(char *text)
+{
+    strcpy (text,ui->lineEdit->text().toAscii());
+}
+
+
+/*******************************************************************************
+
   on_checkBox_toggled
 
   Reviews

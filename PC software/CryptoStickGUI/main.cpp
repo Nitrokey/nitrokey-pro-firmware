@@ -49,12 +49,27 @@
 
 int main(int argc, char *argv[])
 {
+    bool DebugWindowActive;
+    char *p;
+
     QApplication a(argc, argv);
-    MainWindow w;
+
+    DebugWindowActive = FALSE;
+    if (2 == argc)
+    {
+        p = argv[1];
+        if (0 == strcmp (p,"-debug"))
+        {
+            DebugWindowActive = TRUE;
+        }
+    }
+
+    MainWindow w(DebugWindowActive);
     //w.show();
 
     QTime midnight(0, 0, 0);
     qsrand(midnight.secsTo(QTime::currentTime()));
+
 
     a.setQuitOnLastWindowClosed(false);
     return a.exec();

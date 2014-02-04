@@ -34,7 +34,10 @@ class PasswordDialog : public QDialog
 public:
     explicit PasswordDialog(QWidget *parent = 0);
     ~PasswordDialog();
-    
+
+    void init(char *text);
+    void getPassword(char *text);
+
 private slots:
     void on_checkBox_toggled(bool checked);
 

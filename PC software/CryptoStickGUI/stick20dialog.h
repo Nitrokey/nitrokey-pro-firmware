@@ -46,6 +46,8 @@ private slots:
 
     void on_checkBox_Matrix_toggled(bool checked);
 
+    void on_PasswordEdit_textChanged(const QString &arg1);
+
 private:
     Ui::Stick20Dialog *ui;
 

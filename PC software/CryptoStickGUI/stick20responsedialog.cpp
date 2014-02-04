@@ -63,6 +63,13 @@ Stick20ResponseDialog::Stick20ResponseDialog(QWidget *parent) :
 
     ui->setupUi(this);
 
+    ui->OutputText->setText("");
+
+    if (false == DebugingActive)
+    {
+//        ui->
+    }
+
     ui->progressBar->hide();
 
     pollStick20Timer = new QTimer(this);
@@ -127,7 +134,10 @@ void Stick20ResponseDialog::checkStick20Status()
 
     ret = stick20Response->getResponse(cryptostick);
 
-    checkStick20StatusDebug (stick20Response,ret);
+    if (true == DebugingActive)
+    {
+        checkStick20StatusDebug (stick20Response,ret);
+    }
 
     if (0 == ret)
     {
@@ -200,18 +210,20 @@ void Stick20ResponseDialog::checkStick20Status()
         ui->HeaderText->setText(OutputText);
 
         if (TRUE == FlagNoStopWhenStatusOK)
-        switch (stick20Response->HID_Stick20Status_st.Status_u8)
         {
-            case OUTPUT_CMD_STICK20_STATUS_OK               :
-                done (TRUE);
-                break;
-            case OUTPUT_CMD_STICK20_STATUS_IDLE             :
-            case OUTPUT_CMD_STICK20_STATUS_BUSY             :
-            case OUTPUT_CMD_STICK20_STATUS_WRONG_PASSWORD   :
-            case OUTPUT_CMD_STICK20_STATUS_BUSY_PROGRESSBAR :
-            case OUTPUT_CMD_STICK20_STATUS_PASSWORD_MATRIX_READY   :
-            default :
-                break;
+            switch (stick20Response->HID_Stick20Status_st.Status_u8)
+            {
+                case OUTPUT_CMD_STICK20_STATUS_OK               :
+                    done (TRUE);
+                    break;
+                case OUTPUT_CMD_STICK20_STATUS_IDLE             :
+                case OUTPUT_CMD_STICK20_STATUS_BUSY             :
+                case OUTPUT_CMD_STICK20_STATUS_WRONG_PASSWORD   :
+                case OUTPUT_CMD_STICK20_STATUS_BUSY_PROGRESSBAR :
+                case OUTPUT_CMD_STICK20_STATUS_PASSWORD_MATRIX_READY   :
+                default :
+                    break;
+            }
         }
     }
 

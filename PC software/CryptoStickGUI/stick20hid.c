@@ -46,6 +46,7 @@ extern "C" {
 
 char DebugText_Stick20[STICK20_DEBUG_TEXT_LEN];
 unsigned long DebugTextlen_Stick20 = 0;
+int DebugingActive = FALSE;
 
 HID_Stick20SendData_est             HID_Stick20ReceiveData_st;
 
@@ -327,6 +328,9 @@ if (OUTPUT_CMD_STICK20_SEND_DATA_TYPE_NONE != HID_Stick20ReceiveData_st.SendData
     }
     return (TRUE);
 }
+
+
+
 
 #ifdef __cplusplus
 } // extern "C"
