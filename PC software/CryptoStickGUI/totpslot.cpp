@@ -55,6 +55,7 @@ TOTPSlot::TOTPSlot()
     memset(tokenID,0,sizeof(tokenID));
     config=0;
     slotNumber=0;
+    interval=30;
 }
 
 /*******************************************************************************

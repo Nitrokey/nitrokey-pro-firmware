@@ -28,6 +28,7 @@
 #include "hotpslot.h"
 #include "totpslot.h"
 
+class Response;
 
 #define REPORT_SIZE 64
 #define PAYLOAD_SIZE 53
@@ -83,6 +84,13 @@
 #define CMD_STATUS_WRONG_PASSWORD 4
 #define CMD_STATUS_NOT_AUTHORIZED 5
 
+enum comm_errors{
+ERR_NOT_CONNECTED=-1,
+ERR_WRONG_RESPONSE_CRC=-2,
+ERR_SENDING=-3,
+ERR_STATUS_NOT_OK=-4
+};
+
 
 #define STICK20_PASSOWRD_LEN               20
 #define STICK20_PASSWORD_KIND_USER          0
@@ -134,12 +142,14 @@ public:
     int checkConnection();
     bool isConnected;
     int sendCommand(Command *cmd);
+    int sendCommandGetResponse(Command *cmd, Response *resp);
     void connect();
     int getSlotName(uint8_t slotNo);
     int eraseSlot(uint8_t slotNo);
     int writeToHOTPSlot(HOTPSlot *slot);
     int writeToTOTPSlot(TOTPSlot *slot);
     int getCode(uint8_t slotNo, uint64_t challenge,uint8_t result[18]);
+    int getHOTP(uint8_t slotNo);
     int readSlot(uint8_t slotNo);
     int getPasswordRetryCount();
     bool newConnection;

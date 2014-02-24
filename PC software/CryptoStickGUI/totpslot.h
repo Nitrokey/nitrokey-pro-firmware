@@ -38,6 +38,7 @@ public:
     uint8_t secret[20];
     uint8_t config;
     uint8_t tokenID[13];
+    uint16_t interval;
     bool isProgrammed;
 };
 

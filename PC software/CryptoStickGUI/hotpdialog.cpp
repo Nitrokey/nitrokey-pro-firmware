@@ -34,12 +34,19 @@ void HOTPDialog::getNextCode()
     memset(result,0,18);
     uint32_t code;
     uint8_t config;
+    int interval=ui->intervalSpinBox->value();
+
+    if (interval<1)
+        interval=1;
+
+    if (slotNumber>=0x20)
+    device->TOTPSlots[slotNumber-0x20]->interval=interval;
 
     QString output;
 
      uint64_t currentTime= QDateTime::currentDateTime().toTime_t();
 
-     device->getCode(slotNumber,currentTime/30,result);
+     device->getCode(slotNumber,currentTime/interval,result);
      //cryptostick->getCode(slotNo,1,result);
      code=result[0]+(result[1]<<8)+(result[2]<<16)+(result[3]<<24);
      config=result[4];
@@ -61,7 +68,7 @@ void HOTPDialog::getNextCode()
 
 
      qDebug() << "Current time:" << currentTime;
-     qDebug() << "Counter:" << currentTime/30;
+     qDebug() << "Counter:" << currentTime/interval;
      qDebug() << "TOTP:" << code;
 
      ui->lineEdit->setText(output);
@@ -73,6 +80,8 @@ void HOTPDialog::setToHOTP()
     ui->label->setText("Your HOTP:");
     ui->nextButton->setText("Next HOTP");
     this->setWindowTitle(title);
+    ui->intervalLabel->hide();
+    ui->intervalSpinBox->hide();
 
 }
 
@@ -81,6 +90,11 @@ void HOTPDialog::setToTOTP()
     ui->label->setText("Your TOTP:");
     ui->nextButton->setText("Generate TOTP");
     this->setWindowTitle(title);
+    ui->intervalLabel->show();
+
+    ui->intervalSpinBox->setValue(device->TOTPSlots[slotNumber-0x20]->interval);
+    ui->intervalSpinBox->show();
+
 }
 
 HOTPDialog::~HOTPDialog()

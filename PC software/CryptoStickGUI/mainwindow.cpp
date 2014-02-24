@@ -869,7 +869,7 @@ void MainWindow::startConfiguration()
                 tempPassword[i]=qrand()&0xFF;
 
             cryptostick->firstAuthenticate((uint8_t *)password.toAscii().data(),tempPassword);
-
+            password.clear();
         }
     }
     if (cryptostick->validPassword){
