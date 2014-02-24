@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'hotpdialog.ui'
 **
-** Created: Sun Jan 26 21:06:42 2014
+** Created: Mon Feb 24 21:36:19 2014
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -19,6 +19,7 @@
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
 #include <QtGui/QPushButton>
+#include <QtGui/QSpinBox>
 
 QT_BEGIN_NAMESPACE
 
@@ -30,6 +31,8 @@ public:
     QPushButton *cancelButton;
     QPushButton *clipboardButton;
     QPushButton *nextButton;
+    QSpinBox *intervalSpinBox;
+    QLabel *intervalLabel;
 
     void setupUi(QDialog *HOTPDialog)
     {
@@ -52,6 +55,15 @@ public:
         nextButton = new QPushButton(HOTPDialog);
         nextButton->setObjectName(QString::fromUtf8("nextButton"));
         nextButton->setGeometry(QRect(10, 90, 91, 23));
+        intervalSpinBox = new QSpinBox(HOTPDialog);
+        intervalSpinBox->setObjectName(QString::fromUtf8("intervalSpinBox"));
+        intervalSpinBox->setGeometry(QRect(320, 10, 42, 22));
+        intervalSpinBox->setMinimum(1);
+        intervalSpinBox->setMaximum(65536);
+        intervalSpinBox->setValue(30);
+        intervalLabel = new QLabel(HOTPDialog);
+        intervalLabel->setObjectName(QString::fromUtf8("intervalLabel"));
+        intervalLabel->setGeometry(QRect(235, 10, 81, 21));
 
         retranslateUi(HOTPDialog);
         QObject::connect(cancelButton, SIGNAL(clicked()), HOTPDialog, SLOT(reject()));
@@ -66,6 +78,7 @@ public:
         cancelButton->setText(QApplication::translate("HOTPDialog", "Close", 0, QApplication::UnicodeUTF8));
         clipboardButton->setText(QApplication::translate("HOTPDialog", "Copy to clipboard and close", 0, QApplication::UnicodeUTF8));
         nextButton->setText(QApplication::translate("HOTPDialog", "Get next", 0, QApplication::UnicodeUTF8));
+        intervalLabel->setText(QApplication::translate("HOTPDialog", "TOTP interval:", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };
