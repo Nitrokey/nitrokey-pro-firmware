@@ -838,7 +838,7 @@ int Device::firstAuthenticate(uint8_t cardPassword[], uint8_t tempPasswrod[])
 
     int res;
     uint8_t data[50];
-
+    uint32_t crc;
     memcpy(data,cardPassword,25);
     memcpy(data+25,tempPasswrod,25);
 
@@ -846,7 +846,7 @@ int Device::firstAuthenticate(uint8_t cardPassword[], uint8_t tempPasswrod[])
     if (isConnected){
     Command *cmd=new Command(CMD_FIRST_AUTHENTICATE,data,50);
     res=sendCommand(cmd);
-
+    crc=cmd->crc;
     //remove the card password from memory
     delete cmd;
     memset(data,0,sizeof(data));
@@ -859,7 +859,7 @@ int Device::firstAuthenticate(uint8_t cardPassword[], uint8_t tempPasswrod[])
         Response *resp=new Response();
         resp->getResponse(this);
 
-        if (cmd->crc==resp->lastCommandCRC){ //the response was for the last command
+        if (crc==resp->lastCommandCRC){ //the response was for the last command
             if (resp->lastCommandStatus==CMD_STATUS_OK){
                 memcpy(password,tempPasswrod,25);
                 validPassword=true;
@@ -870,7 +870,6 @@ int Device::firstAuthenticate(uint8_t cardPassword[], uint8_t tempPasswrod[])
             }
 
         }
-
 
     }
 
