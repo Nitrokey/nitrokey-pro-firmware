@@ -34,7 +34,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
     
 public:
-    explicit MainWindow(bool FlagDebugWindowActive,QWidget *parent = 0);
+    explicit MainWindow(int FlagDebug,QWidget *parent = 0);
     void startTimer();
     ~MainWindow();
 
@@ -71,10 +71,11 @@ private:
     QAction *Stick20ActionGetStickStatus;
     QAction *Stick20ActionSetReadonlyUncryptedVolume;
     QAction *Stick20ActionSetReadWriteUncryptedVolume;
-
+    QAction *Stick20ActionDebugAction;
 
     QString DebugText;
 
+    void generateMenuForStick10();
     void initActionsForStick20();
     int  stick20SendCommand (uint8_t stick20Command, uint8_t *password);
 
@@ -141,9 +142,7 @@ void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void startStick20GetStickStatus();
     void startStick20SetReadonlyUncryptedVolume();
     void startStick20SetReadWriteUncryptedVolume();
-
-
-
+    void startStick20DebugAction();
 
 };
 

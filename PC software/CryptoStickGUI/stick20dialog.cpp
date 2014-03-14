@@ -148,12 +148,14 @@ void Stick20Dialog::on_buttonBox_accepted()
 {
     bool        ret;
     bool        waitForAnswerFromStick20;
+    bool        stopWhenStatusOKFromStick20;
     int         n;
     uint8_t     password[50];
     QByteArray  passwordString;
     QMessageBox msgBox;
 
-    waitForAnswerFromStick20 = FALSE;
+    waitForAnswerFromStick20    = FALSE;
+    stopWhenStatusOKFromStick20 = FALSE;
 
     // No Stick no work
     if (false == cryptostick->isConnected){
@@ -296,7 +298,7 @@ void Stick20Dialog::on_buttonBox_accepted()
                 ret = msgBox.exec();
                 if (Accepted == ret)
                 {
-                    ret = cryptostick->stick20FillSDCardWithRandomChars (password);
+                    ret = cryptostick->stick20FillSDCardWithRandomChars (password,STICK20_FILL_SD_CARD_WITH_RANDOM_CHARS_ENCRYPTED_VOL);
                     if (TRUE == ret)
                     {
                         waitForAnswerFromStick20 = TRUE;
@@ -341,7 +343,8 @@ void Stick20Dialog::on_buttonBox_accepted()
             ret = cryptostick->stick20GetStatusData ();
             if (TRUE == ret)
             {
-                waitForAnswerFromStick20 = TRUE;
+                waitForAnswerFromStick20    = TRUE;
+                stopWhenStatusOKFromStick20 = TRUE;
             }
             break;
 
@@ -357,7 +360,10 @@ void Stick20Dialog::on_buttonBox_accepted()
     {
         Stick20ResponseDialog ResponseDialog(this);
 
-        ResponseDialog.NoStopWhenStatusOK ();
+        if (FALSE == stopWhenStatusOKFromStick20)
+        {
+            ResponseDialog.NoStopWhenStatusOK ();
+        }
         ResponseDialog.cryptostick=cryptostick;
 
         ResponseDialog.exec();

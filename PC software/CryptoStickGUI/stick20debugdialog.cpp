@@ -37,7 +37,9 @@
 
 extern "C" char DebugText_Stick20[600000];          // todo move to header
 extern "C" unsigned long DebugTextlen_Stick20;      // todo move to header
-extern "C" int DebugingActive;                     // todo move to header
+extern "C" char DebugTextHasChanged;                // todo move to header
+extern "C" int DebugingActive;                      // todo move to header
+extern "C" int DebugingStick20PoolingActive;;       // todo move to header
 
 /*******************************************************************************
 
@@ -117,14 +119,17 @@ DebugDialog::~DebugDialog()
 void DebugDialog::UpdateDebugText()
 {
     static int nCallCounter = 0;
-    static int nOldTextLen = 0;
     QString OutputText;
     int ret;
 
-    // Get response data
-    Response *stick20Response = new Response();
 
-    ret = stick20Response->getResponse(cryptostick);
+    if (true == DebugingStick20PoolingActive)
+    {
+        // Poll data from stick 20
+        Response *stick20Response = new Response();
+
+        ret = stick20Response->getResponse(cryptostick);
+    }
 
 #ifdef LOCAL_DEBUG
     { // For debugging
@@ -138,13 +143,11 @@ void DebugDialog::UpdateDebugText()
     // Check for auto scroll activ
     if (0 != ui->checkBox->checkState())
     {
-        if (nOldTextLen != strlen (DebugText_Stick20))
+        if (TRUE == DebugTextHasChanged)
         {
             ui->plainTextEdit->setPlainText(DebugText_Stick20);
 
             ui->plainTextEdit->moveCursor (QTextCursor::End);
-
-            nOldTextLen = strlen (DebugText_Stick20);
        }
     }
 

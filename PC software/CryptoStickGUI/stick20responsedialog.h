@@ -34,6 +34,7 @@ extern "C" {
     extern char DebugText_Stick20[STICK20_DEBUG_TEXT_LEN];
     extern unsigned long DebugTextlen_Stick20;
     extern int DebugingActive;
+    extern int DebugingStick20PoolingActive;
 
     void DebugAppendText (char *Text);
 #ifdef __cplusplus
@@ -54,6 +55,7 @@ public:
     ~Stick20ResponseDialog();
 
     void checkStick20StatusDebug(Response *stick20Response,int Status);
+    void showStick20Configuration (int Status);
 
     Device *cryptostick;
 
