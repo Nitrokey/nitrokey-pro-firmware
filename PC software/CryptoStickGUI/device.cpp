@@ -18,12 +18,12 @@
 * along with GPF Crypto Stick. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "device.h"
-#include "string.h"
+
 #include "response.h"
+#include "string.h"
 #include "crc32.h"
 #include "sleep.h"
-
+#include "device.h"
 /*******************************************************************************
 
  External declarations
@@ -250,6 +250,52 @@ int Device::sendCommand(Command *cmd)
      }
     return err;
 }
+
+
+int Device::sendCommandGetResponse(Command *cmd, Response *resp)
+{
+    uint8_t report[REPORT_SIZE+1];
+    int i;
+    int err;
+
+    if (!isConnected)
+        return ERR_NOT_CONNECTED;
+
+    memset(report,0,sizeof(report));
+    report[1]=cmd->commandType;
+
+
+    memcpy(report+2,cmd->data,COMMAND_SIZE);
+
+    uint32_t crc=0xffffffff;
+    for (i=0;i<15;i++){
+        crc=Crc32(crc,((uint32_t *)(report+1))[i]);
+    }
+    ((uint32_t *)(report+1))[15]=crc;
+
+    cmd->crc=crc;
+
+    err = hid_send_feature_report(handle, report, sizeof(report));
+
+    if (err==-1)
+        return ERR_SENDING;
+
+    Sleep::msleep(100);
+
+    //Response *resp=new Response();
+    resp->getResponse(this);
+
+    if (cmd->crc!=resp->lastCommandCRC)
+        return ERR_WRONG_RESPONSE_CRC;
+
+    if (resp->lastCommandStatus==CMD_STATUS_OK)
+        return 0;
+
+
+
+    return ERR_STATUS_NOT_OK;
+}
+
 
 /*******************************************************************************
 
@@ -546,6 +592,31 @@ int Device::getCode(uint8_t slotNo, uint64_t challenge,uint8_t result[18])
     return -1;
 
 }
+
+
+int Device::getHOTP(uint8_t slotNo)
+{
+
+    qDebug() << "getting code" << slotNo;
+    int res;
+    uint8_t data[9];
+
+    data[0]=slotNo;
+
+    //memcpy(data+1,&challenge,8);
+
+
+    Command *cmd=new Command(CMD_GET_CODE,data,9);
+    Response *resp=new Response();
+    res=sendCommandGetResponse(cmd,resp);
+
+        //    if (res==0)
+        //        memcpy(result,resp->data,18);
+
+    return res;
+
+}
+
 /*******************************************************************************
 
   readSlot
@@ -721,7 +792,7 @@ int Device::getPasswordRetryCount()
     res=sendCommand(cmd);
 
     if (res==-1)
-        return -1;
+        return ERR_SENDING;
     else{  //sending the command was successful
         Sleep::msleep(100);
         Response *resp=new Response();
@@ -730,9 +801,11 @@ int Device::getPasswordRetryCount()
         if (cmd->crc==resp->lastCommandCRC){
             passwordRetryCount=resp->data[0];
         }
+        else
+            return ERR_WRONG_RESPONSE_CRC;
     }
     }
-    return -2;
+    return ERR_NOT_CONNECTED;
 }
 
 
@@ -771,7 +844,7 @@ int Device::writeGeneralConfig(uint8_t data[])
     res=sendCommand(cmd);
 
     if (res==-1)
-        return -1;
+        return ERR_SENDING;
     else{  //sending the command was successful
         Sleep::msleep(100);
         Response *resp=new Response();
@@ -781,10 +854,11 @@ int Device::writeGeneralConfig(uint8_t data[])
         if (resp->lastCommandStatus==CMD_STATUS_OK)
             return 0;
         }
+        else
+            return ERR_WRONG_RESPONSE_CRC;
     }
-    return -2;
     }
-    return -3;
+    return ERR_NOT_CONNECTED;
 
 
 }
@@ -803,7 +877,7 @@ int Device::firstAuthenticate(uint8_t cardPassword[], uint8_t tempPasswrod[])
 
     int res;
     uint8_t data[50];
-
+    uint32_t crc;
     memcpy(data,cardPassword,25);
     memcpy(data+25,tempPasswrod,25);
 
@@ -811,6 +885,10 @@ int Device::firstAuthenticate(uint8_t cardPassword[], uint8_t tempPasswrod[])
     if (isConnected){
     Command *cmd=new Command(CMD_FIRST_AUTHENTICATE,data,50);
     res=sendCommand(cmd);
+    crc=cmd->crc;
+    //remove the card password from memory
+    delete cmd;
+    memset(data,0,sizeof(data));
 
     if (res==-1)
         return -1;
@@ -839,7 +917,6 @@ int Device::firstAuthenticate(uint8_t cardPassword[], uint8_t tempPasswrod[])
 
         }
 
-
     }
 
    }
@@ -848,6 +925,9 @@ int Device::firstAuthenticate(uint8_t cardPassword[], uint8_t tempPasswrod[])
 
 
 }
+
+
+
 /*******************************************************************************
 
   authorize

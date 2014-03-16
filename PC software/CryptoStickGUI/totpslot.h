@@ -22,7 +22,8 @@
 #define TOTPSLOT_H
 
 #ifdef _MSC_VER
-    #define uint8_t unsigned char
+#define uint8_t unsigned char
+#define uint16_t unsigned short
 #else
     #include "inttypes.h"
 #endif
@@ -38,6 +39,7 @@ public:
     uint8_t secret[20];
     uint8_t config;
     uint8_t tokenID[13];
+    uint16_t interval;
     bool isProgrammed;
 };
 
