@@ -882,42 +882,45 @@ int Device::firstAuthenticate(uint8_t cardPassword[], uint8_t tempPasswrod[])
     memcpy(data+25,tempPasswrod,25);
 
 
-    if (isConnected){
-    Command *cmd=new Command(CMD_FIRST_AUTHENTICATE,data,50);
-    res=sendCommand(cmd);
-    crc=cmd->crc;
-    //remove the card password from memory
-    delete cmd;
-    memset(data,0,sizeof(data));
+    if (isConnected)
+    {
+        Command *cmd=new Command(CMD_FIRST_AUTHENTICATE,data,50);
+        res=sendCommand(cmd);
+        crc=cmd->crc;
 
-    if (res==-1)
-        return -1;
-    else{  //sending the command was successful
-        //return cmd->crc;
-        Sleep::msleep(1000);
-        Response *resp=new Response();
-        resp->getResponse(this);
+        //remove the card password from memory
+        delete cmd;
+        memset(data,0,sizeof(data));
+
+        if (res==-1)
+            return -1;
+        else
+        {  //sending the command was successful
+            //return cmd->crc;
+            Sleep::msleep(1000);
+            Response *resp=new Response();
+            resp->getResponse(this);
 {
-        char text[1000];
-     sprintf(text,"send crc :%08x: get :%08x:\n",cmd->crc,resp->lastCommandCRC );
+     char text[1000];
+     sprintf(text,"send crc :%08x: get :%08x:\n",crc,resp->lastCommandCRC );
      DebugAppendText (text);
 }
-        if (cmd->crc==resp->lastCommandCRC)
-        { //the response was for the last command
-            if (resp->lastCommandStatus==CMD_STATUS_OK)
-            {
-                memcpy(password,tempPasswrod,25);
-                validPassword=true;
-                return 0;
-            }
-            else if (resp->lastCommandStatus==CMD_STATUS_WRONG_PASSWORD)
-            {
-                return -3;
+            if (crc==resp->lastCommandCRC)
+            { //the response was for the last command
+                if (resp->lastCommandStatus==CMD_STATUS_OK)
+                {
+                    memcpy(password,tempPasswrod,25);
+                    validPassword=true;
+                    return 0;
+                }
+                else if (resp->lastCommandStatus==CMD_STATUS_WRONG_PASSWORD)
+                {
+                    return -3;
+                }
+
             }
 
         }
-
-    }
 
    }
 
