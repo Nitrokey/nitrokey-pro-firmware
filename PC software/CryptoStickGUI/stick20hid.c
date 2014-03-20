@@ -46,13 +46,15 @@ extern "C" {
 
 char DebugText_Stick20[STICK20_DEBUG_TEXT_LEN];
 unsigned long DebugTextlen_Stick20 = 0;
+char DebugTextHasChanged = FALSE;
 int DebugingActive = FALSE;
+int DebugingStick20PoolingActive = FALSE;
 
 HID_Stick20SendData_est             HID_Stick20ReceiveData_st;
 
 HID_Stick20MatrixPasswordData_est   HID_Stick20MatrixPasswordData_st;
 
-HID_Stick20AccessStatus_est         HID_Stick20AccessStatus_st;
+typeStick20Configuration_st         HID_Stick20Configuration_st;
 
 /*******************************************************************************
 
@@ -78,6 +80,7 @@ void DebugClearText (void)
 {
     DebugText_Stick20[0] = 0;
     DebugTextlen_Stick20 = 0;
+    DebugTextHasChanged  = FALSE;
 }
 
 /*******************************************************************************
@@ -110,13 +113,17 @@ void DebugAppendText (char *Text)
         }
         i++;
     }
+    if (0 != i)
+    {
+        DebugTextHasChanged = TRUE;
+    }
 }
 
 /** Only for debugging - End */
 
 /*******************************************************************************
 
-  HID_GetStick20AccessStatusData
+  HID_GetStick20Configuration
 
   Reviews
   Date      Reviewer        Info
@@ -124,17 +131,19 @@ void DebugAppendText (char *Text)
 
 *******************************************************************************/
 
-int HID_GetStick20AccessStatusData (void)
+int HID_GetStick20Configuration (void)
 {
     unsigned char NewDebugBlock = 1;
     int len;
 
+    DebugAppendText ("GetStick20Configuration\n");
+
     NewDebugBlock = HID_Stick20ReceiveData_st.SendCounter_u8;
     len = HID_Stick20ReceiveData_st.SendSize_u8;
 
-    memcpy (&HID_Stick20AccessStatus_st,
-            &HID_Stick20ReceiveData_st.SendData_u8[1],
-            sizeof (HID_Stick20AccessStatus_st));
+    memcpy (&HID_Stick20Configuration_st,
+            &HID_Stick20ReceiveData_st.SendData_u8[0],
+            sizeof (HID_Stick20Configuration_st));
 
     return (TRUE);
 }
@@ -323,7 +332,7 @@ if (OUTPUT_CMD_STICK20_SEND_DATA_TYPE_NONE != HID_Stick20ReceiveData_st.SendData
             HID_GetStick20PasswordMatrixData ();
             break;
         case OUTPUT_CMD_STICK20_SEND_DATA_TYPE_STATUS :
-            HID_GetStick20AccessStatusData ();
+            HID_GetStick20Configuration ();
             break;
     }
     return (TRUE);

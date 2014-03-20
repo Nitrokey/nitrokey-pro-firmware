@@ -51,7 +51,10 @@ enum DialogCode { Rejected, Accepted };     // Why not found ?
 
 *******************************************************************************/
 
-extern "C" char DebugText_Stick20[600000];
+//extern "C" char DebugText_Stick20[600000];
+
+extern "C" void DebugAppendText (char *Text);
+extern "C" void DebugClearText (void);
 
 /*******************************************************************************
 
@@ -83,18 +86,34 @@ extern "C" char DebugText_Stick20[600000];
 
 *******************************************************************************/
 
-MainWindow::MainWindow(bool FlagDebugWindowActive,QWidget *parent) :
+MainWindow::MainWindow(int FlagDebug,QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     bool ret;
 
-    DebugWindowActive = FALSE;
-    if (TRUE == FlagDebugWindowActive)
+    switch (FlagDebug)
     {
-        DebugWindowActive = TRUE;
-        DebugingActive    = TRUE;
+        case DEBUG_STATUS_LOCAL_DEBUG :
+            DebugWindowActive            = TRUE;
+            DebugingActive               = TRUE;
+            DebugingStick20PoolingActive = FALSE;
+            break;
+
+        case DEBUG_STATUS_DEBUG_ALL :
+            DebugWindowActive            = TRUE;
+            DebugingActive               = TRUE;
+            DebugingStick20PoolingActive = TRUE;
+            break;
+
+        case DEBUG_STATUS_NO_DEBUGGING :
+        default :
+            DebugWindowActive            = FALSE;
+            DebugingActive               = FALSE;
+            DebugingStick20PoolingActive = FALSE;
+            break;
     }
+
 
     ui->setupUi(this);
     ui->statusBar->showMessage("Device disconnected.");
@@ -143,7 +162,58 @@ MainWindow::MainWindow(bool FlagDebugWindowActive,QWidget *parent) :
     initActionsForStick20 ();
 
     // Init debug text
-    DebugText = "Start Debug\n";
+    DebugClearText ();
+
+    DebugAppendText ("Start Debug - ");
+
+#ifdef WIN32
+    DebugAppendText ("WIN32 system\n");
+#endif
+
+#ifdef linux
+    DebugAppendText ("LINUX system\n");
+#endif
+
+#ifdef MAC
+    DebugAppendText ("MAC system\n");
+#endif
+
+    {
+        union {
+            unsigned char input[4];
+            unsigned int  endianCheck;
+        } uEndianCheck;
+
+        unsigned char text[50];
+
+        DebugAppendText ("\nEndian check\n\n");
+
+        DebugAppendText ("Store 0x01 0x02 0x03 0x04 in memory locations x,x+1,x+2,x+3\n");
+        DebugAppendText ("then read the location x - x+3 as an unsigned int\n\n");
+
+        uEndianCheck.input[0] = 0x01;
+        uEndianCheck.input[1] = 0x02;
+        uEndianCheck.input[2] = 0x03;
+        uEndianCheck.input[3] = 0x04;
+
+        sprintf ((char*)text,"write u8  %02x%02x%02x%02x\n",uEndianCheck.input[0],uEndianCheck.input[1],uEndianCheck.input[2],uEndianCheck.input[3]);
+        DebugAppendText ((char*)text);
+
+        sprintf ((char*)text,"read  u32 %08x\n",uEndianCheck.endianCheck);
+        DebugAppendText ((char*)text);
+
+        DebugAppendText ("\n");
+
+        if (0x01020304 == uEndianCheck.endianCheck)
+        {
+            DebugAppendText ("System is little endian\n");
+        }
+        if (0x04030201 == uEndianCheck.endianCheck)
+        {
+            DebugAppendText ("System is big endian\n");
+        }
+        DebugAppendText ("\n");
+    }
 
 
     //totp1Action = new QAction(tr("&TOTP Slot 1"), this);
@@ -385,45 +455,12 @@ void MainWindow::generateMenu()
     else{
         if (false == cryptostick->activStick20)
         {
-            // Stick OTP ist connected
-            if (cryptostick->HOTPSlots[0]->isProgrammed==true){
-                QString actionName("HOTP slot 1 ");
-                trayMenu->addAction(actionName.append((char *)cryptostick->HOTPSlots[0]->slotName),this,SLOT(getHOTP1()));
-
-            }
-            if (cryptostick->HOTPSlots[1]->isProgrammed==true){
-                QString actionName("HOTP slot 2 ");
-                trayMenu->addAction(actionName.append((char *)cryptostick->HOTPSlots[1]->slotName),this,SLOT(getHOTP2()));
-
-
-            }
-            if (cryptostick->TOTPSlots[0]->isProgrammed==true){
-                QString actionName("TOTP slot 1 ");
-                trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[0]->slotName),this,SLOT(getTOTP1()));
-
-            }
-            if (cryptostick->TOTPSlots[1]->isProgrammed==true){
-                QString actionName("TOTP slot 2 ");
-                trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[1]->slotName),this,SLOT(getTOTP2()));
-
-
-            }
-            if (cryptostick->TOTPSlots[2]->isProgrammed==true){
-                QString actionName("TOTP slot 3 ");
-                trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[2]->slotName),this,SLOT(getTOTP3()));
-
-
-            }
-            if (cryptostick->TOTPSlots[3]->isProgrammed==true){
-                QString actionName("TOTP slot 4 ");
-                trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[3]->slotName),this,SLOT(getTOTP4()));
-
-
-            }
-            trayMenu->addAction(restoreAction);
+            // Stick 10 is connected
+            generateMenuForStick10 ();
         }
         else {
             // Stick 20 is connected
+            generateMenuForStick10 ();
             generateMenuForStick20 ();
 
         }
@@ -505,6 +542,62 @@ void MainWindow::initActionsForStick20()
     Stick20ActionSetReadWriteUncryptedVolume = new QAction(tr("&Set readwrite uncrypted volume"), this);
     connect(Stick20ActionSetReadWriteUncryptedVolume, SIGNAL(triggered()), this, SLOT(startStick20SetReadWriteUncryptedVolume()));
 
+    Stick20ActionDebugAction = new QAction(tr("&Debug Action"), this);
+    connect(Stick20ActionDebugAction, SIGNAL(triggered()), this, SLOT(startStick20DebugAction()));
+
+
+}
+
+/*******************************************************************************
+
+  generateMenuForStick10
+
+  Changes
+  Date      Author        Info
+  27.02.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void MainWindow::generateMenuForStick10()
+{
+    if (cryptostick->HOTPSlots[0]->isProgrammed==true){
+        QString actionName("HOTP slot 1 ");
+        trayMenu->addAction(actionName.append((char *)cryptostick->HOTPSlots[0]->slotName),this,SLOT(getHOTP1()));
+
+    }
+    if (cryptostick->HOTPSlots[1]->isProgrammed==true){
+        QString actionName("HOTP slot 2 ");
+        trayMenu->addAction(actionName.append((char *)cryptostick->HOTPSlots[1]->slotName),this,SLOT(getHOTP2()));
+
+
+    }
+    if (cryptostick->TOTPSlots[0]->isProgrammed==true){
+        QString actionName("TOTP slot 1 ");
+        trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[0]->slotName),this,SLOT(getTOTP1()));
+
+    }
+    if (cryptostick->TOTPSlots[1]->isProgrammed==true){
+        QString actionName("TOTP slot 2 ");
+        trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[1]->slotName),this,SLOT(getTOTP2()));
+
+
+    }
+    if (cryptostick->TOTPSlots[2]->isProgrammed==true){
+        QString actionName("TOTP slot 3 ");
+        trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[2]->slotName),this,SLOT(getTOTP3()));
+
+
+    }
+    if (cryptostick->TOTPSlots[3]->isProgrammed==true){
+        QString actionName("TOTP slot 4 ");
+        trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[3]->slotName),this,SLOT(getTOTP4()));
+
+
+    }
+    trayMenu->addAction(restoreAction);
 }
 
 /*******************************************************************************
@@ -543,9 +636,11 @@ void MainWindow::generateMenuForStick20()
     // Add secure password dialog test
 //    trayMenu->addAction(SecPasswordAction);
 
-    trayMenu->addSeparator();
-
-    trayMenu->addAction(quitAction);
+    // Add debug window ?
+    if (TRUE == DebugWindowActive)
+    {
+        trayMenu->addAction(Stick20ActionDebugAction);
+    }
 
 }
 
@@ -1226,7 +1321,7 @@ void MainWindow::startStick20GetStickStatus()
 {
     uint8_t password[40];
     bool    ret;
-
+/*
     PasswordDialog dialog(this);
     dialog.init("Enter admin password");
     ret = dialog.exec();
@@ -1236,8 +1331,13 @@ void MainWindow::startStick20GetStickStatus()
         password[0] = 'P';
         dialog.getPassword ((char*)&password[1]);
 
-//        stick20SendCommand (STICK20_CMD_GET_DEVICE_STATUS,password);
+        stick20SendCommand (STICK20_CMD_GET_DEVICE_STATUS,password);
     }
+*/
+
+    password[0] = 'P';
+    password[1] = 0;
+    stick20SendCommand (STICK20_CMD_GET_DEVICE_STATUS,password);
 
 }
 
@@ -1260,7 +1360,7 @@ void MainWindow::startStick20SetReadonlyUncryptedVolume()
     bool    ret;
 
     PasswordDialog dialog(this);
-    dialog.init("Enter admin password");
+    dialog.init("Enter user password");
     ret = dialog.exec();
 
     if (Accepted == ret)
@@ -1292,7 +1392,7 @@ void MainWindow::startStick20SetReadWriteUncryptedVolume()
     bool    ret;
 
     PasswordDialog dialog(this);
-    dialog.init("Enter admin password");
+    dialog.init("Enter user password");
     ret = dialog.exec();
 
     if (Accepted == ret)
@@ -1306,6 +1406,69 @@ void MainWindow::startStick20SetReadWriteUncryptedVolume()
 }
 
 
+/*******************************************************************************
+
+  startStick20DebugAction
+
+  Function to start a action to test functions of firmware
+
+  Changes
+  Date      Author        Info
+  24.02.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void MainWindow::startStick20DebugAction()
+{
+    uint8_t password[40];
+    bool    ret;
+    int64_t crc;
+
+
+    if (1)
+    {
+        crc = cryptostick->getSlotName(0x10);
+
+//        Sleep::msleep(100);
+//        Response *testResponse=new Response();
+//        testResponse->getResponse(cryptostick);
+
+//        if (crc==testResponse->lastCommandCRC)
+/*
+        {
+
+            QMessageBox message;
+            QString str;
+            QByteArray *data =new QByteArray((char*)testResponse->reportBuffer,REPORT_SIZE+1);
+
+//            str.append(QString::number(testResponse->lastCommandCRC,16));
+            str.append(QString(data->toHex()));
+
+            message.setText(str);
+            message.exec();
+
+            str.clear();
+        }
+*/
+    }
+
+/*
+    PasswordDialog dialog(this);
+    dialog.init("Enter user password");
+    ret = dialog.exec();
+
+    if (Accepted == ret)
+    {
+        password[0] = 'P';
+        dialog.getPassword ((char*)&password[1]);
+
+        stick20SendCommand (STICK20_CMD_ENABLE_READWRITE_UNCRYPTED_LUN,password);
+    }
+*/
+}
 
 /*******************************************************************************
 
@@ -1324,10 +1487,13 @@ int MainWindow::stick20SendCommand (uint8_t stick20Command, uint8_t *password)
 {
     bool        ret;
     bool        waitForAnswerFromStick20;
+    bool        stopWhenStatusOKFromStick20;
+
     QByteArray  passwordString;
     QMessageBox msgBox;
 
-    waitForAnswerFromStick20 = FALSE;
+    waitForAnswerFromStick20    = FALSE;
+    stopWhenStatusOKFromStick20 = FALSE;
 
     switch (stick20Command)
     {
@@ -1404,7 +1570,7 @@ int MainWindow::stick20SendCommand (uint8_t stick20Command, uint8_t *password)
                 ret = msgBox.exec();
                 if (Accepted == ret)
                 {
-                    ret = cryptostick->stick20FillSDCardWithRandomChars (password);
+                    ret = cryptostick->stick20FillSDCardWithRandomChars (password,STICK20_FILL_SD_CARD_WITH_RANDOM_CHARS_ENCRYPTED_VOL);
                     if (TRUE == ret)
                     {
                         waitForAnswerFromStick20 = TRUE;
@@ -1449,10 +1615,10 @@ int MainWindow::stick20SendCommand (uint8_t stick20Command, uint8_t *password)
             ret = cryptostick->stick20GetStatusData ();
             if (TRUE == ret)
             {
-                waitForAnswerFromStick20 = TRUE;
+                waitForAnswerFromStick20    = TRUE;
+                stopWhenStatusOKFromStick20 = TRUE;
             }
             break;
-
         default :
             msgBox.setText("Stick20Dialog: Wrong combobox value! ");
             msgBox.exec();
@@ -1464,11 +1630,15 @@ int MainWindow::stick20SendCommand (uint8_t stick20Command, uint8_t *password)
     {
         Stick20ResponseDialog ResponseDialog(this);
 
-        ResponseDialog.NoStopWhenStatusOK ();
+        if (FALSE == stopWhenStatusOKFromStick20)
+        {
+            ResponseDialog.NoStopWhenStatusOK ();
+        }
         ResponseDialog.cryptostick=cryptostick;
 
         ResponseDialog.exec();
     }
+
     return (true);
 }
 

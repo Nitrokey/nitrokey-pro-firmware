@@ -242,7 +242,7 @@ int HID_API_EXPORT hid_init(void)
 {
 #ifndef HIDAPI_USE_DDK
 	if (!initialized) {
-        DebugClearText ();
+//        DebugClearText ();
         if (lookup_functions() < 0) {
 			hid_exit();
             DebugAppendText ("initialized FAILED\n");

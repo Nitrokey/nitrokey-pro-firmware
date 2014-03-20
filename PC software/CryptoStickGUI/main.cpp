@@ -20,7 +20,7 @@
 
 #include <QtGui/QApplication>
 #include "mainwindow.h"
-
+#include "device.h"
 
 /*******************************************************************************
 
@@ -49,19 +49,24 @@
 
 int main(int argc, char *argv[])
 {
-    bool DebugWindowActive;
+    int DebugWindowActive;
     char *p;
 
     QApplication a(argc, argv);
 
-    DebugWindowActive = FALSE;
+    DebugWindowActive = DEBUG_STATUS_NO_DEBUGGING;
     if (2 == argc)
     {
         p = argv[1];
         if (0 == strcmp (p,"-debug"))
         {
-            DebugWindowActive = TRUE;
+            DebugWindowActive = DEBUG_STATUS_LOCAL_DEBUG;
         }
+        if (0 == strcmp (p,"-debugAll"))
+        {
+            DebugWindowActive = DEBUG_STATUS_DEBUG_ALL;
+        }
+
     }
 
     MainWindow w(DebugWindowActive);

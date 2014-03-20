@@ -22,7 +22,8 @@
 #define TOTPSLOT_H
 
 #ifdef _MSC_VER
-    #define uint8_t unsigned char
+#define uint8_t unsigned char
+#define uint16_t unsigned short
 #else
     #include "inttypes.h"
 #endif

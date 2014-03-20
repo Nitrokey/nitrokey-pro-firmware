@@ -27,6 +27,7 @@
 #include "command.h"
 #include "hotpslot.h"
 #include "totpslot.h"
+#include "stick20hid.h"
 
 class Response;
 
@@ -44,6 +45,10 @@ class Response;
 #define CMD_AUTHORIZE 0x08
 #define CMD_GET_PASSWORD_RETRY_COUNT 0x09
 
+
+#define DEBUG_STATUS_NO_DEBUGGING       0
+#define DEBUG_STATUS_LOCAL_DEBUG        1
+#define DEBUG_STATUS_DEBUG_ALL          2
 
 
 #define STICK20_CMD_START_VALUE                         0x10
@@ -71,18 +76,19 @@ class Response;
 #define STICK20_CMD_SEND_HIDDEN_VOLUME_SETUP            (STICK20_CMD_START_VALUE + 17)
 #define STICK20_CMD_SEND_PASSWORD                       (STICK20_CMD_START_VALUE + 18)
 #define STICK20_CMD_SEND_NEW_PASSWORD                   (STICK20_CMD_START_VALUE + 19)
+#define STICK20_CMD_CLEAR_NEW_SD_CARD_FOUND             (STICK20_CMD_START_VALUE + 20)
 
 #define STATUS_READY 0x00
 #define STATUS_BUSY	 0x01
 #define STATUS_ERROR 0x02
-#define STATUS_RECEIVED_REPORT 0x03
+#define STATUS_RECEIstick20FillSDCardWithRandomCharsVED_REPORT 0x03
 
-#define CMD_STATUS_OK 0
-#define CMD_STATUS_WRONG_CRC 1
-#define CMD_STATUS_WRONG_SLOT 2
+#define CMD_STATUS_OK                  0
+#define CMD_STATUS_WRONG_CRC           1
+#define CMD_STATUS_WRONG_SLOT          2
 #define CMD_STATUS_SLOT_NOT_PROGRAMMED 3
-#define CMD_STATUS_WRONG_PASSWORD 4
-#define CMD_STATUS_NOT_AUTHORIZED 5
+#define CMD_STATUS_WRONG_PASSWORD      4
+#define CMD_STATUS_NOT_AUTHORIZED      5
 
 enum comm_errors{
 ERR_NOT_CONNECTED=-1,
@@ -95,6 +101,10 @@ ERR_STATUS_NOT_OK=-4
 #define STICK20_PASSOWRD_LEN               20
 #define STICK20_PASSWORD_KIND_USER          0
 #define STICK20_PASSWORD_KIND_ADMIN         1
+
+#define STICK20_FILL_SD_CARD_WITH_RANDOM_CHARS_ALL_VOL              0
+#define STICK20_FILL_SD_CARD_WITH_RANDOM_CHARS_ENCRYPTED_VOL        1
+
 
 
 #define OUTPUT_CMD_STICK20_STATUS_IDLE                      0
@@ -172,7 +182,7 @@ public:
     bool stick20ExportFirmware (uint8_t *password);
 
     bool stick20CreateNewKeys (uint8_t *password);
-    bool stick20FillSDCardWithRandomChars (uint8_t *password);
+    bool stick20FillSDCardWithRandomChars (uint8_t *password,uint8_t VolumeFlag);
 
     bool stick20SetupHiddenVolume (void);
     bool stick20GetPasswordMatrix (void);
@@ -181,7 +191,7 @@ public:
     bool stick20GetStatusData ();
     int stick20SendPassword (uint8_t *Pindata);
     int stick20SendNewPassword (uint8_t *NewPindata);
-
+    int stick20SendClearNewSdCardFound (uint8_t *Pindata);
 
     int stick20SendSetReadonlyToUncryptedVolume (uint8_t *Pindata);
     int stick20SendSetReadwriteToUncryptedVolume (uint8_t *Pindata);

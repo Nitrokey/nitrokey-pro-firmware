@@ -51,7 +51,9 @@ typedef struct {
 
 extern char DebugText_Stick20[STICK20_DEBUG_TEXT_LEN];
 extern unsigned long DebugTextlen_Stick20;
+extern char DebugTextHasChanged;
 extern int DebugingActive;
+extern int DebugingStick20PoolingActive;
 
 void DebugClearText (void);
 void DebugAppendText (char *Text);
@@ -93,19 +95,35 @@ typedef struct {
 extern HID_Stick20MatrixPasswordData_est HID_Stick20MatrixPasswordData_st;
 
 
+/* Stick 20 configuration data */
+
+#define READ_WRITE_ACTIVE             0
+#define READ_ONLY_ACTIVE              1
+
+#define SD_UNCRYPTED_VOLUME_BIT_PLACE   0
+#define SD_CRYPTED_VOLUME_BIT_PLACE     1
+#define SD_HIDDEN_VOLUME_BIT_PLACE      2
+
 
 typedef struct {
-    unsigned char  MatrixPasswordUserActiv_u8;
-    unsigned char  MatrixPasswordAdminActiv_u8;
-    unsigned char  ActivPasswordStatus_u8;
-    unsigned char  VolumeStatus_u8;
-    unsigned long  SD_BlockSize_u32;
-} HID_Stick20AccessStatus_est;
+  unsigned short  MagicNumber_StickConfig_u16;          // Shows that the structure is valid                  2 byte
+  unsigned char   ReadWriteFlagUncryptedVolume_u8;      // Flag stores the read/write flag in the CPU flash   1 byte
+  unsigned char   ReadWriteFlagCryptedVolume_u8;        // Flag stores the read/write flag in the CPU flash   1 byte
+  unsigned char   ReadWriteFlagHiddenVolume_u8;         // Flag stores the read/write flag in the CPU flash   1 byte
+  unsigned char   StoredMatrixLength_u8;                // Not used                                           1 byte
+  unsigned long   ActiveSD_CardID_u32;                  // Not used                                           4 byte
+  unsigned char   VersionInfo_au8[4];                   //                                                    4 byte
+  unsigned char   NewSDCardFound_u8;                    // Bit 0 new card found, bit 1-7 change counter       1 byte
+  unsigned char   SDFillWithRandomChars_u8;             // Bit 0 new card found, bit 1-7 change counter       1 byte
+  unsigned char   VolumeActiceFlag_u8;                  // Bit 0 new card found, bit 1-7 change counter       1 byte
+} typeStick20Configuration_st;                                                          // Sum   17 byte
 
 
-extern HID_Stick20AccessStatus_est HID_Stick20AccessStatus_st;
+extern typeStick20Configuration_st HID_Stick20Configuration_st;
 
-int HID_GetStick20AccessStatusData (void);
+
+
+int HID_GetStick20Configuration (void);
 int HID_GetStick20PasswordMatrixData (void);
 int HID_GetStick20DebugData (void);
 int HID_GetStick20ReceiveData (unsigned char *data);

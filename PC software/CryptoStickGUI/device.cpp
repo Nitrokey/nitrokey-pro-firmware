@@ -142,8 +142,8 @@ int Device::checkConnection()
             // stick 20 with no OTP
             if (false == activStick20)
             {
-               initializeConfig();          // init data for OTP
             }
+            initializeConfig();          // init data for OTP
             return 1;
         }
         return 0;
@@ -223,8 +223,31 @@ int Device::sendCommand(Command *cmd)
 
     cmd->crc=crc;
 
+    {
+         char text[1000];
+         sprintf(text,"computed crc :%08x:\n",crc );
+         DebugAppendText (text);
+    }
+
     err = hid_send_feature_report(handle, report, sizeof(report));
 
+    {
+            char text[1000];
+            int i;
+            static int Counter = 0;
+
+            sprintf(text,"%6d :sendCommand: ",Counter);
+            Counter++;
+            DebugAppendText (text);
+            for (i=0;i<=64;i++)
+            {
+                sprintf(text,"%02x ",(unsigned char)report[i]);
+                DebugAppendText (text);
+            }
+            sprintf(text,"\n");
+            DebugAppendText (text);
+
+     }
     return err;
 }
 
@@ -326,7 +349,22 @@ int Device::getSlotName(uint8_t slotNo){
              }
 
          }
+/*
+         {
 
+             QMessageBox message;
+             QString str;
+             QByteArray *data =new QByteArray((char*)resp->reportBuffer,REPORT_SIZE+1);
+
+ //            str.append(QString::number(testResponse->lastCommandCRC,16));
+             str.append(QString(data->toHex()));
+
+             message.setText(str);
+             message.exec();
+
+             str.clear();
+         }
+*/
          return 0;
      }
 
@@ -351,6 +389,7 @@ int Device::eraseSlot(uint8_t slotNo)
     uint8_t data[1];
 
     data[0]=slotNo;
+
 
 
     if (isConnected){
@@ -843,35 +882,45 @@ int Device::firstAuthenticate(uint8_t cardPassword[], uint8_t tempPasswrod[])
     memcpy(data+25,tempPasswrod,25);
 
 
-    if (isConnected){
-    Command *cmd=new Command(CMD_FIRST_AUTHENTICATE,data,50);
-    res=sendCommand(cmd);
-    crc=cmd->crc;
-    //remove the card password from memory
-    delete cmd;
-    memset(data,0,sizeof(data));
+    if (isConnected)
+    {
+        Command *cmd=new Command(CMD_FIRST_AUTHENTICATE,data,50);
+        res=sendCommand(cmd);
+        crc=cmd->crc;
 
-    if (res==-1)
-        return -1;
-    else{  //sending the command was successful
-        //return cmd->crc;
-        Sleep::msleep(1000);
-        Response *resp=new Response();
-        resp->getResponse(this);
+        //remove the card password from memory
+        delete cmd;
+        memset(data,0,sizeof(data));
 
-        if (crc==resp->lastCommandCRC){ //the response was for the last command
-            if (resp->lastCommandStatus==CMD_STATUS_OK){
-                memcpy(password,tempPasswrod,25);
-                validPassword=true;
-            return 0;
-            }
-            else if (resp->lastCommandStatus==CMD_STATUS_WRONG_PASSWORD){
-            return -3;
+        if (res==-1)
+            return -1;
+        else
+        {  //sending the command was successful
+            //return cmd->crc;
+            Sleep::msleep(1000);
+            Response *resp=new Response();
+            resp->getResponse(this);
+{
+     char text[1000];
+     sprintf(text,"send crc :%08x: get :%08x:\n",crc,resp->lastCommandCRC );
+     DebugAppendText (text);
+}
+            if (crc==resp->lastCommandCRC)
+            { //the response was for the last command
+                if (resp->lastCommandStatus==CMD_STATUS_OK)
+                {
+                    memcpy(password,tempPasswrod,25);
+                    validPassword=true;
+                    return 0;
+                }
+                else if (resp->lastCommandStatus==CMD_STATUS_WRONG_PASSWORD)
+                {
+                    return -3;
+                }
+
             }
 
         }
-
-    }
 
    }
 
@@ -1131,7 +1180,7 @@ bool Device::stick20CreateNewKeys (uint8_t *password)
 
 /*******************************************************************************
 
-  writeToHOTPSlot
+  stick20FillSDCardWithRandomChars
 
   Reviews
   Date      Reviewer        Info
@@ -1139,11 +1188,12 @@ bool Device::stick20CreateNewKeys (uint8_t *password)
 
 *******************************************************************************/
 
-bool Device::stick20FillSDCardWithRandomChars (uint8_t *password)
+bool Device::stick20FillSDCardWithRandomChars (uint8_t *password,uint8_t VolumeFlag)
 {
-    uint8_t n;
-    int     res;
+    uint8_t  n;
+    int      res;
     Command *cmd;
+    uint8_t  data[CS20_MAX_PASSWORD_LEN+2];
 
     // Check password length
     n = strlen ((const char*)password);
@@ -1152,7 +1202,10 @@ bool Device::stick20FillSDCardWithRandomChars (uint8_t *password)
         return (false);
     }
 
-    cmd = new Command(STICK20_CMD_FILL_SD_CARD_WITH_RANDOM_CHARS,password,n);
+    data[0] = VolumeFlag;
+    strcpy ((char*)&data[1],(char*)password);
+
+    cmd = new Command(STICK20_CMD_FILL_SD_CARD_WITH_RANDOM_CHARS,data,n+1);
     res = sendCommand(cmd);
 
     return (true);
@@ -1428,4 +1481,35 @@ int Device::stick20SendSetReadwriteToUncryptedVolume (uint8_t *Pindata)
     return (true);
 }
 
+/*******************************************************************************
+
+  stick20SendClearNewSdCardFound
+
+  Changes
+  Date      Author          Info
+  11.02.14  RB              Implementation: New SD card found
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+int Device::stick20SendClearNewSdCardFound (uint8_t *Pindata)
+{
+    uint8_t n;
+    int     res;
+    Command *cmd;
+
+    // Check pin data length
+    n = strlen ((const char*)Pindata);
+    if (STICK20_PASSOWRD_LEN + 2 <= n)      // Kind byte + End byte 0
+    {
+        return (false);
+    }
+
+    cmd = new Command(STICK20_CMD_CLEAR_NEW_SD_CARD_FOUND,Pindata,n);
+    res = sendCommand(cmd);
+
+    return (true);
+}
 

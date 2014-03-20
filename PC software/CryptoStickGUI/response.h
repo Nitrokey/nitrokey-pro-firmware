@@ -29,6 +29,8 @@ class Response
 {
 public:
     Response();
+    void DebugResponse();
+
     uint8_t deviceStatus;
     uint8_t lastCommandType;
     uint32_t lastCommandCRC;

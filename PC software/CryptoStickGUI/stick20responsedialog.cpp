@@ -64,12 +64,6 @@ Stick20ResponseDialog::Stick20ResponseDialog(QWidget *parent) :
     ui->setupUi(this);
 
     ui->OutputText->setText("");
-
-    if (false == DebugingActive)
-    {
-//        ui->
-    }
-
     ui->progressBar->hide();
 
     pollStick20Timer = new QTimer(this);
@@ -77,7 +71,88 @@ Stick20ResponseDialog::Stick20ResponseDialog(QWidget *parent) :
     // Start timer for polling stick response
     ret = connect(pollStick20Timer, SIGNAL(timeout()), this, SLOT(checkStick20Status()));
     pollStick20Timer->start(100);
+}
 
+/*******************************************************************************
+
+  ShowStick20Configuration
+
+  Changes
+  Date      Author        Info
+  05.02.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void Stick20ResponseDialog::showStick20Configuration (int Status)
+{
+    QString OutputText;
+
+    Counter_u32 += 1;
+
+    if (0 == Status)
+    {
+        OutputText.append(QString("Firmware version      "));
+        OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.VersionInfo_au8[0])));
+        OutputText.append(QString("."));
+        OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.VersionInfo_au8[1])));
+        OutputText.append(QString("\n"));
+
+        if (READ_WRITE_ACTIVE == HID_Stick20Configuration_st.ReadWriteFlagUncryptedVolume_u8)
+        {
+            OutputText.append(QString("Uncrypted volume     READ/WRITE mode ")).append("\n");
+        }
+        else
+        {
+            OutputText.append(QString("Uncrypted volume     READ ONLY mode ")).append("\n");
+        }
+
+        if (0 != (HID_Stick20Configuration_st.VolumeActiceFlag_u8 & (1 << SD_CRYPTED_VOLUME_BIT_PLACE)))
+        {
+            OutputText.append(QString("Crypted volume        active")).append("\n");
+        }
+        else
+        {
+            OutputText.append(QString("Crypted volume        not active")).append("\n");
+        }
+
+        if (0 != (HID_Stick20Configuration_st.VolumeActiceFlag_u8 & (1 << SD_HIDDEN_VOLUME_BIT_PLACE)))
+        {
+            OutputText.append(QString("Hidden volume         active")).append("\n");
+        }
+
+        if (0 != (HID_Stick20Configuration_st.NewSDCardFound_u8 & 0x01))
+        {
+            OutputText.append(QString("*** New SD card found - Change Counter "));
+            OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.NewSDCardFound_u8 >> 1))).append("\n");
+        }
+        else
+        {
+            OutputText.append(QString("SD card              Change Counter "));
+            OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.NewSDCardFound_u8 >> 1))).append("\n");
+        }
+
+        if (0 == (HID_Stick20Configuration_st.SDFillWithRandomChars_u8 & 0x01))
+        {
+            OutputText.append(QString("*** Not filled with random chars - Fill Counter "));
+            OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.SDFillWithRandomChars_u8 >> 1))).append("\n");
+        }
+        else
+        {
+            OutputText.append(QString("Filled with random    Fill Counter "));
+            OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.SDFillWithRandomChars_u8 >> 1))).append("\n");
+        }
+
+
+    }
+    else
+    {
+        OutputText.append(QString("Can't read HID interface\n"));
+    }
+
+    ui->OutputText->setText(OutputText);
 }
 
 /*******************************************************************************
@@ -167,8 +242,8 @@ void Stick20ResponseDialog::checkStick20Status()
             case STICK20_CMD_FILL_SD_CARD_WITH_RANDOM_CHARS :
                 OutputText.append (QString("Fill SD card with random chars"));
                 break;
-            case STICK20_CMD_WRITE_STATUS_DATA              :
-                OutputText.append (QString("Write status data"));
+            case STICK20_CMD_GET_DEVICE_STATUS              :
+                OutputText.append (QString("Get device configuration"));
                 break;
             case STICK20_CMD_ENABLE_READONLY_UNCRYPTED_LUN  :
                 OutputText.append (QString("Enable readonly for uncrypted volume"));
@@ -189,12 +264,14 @@ void Stick20ResponseDialog::checkStick20Status()
                 break;
             case OUTPUT_CMD_STICK20_STATUS_OK               :
                 OutputText.append (QString("OK"));
+                pollStick20Timer->stop();
                 break;
             case OUTPUT_CMD_STICK20_STATUS_BUSY             :
                 OutputText.append (QString("BUSY"));
                 break;
             case OUTPUT_CMD_STICK20_STATUS_WRONG_PASSWORD   :
                 OutputText.append (QString("WORNG PASSWORD"));
+                pollStick20Timer->stop();
                 break;
             case OUTPUT_CMD_STICK20_STATUS_BUSY_PROGRESSBAR :
                 OutputText.append (QString("BUSY"));
@@ -203,6 +280,7 @@ void Stick20ResponseDialog::checkStick20Status()
                 break;
             case OUTPUT_CMD_STICK20_STATUS_PASSWORD_MATRIX_READY   :
                 OutputText.append (QString("PASSWORD MATRIX READY"));
+                pollStick20Timer->stop();
                 break;
             default :
                 break;
@@ -221,6 +299,18 @@ void Stick20ResponseDialog::checkStick20Status()
                 case OUTPUT_CMD_STICK20_STATUS_WRONG_PASSWORD   :
                 case OUTPUT_CMD_STICK20_STATUS_BUSY_PROGRESSBAR :
                 case OUTPUT_CMD_STICK20_STATUS_PASSWORD_MATRIX_READY   :
+                default :
+                    break;
+            }
+        }
+
+        if (OUTPUT_CMD_STICK20_STATUS_OK == stick20Response->HID_Stick20Status_st.Status_u8)
+        {
+            switch (stick20Response->HID_Stick20Status_st.LastCommand_u8)
+            {
+                case STICK20_CMD_GET_DEVICE_STATUS              :
+                    showStick20Configuration (ret);
+                    break;
                 default :
                     break;
             }
