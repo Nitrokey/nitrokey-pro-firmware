@@ -1,6 +1,6 @@
 /*
 * Author: Copyright (C) Rudolf Boeddeker 					Date: 2010-01-13
-*												STMicroelectronics	 			
+*												STMicroelectronics
 *												MCD Application Team			Date:	04/27/2009
 *
 * This file is part of GPF Crypto Stick.
@@ -78,7 +78,7 @@ void DisableFirmwareDownloadPort (void)
 
 void DisableSmartcardLED (void)
 {
-/*  
+/*
 	GPIO_InitTypeDef GPIO_InitStructure;
 
 // enable port clock
@@ -147,7 +147,7 @@ void EnableButton (void)
 
   GPIO_InitTypeDef  GPIO_InitStructure;
 
-  
+
   RCC_APB2PeriphClockCmd(BUTTON_PERIPH, ENABLE);
 
   GPIO_InitStructure.GPIO_Pin =  BUTTON_PIN;
@@ -165,35 +165,35 @@ void EnableButton (void)
 void EnableTimer2 (void)
 {
 
- 	
+
 /* TIM2 clock enable */
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);	
-  
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+
 TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 
 /* Time base configuration */
-  TIM_TimeBaseStructure.TIM_Period = 9;          
-  TIM_TimeBaseStructure.TIM_Prescaler = 7200;       
-  TIM_TimeBaseStructure.TIM_ClockDivision = 0x0;    
-  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
-  
+  TIM_TimeBaseStructure.TIM_Period = 9;
+  TIM_TimeBaseStructure.TIM_Prescaler = 7200;
+  TIM_TimeBaseStructure.TIM_ClockDivision = 0x0;
+  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+
   TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
-  
+
 /* TIM2 enable counter */
     TIM_Cmd(TIM2, ENABLE);
 
     /* Enable TIM2 Update interrupt */
     TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
-  
+
   NVIC_InitTypeDef NVIC_InitStructure;
-  
+
     /* Enable the TIM2 Interrupt */
     NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
-	
+
 }
 
 /*******************************************************************************
@@ -217,11 +217,11 @@ void SwitchSmartcardLED (FunctionalState NewState)
 
   if (NewState == ENABLE)
   {
-    GPIO_SetBits(SMARTCARD_LED_PIN_PORT, SMARTCARD_LED_PIN);
+    GPIO_ResetBits(SMARTCARD_LED_PIN_PORT, SMARTCARD_LED_PIN);
   }
   else
   {
-    GPIO_ResetBits(SMARTCARD_LED_PIN_PORT, SMARTCARD_LED_PIN);
+    GPIO_SetBits(SMARTCARD_LED_PIN_PORT, SMARTCARD_LED_PIN);
   }
 
 }
@@ -276,14 +276,14 @@ EnableOATHLED ();
 /*Enable CRC calculator*/
 RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, ENABLE);
 
-/*Enable Timer 2 */	
+/*Enable Timer 2 */
  EnableTimer2();
-	
-/* Enable button */	
+
+/* Enable button */
 	EnableButton();
-	
+
 /* MAL configuration */
-	CCID_Init();	// set CCID default values 
+	CCID_Init();	// set CCID default values
 
 }
 
@@ -364,15 +364,15 @@ void USB_Interrupts_Config(void)
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
-  
-#ifdef USB_4BIT_SD_CARD_INTERFACE  
+
+#ifdef USB_4BIT_SD_CARD_INTERFACE
   NVIC_InitStructure.NVIC_IRQChannel = SDIO_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
 #endif /* USB_4BIT_SD_CARD_INTERFACE */
-  
+
 }
 
 /*******************************************************************************
@@ -428,8 +428,8 @@ void Get_SerialNum(void)
 //  Device_Serial1 = *(__IO uint32_t*)(0x1FFFF7EC);
 //  Device_Serial2 = *(__IO uint32_t*)(0x1FFFF7F0);
 
-// No device id	
-//  Device_Serial0 = 0;			
+// No device id
+//  Device_Serial0 = 0;
 //  Device_Serial1 = 0;
 //  Device_Serial2 = 0;
 
@@ -443,19 +443,19 @@ uint8_t b2=getByteOfData(12);
 uint8_t b3=getByteOfData(13);
 
 
-  Device_Serial0 = b3+(b2<<8)+(b1<<16)+(b0<<24);	
-  
+  Device_Serial0 = b3+(b2<<8)+(b1<<16)+(b0<<24);
+
   cardSerial=Device_Serial0;
-  
+
   Device_Serial1 = 0;
   Device_Serial2 = 0;
 
 
 	//SerialString = MASS_StringSerial; // default value
 
-	
-SerialString = CCID_StringSerial; 																	
-	
+
+SerialString = CCID_StringSerial;
+
 
   if (Device_Serial0 != 0)
   {
@@ -485,7 +485,7 @@ SerialString = CCID_StringSerial;
     SerialString [12] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x00000F00) >>  8));
     SerialString [14] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x000000F0) >>  4));
     SerialString [16] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x0000000F) >>  0));
-  } 
+  }
 }
 
 /*******************************************************************************
@@ -495,8 +495,8 @@ SerialString = CCID_StringSerial;
 * Return         : None.
 *******************************************************************************/
 void RCC_Config(void)
-{ 
- /* Setup the microcontroller system. Initialize the Embedded Flash Interface,  
+{
+ /* Setup the microcontroller system. Initialize the Embedded Flash Interface,
      initialize the PLL and update the SystemFrequency variable. */
   SystemInit();
 
