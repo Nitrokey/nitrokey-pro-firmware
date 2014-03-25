@@ -22,6 +22,7 @@
 #define HOTPDIALOG_H
 
 #include <QDialog>
+#include <QTimer>
 #include "device.h"
 
 namespace Ui {
@@ -38,6 +39,10 @@ public:
     uint8_t slotNumber;
     QString title;
 
+    QTimer *TOTP_ValidTimer;
+    uint64_t lastTOTPTime;
+    uint8_t  lastInterval;
+
     ~HOTPDialog();
 
     void getNextCode();
@@ -50,6 +55,8 @@ private slots:
     void on_nextButton_clicked();
 
     void on_clipboardButton_clicked();
+
+    void checkTOTP_Valid();
 
 private:
     Ui::HOTPDialog *ui;

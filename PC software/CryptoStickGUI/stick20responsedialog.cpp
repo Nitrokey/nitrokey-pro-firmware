@@ -58,8 +58,9 @@ Stick20ResponseDialog::Stick20ResponseDialog(QWidget *parent) :
 {
     bool ret;
 
-    Counter_u32 = 0;
+    Counter_u32            = 0;
     FlagNoStopWhenStatusOK = FALSE;
+    ResultValue            = FALSE;
 
     ui->setupUi(this);
 
@@ -230,6 +231,9 @@ void Stick20ResponseDialog::checkStick20Status()
             case STICK20_CMD_DISABLE_HIDDEN_CRYPTED_PARI    :
                 OutputText.append (QString("Disable crypted volume"));
                 break;
+            case STICK20_CMD_SEND_NEW_PASSWORD    :
+                OutputText.append (QString("Change PIN"));
+                break;
             case STICK20_CMD_ENABLE_FIRMWARE_UPDATE         :
                 OutputText.append (QString("Enable firmeware update"));
                 break;
@@ -293,6 +297,7 @@ void Stick20ResponseDialog::checkStick20Status()
             {
                 case OUTPUT_CMD_STICK20_STATUS_OK               :
                     done (TRUE);
+                    ResultValue = TRUE;
                     break;
                 case OUTPUT_CMD_STICK20_STATUS_IDLE             :
                 case OUTPUT_CMD_STICK20_STATUS_BUSY             :
@@ -352,4 +357,6 @@ Stick20ResponseDialog::~Stick20ResponseDialog()
     pollStick20Timer->stop();
 
     delete pollStick20Timer;
+
+    setResult (ResultValue);
 }

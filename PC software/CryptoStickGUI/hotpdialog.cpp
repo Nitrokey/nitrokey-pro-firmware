@@ -25,6 +25,12 @@ HOTPDialog::HOTPDialog( QWidget *parent) :
     QDialog(parent),
     ui(new Ui::HOTPDialog)
 {
+    TOTP_ValidTimer = new QTimer(this);
+
+    // Start timer for polling stick response
+    connect(TOTP_ValidTimer, SIGNAL(timeout()), this, SLOT(checkTOTP_Valid()));
+    TOTP_ValidTimer->start(100);
+
     ui->setupUi(this);
 }
 
@@ -34,19 +40,21 @@ void HOTPDialog::getNextCode()
     memset(result,0,18);
     uint32_t code;
     uint8_t config;
-    int interval=ui->intervalSpinBox->value();
 
-    if (interval<1)
-        interval=1;
+    lastInterval = ui->intervalSpinBox->value();
+
+    if (lastInterval<1)
+        lastInterval=1;
 
     if (slotNumber>=0x20)
-    device->TOTPSlots[slotNumber-0x20]->interval=interval;
+    device->TOTPSlots[slotNumber-0x20]->interval = lastInterval;
 
     QString output;
 
-     uint64_t currentTime= QDateTime::currentDateTime().toTime_t();
+     lastTOTPTime = QDateTime::currentDateTime().toTime_t();
 
-     device->getCode(slotNumber,currentTime/interval,result);
+     device->getCode(slotNumber,lastTOTPTime/lastInterval,lastTOTPTime,lastInterval,result);
+
      //cryptostick->getCode(slotNo,1,result);
      code=result[0]+(result[1]<<8)+(result[2]<<16)+(result[3]<<24);
      config=result[4];
@@ -67,8 +75,8 @@ void HOTPDialog::getNextCode()
      }
 
 
-     qDebug() << "Current time:" << currentTime;
-     qDebug() << "Counter:" << currentTime/interval;
+     qDebug() << "Current time:" << lastTOTPTime;
+     qDebug() << "Counter:" << lastTOTPTime/lastInterval;
      qDebug() << "TOTP:" << code;
 
      ui->lineEdit->setText(output);
@@ -82,6 +90,7 @@ void HOTPDialog::setToHOTP()
     this->setWindowTitle(title);
     ui->intervalLabel->hide();
     ui->intervalSpinBox->hide();
+    ui->validTimer->hide();
 
 }
 
@@ -94,11 +103,15 @@ void HOTPDialog::setToTOTP()
 
     ui->intervalSpinBox->setValue(device->TOTPSlots[slotNumber-0x20]->interval);
     ui->intervalSpinBox->show();
-
+    ui->validTimer->show();
 }
 
 HOTPDialog::~HOTPDialog()
 {
+    // Kill timer
+    TOTP_ValidTimer->stop();
+    delete TOTP_ValidTimer;
+
     delete ui;
 }
 
@@ -115,4 +128,66 @@ void HOTPDialog::on_clipboardButton_clicked()
 
      clipboard->setText(ui->lineEdit->text());
      this->accept();
+}
+
+
+/*******************************************************************************
+
+  checkTOTP_Valid
+
+  Changes
+  Date      Author        Info
+  17.03.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+#define TOTP_MORE_THAN_5_SEC_TO_INVALID 0
+#define TOTP_LESS_THAN_5_SEC_TO_INVALID 1
+#define TOTP_IS_INVALID                 2
+
+
+void HOTPDialog::checkTOTP_Valid()
+{
+    uint64_t currentTime;
+    uint64_t checkTime;
+    uint8_t  state;
+    QPalette palette;
+
+    state       = TOTP_IS_INVALID;
+
+    currentTime = QDateTime::currentDateTime().toTime_t();
+
+    checkTime = (lastTOTPTime/(uint64_t)lastInterval)*(uint64_t)lastInterval;
+    if (checkTime + (uint64_t)lastInterval - (uint64_t)5 > currentTime)
+    {
+        state = TOTP_MORE_THAN_5_SEC_TO_INVALID;
+    }
+
+    if ((checkTime + (uint64_t)lastInterval - (uint64_t)5 <= currentTime) && (checkTime + lastInterval > currentTime))
+    {
+        state = TOTP_LESS_THAN_5_SEC_TO_INVALID;
+    }
+
+    palette = ui->validTimer->palette();
+    ui->validTimer->setAutoFillBackground(true);
+    switch (state)
+    {
+        case TOTP_MORE_THAN_5_SEC_TO_INVALID :
+            ui->validTimer->setText("Valid");
+            palette.setColor(ui->validTimer->backgroundRole(), Qt::green);
+            break;
+        case TOTP_LESS_THAN_5_SEC_TO_INVALID :
+            ui->validTimer->setText("Valid");
+            palette.setColor(ui->validTimer->backgroundRole(), Qt::yellow);
+            break;
+        case TOTP_IS_INVALID :
+            ui->validTimer->setText("Invalid");
+            palette.setColor(ui->validTimer->backgroundRole(), Qt::red);
+            break;
+    }
+
+    ui->validTimer->setPalette(palette);
+
 }

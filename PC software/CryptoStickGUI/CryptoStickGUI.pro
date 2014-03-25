@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     stick20matrixpassworddialog.cpp \
     stick20hid.c \
     stick20updatedialog.cpp \
-    stick20changepassworddialog.cpp
+    stick20changepassworddialog.cpp \
+    aboutdialog.cpp
 
 win32 {
 
@@ -62,7 +63,8 @@ HEADERS  += mainwindow.h \
     stick20matrixpassworddialog.h \
     stick20hid.h \
     stick20updatedialog.h \
-    stick20changepassworddialog.h
+    stick20changepassworddialog.h \
+    aboutdialog.h
 
 FORMS    += mainwindow.ui \
     passworddialog.ui \
@@ -73,7 +75,8 @@ FORMS    += mainwindow.ui \
     stick20debugdialog.ui \
     stick20matrixpassworddialog.ui \
     stick20updatedialog.ui \
-    stick20changepassworddialog.ui
+    stick20changepassworddialog.ui \
+    aboutdialog.ui
 
 win32{
 LIBS= -lsetupapi

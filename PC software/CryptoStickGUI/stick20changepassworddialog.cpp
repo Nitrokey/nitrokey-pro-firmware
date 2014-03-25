@@ -91,10 +91,10 @@ void DialogChangePassword::InitData(void)
     switch (PasswordKind)
     {
         case STICK20_PASSWORD_KIND_USER :
-            ui->label->setText("Change user password");
+            ui->label->setText("Change user PIN");
             break;
         case STICK20_PASSWORD_KIND_ADMIN :
-            ui->label->setText("Change admin password");
+            ui->label->setText("Change admin PIN");
             break;
     }
 }

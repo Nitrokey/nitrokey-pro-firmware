@@ -51,6 +51,8 @@ class Stick20ResponseDialog : public QDialog
     Q_OBJECT
     
 public:
+    int ResultValue;
+
     explicit Stick20ResponseDialog(QWidget *parent = 0);
     ~Stick20ResponseDialog();
 
@@ -66,7 +68,6 @@ private:
     Ui::Stick20ResponseDialog *ui;
     int Counter_u32;
     bool FlagNoStopWhenStatusOK;
-
 
 private slots:
     void checkStick20Status();

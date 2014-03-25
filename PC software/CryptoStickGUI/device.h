@@ -34,16 +34,17 @@ class Response;
 #define REPORT_SIZE 64
 #define PAYLOAD_SIZE 53
 
-#define CMD_GET_STATUS 0x00
-#define CMD_WRITE_TO_SLOT 0x01
-#define CMD_READ_SLOT_NAME 0x02
-#define CMD_READ_SLOT 0x03
-#define CMD_GET_CODE 0x04
-#define CMD_WRITE_CONFIG 0x05
-#define CMD_ERASE_SLOT 0x06
-#define CMD_FIRST_AUTHENTICATE 0x07
-#define CMD_AUTHORIZE 0x08
-#define CMD_GET_PASSWORD_RETRY_COUNT 0x09
+#define CMD_GET_STATUS                 0x00
+#define CMD_WRITE_TO_SLOT              0x01
+#define CMD_READ_SLOT_NAME             0x02
+#define CMD_READ_SLOT                  0x03
+#define CMD_GET_CODE                   0x04
+#define CMD_WRITE_CONFIG               0x05
+#define CMD_ERASE_SLOT                 0x06
+#define CMD_FIRST_AUTHENTICATE         0x07
+#define CMD_AUTHORIZE                  0x08
+#define CMD_GET_PASSWORD_RETRY_COUNT   0x09
+#define CMD_CLEAR_WARNING              0x0A
 
 
 #define DEBUG_STATUS_NO_DEBUGGING       0
@@ -78,10 +79,10 @@ class Response;
 #define STICK20_CMD_SEND_NEW_PASSWORD                   (STICK20_CMD_START_VALUE + 19)
 #define STICK20_CMD_CLEAR_NEW_SD_CARD_FOUND             (STICK20_CMD_START_VALUE + 20)
 
-#define STATUS_READY 0x00
-#define STATUS_BUSY	 0x01
-#define STATUS_ERROR 0x02
-#define STATUS_RECEIstick20FillSDCardWithRandomCharsVED_REPORT 0x03
+#define STATUS_READY           0x00
+#define STATUS_BUSY	           0x01
+#define STATUS_ERROR           0x02
+#define STATUS_RECEIVED_REPORT 0x03
 
 #define CMD_STATUS_OK                  0
 #define CMD_STATUS_WRONG_CRC           1
@@ -89,12 +90,13 @@ class Response;
 #define CMD_STATUS_SLOT_NOT_PROGRAMMED 3
 #define CMD_STATUS_WRONG_PASSWORD      4
 #define CMD_STATUS_NOT_AUTHORIZED      5
+#define CMD_STATUS_TIMESTAMP_WARNING   6
 
 enum comm_errors{
-ERR_NOT_CONNECTED=-1,
-ERR_WRONG_RESPONSE_CRC=-2,
-ERR_SENDING=-3,
-ERR_STATUS_NOT_OK=-4
+    ERR_NOT_CONNECTED      = -1,
+    ERR_WRONG_RESPONSE_CRC = -2,
+    ERR_SENDING            = -3,
+    ERR_STATUS_NOT_OK      = -4
 };
 
 
@@ -140,6 +142,13 @@ typedef struct {
     #define uint64_t unsigned long long
 #endif
 
+/*
+#define HOTP_SLOT_COUNT      3
+#define TOTP_SLOT_COUNT     15
+*/
+
+#define HOTP_SLOT_COUNT      2
+#define TOTP_SLOT_COUNT      4
 
 class Device
 {
@@ -158,14 +167,14 @@ public:
     int eraseSlot(uint8_t slotNo);
     int writeToHOTPSlot(HOTPSlot *slot);
     int writeToTOTPSlot(TOTPSlot *slot);
-    int getCode(uint8_t slotNo, uint64_t challenge,uint8_t result[18]);
+    int getCode(uint8_t slotNo, uint64_t challenge,uint64_t lastTOTPTime,uint8_t  lastInterval,uint8_t result[18]);
     int getHOTP(uint8_t slotNo);
     int readSlot(uint8_t slotNo);
     int getPasswordRetryCount();
     bool newConnection;
     void initializeConfig();
-    HOTPSlot *HOTPSlots[2];
-    TOTPSlot *TOTPSlots[4];
+    HOTPSlot *HOTPSlots[HOTP_SLOT_COUNT];
+    TOTPSlot *TOTPSlots[TOTP_SLOT_COUNT];
     void getSlotConfigs();
     uint8_t *password[25];
     bool validPassword;
@@ -214,6 +223,10 @@ public:
     int  activStick20;
     bool waitForAckStick20;
     int  lastBlockNrStick20;
+
+    int  CountHOTP;
+    int  CountTOTP;
+
 
 
 private:

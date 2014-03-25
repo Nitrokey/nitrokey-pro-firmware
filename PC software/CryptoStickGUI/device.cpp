@@ -45,6 +45,10 @@
 
   Constructor Device
 
+  Changes
+  Date      Author          Info
+  25.03.14  RB              Dynamic slot counts
+
   Reviews
   Date      Reviewer        Info
   12.08.13  RB              First review
@@ -53,35 +57,35 @@
 
 Device::Device(int vid, int pid,int vidStick20, int pidStick20)
 {
+    int i;
+
     handle=NULL;
     isConnected=false;
 
     this->vid=vid;
     this->pid=pid;
 
+    CountHOTP = 0;
+    CountTOTP = 0;
+
+
     validPassword    =false;
     passwordSet      =false;
-
-
 
     memset(password,0,50);
     //handle = hid_open(vid,pid, NULL);
 
-    HOTPSlots[0]=new HOTPSlot();
-    HOTPSlots[1]=new HOTPSlot();
+    for (i=0;i<HOTP_SLOT_COUNT;i++)
+    {
+        HOTPSlots[i]             = new HOTPSlot();
+        HOTPSlots[i]->slotNumber = 0x10 + i;
+    }
 
-    HOTPSlots[0]->slotNumber=0x10;
-    HOTPSlots[1]->slotNumber=0x11;
-
-    TOTPSlots[0]=new TOTPSlot();
-    TOTPSlots[1]=new TOTPSlot();
-    TOTPSlots[2]=new TOTPSlot();
-    TOTPSlots[3]=new TOTPSlot();
-
-    TOTPSlots[0]->slotNumber=0x20;
-    TOTPSlots[1]->slotNumber=0x21;
-    TOTPSlots[2]->slotNumber=0x22;
-    TOTPSlots[3]->slotNumber=0x23;
+    for (i=0;i<TOTP_SLOT_COUNT;i++)
+    {
+        TOTPSlots[i]             = new TOTPSlot();
+        TOTPSlots[i]->slotNumber = 0x20 + i;
+    }
 
     newConnection=true;
 
@@ -330,22 +334,28 @@ int Device::getSlotName(uint8_t slotNo){
          qDebug() << resp->lastCommandCRC;
 
          if (cmd->crc==resp->lastCommandCRC){ //the response was for the last command
-             if (resp->lastCommandStatus==CMD_STATUS_OK){
-                 if (slotNo>=0x10&&slotNo<=0x11){
+             if (resp->lastCommandStatus==CMD_STATUS_OK)
+             {
+                 if ((slotNo >= 0x10) && (slotNo < 0x10 + HOTP_SLOT_COUNT)){
                     memcpy(HOTPSlots[slotNo&0x0F]->slotName,resp->data,15);
                     HOTPSlots[slotNo&0x0F]->isProgrammed=true;
                  }
-                 else if (slotNo>=0x20&&slotNo<=0x23){
+                 else if ((slotNo >= 0x20) && (slotNo < 0x20 + TOTP_SLOT_COUNT)){
                      memcpy(TOTPSlots[slotNo&0x0F]->slotName,resp->data,15);
                      TOTPSlots[slotNo&0x0F]->isProgrammed=true;
                  }
 
              }
-             else if (resp->lastCommandStatus==CMD_STATUS_SLOT_NOT_PROGRAMMED){
-                 if (slotNo>=0x10&&slotNo<=0x11)
+             else if (resp->lastCommandStatus==CMD_STATUS_SLOT_NOT_PROGRAMMED)
+             {
+                 if ((slotNo >= 0x10) && (slotNo < 0x10 + HOTP_SLOT_COUNT))
+                 {
                     HOTPSlots[slotNo&0x0F]->isProgrammed=false;
-                 else if (slotNo>=0x20&&slotNo<=0x23)
-                     TOTPSlots[slotNo&0x0F]->isProgrammed=false;
+                 }
+                 else if ((slotNo >= 0x20) && (slotNo < 0x20 + TOTP_SLOT_COUNT))
+                 {
+                    TOTPSlots[slotNo&0x0F]->isProgrammed=false;
+                 }
              }
 
          }
@@ -432,7 +442,8 @@ int Device::writeToHOTPSlot(HOTPSlot *slot)
     qDebug() << "preparing to send";
     qDebug() << slot->slotNumber;
     qDebug() << QString((char *)slot->slotName);
-    if (slot->slotNumber>=0x10&&slot->slotNumber<=0x11){
+
+    if ((slot->slotNumber >= 0x10) && (slot->slotNumber < 0x10 + HOTP_SLOT_COUNT)){
         int res;
         uint8_t data[COMMAND_SIZE];
         memset(data,0,COMMAND_SIZE);
@@ -493,7 +504,8 @@ int Device::writeToHOTPSlot(HOTPSlot *slot)
 
 int Device::writeToTOTPSlot(TOTPSlot *slot)
 {
-    if (slot->slotNumber>=0x20&&slot->slotNumber<=0x23){
+    if ((slot->slotNumber >= 0x20) && (slot->slotNumber < 0x20 + TOTP_SLOT_COUNT))
+    {
         int res;
         uint8_t data[COMMAND_SIZE];
         memset(data,0,COMMAND_SIZE);
@@ -549,21 +561,24 @@ int Device::writeToTOTPSlot(TOTPSlot *slot)
 
 *******************************************************************************/
 
-int Device::getCode(uint8_t slotNo, uint64_t challenge,uint8_t result[18])
+int Device::getCode(uint8_t slotNo, uint64_t challenge,uint64_t lastTOTPTime,uint8_t  lastInterval,uint8_t result[18])
 {
 
     qDebug() << "getting code" << slotNo;
     int res;
-    uint8_t data[9];
+    uint8_t data[30];
 
     data[0]=slotNo;
 
-    memcpy(data+1,&challenge,8);
+    memcpy(data+ 1,&challenge,8);
 
+    memcpy(data+ 9,&lastTOTPTime,8);     // Time of challenge: Warning: it's better to tranfer time and interval, to avoid attacks with wrong timestamps
+    memcpy(data+17,&lastInterval,1);
 
     if (isConnected){
        qDebug() << "sending command";
-    Command *cmd=new Command(CMD_GET_CODE,data,9);
+
+    Command *cmd=new Command(CMD_GET_CODE,data,18);
     res=sendCommand(cmd);
 
     if (res==-1)
@@ -654,14 +669,14 @@ int Device::readSlot(uint8_t slotNo)
 
         if (cmd->crc==resp->lastCommandCRC){ //the response was for the last command
             if (resp->lastCommandStatus==CMD_STATUS_OK){
-                if (slotNo>=0x10&&slotNo<=0x11){
+                if ((slotNo >= 0x10) && (slotNo < 0x10 + HOTP_SLOT_COUNT)){
                    memcpy(HOTPSlots[slotNo&0x0F]->secret,resp->data,20);
                    HOTPSlots[slotNo&0x0F]->config=resp->data[20];
                    memcpy(HOTPSlots[slotNo&0x0F]->counter,resp->data+34,8);
                    memcpy(HOTPSlots[slotNo&0x0F]->tokenID,resp->data+21,13);
                    HOTPSlots[slotNo&0x0F]->isProgrammed=true;
                 }
-                else if (slotNo>=0x20&&slotNo<=0x23){
+                else if ((slotNo >= 0x20) && (slotNo < 0x20 + TOTP_SLOT_COUNT)){
                     memcpy(TOTPSlots[slotNo&0x0F]->secret,resp->data,20);
                     TOTPSlots[slotNo&0x0F]->config=resp->data[20];
                     memcpy(TOTPSlots[slotNo&0x0F]->tokenID,resp->data+21,13);
@@ -671,11 +686,11 @@ int Device::readSlot(uint8_t slotNo)
                 qDebug() << "programmed";
             }
             else if (resp->lastCommandStatus==CMD_STATUS_SLOT_NOT_PROGRAMMED){
-                if (slotNo>=0x10&&slotNo<=0x11){
+                if ((slotNo >= 0x10) && (slotNo < 0x10 + HOTP_SLOT_COUNT)){
                     HOTPSlots[slotNo&0x0F]=new HOTPSlot();
                   // HOTPSlots[slotNo&0x0F]->isProgrammed=false;
                 }
-                else if (slotNo>=0x20&&slotNo<=0x23){
+                else if ((slotNo >= 0x20) && (slotNo < 0x20 + TOTP_SLOT_COUNT)){
                     TOTPSlots[slotNo&0x0F]=new TOTPSlot();
                    // TOTPSlots[slotNo&0x0F]->isProgrammed=false;
                 }
@@ -696,6 +711,10 @@ int Device::readSlot(uint8_t slotNo)
 
   initializeConfig
 
+  Changes
+  Date      Author          Info
+  25.03.14  RB              Slot count by
+
   Reviews
   Date      Reviewer        Info
   12.08.13  RB              First review
@@ -704,12 +723,18 @@ int Device::readSlot(uint8_t slotNo)
 
 void Device::initializeConfig()
 {
-    getSlotName(0x10);
-    getSlotName(0x11);
-    getSlotName(0x20);
-    getSlotName(0x21);
-    getSlotName(0x22);
-    getSlotName(0x23);
+    int i;
+
+    for (i=0;i<HOTP_SLOT_COUNT;i++)
+    {
+        getSlotName(0x10 + i);
+
+    }
+
+    for (i=0;i<TOTP_SLOT_COUNT;i++)
+    {
+        getSlotName(0x20 + i);
+    }
 }
 
 /*******************************************************************************
@@ -900,11 +925,7 @@ int Device::firstAuthenticate(uint8_t cardPassword[], uint8_t tempPasswrod[])
             Sleep::msleep(1000);
             Response *resp=new Response();
             resp->getResponse(this);
-{
-     char text[1000];
-     sprintf(text,"send crc :%08x: get :%08x:\n",crc,resp->lastCommandCRC );
-     DebugAppendText (text);
-}
+
             if (crc==resp->lastCommandCRC)
             { //the response was for the last command
                 if (resp->lastCommandStatus==CMD_STATUS_OK)

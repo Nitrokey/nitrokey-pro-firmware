@@ -47,15 +47,21 @@ private:
     Ui::MainWindow *ui;
     QSystemTrayIcon *trayIcon;
     QMenu *trayMenu;
+    QMenu *trayMenuSubConfigure;
+
+
     Device *cryptostick;
     void getSlotNames();
 
     uint64_t currentTime;
+    bool     CryptedVolumeActive;
+    bool     HiddenVolumeActive;
 
     QAction *quitAction;
     QAction *restoreAction;
     QAction *Stick20Action;
     QAction *DebugAction;
+    QAction *ActionAboutDialog;
     QAction *SecPasswordAction;
     QAction *Stick20SetupAction;
 
@@ -64,6 +70,8 @@ private:
     QAction *Stick20ActionDisableCryptedVolume;
     QAction *Stick20ActionEnableHiddenVolume;
     QAction *Stick20ActionDisableHiddenVolume;
+    QAction *Stick20ActionChangeUserPIN;
+    QAction *Stick20ActionChangeAdminPIN;
     QAction *Stick20ActionEnableFirmwareUpdate;
     QAction *Stick20ActionExportFirmwareToFile;
     QAction *Stick20ActionDestroyCryptedVolume;
@@ -75,6 +83,7 @@ private:
 
     QString DebugText;
 
+    void generateMenuOTP();
     void generateMenuForStick10();
     void initActionsForStick20();
     int  stick20SendCommand (uint8_t stick20Command, uint8_t *password);
@@ -111,14 +120,27 @@ private slots:
 bool eventFilter (QObject *obj, QEvent *event);
 void iconActivated(QSystemTrayIcon::ActivationReason reason);
 
-
+    void getHOTPDialog (int slot);
     void getHOTP1();
     void getHOTP2();
+    void getHOTP3();
 
+    void getTOTPDialog (int slot);
     void getTOTP1();
     void getTOTP2();
     void getTOTP3();
     void getTOTP4();
+    void getTOTP5();
+    void getTOTP6();
+    void getTOTP7();
+    void getTOTP8();
+    void getTOTP9();
+    void getTOTP10();
+    void getTOTP11();
+    void getTOTP12();
+    void getTOTP13();
+    void getTOTP14();
+    void getTOTP15();
     void on_eraseButton_clicked();
     void on_resetGeneralConfigButton_clicked();
     void on_randomSecretButton_clicked();
@@ -126,6 +148,7 @@ void iconActivated(QSystemTrayIcon::ActivationReason reason);
 
     void startStick20Configuration();
     void startStickDebug();
+    void startAboutDialog ();
     void startMatrixPasswordDialog();
     void startStick20Setup() ;
 
@@ -135,6 +158,8 @@ void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void startStick20DisableCryptedVolume();
     void startStick20EnableHiddenVolume();
     void startStick20DisableHiddenVolume();
+    void startStick20ActionChangeUserPIN ();
+    void startStick20ActionChangeAdminPIN ();
     void startStick20EnableFirmwareUpdate();
     void startStick20ExportFirmwareToFile();
     void startStick20DestroyCryptedVolume();
