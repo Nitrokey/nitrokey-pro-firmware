@@ -61,7 +61,7 @@ public:
         label_2->setFont(font);
         layoutWidget = new QWidget(Stick20Dialog);
         layoutWidget->setObjectName(QString::fromUtf8("layoutWidget"));
-        layoutWidget->setGeometry(QRect(16, 90, 211, 29));
+        layoutWidget->setGeometry(QRect(16, 90, 221, 29));
         horizontalLayout = new QHBoxLayout(layoutWidget);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
         horizontalLayout->setContentsMargins(0, 0, 0, 0);
