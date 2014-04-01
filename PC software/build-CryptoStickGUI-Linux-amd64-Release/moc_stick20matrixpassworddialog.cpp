@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'stick20matrixpassworddialog.h'
 **
-** Created: Mon Feb 24 21:36:55 2014
+** Created: Wed Mar 26 21:53:44 2014
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.4)
 **
 ** WARNING! All changes made in this file will be lost!

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'passworddialog.ui'
 **
-** Created: Mon Feb 24 21:36:19 2014
+** Created: Mon Mar 17 21:33:01 2014
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -47,10 +47,17 @@ public:
         lineEdit->setEchoMode(QLineEdit::Password);
         checkBox = new QCheckBox(PasswordDialog);
         checkBox->setObjectName(QString::fromUtf8("checkBox"));
-        checkBox->setGeometry(QRect(30, 70, 101, 21));
+        checkBox->setGeometry(QRect(30, 70, 341, 22));
+        QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(checkBox->sizePolicy().hasHeightForWidth());
+        checkBox->setSizePolicy(sizePolicy);
         label = new QLabel(PasswordDialog);
         label->setObjectName(QString::fromUtf8("label"));
-        label->setGeometry(QRect(30, 10, 111, 21));
+        label->setGeometry(QRect(30, 10, 341, 21));
+        sizePolicy.setHeightForWidth(label->sizePolicy().hasHeightForWidth());
+        label->setSizePolicy(sizePolicy);
 
         retranslateUi(PasswordDialog);
         QObject::connect(buttonBox, SIGNAL(accepted()), PasswordDialog, SLOT(accept()));

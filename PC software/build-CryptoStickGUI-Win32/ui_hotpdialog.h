@@ -32,6 +32,7 @@ public:
     QPushButton *nextButton;
     QSpinBox *intervalSpinBox;
     QLabel *intervalLabel;
+    QLabel *validTimer;
 
     void setupUi(QDialog *HOTPDialog)
     {
@@ -63,6 +64,10 @@ public:
         intervalLabel = new QLabel(HOTPDialog);
         intervalLabel->setObjectName(QString::fromUtf8("intervalLabel"));
         intervalLabel->setGeometry(QRect(235, 10, 81, 21));
+        validTimer = new QLabel(HOTPDialog);
+        validTimer->setObjectName(QString::fromUtf8("validTimer"));
+        validTimer->setGeometry(QRect(20, 10, 51, 16));
+        validTimer->setAlignment(Qt::AlignCenter);
 
         retranslateUi(HOTPDialog);
         QObject::connect(cancelButton, SIGNAL(clicked()), HOTPDialog, SLOT(reject()));
@@ -78,6 +83,7 @@ public:
         clipboardButton->setText(QApplication::translate("HOTPDialog", "Copy to clipboard and close", 0, QApplication::UnicodeUTF8));
         nextButton->setText(QApplication::translate("HOTPDialog", "Get next", 0, QApplication::UnicodeUTF8));
         intervalLabel->setText(QApplication::translate("HOTPDialog", "TOTP interval:", 0, QApplication::UnicodeUTF8));
+        validTimer->setText(QApplication::translate("HOTPDialog", "Valid", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

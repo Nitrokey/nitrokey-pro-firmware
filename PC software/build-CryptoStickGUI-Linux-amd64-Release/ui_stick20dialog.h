@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'stick20dialog.ui'
 **
-** Created: Mon Feb 24 21:36:19 2014
+** Created: Mon Mar 17 21:33:01 2014
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -62,7 +62,7 @@ public:
         label_2->setFont(font);
         layoutWidget = new QWidget(Stick20Dialog);
         layoutWidget->setObjectName(QString::fromUtf8("layoutWidget"));
-        layoutWidget->setGeometry(QRect(16, 90, 211, 29));
+        layoutWidget->setGeometry(QRect(16, 90, 221, 29));
         horizontalLayout = new QHBoxLayout(layoutWidget);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
         horizontalLayout->setContentsMargins(0, 0, 0, 0);

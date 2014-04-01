@@ -18,6 +18,7 @@ INPUT(
 ./release/stick20hid.o
 ./release/stick20updatedialog.o
 ./release/stick20changepassworddialog.o
+./release/aboutdialog.o
 ./release/hid_win.o
 ./release/moc_mainwindow.o
 ./release/moc_passworddialog.o
@@ -29,5 +30,6 @@ INPUT(
 ./release/moc_stick20matrixpassworddialog.o
 ./release/moc_stick20updatedialog.o
 ./release/moc_stick20changepassworddialog.o
+./release/moc_aboutdialog.o
 ./release/qrc_resources.o
 );
