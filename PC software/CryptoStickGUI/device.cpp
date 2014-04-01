@@ -226,15 +226,15 @@ int Device::sendCommand(Command *cmd)
     ((uint32_t *)(report+1))[15]=crc;
 
     cmd->crc=crc;
-
+/*
     {
          char text[1000];
          sprintf(text,"computed crc :%08x:\n",crc );
          DebugAppendText (text);
     }
-
+*/
     err = hid_send_feature_report(handle, report, sizeof(report));
-
+/*
     {
             char text[1000];
             int i;
@@ -252,6 +252,7 @@ int Device::sendCommand(Command *cmd)
             DebugAppendText (text);
 
      }
+*/
     return err;
 }
 
@@ -551,6 +552,7 @@ int Device::writeToTOTPSlot(TOTPSlot *slot)
 
 
 }
+
 /*******************************************************************************
 
   getCode
@@ -713,7 +715,7 @@ int Device::readSlot(uint8_t slotNo)
 
   Changes
   Date      Author          Info
-  25.03.14  RB              Slot count by
+  25.03.14  RB              Slot count by define
 
   Reviews
   Date      Reviewer        Info
@@ -724,6 +726,7 @@ int Device::readSlot(uint8_t slotNo)
 void Device::initializeConfig()
 {
     int i;
+    unsigned int currentTime;
 
     for (i=0;i<HOTP_SLOT_COUNT;i++)
     {
@@ -734,6 +737,12 @@ void Device::initializeConfig()
     for (i=0;i<TOTP_SLOT_COUNT;i++)
     {
         getSlotName(0x20 + i);
+    }
+
+    if (true == activStick20)
+    {
+        currentTime = QDateTime::currentDateTime().toTime_t();
+        stick20SendStartup ((unsigned long long)currentTime);
     }
 }
 
@@ -1534,3 +1543,91 @@ int Device::stick20SendClearNewSdCardFound (uint8_t *Pindata)
     return (true);
 }
 
+/*******************************************************************************
+
+  stick20SendStartup
+
+  Changes
+  Date      Author          Info
+  28.03.14  RB              Send startup and get startup infos
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+int Device::stick20SendStartup (uint64_t localTime)
+{
+    uint8_t   data[30];
+    int       res;
+    Command  *cmd;
+    Response *resp;
+
+    memcpy (data,&localTime,8);
+
+    cmd = new Command (STICK20_CMD_SEND_STARTUP,data,8);
+    res = sendCommand (cmd);
+
+    return (TRUE);
+}
+
+
+
+
+/*******************************************************************************
+
+  getCode
+
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
+
+*******************************************************************************/
+/*
+int Device::getCode(uint8_t slotNo, uint64_t challenge,uint64_t lastTOTPTime,uint8_t  lastInterval,uint8_t result[18])
+{
+
+    qDebug() << "getting code" << slotNo;
+    int res;
+    uint8_t data[30];
+
+    data[0]=slotNo;
+
+    memcpy(data+ 1,&challenge,8);
+
+    memcpy(data+ 9,&lastTOTPTime,8);     // Time of challenge: Warning: it's better to tranfer time and interval, to avoid attacks with wrong timestamps
+    memcpy(data+17,&lastInterval,1);
+
+    if (isConnected){
+       qDebug() << "sending command";
+
+    Command *cmd=new Command(CMD_GET_CODE,data,18);
+    res=sendCommand(cmd);
+
+    if (res==-1)
+        return -1;
+    else{  //sending the command was successful
+        //return cmd->crc;
+         qDebug() << "command sent";
+        Sleep::msleep(100);
+        Response *resp=new Response();
+        resp->getResponse(this);
+
+
+        if (cmd->crc==resp->lastCommandCRC){ //the response was for the last command
+            if (resp->lastCommandStatus==CMD_STATUS_OK){
+                memcpy(result,resp->data,18);
+
+            }
+
+        }
+
+        return 0;
+    }
+
+   }
+
+    return -1;
+
+}
+*/

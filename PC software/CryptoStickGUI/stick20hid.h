@@ -118,7 +118,7 @@ typedef struct {
   unsigned char   VolumeActiceFlag_u8;                  // Bit 0 new card found, bit 1-7 change counter       1 byte
 } typeStick20Configuration_st;                                                          // Sum   17 byte
 
-
+extern int Stick20_ConfigurationChanged;
 extern typeStick20Configuration_st HID_Stick20Configuration_st;
 
 

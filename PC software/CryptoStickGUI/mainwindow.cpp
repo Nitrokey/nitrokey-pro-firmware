@@ -88,16 +88,18 @@ extern "C" void DebugClearText (void);
 
 *******************************************************************************/
 
-MainWindow::MainWindow(int FlagDebug,QWidget *parent) :
+MainWindow::MainWindow(int FlagDebug,int SConfigActive,QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     bool ret;
 
-    trayMenu            = NULL;
-    CryptedVolumeActive = FALSE;
-    HiddenVolumeActive  = FALSE;
+    trayMenu             = NULL;
+    CryptedVolumeActive  = FALSE;
+    HiddenVolumeActive   = FALSE;
+    NormalVolumeRWActive = FALSE;
 
+    SpecialConfigActive = SConfigActive;
 
     switch (FlagDebug)
     {
@@ -325,6 +327,12 @@ void MainWindow::checkConnection()
         }
         generateMenu();
     }
+
+    if (TRUE == Stick20_ConfigurationChanged)
+    {
+        Stick20_ConfigurationChanged = FALSE;
+        UpdateDynamicMenuEntrys ();
+    }
 }
 
 /*******************************************************************************
@@ -447,7 +455,6 @@ void MainWindow::getSlotNames()
 void MainWindow::generateMenu()
 {
     int i;
-    int slotCount;
 
 // Delete old menu
     if (NULL != trayMenu)
@@ -488,34 +495,20 @@ void MainWindow::generateMenu()
     trayMenu->addAction(quitAction);
     trayIcon->setContextMenu(trayMenu);
 
-//    ui->slotComboBox->setMaxCount(HOTP_SLOT_COUNT+TOTP_SLOT_COUNT);
     ui->slotComboBox->clear();
-    slotCount = 0;
+
     for (i=0;i<HOTP_SLOT_COUNT;i++)
     {
         ui->slotComboBox->addItem(QString("HOTP slot ").append(QString::number(i+1,10)).append(" [").append((char *)cryptostick->HOTPSlots[i]->slotName).append("]"));
-//        ui->slotComboBox->setItemText(slotCount,QString("HOTP slot ").append(QString::number(i+1,10)).append(" [").append((char *)cryptostick->HOTPSlots[i]->slotName).append("]"));
-        slotCount++;
     }
 
     for (i=0;i<TOTP_SLOT_COUNT;i++)
     {
         ui->slotComboBox->addItem(QString("TOTP slot ").append(QString::number(i+1,10)).append(" [").append((char *)cryptostick->TOTPSlots[i]->slotName).append("]"));
-//        ui->slotComboBox->setItemText(slotCount,QString("TOTP slot ").append(QString::number(i+1,10)).append(" [").append((char *)cryptostick->TOTPSlots[i]->slotName).append("]"));
-        slotCount++;
     }
     ui->slotComboBox->setCurrentIndex(0);
 
     i = ui->slotComboBox->currentIndex();
-
-/*
-    ui->slotComboBox->setItemText(0,QString("HOTP slot 1 [").append((char *)cryptostick->HOTPSlots[0]->slotName).append("]"));
-    ui->slotComboBox->setItemText(1,QString("HOTP slot 2 [").append((char *)cryptostick->HOTPSlots[1]->slotName).append("]"));
-    ui->slotComboBox->setItemText(2,QString("TOTP slot 1 [").append((char *)cryptostick->TOTPSlots[0]->slotName).append("]"));
-    ui->slotComboBox->setItemText(3,QString("TOTP slot 2 [").append((char *)cryptostick->TOTPSlots[1]->slotName).append("]"));
-    ui->slotComboBox->setItemText(4,QString("TOTP slot 3 [").append((char *)cryptostick->TOTPSlots[2]->slotName).append("]"));
-    ui->slotComboBox->setItemText(5,QString("TOTP slot 4 [").append((char *)cryptostick->TOTPSlots[3]->slotName).append("]"));
-*/
 }
 
 
@@ -584,8 +577,6 @@ void MainWindow::initActionsForStick20()
 
     Stick20ActionDebugAction = new QAction(tr("&Debug Action"), this);
     connect(Stick20ActionDebugAction, SIGNAL(triggered()), this, SLOT(startStick20DebugAction()));
-
-
 }
 
 /*******************************************************************************
@@ -766,16 +757,27 @@ void MainWindow::generateMenuForStick20()
     trayMenuSubConfigure->addAction(restoreAction);
     trayMenuSubConfigure->addAction(Stick20ActionChangeUserPIN);
     trayMenuSubConfigure->addAction(Stick20ActionChangeAdminPIN);
-    trayMenuSubConfigure->addAction(Stick20ActionEnableFirmwareUpdate       );
-    trayMenuSubConfigure->addAction(Stick20ActionExportFirmwareToFile       );
     trayMenuSubConfigure->addAction(Stick20ActionDestroyCryptedVolume       );
-    trayMenuSubConfigure->addAction(Stick20ActionFillSDCardWithRandomChars  );
     trayMenuSubConfigure->addAction(Stick20ActionGetStickStatus             );
-    trayMenuSubConfigure->addAction(Stick20ActionSetReadonlyUncryptedVolume );
-    trayMenuSubConfigure->addAction(Stick20ActionSetReadWriteUncryptedVolume);
 
-    // Add stick 20 setup - yet not used
-//        trayMenu->addAction(Stick20SetupAction);
+
+    if (TRUE == SpecialConfigActive)
+    {
+        trayMenuSubSpecialConfigure = trayMenuSubConfigure->addMenu( "Special Configure" );
+        trayMenuSubSpecialConfigure->addAction(Stick20ActionEnableFirmwareUpdate       );
+        trayMenuSubSpecialConfigure->addAction(Stick20ActionExportFirmwareToFile       );
+        trayMenuSubSpecialConfigure->addAction(Stick20ActionFillSDCardWithRandomChars  );
+
+        if (FALSE == NormalVolumeRWActive)
+        {
+            trayMenuSubSpecialConfigure->addAction(Stick20ActionSetReadonlyUncryptedVolume );      // Set RW active
+        }
+        else
+        {
+            trayMenuSubSpecialConfigure->addAction(Stick20ActionSetReadWriteUncryptedVolume);      // Set readonly active
+        }
+    }
+
 
     // Add secure password dialog test
 //    trayMenu->addAction(SecPasswordAction);
@@ -804,11 +806,6 @@ void MainWindow::generateMenuForStick20()
 void MainWindow::generateHOTPConfig(HOTPSlot *slot)
 {
     int selectedSlot = ui->slotComboBox->currentIndex();
-
-    //    if (selectedSlot==0)
-    //        slot->slotNumber=0x10;
-    //    else if (selectedSlot==1)
-    //        slot->slotNumber=0x11;
 
     if ((selectedSlot >= 0) && (selectedSlot < HOTP_SLOT_COUNT))
     {
@@ -867,11 +864,6 @@ void MainWindow::generateHOTPConfig(HOTPSlot *slot)
 void MainWindow::generateTOTPConfig(TOTPSlot *slot)
 {
     int selectedSlot = ui->slotComboBox->currentIndex();
-
-    //    if (selectedSlot==0)
-    //        slot->slotNumber=0x10;
-    //    else if (selectedSlot==1)
-    //        slot->slotNumber=0x11;
 
     // get the TOTP slot number
     selectedSlot -= HOTP_SLOT_COUNT;
@@ -1666,7 +1658,8 @@ void MainWindow::startStick20DebugAction()
 
     if (1)
     {
-        crc = cryptostick->getSlotName(0x10);
+          cryptostick->getPasswordRetryCount();
+//        crc = cryptostick->getSlotName(0x10);
 
 //        Sleep::msleep(100);
 //        Response *testResponse=new Response();
@@ -1704,6 +1697,52 @@ void MainWindow::startStick20DebugAction()
         stick20SendCommand (STICK20_CMD_ENABLE_READWRITE_UNCRYPTED_LUN,password);
     }
 */
+}
+
+/*******************************************************************************
+
+  UpdateDynamicMenuEntrys
+
+  Changes
+  Date      Author        Info
+  31.03.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+int MainWindow::UpdateDynamicMenuEntrys (void)
+{
+    if (READ_WRITE_ACTIVE == HID_Stick20Configuration_st.ReadWriteFlagUncryptedVolume_u8)
+    {
+        NormalVolumeRWActive = FALSE;
+    }
+    else
+    {
+        NormalVolumeRWActive = TRUE;
+    }
+
+    if (0 != (HID_Stick20Configuration_st.VolumeActiceFlag_u8 & (1 << SD_CRYPTED_VOLUME_BIT_PLACE)))
+    {
+        CryptedVolumeActive = TRUE;
+    }
+    else
+    {
+        CryptedVolumeActive = FALSE;
+    }
+
+    if (0 != (HID_Stick20Configuration_st.VolumeActiceFlag_u8 & (1 << SD_HIDDEN_VOLUME_BIT_PLACE)))
+    {
+        HiddenVolumeActive  = TRUE;
+    }
+    else
+    {
+        HiddenVolumeActive  = FALSE;
+    }
+    generateMenu();
+
+    return (TRUE);
 }
 
 /*******************************************************************************
@@ -1853,8 +1892,10 @@ int MainWindow::stick20SendCommand (uint8_t stick20Command, uint8_t *password)
             if (TRUE == ret)
             {
                 waitForAnswerFromStick20    = TRUE;
-                stopWhenStatusOKFromStick20 = TRUE;
+                stopWhenStatusOKFromStick20 = TRUE;                
             }
+            break;
+        case STICK20_CMD_SEND_STARTUP                   :
             break;
         default :
             msgBox.setText("Stick20Dialog: Wrong combobox value! ");
@@ -1902,6 +1943,16 @@ int MainWindow::stick20SendCommand (uint8_t stick20Command, uint8_t *password)
                 HiddenVolumeActive  = FALSE;
                 generateMenu();
                 break;
+            case STICK20_CMD_GET_DEVICE_STATUS              :
+            case STICK20_CMD_SEND_STARTUP                   :
+                UpdateDynamicMenuEntrys ();
+                break;
+            case STICK20_CMD_ENABLE_READWRITE_UNCRYPTED_LUN :
+               NormalVolumeRWActive = TRUE;
+               break;
+            case STICK20_CMD_ENABLE_READONLY_UNCRYPTED_LUN:
+               NormalVolumeRWActive = FALSE;
+               break;
             default :
                 break;
         }

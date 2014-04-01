@@ -49,15 +49,22 @@
 
 int main(int argc, char *argv[])
 {
+    int i;
     int DebugWindowActive;
+    int SpecialConfigActive;
     char *p;
 
     QApplication a(argc, argv);
 
+    SpecialConfigActive = TRUE;
+
     DebugWindowActive = DEBUG_STATUS_NO_DEBUGGING;
-    if (2 == argc)
+
+// Check for commandline parameter
+    //    if (2 == argc)
+    for (i=2;i<=argc;i++)
     {
-        p = argv[1];
+        p = argv[i-1];
         if (0 == strcmp (p,"-debug"))
         {
             DebugWindowActive = DEBUG_STATUS_LOCAL_DEBUG;
@@ -65,11 +72,14 @@ int main(int argc, char *argv[])
         if (0 == strcmp (p,"-debugAll"))
         {
             DebugWindowActive = DEBUG_STATUS_DEBUG_ALL;
+        }     
+        if (0 == strcmp (p,"-configAll"))
+        {
+            SpecialConfigActive = TRUE;
         }
-
     }
 
-    MainWindow w(DebugWindowActive);
+    MainWindow w(DebugWindowActive,SpecialConfigActive);
     //w.show();
 
     QTime midnight(0, 0, 0);

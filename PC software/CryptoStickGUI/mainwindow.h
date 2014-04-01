@@ -34,11 +34,12 @@ class MainWindow : public QMainWindow
     Q_OBJECT
     
 public:
-    explicit MainWindow(int FlagDebug,QWidget *parent = 0);
+    explicit MainWindow(int FlagDebug,int SConfigActive,QWidget *parent = 0);
     void startTimer();
     ~MainWindow();
 
     bool DebugWindowActive;
+    bool SpecialConfigActive;
 
 protected:
      void closeEvent(QCloseEvent *event);
@@ -48,6 +49,7 @@ private:
     QSystemTrayIcon *trayIcon;
     QMenu *trayMenu;
     QMenu *trayMenuSubConfigure;
+    QMenu *trayMenuSubSpecialConfigure;
 
 
     Device *cryptostick;
@@ -56,6 +58,7 @@ private:
     uint64_t currentTime;
     bool     CryptedVolumeActive;
     bool     HiddenVolumeActive;
+    bool     NormalVolumeRWActive;
 
     QAction *quitAction;
     QAction *restoreAction;
@@ -96,7 +99,7 @@ private:
     void generateAllConfigs();
 
     void generateMenuForStick20();
-
+    int  UpdateDynamicMenuEntrys (void);
 
 private slots:
     void checkConnection();

@@ -54,6 +54,7 @@ HID_Stick20SendData_est             HID_Stick20ReceiveData_st;
 
 HID_Stick20MatrixPasswordData_est   HID_Stick20MatrixPasswordData_st;
 
+int Stick20_ConfigurationChanged = FALSE;
 typeStick20Configuration_st         HID_Stick20Configuration_st;
 
 /*******************************************************************************
@@ -144,6 +145,8 @@ int HID_GetStick20Configuration (void)
     memcpy (&HID_Stick20Configuration_st,
             &HID_Stick20ReceiveData_st.SendData_u8[0],
             sizeof (HID_Stick20Configuration_st));
+
+    Stick20_ConfigurationChanged = TRUE;
 
     return (TRUE);
 }

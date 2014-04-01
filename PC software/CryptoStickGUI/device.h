@@ -79,6 +79,8 @@ class Response;
 #define STICK20_CMD_SEND_NEW_PASSWORD                   (STICK20_CMD_START_VALUE + 19)
 #define STICK20_CMD_CLEAR_NEW_SD_CARD_FOUND             (STICK20_CMD_START_VALUE + 20)
 
+#define STICK20_CMD_SEND_STARTUP                        (STICK20_CMD_START_VALUE + 21)
+
 #define STATUS_READY           0x00
 #define STATUS_BUSY	           0x01
 #define STATUS_ERROR           0x02
@@ -204,6 +206,7 @@ public:
 
     int stick20SendSetReadonlyToUncryptedVolume (uint8_t *Pindata);
     int stick20SendSetReadwriteToUncryptedVolume (uint8_t *Pindata);
+    int stick20SendStartup (uint64_t localTime);
 
     uint8_t cardSerial[4];
     uint8_t firmwareVersion[2];
