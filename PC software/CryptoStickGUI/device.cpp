@@ -24,6 +24,7 @@
 #include "crc32.h"
 #include "sleep.h"
 #include "device.h"
+
 /*******************************************************************************
 
  External declarations
@@ -55,7 +56,7 @@
 
 *******************************************************************************/
 
-Device::Device(int vid, int pid,int vidStick20, int pidStick20)
+Device::Device(int vid, int pid,int vidStick20, int pidStick20,int vidStick20UpdateMode, int pidStick20UpdateMode)
 {
     int i;
 
@@ -65,9 +66,6 @@ Device::Device(int vid, int pid,int vidStick20, int pidStick20)
     this->vid=vid;
     this->pid=pid;
 
-    CountHOTP = 0;
-    CountTOTP = 0;
-
 
     validPassword    =false;
     passwordSet      =false;
@@ -75,13 +73,16 @@ Device::Device(int vid, int pid,int vidStick20, int pidStick20)
     memset(password,0,50);
     //handle = hid_open(vid,pid, NULL);
 
-    for (i=0;i<HOTP_SLOT_COUNT;i++)
+    HOTP_SlotCount = HOTP_SLOT_COUNT;       // For stick 1.0
+    TOTP_SlotCount = TOTP_SLOT_COUNT;
+
+    for (i=0;i<HOTP_SLOT_COUNT_MAX;i++)
     {
         HOTPSlots[i]             = new HOTPSlot();
         HOTPSlots[i]->slotNumber = 0x10 + i;
     }
 
-    for (i=0;i<TOTP_SLOT_COUNT;i++)
+    for (i=0;i<TOTP_SLOT_COUNT_MAX;i++)
     {
         TOTPSlots[i]             = new TOTPSlot();
         TOTPSlots[i]->slotNumber = 0x20 + i;
@@ -91,8 +92,10 @@ Device::Device(int vid, int pid,int vidStick20, int pidStick20)
 
 // Init data for stick 20
 
-   this->vidStick20   = vidStick20;
-   this->pidStick20   = pidStick20;
+   this->vidStick20             = vidStick20;
+   this->pidStick20             = pidStick20;
+   this->vidStick20UpdateMode   = vidStick20UpdateMode;
+   this->pidStick20UpdateMode   = pidStick20UpdateMode;
 
 //    this->vidStick20   = 0x046d;
 //    this->pidStick20   = 0xc315;
@@ -124,37 +127,49 @@ int Device::checkConnection()
 
     //handle = hid_open(vid,pid, NULL);
 
-    if (!handle){
-        isConnected=false;
-        newConnection=true;
+    if (!handle)
+    {
+        isConnected   = false;
+        newConnection = true;
         return -1;
     }
     else{
         res = hid_get_feature_report (handle, buf, 65);
-        if (res < 0){
-            isConnected=false;
-            newConnection=true;
-            return -1;
+        if (res < 0){ // Check it twice to avoid connection problem
+            res = hid_get_feature_report (handle, buf, 65);
+            if (res < 0){
+                isConnected   = false;
+                newConnection = true;
+                return -1;
+            }
         }
 
-        if (newConnection){
-            isConnected=true;
-            newConnection=false;
-            passwordSet=false;
-            validPassword=false;
+        if (newConnection)
+        {
+            isConnected   = true;
+            newConnection = false;
+            passwordSet   = false;
+            validPassword = false;
+
+            HOTP_SlotCount = HOTP_SLOT_COUNT;       // For stick 1.0
+            TOTP_SlotCount = TOTP_SLOT_COUNT;
 
             // stick 20 with no OTP
-            if (false == activStick20)
+            if (true == activStick20)
             {
+                HOTP_SlotCount = HOTP_SLOT_COUNT_MAX;
+                TOTP_SlotCount = TOTP_SLOT_COUNT_MAX;
             }
             initializeConfig();          // init data for OTP
             return 1;
         }
-        return 0;
 
+        return 0;
     }
 
 }
+
+
 
 /*******************************************************************************
 
@@ -182,7 +197,7 @@ void Device::connect()
             // Stick 20 found
             activStick20 = true;
         }
-    }
+    }       
 }
 
 /*******************************************************************************
@@ -337,11 +352,11 @@ int Device::getSlotName(uint8_t slotNo){
          if (cmd->crc==resp->lastCommandCRC){ //the response was for the last command
              if (resp->lastCommandStatus==CMD_STATUS_OK)
              {
-                 if ((slotNo >= 0x10) && (slotNo < 0x10 + HOTP_SLOT_COUNT)){
+                 if ((slotNo >= 0x10) && (slotNo < 0x10 + HOTP_SlotCount)){
                     memcpy(HOTPSlots[slotNo&0x0F]->slotName,resp->data,15);
                     HOTPSlots[slotNo&0x0F]->isProgrammed=true;
                  }
-                 else if ((slotNo >= 0x20) && (slotNo < 0x20 + TOTP_SLOT_COUNT)){
+                 else if ((slotNo >= 0x20) && (slotNo < 0x20 + TOTP_SlotCount)){
                      memcpy(TOTPSlots[slotNo&0x0F]->slotName,resp->data,15);
                      TOTPSlots[slotNo&0x0F]->isProgrammed=true;
                  }
@@ -349,11 +364,11 @@ int Device::getSlotName(uint8_t slotNo){
              }
              else if (resp->lastCommandStatus==CMD_STATUS_SLOT_NOT_PROGRAMMED)
              {
-                 if ((slotNo >= 0x10) && (slotNo < 0x10 + HOTP_SLOT_COUNT))
+                 if ((slotNo >= 0x10) && (slotNo < 0x10 + HOTP_SlotCount))
                  {
                     HOTPSlots[slotNo&0x0F]->isProgrammed=false;
                  }
-                 else if ((slotNo >= 0x20) && (slotNo < 0x20 + TOTP_SLOT_COUNT))
+                 else if ((slotNo >= 0x20) && (slotNo < 0x20 + TOTP_SlotCount))
                  {
                     TOTPSlots[slotNo&0x0F]->isProgrammed=false;
                  }
@@ -444,7 +459,7 @@ int Device::writeToHOTPSlot(HOTPSlot *slot)
     qDebug() << slot->slotNumber;
     qDebug() << QString((char *)slot->slotName);
 
-    if ((slot->slotNumber >= 0x10) && (slot->slotNumber < 0x10 + HOTP_SLOT_COUNT)){
+    if ((slot->slotNumber >= 0x10) && (slot->slotNumber < 0x10 + HOTP_SlotCount)){
         int res;
         uint8_t data[COMMAND_SIZE];
         memset(data,0,COMMAND_SIZE);
@@ -505,7 +520,7 @@ int Device::writeToHOTPSlot(HOTPSlot *slot)
 
 int Device::writeToTOTPSlot(TOTPSlot *slot)
 {
-    if ((slot->slotNumber >= 0x20) && (slot->slotNumber < 0x20 + TOTP_SLOT_COUNT))
+    if ((slot->slotNumber >= 0x20) && (slot->slotNumber < 0x20 + TOTP_SlotCount))
     {
         int res;
         uint8_t data[COMMAND_SIZE];
@@ -671,14 +686,14 @@ int Device::readSlot(uint8_t slotNo)
 
         if (cmd->crc==resp->lastCommandCRC){ //the response was for the last command
             if (resp->lastCommandStatus==CMD_STATUS_OK){
-                if ((slotNo >= 0x10) && (slotNo < 0x10 + HOTP_SLOT_COUNT)){
+                if ((slotNo >= 0x10) && (slotNo < 0x10 + HOTP_SlotCount)){
                    memcpy(HOTPSlots[slotNo&0x0F]->secret,resp->data,20);
                    HOTPSlots[slotNo&0x0F]->config=resp->data[20];
                    memcpy(HOTPSlots[slotNo&0x0F]->counter,resp->data+34,8);
                    memcpy(HOTPSlots[slotNo&0x0F]->tokenID,resp->data+21,13);
                    HOTPSlots[slotNo&0x0F]->isProgrammed=true;
                 }
-                else if ((slotNo >= 0x20) && (slotNo < 0x20 + TOTP_SLOT_COUNT)){
+                else if ((slotNo >= 0x20) && (slotNo < 0x20 + TOTP_SlotCount)){
                     memcpy(TOTPSlots[slotNo&0x0F]->secret,resp->data,20);
                     TOTPSlots[slotNo&0x0F]->config=resp->data[20];
                     memcpy(TOTPSlots[slotNo&0x0F]->tokenID,resp->data+21,13);
@@ -688,11 +703,11 @@ int Device::readSlot(uint8_t slotNo)
                 qDebug() << "programmed";
             }
             else if (resp->lastCommandStatus==CMD_STATUS_SLOT_NOT_PROGRAMMED){
-                if ((slotNo >= 0x10) && (slotNo < 0x10 + HOTP_SLOT_COUNT)){
+                if ((slotNo >= 0x10) && (slotNo < 0x10 + HOTP_SlotCount)){
                     HOTPSlots[slotNo&0x0F]=new HOTPSlot();
                   // HOTPSlots[slotNo&0x0F]->isProgrammed=false;
                 }
-                else if ((slotNo >= 0x20) && (slotNo < 0x20 + TOTP_SLOT_COUNT)){
+                else if ((slotNo >= 0x20) && (slotNo < 0x20 + TOTP_SlotCount)){
                     TOTPSlots[slotNo&0x0F]=new TOTPSlot();
                    // TOTPSlots[slotNo&0x0F]->isProgrammed=false;
                 }
@@ -728,13 +743,12 @@ void Device::initializeConfig()
     int i;
     unsigned int currentTime;
 
-    for (i=0;i<HOTP_SLOT_COUNT;i++)
+    for (i=0;i<HOTP_SlotCount;i++)
     {
         getSlotName(0x10 + i);
-
     }
 
-    for (i=0;i<TOTP_SLOT_COUNT;i++)
+    for (i=0;i<TOTP_SlotCount;i++)
     {
         getSlotName(0x20 + i);
     }
@@ -1561,7 +1575,6 @@ int Device::stick20SendStartup (uint64_t localTime)
     uint8_t   data[30];
     int       res;
     Command  *cmd;
-    Response *resp;
 
     memcpy (data,&localTime,8);
 
@@ -1571,7 +1584,33 @@ int Device::stick20SendStartup (uint64_t localTime)
     return (TRUE);
 }
 
+/*******************************************************************************
 
+  stick20SendHiddenVolumeSetup
+
+  Changes
+  Date      Author          Info
+  25.04.14  RB              Send setup of a hidden volume
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+int Device::stick20SendHiddenVolumeSetup (HiddenVolumeSetup_tst *HV_Data_st)
+{
+    uint8_t   data[30];
+    int       res;
+    Command  *cmd;
+    uint8_t   SizeCheck_data[1 - 2*(sizeof(HiddenVolumeSetup_tst) > 30)];
+
+    memcpy (data,HV_Data_st,sizeof (HiddenVolumeSetup_tst));
+
+    cmd = new Command (STICK20_CMD_SEND_HIDDENVOLUME_SETUP,data,sizeof (HiddenVolumeSetup_tst));
+    res = sendCommand (cmd);
+
+    return (TRUE);
+}
 
 
 /*******************************************************************************

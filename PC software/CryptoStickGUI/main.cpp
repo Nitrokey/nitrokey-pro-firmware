@@ -53,12 +53,13 @@ int main(int argc, char *argv[])
     int DebugWindowActive;
     int SpecialConfigActive;
     char *p;
+    StartUpParameter_tst StartupInfo_st;
 
     QApplication a(argc, argv);
 
-    SpecialConfigActive = TRUE;
-
-    DebugWindowActive = DEBUG_STATUS_NO_DEBUGGING;
+    StartupInfo_st.ExtendedConfigActive  = TRUE;
+    StartupInfo_st.FlagDebug      = DEBUG_STATUS_NO_DEBUGGING;
+    StartupInfo_st.PasswordMatrix = FALSE;
 
 // Check for commandline parameter
     //    if (2 == argc)
@@ -67,19 +68,25 @@ int main(int argc, char *argv[])
         p = argv[i-1];
         if (0 == strcmp (p,"-debug"))
         {
-            DebugWindowActive = DEBUG_STATUS_LOCAL_DEBUG;
+            StartupInfo_st.FlagDebug = DEBUG_STATUS_LOCAL_DEBUG;
         }
         if (0 == strcmp (p,"-debugAll"))
         {
-            DebugWindowActive = DEBUG_STATUS_DEBUG_ALL;
+            StartupInfo_st.FlagDebug = DEBUG_STATUS_DEBUG_ALL;
         }     
         if (0 == strcmp (p,"-configAll"))
         {
-            SpecialConfigActive = TRUE;
+            StartupInfo_st.ExtendedConfigActive = TRUE;
+        }
+        if (0 == strcmp (p,"-PWM"))
+        {
+            StartupInfo_st.PasswordMatrix = TRUE;
         }
     }
 
-    MainWindow w(DebugWindowActive,SpecialConfigActive);
+
+
+    MainWindow w(&StartupInfo_st);
     //w.show();
 
     QTime midnight(0, 0, 0);

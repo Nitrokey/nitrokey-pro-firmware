@@ -91,8 +91,10 @@ void Stick20ResponseDialog::showStick20Configuration (int Status)
 {
     QString OutputText;
 
+
     Counter_u32 += 1;
 
+    Status = 0;
     if (0 == Status)
     {
         OutputText.append(QString("Firmware version      "));
@@ -146,6 +148,17 @@ void Stick20ResponseDialog::showStick20Configuration (int Status)
             OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.SDFillWithRandomChars_u8 >> 1))).append("\n");
         }
 
+        OutputText.append(QString("Smartcard ID "));
+        OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.ActiveSmartCardID_u32))).append("\n");
+
+        OutputText.append(QString("SD ID "));
+        OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.ActiveSD_CardID_u32))).append("\n");
+
+        OutputText.append(QString("Admin password retry counter "));
+        OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.AdminPwRetryCount))).append("\n");
+
+        OutputText.append(QString("User password retry counter  "));
+        OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.UserPwRetryCount))).append("\n");
 
     }
     else
@@ -154,6 +167,9 @@ void Stick20ResponseDialog::showStick20Configuration (int Status)
     }
 
     ui->OutputText->setText(OutputText);
+
+    DebugAppendText (OutputText.toAscii().data());
+
 }
 
 /*******************************************************************************
@@ -286,6 +302,14 @@ void Stick20ResponseDialog::checkStick20Status()
                 OutputText.append (QString("PASSWORD MATRIX READY"));
                 pollStick20Timer->stop();
                 break;
+            case OUTPUT_CMD_STICK20_STATUS_NO_USER_PASSWORD_UNLOCK   :
+                OutputText.append (QString("NO USER PASSWORD UNLOCK"));
+                pollStick20Timer->stop();
+                break;
+            case OUTPUT_CMD_STICK20_STATUS_SMARTCARD_ERROR   :
+                OutputText.append (QString("SMARTCARD ERROR"));
+                pollStick20Timer->stop();
+                break;
             default :
                 break;
         }
@@ -304,6 +328,16 @@ void Stick20ResponseDialog::checkStick20Status()
                 case OUTPUT_CMD_STICK20_STATUS_WRONG_PASSWORD   :
                 case OUTPUT_CMD_STICK20_STATUS_BUSY_PROGRESSBAR :
                 case OUTPUT_CMD_STICK20_STATUS_PASSWORD_MATRIX_READY   :
+                    // Do nothing, wait for next hid info
+                    break;
+                case OUTPUT_CMD_STICK20_STATUS_NO_USER_PASSWORD_UNLOCK :
+                    done (FALSE);
+                    ResultValue = FALSE;
+                    break;
+                case OUTPUT_CMD_STICK20_STATUS_SMARTCARD_ERROR  :
+                    done (FALSE);
+                    ResultValue = FALSE;
+                    break;
                 default :
                     break;
             }
@@ -315,6 +349,38 @@ void Stick20ResponseDialog::checkStick20Status()
             {
                 case STICK20_CMD_GET_DEVICE_STATUS              :
                     showStick20Configuration (ret);
+                    break;
+                default :
+                    break;
+            }
+        }
+
+        if (OUTPUT_CMD_STICK20_STATUS_NO_USER_PASSWORD_UNLOCK == stick20Response->HID_Stick20Status_st.Status_u8)
+        {
+            switch (stick20Response->HID_Stick20Status_st.LastCommand_u8)
+            {
+                case STICK20_CMD_ENABLE_HIDDEN_CRYPTED_PARI     :
+                    {
+                        QMessageBox msgBox;
+                        msgBox.setText("Crypted volume was not enabled, please enable the crypted volume");
+                        msgBox.exec();
+                    }
+                    break;
+                default :
+                    break;
+            }
+        }
+
+        if (OUTPUT_CMD_STICK20_STATUS_SMARTCARD_ERROR == stick20Response->HID_Stick20Status_st.Status_u8)
+        {
+            switch (stick20Response->HID_Stick20Status_st.LastCommand_u8)
+            {
+                case STICK20_CMD_ENABLE_HIDDEN_CRYPTED_PARI     :
+                    {
+                        QMessageBox msgBox;
+                        msgBox.setText("Smartcard error, please retry the command");
+                        msgBox.exec();
+                    }
                     break;
                 default :
                     break;

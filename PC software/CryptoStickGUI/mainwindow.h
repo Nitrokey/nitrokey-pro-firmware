@@ -29,17 +29,24 @@ namespace Ui {
 class MainWindow;
 }
 
+typedef struct {
+    int FlagDebug;
+    int ExtendedConfigActive;
+    int PasswordMatrix;
+} StartUpParameter_tst;
+
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
     
 public:
-    explicit MainWindow(int FlagDebug,int SConfigActive,QWidget *parent = 0);
+    explicit MainWindow(StartUpParameter_tst *StartupInfo_st,QWidget *parent = 0);
     void startTimer();
     ~MainWindow();
 
     bool DebugWindowActive;
-    bool SpecialConfigActive;
+    bool ExtendedlConfigActive;
 
 protected:
      void closeEvent(QCloseEvent *event);
@@ -51,6 +58,8 @@ private:
     QMenu *trayMenuSubConfigure;
     QMenu *trayMenuSubSpecialConfigure;
 
+    unsigned char HOTP_SlotCount;
+    unsigned char TOTP_SlotCount;
 
     Device *cryptostick;
     void getSlotNames();
@@ -59,6 +68,11 @@ private:
     bool     CryptedVolumeActive;
     bool     HiddenVolumeActive;
     bool     NormalVolumeRWActive;
+    bool     HiddenVolumeAccessable;
+    bool     StickNotInitated;
+    bool     ClearSdCardNotErased;
+    bool     ClearSdCardNotErased_DontAsk;
+    bool     StickNotInitated_DontAsk;
 
     QAction *quitAction;
     QAction *restoreAction;
@@ -83,6 +97,7 @@ private:
     QAction *Stick20ActionSetReadonlyUncryptedVolume;
     QAction *Stick20ActionSetReadWriteUncryptedVolume;
     QAction *Stick20ActionDebugAction;
+    QAction *Stick20ActionSetupHiddenVolume;
 
     QString DebugText;
 
@@ -171,7 +186,7 @@ void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void startStick20SetReadonlyUncryptedVolume();
     void startStick20SetReadWriteUncryptedVolume();
     void startStick20DebugAction();
-
+    void startStick20SetupHiddenVolume();
 };
 
 #endif // MAINWINDOW_H

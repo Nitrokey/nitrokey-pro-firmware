@@ -38,6 +38,8 @@
 #include "stick20setup.h"
 #include "stick20updatedialog.h"
 #include "stick20changepassworddialog.h"
+#include "stick20infodialog.h"
+#include "stick20hiddenvolumedialog.h"
 
 #include <QTimer>
 #include <QMenu>
@@ -64,15 +66,6 @@ extern "C" void DebugClearText (void);
 
 *******************************************************************************/
 
-#define VID_STICK_OTP 0x20A0
-#define PID_STICK_OTP 0x4108
-
-#define VID_STICK_20  0x20A0
-#define PID_STICK_20  0x4109 // MSD + CCID + HID production id
-
-//#define PID_STICK_20    0x220D // MSD + CCID + HID test id
-//#define PID_STICK_20    0x2309 // MSD + HID test id
-//#define PID_STICK_20    0x220B // HID test id
 
 /*******************************************************************************
 
@@ -88,20 +81,29 @@ extern "C" void DebugClearText (void);
 
 *******************************************************************************/
 
-MainWindow::MainWindow(int FlagDebug,int SConfigActive,QWidget *parent) :
+MainWindow::MainWindow(StartUpParameter_tst *StartupInfo_st,QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     bool ret;
 
-    trayMenu             = NULL;
-    CryptedVolumeActive  = FALSE;
-    HiddenVolumeActive   = FALSE;
-    NormalVolumeRWActive = FALSE;
+    HOTP_SlotCount = HOTP_SLOT_COUNT;
+    TOTP_SlotCount = TOTP_SLOT_COUNT;
 
-    SpecialConfigActive = SConfigActive;
+    trayMenu               = NULL;
+    CryptedVolumeActive    = FALSE;
+    HiddenVolumeActive     = FALSE;
+    NormalVolumeRWActive   = FALSE;
+    HiddenVolumeAccessable = FALSE;
+    StickNotInitated       = FALSE;
+    ClearSdCardNotErased   = FALSE;
 
-    switch (FlagDebug)
+    ClearSdCardNotErased_DontAsk = FALSE;
+    StickNotInitated_DontAsk     = FALSE;
+
+    ExtendedlConfigActive = StartupInfo_st->ExtendedConfigActive;
+
+    switch (StartupInfo_st->FlagDebug)
     {
         case DEBUG_STATUS_LOCAL_DEBUG :
             DebugWindowActive            = TRUE;
@@ -127,7 +129,7 @@ MainWindow::MainWindow(int FlagDebug,int SConfigActive,QWidget *parent) :
     ui->setupUi(this);
     ui->statusBar->showMessage("Device disconnected.");
 
-    cryptostick =  new Device(VID_STICK_OTP, PID_STICK_OTP,VID_STICK_20,PID_STICK_20);
+    cryptostick =  new Device(VID_STICK_OTP, PID_STICK_OTP,VID_STICK_20,PID_STICK_20,VID_STICK_20_UPDATE_MODE,PID_STICK_20_UPDATE_MODE);
 
     QTimer *timer = new QTimer(this);
     ret = connect(timer, SIGNAL(timeout()), this, SLOT(checkConnection()));
@@ -143,12 +145,26 @@ MainWindow::MainWindow(int FlagDebug,int SConfigActive,QWidget *parent) :
 
     if (TRUE == trayIcon->supportsMessages ())
     {
-        trayIcon->showMessage ("Cryptostick GUI","active");
+        if (TRUE == DebugWindowActive)
+        {
+            trayIcon->showMessage ("Cryptostick GUI","active - DEBUG Mode");
+        }
+        else
+        {
+            trayIcon->showMessage ("Cryptostick GUI","active");
+        }
     }
     else
     {
         QMessageBox msgBox;
-        msgBox.setText("Cryptostick GUI active");
+        if (TRUE == DebugWindowActive)
+        {
+            msgBox.setText("Cryptostick GUI active - DEBUG Mode");
+        }
+        else
+        {
+            msgBox.setText("Cryptostick GUI active");
+        }
         msgBox.exec();
     }
 
@@ -301,28 +317,64 @@ bool MainWindow::eventFilter (QObject *obj, QEvent *event)
 
 void MainWindow::checkConnection()
 {
+    static int Stick20CheckFlashMode = TRUE;
+    static int DeviceOffline         = TRUE;
+    int ret;
+
     currentTime = QDateTime::currentDateTime().toTime_t();
 
     int result = cryptostick->checkConnection();
+
+// Set new slot counts
+    HOTP_SlotCount = cryptostick->HOTP_SlotCount;
+    TOTP_SlotCount = cryptostick->TOTP_SlotCount;
+
     if (result==0)
     {
-        if (false == cryptostick->activStick20) {
+        if (false == cryptostick->activStick20)
+        {
             ui->statusBar->showMessage("Device connected.");
-        } else {
+        } else
+        {
             ui->statusBar->showMessage("Device Stick 2.0 connected.");
         }
+        DeviceOffline = FALSE;
     }
-    else if (result==-1){
+    else if (result == -1)
+    {
         ui->statusBar->showMessage("Device disconnected.");
         CryptedVolumeActive = FALSE;
         HiddenVolumeActive  = FALSE;
-        generateMenu();
+        if (FALSE== DeviceOffline)      // To avoid the continuous reseting of the menu
+        {
+            generateMenu();
+            DeviceOffline = TRUE;
+        }
         cryptostick->connect();
+
+
+
+/* Don't work :-(
+        // Check for stick 20 flash mode, only one time
+        if (TRUE == Stick20CheckFlashMode)
+        {
+            ret = cryptostick->checkUsbDeviceActive (VID_STICK_20_UPDATE_MODE,PID_STICK_20_UPDATE_MODE);
+ //           Stick20CheckFlashMode = FALSE;
+            if (TRUE == ret)
+            {
+                QMessageBox msgBox;
+                msgBox.setText("Flash Cryptostick application");
+                msgBox.exec();
+            }
+        }
+*/
     }
-    else if (result==1){ //recreate the settings and menus
-        if (false == cryptostick->activStick20) {
+    else if (result == 1){ //recreate the settings and menus
+        if (false == cryptostick->activStick20)
+        {
             ui->statusBar->showMessage("Device connected.");
-        } else {
+        } else
+        {
             ui->statusBar->showMessage("Device Stick 2.0 connected.");
         }
         generateMenu();
@@ -467,7 +519,7 @@ void MainWindow::generateMenu()
 
 // About entry
 
-    if (cryptostick->isConnected==false){
+    if (cryptostick->isConnected == false){
         trayMenu->addAction("Crypto Stick not connected");
     }
     else{
@@ -497,12 +549,12 @@ void MainWindow::generateMenu()
 
     ui->slotComboBox->clear();
 
-    for (i=0;i<HOTP_SLOT_COUNT;i++)
+    for (i=0;i<HOTP_SlotCount;i++)
     {
         ui->slotComboBox->addItem(QString("HOTP slot ").append(QString::number(i+1,10)).append(" [").append((char *)cryptostick->HOTPSlots[i]->slotName).append("]"));
     }
 
-    for (i=0;i<TOTP_SLOT_COUNT;i++)
+    for (i=0;i<TOTP_SlotCount;i++)
     {
         ui->slotComboBox->addItem(QString("TOTP slot ").append(QString::number(i+1,10)).append(" [").append((char *)cryptostick->TOTPSlots[i]->slotName).append("]"));
     }
@@ -577,6 +629,10 @@ void MainWindow::initActionsForStick20()
 
     Stick20ActionDebugAction = new QAction(tr("&Debug Action"), this);
     connect(Stick20ActionDebugAction, SIGNAL(triggered()), this, SLOT(startStick20DebugAction()));
+
+    Stick20ActionSetupHiddenVolume = new QAction(tr("&Setup hidden vloume"), this);
+    connect(Stick20ActionSetupHiddenVolume, SIGNAL(triggered()), this, SLOT(startStick20SetupHiddenVolume()));
+
 }
 
 /*******************************************************************************
@@ -602,12 +658,13 @@ void MainWindow::generateMenuOTP()
         QString actionName("HOTP slot 2 ");
         trayMenu->addAction(actionName.append((char *)cryptostick->HOTPSlots[1]->slotName),this,SLOT(getHOTP2()));
     }
-#if (HOTP_SLOT_COUNT >= 3)
-    if (cryptostick->HOTPSlots[2]->isProgrammed==true){
-        QString actionName("HOTP slot 3 ");
-        trayMenu->addAction(actionName.append((char *)cryptostick->HOTPSlots[2]->slotName),this,SLOT(getHOTP3()));
+    if (HOTP_SlotCount >= 3)
+    {
+        if (cryptostick->HOTPSlots[2]->isProgrammed==true){
+            QString actionName("HOTP slot 3 ");
+            trayMenu->addAction(actionName.append((char *)cryptostick->HOTPSlots[2]->slotName),this,SLOT(getHOTP3()));
+        }
     }
-#endif
 
     if (cryptostick->TOTPSlots[0]->isProgrammed==true){
         QString actionName("TOTP slot 1 ");
@@ -626,72 +683,83 @@ void MainWindow::generateMenuOTP()
         trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[3]->slotName),this,SLOT(getTOTP4()));
     }
 
-#if (TOTP_SLOT_COUNT > 4)
-    if (cryptostick->TOTPSlots[4]->isProgrammed==true){
-        QString actionName("TOTP slot 5 ");
-        trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[4]->slotName),this,SLOT(getTOTP5()));
+    if (TOTP_SlotCount > 4)
+    {
+        if (cryptostick->TOTPSlots[4]->isProgrammed==true){
+            QString actionName("TOTP slot 5 ");
+            trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[4]->slotName),this,SLOT(getTOTP5()));
+        }
     }
-#endif
-#if (TOTP_SLOT_COUNT > 5)
-    if (cryptostick->TOTPSlots[5]->isProgrammed==true){
-        QString actionName("TOTP slot 6 ");
-        trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[5]->slotName),this,SLOT(getTOTP6()));
+    if (TOTP_SlotCount > 5)
+    {
+        if (cryptostick->TOTPSlots[5]->isProgrammed==true){
+            QString actionName("TOTP slot 6 ");
+            trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[5]->slotName),this,SLOT(getTOTP6()));
+        }
     }
-#endif
-#if (TOTP_SLOT_COUNT > 6)
-    if (cryptostick->TOTPSlots[6]->isProgrammed==true){
-        QString actionName("TOTP slot 7 ");
-        trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[6]->slotName),this,SLOT(getTOTP7()));
+    if (TOTP_SlotCount > 6)
+    {
+        if (cryptostick->TOTPSlots[6]->isProgrammed==true){
+            QString actionName("TOTP slot 7 ");
+            trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[6]->slotName),this,SLOT(getTOTP7()));
+        }
     }
-#endif
-#if (TOTP_SLOT_COUNT > 7)
-    if (cryptostick->TOTPSlots[7]->isProgrammed==true){
-        QString actionName("TOTP slot 8 ");
-        trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[7]->slotName),this,SLOT(getTOTP8()));
+    if (TOTP_SlotCount > 7)
+    {
+        if (cryptostick->TOTPSlots[7]->isProgrammed==true){
+            QString actionName("TOTP slot 8 ");
+            trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[7]->slotName),this,SLOT(getTOTP8()));
+        }
     }
-#endif
-#if (TOTP_SLOT_COUNT > 8)
-    if (cryptostick->TOTPSlots[8]->isProgrammed==true){
-        QString actionName("TOTP slot 9 ");
-        trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[8]->slotName),this,SLOT(getTOTP9()));
+    if (TOTP_SlotCount > 8)
+    {
+        if (cryptostick->TOTPSlots[8]->isProgrammed==true){
+            QString actionName("TOTP slot 9 ");
+            trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[8]->slotName),this,SLOT(getTOTP9()));
+        }
     }
-#endif
-#if (TOTP_SLOT_COUNT > 9)
-    if (cryptostick->TOTPSlots[9]->isProgrammed==true){
-        QString actionName("TOTP slot 10 ");
-        trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[8]->slotName),this,SLOT(getTOTP10()));
+    if (TOTP_SlotCount > 9)
+    {
+        if (cryptostick->TOTPSlots[9]->isProgrammed==true){
+            QString actionName("TOTP slot 10 ");
+            trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[8]->slotName),this,SLOT(getTOTP10()));
+        }
     }
-#endif
-#if (TOTP_SLOT_COUNT > 10)
-    if (cryptostick->TOTPSlots[10]->isProgrammed==true){
-        QString actionName("TOTP slot 11 ");
-        trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[10]->slotName),this,SLOT(getTOTP11()));
+    if (TOTP_SlotCount > 10)
+    {
+        if (cryptostick->TOTPSlots[10]->isProgrammed==true){
+            QString actionName("TOTP slot 11 ");
+            trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[10]->slotName),this,SLOT(getTOTP11()));
+        }
     }
-#endif
-#if (TOTP_SLOT_COUNT > 11)
-    if (cryptostick->TOTPSlots[11]->isProgrammed==true){
-        QString actionName("TOTP slot 12 ");
-        trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[11]->slotName),this,SLOT(getTOTP12()));
+    if (TOTP_SlotCount > 11)
+    {
+        if (cryptostick->TOTPSlots[11]->isProgrammed==true){
+            QString actionName("TOTP slot 12 ");
+            trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[11]->slotName),this,SLOT(getTOTP12()));
+        }
     }
-#endif
-#if (TOTP_SLOT_COUNT > 12)
-    if (cryptostick->TOTPSlots[12]->isProgrammed==true){
-        QString actionName("TOTP slot 13 ");
-        trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[12]->slotName),this,SLOT(getTOTP13()));
+    if (TOTP_SlotCount > 12)
+    {
+        if (cryptostick->TOTPSlots[12]->isProgrammed==true){
+            QString actionName("TOTP slot 13 ");
+            trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[12]->slotName),this,SLOT(getTOTP13()));
+        }
     }
-#endif
-#if (TOTP_SLOT_COUNT > 13)
-    if (cryptostick->TOTPSlots[13]->isProgrammed==true){
-        QString actionName("TOTP slot 14 ");
-        trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[13]->slotName),this,SLOT(getTOTP14()));
+    if (TOTP_SlotCount > 13)
+    {
+        if (cryptostick->TOTPSlots[13]->isProgrammed==true){
+            QString actionName("TOTP slot 14 ");
+            trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[13]->slotName),this,SLOT(getTOTP14()));
+        }
     }
-#endif
-#if (TOTP_SLOT_COUNT > 14)
-    if (cryptostick->TOTPSlots[14]->isProgrammed==true){
-        QString actionName("TOTP slot 15 ");
-        trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[14]->slotName),this,SLOT(getTOTP15()));
+    if (TOTP_SlotCount > 14)
+    {
+        if (cryptostick->TOTPSlots[14]->isProgrammed==true){
+            QString actionName("TOTP slot 15 ");
+            trayMenu->addAction(actionName.append((char *)cryptostick->TOTPSlots[14]->slotName),this,SLOT(getTOTP15()));
+        }
     }
-#endif
 
 
     trayMenu->addSeparator();
@@ -732,6 +800,8 @@ void MainWindow::generateMenuForStick10()
 
 void MainWindow::generateMenuForStick20()
 {
+    int i;
+
     generateMenuOTP ();
 
     if (FALSE == CryptedVolumeActive)
@@ -761,7 +831,12 @@ void MainWindow::generateMenuForStick20()
     trayMenuSubConfigure->addAction(Stick20ActionGetStickStatus             );
 
 
-    if (TRUE == SpecialConfigActive)
+    if (TRUE == HiddenVolumeAccessable)
+    {
+
+    }
+
+    if (TRUE == ExtendedlConfigActive)
     {
         trayMenuSubSpecialConfigure = trayMenuSubConfigure->addMenu( "Special Configure" );
         trayMenuSubSpecialConfigure->addAction(Stick20ActionEnableFirmwareUpdate       );
@@ -790,6 +865,24 @@ void MainWindow::generateMenuForStick20()
         trayMenu->addAction(Stick20ActionDebugAction);
     }
 
+
+// Setup OTP combo box
+    ui->slotComboBox->clear();
+
+    for (i=0;i<HOTP_SlotCount;i++)
+    {
+        ui->slotComboBox->addItem(QString("HOTP slot ").append(QString::number(i+1,10)).append(" [").append((char *)cryptostick->HOTPSlots[i]->slotName).append("]"));
+    }
+
+    for (i=0;i<TOTP_SlotCount;i++)
+    {
+        ui->slotComboBox->addItem(QString("TOTP slot ").append(QString::number(i+1,10)).append(" [").append((char *)cryptostick->TOTPSlots[i]->slotName).append("]"));
+    }
+    ui->slotComboBox->setCurrentIndex(0);
+
+    i = ui->slotComboBox->currentIndex();
+
+
 }
 
 
@@ -807,7 +900,7 @@ void MainWindow::generateHOTPConfig(HOTPSlot *slot)
 {
     int selectedSlot = ui->slotComboBox->currentIndex();
 
-    if ((selectedSlot >= 0) && (selectedSlot < HOTP_SLOT_COUNT))
+    if ((selectedSlot >= 0) && (selectedSlot < HOTP_SlotCount))
     {
         slot->slotNumber=selectedSlot+0x10;
 
@@ -866,9 +959,9 @@ void MainWindow::generateTOTPConfig(TOTPSlot *slot)
     int selectedSlot = ui->slotComboBox->currentIndex();
 
     // get the TOTP slot number
-    selectedSlot -= HOTP_SLOT_COUNT;
+    selectedSlot -= HOTP_SlotCount;
 
-    if ((selectedSlot >= 0) && (selectedSlot < TOTP_SLOT_COUNT))
+    if ((selectedSlot >= 0) && (selectedSlot < TOTP_SlotCount))
     {
         slot->slotNumber = selectedSlot + 0x20;
 
@@ -940,7 +1033,7 @@ void MainWindow::displayCurrentSlotConfig()
         return;
     }
 
-    if ((slotNo >=0) && (slotNo < HOTP_SLOT_COUNT))
+    if ((slotNo >=0) && (slotNo < HOTP_SlotCount))
     {
         //ui->hotpGroupBox->show();
         ui->hotpGroupBox->setTitle("OATH-HOTP Parameters");
@@ -989,9 +1082,9 @@ void MainWindow::displayCurrentSlotConfig()
         //qDebug() << "Counter value:" << cryptostick->HOTPSlots[slotNo]->counter;
 
     }
-    else if ((slotNo >= HOTP_SLOT_COUNT) && (slotNo < HOTP_SLOT_COUNT + TOTP_SLOT_COUNT))
+    else if ((slotNo >= HOTP_SlotCount) && (slotNo < HOTP_SlotCount + TOTP_SlotCount))
     {
-        slotNo -= HOTP_SLOT_COUNT;
+        slotNo -= HOTP_SlotCount;
         //ui->hotpGroupBox->hide();
         ui->hotpGroupBox->setTitle("OATH-TOTP Parameters");
         ui->label_5->setText("TOTP length:");
@@ -1075,8 +1168,10 @@ void MainWindow::displayCurrentGeneralConfig()
 
     if (cryptostick->generalConfig[0]==0||cryptostick->generalConfig[0]==1)
         ui->numLockComboBox->setCurrentIndex(cryptostick->generalConfig[0]+1);
+
     if (cryptostick->generalConfig[1]==0||cryptostick->generalConfig[1]==1)
         ui->capsLockComboBox->setCurrentIndex(cryptostick->generalConfig[1]+1);
+
     if (cryptostick->generalConfig[2]==0||cryptostick->generalConfig[2]==1)
         ui->scrollLockComboBox->setCurrentIndex(cryptostick->generalConfig[2]+1);
 
@@ -1100,6 +1195,24 @@ void MainWindow::startConfiguration()
     //PasswordDialog pd;
     //pd.exec();
     bool ok;
+    int i;
+/*
+// Setup OTP combo box
+    ui->slotComboBox->clear();
+
+    for (i=0;i<HOTP_SlotCount;i++)
+    {
+        ui->slotComboBox->addItem(QString("HOTP slot ").append(QString::number(i+1,10)).append(" [").append((char *)cryptostick->HOTPSlots[i]->slotName).append("]"));
+    }
+
+    for (i=0;i<TOTP_SlotCount;i++)
+    {
+        ui->slotComboBox->addItem(QString("TOTP slot ").append(QString::number(i+1,10)).append(" [").append((char *)cryptostick->TOTPSlots[i]->slotName).append("]"));
+    }
+    ui->slotComboBox->setCurrentIndex(0);
+
+    i = ui->slotComboBox->currentIndex();
+*/
 
     if (!cryptostick->validPassword){
         cryptostick->getPasswordRetryCount();
@@ -1654,11 +1767,26 @@ void MainWindow::startStick20DebugAction()
     uint8_t password[40];
     bool    ret;
     int64_t crc;
+    stick20HiddenVolumeDialog HVDialog(this);
+
+
+    ret = HVDialog.exec();
+
+    if (true == ret)
+    {
+        stick20SendCommand (STICK20_CMD_SEND_HIDDENVOLUME_SETUP,(unsigned char*)&HVDialog.HV_Setup_st);
+    }
 
 
     if (1)
     {
-          cryptostick->getPasswordRetryCount();
+
+//        HVDialog.cryptostick=cryptostick;
+
+//        HVDialog.exec();
+//        Result = ResponseDialog.ResultValue;
+
+//        cryptostick->getPasswordRetryCount();
 //        crc = cryptostick->getSlotName(0x10);
 
 //        Sleep::msleep(100);
@@ -1701,6 +1829,33 @@ void MainWindow::startStick20DebugAction()
 
 /*******************************************************************************
 
+  startStick20SetupHiddenVolume
+
+  Changes
+  Date      Author        Info
+  25.04.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void MainWindow::startStick20SetupHiddenVolume()
+{
+    bool    ret;
+    stick20HiddenVolumeDialog HVDialog(this);
+
+    ret = HVDialog.exec();
+
+    if (true == ret)
+    {
+        stick20SendCommand (STICK20_CMD_SEND_HIDDENVOLUME_SETUP,(unsigned char*)&HVDialog.HV_Setup_st);
+    }
+}
+
+
+/*******************************************************************************
+
   UpdateDynamicMenuEntrys
 
   Changes
@@ -1740,6 +1895,31 @@ int MainWindow::UpdateDynamicMenuEntrys (void)
     {
         HiddenVolumeActive  = FALSE;
     }
+
+    if (TRUE == HID_Stick20Configuration_st.StickKeysNotInitiated)
+    {
+        StickNotInitated  = TRUE;
+
+        if (FALSE == StickNotInitated_DontAsk)
+        {
+            QMessageBox msgBox;
+            int ret;
+
+            msgBox.setText("Init stick keys ?");
+            msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+            msgBox.setDefaultButton(QMessageBox::Yes);
+            ret = msgBox.exec();
+            if (Accepted == ret)
+            {
+//                ret = cryptostick->stick20CreateNewKeys (password);
+            }
+        }
+    }
+    else
+    {
+        StickNotInitated  = FALSE;
+    }
+
     generateMenu();
 
     return (TRUE);
@@ -1892,11 +2072,21 @@ int MainWindow::stick20SendCommand (uint8_t stick20Command, uint8_t *password)
             if (TRUE == ret)
             {
                 waitForAnswerFromStick20    = TRUE;
-                stopWhenStatusOKFromStick20 = TRUE;                
+                stopWhenStatusOKFromStick20 = FALSE;
             }
             break;
         case STICK20_CMD_SEND_STARTUP                   :
             break;
+
+        case STICK20_CMD_SEND_HIDDENVOLUME_SETUP :
+        ret = cryptostick->stick20SendHiddenVolumeSetup ((HiddenVolumeSetup_tst *)password);
+            if (TRUE == ret)
+            {
+                waitForAnswerFromStick20    = TRUE;
+                stopWhenStatusOKFromStick20 = FALSE;
+            }
+            break;
+
         default :
             msgBox.setText("Stick20Dialog: Wrong combobox value! ");
             msgBox.exec();
@@ -1944,6 +2134,12 @@ int MainWindow::stick20SendCommand (uint8_t stick20Command, uint8_t *password)
                 generateMenu();
                 break;
             case STICK20_CMD_GET_DEVICE_STATUS              :
+                UpdateDynamicMenuEntrys ();
+                {
+                    Stick20InfoDialog InfoDialog(this);
+                    InfoDialog.exec();
+                }
+                break;
             case STICK20_CMD_SEND_STARTUP                   :
                 UpdateDynamicMenuEntrys ();
                 break;
@@ -2012,7 +2208,7 @@ void MainWindow::on_writeButton_clicked()
 
         ui->hexRadioButton->toggle();
 
-        if (ui->slotComboBox->currentIndex() < HOTP_SLOT_COUNT){//HOTP slot
+        if (ui->slotComboBox->currentIndex() < HOTP_SlotCount){//HOTP slot
             HOTPSlot *hotp=new HOTPSlot();
 
             generateHOTPConfig(hotp);

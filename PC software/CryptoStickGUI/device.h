@@ -29,6 +29,27 @@
 #include "totpslot.h"
 #include "stick20hid.h"
 
+/***************************************************************
+
+  Used usb device ids
+
+***************************************************************/
+
+#define VID_STICK_OTP 0x20A0
+#define PID_STICK_OTP 0x4108
+
+#define VID_STICK_20  0x20A0
+#define PID_STICK_20  0x4109 // MSD + CCID + HID production id
+
+#define VID_STICK_20_UPDATE_MODE  0x03EB
+#define PID_STICK_20_UPDATE_MODE  0x2FF1
+
+
+//#define PID_STICK_20    0x220D // MSD + CCID + HID test id
+//#define PID_STICK_20    0x2309 // MSD + HID test id
+//#define PID_STICK_20    0x220B // HID test id
+
+
 class Response;
 
 #define REPORT_SIZE 64
@@ -80,6 +101,7 @@ class Response;
 #define STICK20_CMD_CLEAR_NEW_SD_CARD_FOUND             (STICK20_CMD_START_VALUE + 20)
 
 #define STICK20_CMD_SEND_STARTUP                        (STICK20_CMD_START_VALUE + 21)
+#define STICK20_CMD_SEND_HIDDENVOLUME_SETUP             (STICK20_CMD_START_VALUE + 22)
 
 #define STATUS_READY           0x00
 #define STATUS_BUSY	           0x01
@@ -117,6 +139,8 @@ enum comm_errors{
 #define OUTPUT_CMD_STICK20_STATUS_WRONG_PASSWORD            3
 #define OUTPUT_CMD_STICK20_STATUS_BUSY_PROGRESSBAR          4
 #define OUTPUT_CMD_STICK20_STATUS_PASSWORD_MATRIX_READY     5
+#define OUTPUT_CMD_STICK20_STATUS_NO_USER_PASSWORD_UNLOCK   6
+#define OUTPUT_CMD_STICK20_STATUS_SMARTCARD_ERROR           7
 
 
 #define OUTPUT_CMD_STICK20_MAX_MATRIX_ROWS  20
@@ -139,6 +163,20 @@ typedef struct {
 } HID_Stick20Matrix_est;
 
 
+#define MAX_HIDDEN_VOLUME_PASSOWORD_SIZE  20
+
+#pragma pack(push,1)
+
+typedef struct {
+    unsigned char SlotNr_u8;
+    unsigned char StartBlockPercent_u8;
+    unsigned char EndBlockPercent_u8;
+    unsigned char HiddenVolumePassword_au8[MAX_HIDDEN_VOLUME_PASSOWORD_SIZE+1];
+} HiddenVolumeSetup_tst;
+
+#pragma pack(pop)
+
+
 #ifdef _MSC_VER
     // For MSVC
     #define uint64_t unsigned long long
@@ -148,6 +186,8 @@ typedef struct {
 #define HOTP_SLOT_COUNT      3
 #define TOTP_SLOT_COUNT     15
 */
+#define HOTP_SLOT_COUNT_MAX      3
+#define TOTP_SLOT_COUNT_MAX     15
 
 #define HOTP_SLOT_COUNT      2
 #define TOTP_SLOT_COUNT      4
@@ -158,7 +198,7 @@ class Device
 
 
 public:
-    Device(int vid, int pid,int vidStick20, int pidStick20);
+    Device(int vid, int pid,int vidStick20, int pidStick20,int vidStick20UpdateMode, int pidStick20UpdateMode);
     hid_device *handle;
     int checkConnection();
     bool isConnected;
@@ -173,10 +213,11 @@ public:
     int getHOTP(uint8_t slotNo);
     int readSlot(uint8_t slotNo);
     int getPasswordRetryCount();
+
     bool newConnection;
     void initializeConfig();
-    HOTPSlot *HOTPSlots[HOTP_SLOT_COUNT];
-    TOTPSlot *TOTPSlots[TOTP_SLOT_COUNT];
+    HOTPSlot *HOTPSlots[HOTP_SLOT_COUNT_MAX];
+    TOTPSlot *TOTPSlots[TOTP_SLOT_COUNT_MAX];
     void getSlotConfigs();
     uint8_t *password[25];
     bool validPassword;
@@ -207,6 +248,7 @@ public:
     int stick20SendSetReadonlyToUncryptedVolume (uint8_t *Pindata);
     int stick20SendSetReadwriteToUncryptedVolume (uint8_t *Pindata);
     int stick20SendStartup (uint64_t localTime);
+    int stick20SendHiddenVolumeSetup (HiddenVolumeSetup_tst *HV_Data_st);
 
     uint8_t cardSerial[4];
     uint8_t firmwareVersion[2];
@@ -227,8 +269,8 @@ public:
     bool waitForAckStick20;
     int  lastBlockNrStick20;
 
-    int  CountHOTP;
-    int  CountTOTP;
+    int  HOTP_SlotCount;
+    int  TOTP_SlotCount;
 
 
 
@@ -239,6 +281,8 @@ private:
     int vidStick20;
     int pidStick20;
 
+    int vidStick20UpdateMode;
+    int pidStick20UpdateMode;
 
 };
 

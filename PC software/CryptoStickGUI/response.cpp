@@ -226,6 +226,7 @@ int Response::getResponse(Device *device)
         memcpy ((void*)&HID_Stick20Status_st,reportBuffer+1+OUTPUT_CMD_RESULT_STICK20_STATUS_START,sizeof (HID_Stick20Status_st));
 
         DebugResponse ();
+
         return 0;
     }
     else
