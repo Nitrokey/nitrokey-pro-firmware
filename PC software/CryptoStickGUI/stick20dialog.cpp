@@ -348,6 +348,15 @@ void Stick20Dialog::on_buttonBox_accepted()
             }
             break;
 
+        case STICK20_CMD_CLEAR_NEW_SD_CARD_FOUND        :
+            ret = cryptostick->stick20SendClearNewSdCardFound(password);
+            if (TRUE == ret)
+            {
+                waitForAnswerFromStick20 = TRUE;
+            }
+            break;
+
+
         default :
         // ui->comboBox->currentIndex()
             msgBox.setText("Stick20Dialog: Wrong combobox value! ");

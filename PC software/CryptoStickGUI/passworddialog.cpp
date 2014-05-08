@@ -18,9 +18,12 @@
 * along with GPF Crypto Stick. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "device.h"
+
 #include "passworddialog.h"
 #include "ui_passworddialog.h"
 
+#include "stick20matrixpassworddialog.h"
 
 /*******************************************************************************
 
@@ -41,17 +44,30 @@
 
   Constructor PasswordDialog
 
+  Changes
+  Date      Author        Info
+  07.05.14  RB            Add matrix input
+
   Reviews
   Date      Reviewer        Info
   13.08.13  RB              First review
 
 *******************************************************************************/
 
-PasswordDialog::PasswordDialog(QWidget *parent) :
+PasswordDialog::PasswordDialog(bool ShowMatrix,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PasswordDialog)
 {
     ui->setupUi(this);
+
+    cryptostick = NULL;     // Set it manuel
+
+    ui->checkBox_PasswordMatrix->setCheckState(Qt::Unchecked);
+
+    if (FALSE == ShowMatrix)
+    {
+        ui->checkBox_PasswordMatrix->hide();
+    }
 }
 
 /*******************************************************************************
@@ -104,7 +120,15 @@ void PasswordDialog::init(char *text)
 
 void PasswordDialog::getPassword(char *text)
 {
-    strcpy (text,ui->lineEdit->text().toAscii());
+    if (FALSE == ui->checkBox_PasswordMatrix->isChecked())
+    {
+        text[0] = 'P';
+        strcpy (&text[1],ui->lineEdit->text().toAscii());
+    }
+    else
+    {
+        strcpy (text,(char*)password);
+    }
 }
 
 
@@ -124,4 +148,96 @@ void PasswordDialog::on_checkBox_toggled(bool checked)
         ui->lineEdit->setEchoMode(QLineEdit::Normal);
     else
         ui->lineEdit->setEchoMode(QLineEdit::Password);
+}
+
+/*******************************************************************************
+
+  on_checkBox_toggled
+
+  Changes
+  Date      Author        Info
+  07.05.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void PasswordDialog::on_checkBox_PasswordMatrix_toggled(bool checked)
+{
+
+    if (checked)
+    {
+        ui->lineEdit->setDisabled(TRUE);
+    }
+    else
+    {
+        ui->lineEdit->setDisabled(FALSE);
+    }
+
+}
+
+/*******************************************************************************
+
+  on_buttonBox_accepted
+
+  Changes
+  Date      Author        Info
+  07.05.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void PasswordDialog::on_buttonBox_accepted()
+{
+    int           n;
+//    unsigned char password[50];
+    QByteArray    passwordString;
+    QMessageBox   msgBox;
+
+    if (false == ui->checkBox_PasswordMatrix->isChecked())
+    {
+        // Send normal password
+        password[0] = 'P';          // For normal password
+
+        // Check the password length
+        passwordString = ui->lineEdit->text().toAscii();
+        n = passwordString.size();
+        if (30 <= n) {
+            msgBox.setText("Password too long! (Max = 30 char)");
+            msgBox.exec();
+            return;
+        }
+        memset (&password[1],0,49);
+        memcpy(&password[1],passwordString.data(),n);
+    }
+    else
+    {
+        if (NULL != cryptostick)
+        {
+            // Get matrix password
+            MatrixPasswordDialog dialog (this);
+
+            dialog.setModal (TRUE);
+
+            dialog.cryptostick        = cryptostick;
+            dialog.PasswordLen        = 19;
+            dialog.SetupInterfaceFlag = false;
+
+            dialog.InitSecurePasswordDialog ();
+
+            if (false == dialog.exec())
+            {
+                done (FALSE);
+                return;
+            }
+
+            // Copy the matrix password
+            password[0] = 'M';          // For matrix password
+            dialog.CopyMatrixPassword((char*)&password[1],49);
+        }
+    }
+
 }

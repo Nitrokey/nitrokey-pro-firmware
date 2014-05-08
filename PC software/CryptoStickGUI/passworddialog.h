@@ -23,6 +23,8 @@
 
 #include <QDialog>
 
+#include "device.h"
+
 namespace Ui {
 class PasswordDialog;
 }
@@ -32,7 +34,11 @@ class PasswordDialog : public QDialog
     Q_OBJECT
     
 public:
-    explicit PasswordDialog(QWidget *parent = 0);
+    unsigned char password[50];
+//    QByteArray  passwordString;
+    Device *cryptostick;
+
+    explicit PasswordDialog(bool ShowMatrix,QWidget *parent = 0);
     ~PasswordDialog();
 
     void init(char *text);
@@ -40,6 +46,10 @@ public:
 
 private slots:
     void on_checkBox_toggled(bool checked);
+
+    void on_checkBox_PasswordMatrix_toggled(bool checked);
+
+    void on_buttonBox_accepted();
 
 private:
     Ui::PasswordDialog *ui;

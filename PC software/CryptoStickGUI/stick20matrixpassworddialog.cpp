@@ -275,7 +275,7 @@ void MatrixPasswordDialog::sendPasswordKey (char *Password)
     InputPasswordLengthPointer++;
 
 // Enter the next char
-    if (InputPasswordLength < OUTPUT_CMD_STICK20_MAX_MATRIX_ROWS)
+    if (InputPasswordLengthPointer < OUTPUT_CMD_STICK20_MAX_MATRIX_ROWS)
     {
         OutputText = "Select column " + QString("%1").arg(InputPasswordLengthPointer+1);
         ui->label->setText(OutputText);

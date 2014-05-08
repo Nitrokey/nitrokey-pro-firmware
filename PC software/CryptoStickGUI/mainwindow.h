@@ -30,9 +30,9 @@ class MainWindow;
 }
 
 typedef struct {
-    int FlagDebug;
-    int ExtendedConfigActive;
-    int PasswordMatrix;
+    int  FlagDebug;
+    int  ExtendedConfigActive;
+    int  PasswordMatrix;
 } StartUpParameter_tst;
 
 
@@ -46,7 +46,8 @@ public:
     ~MainWindow();
 
     bool DebugWindowActive;
-    bool ExtendedlConfigActive;
+    bool ExtendedConfigActive;
+    bool MatrixInputActive;
 
 protected:
      void closeEvent(QCloseEvent *event);
@@ -70,8 +71,8 @@ private:
     bool     NormalVolumeRWActive;
     bool     HiddenVolumeAccessable;
     bool     StickNotInitated;
-    bool     ClearSdCardNotErased;
-    bool     ClearSdCardNotErased_DontAsk;
+    bool     SdCardNotErased;
+    bool     SdCardNotErased_DontAsk;
     bool     StickNotInitated_DontAsk;
 
     QAction *quitAction;
@@ -92,14 +93,18 @@ private:
     QAction *Stick20ActionEnableFirmwareUpdate;
     QAction *Stick20ActionExportFirmwareToFile;
     QAction *Stick20ActionDestroyCryptedVolume;
+    QAction *Stick20ActionInitCryptedVolume;
     QAction *Stick20ActionFillSDCardWithRandomChars;
     QAction *Stick20ActionGetStickStatus;
     QAction *Stick20ActionSetReadonlyUncryptedVolume;
     QAction *Stick20ActionSetReadWriteUncryptedVolume;
     QAction *Stick20ActionDebugAction;
     QAction *Stick20ActionSetupHiddenVolume;
+    QAction *Stick20ActionClearNewSDCardFound;
+    QAction *Stick20ActionSetupPasswordMatrix;
 
     QString DebugText;
+
 
     void generateMenuOTP();
     void generateMenuForStick10();
@@ -108,6 +113,7 @@ private:
 
     //QAction *totp1Action;
 
+    void generateComboBoxEntrys();
     void generateMenu();
     void generateHOTPConfig(HOTPSlot *slot);
     void generateTOTPConfig(TOTPSlot *slot);
@@ -187,6 +193,8 @@ void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void startStick20SetReadWriteUncryptedVolume();
     void startStick20DebugAction();
     void startStick20SetupHiddenVolume();
+    void startStick20ClearNewSdCardFound();
+    void startStick20SetupPasswordMatrix();
 };
 
 #endif // MAINWINDOW_H

@@ -96,12 +96,18 @@ MainWindow::MainWindow(StartUpParameter_tst *StartupInfo_st,QWidget *parent) :
     NormalVolumeRWActive   = FALSE;
     HiddenVolumeAccessable = FALSE;
     StickNotInitated       = FALSE;
-    ClearSdCardNotErased   = FALSE;
+    SdCardNotErased        = FALSE;
+    MatrixInputActive      = FALSE;
 
-    ClearSdCardNotErased_DontAsk = FALSE;
-    StickNotInitated_DontAsk     = FALSE;
+    SdCardNotErased_DontAsk   = FALSE;
+    StickNotInitated_DontAsk  = FALSE;
 
-    ExtendedlConfigActive = StartupInfo_st->ExtendedConfigActive;
+    ExtendedConfigActive = StartupInfo_st->ExtendedConfigActive;
+
+    if (0 != StartupInfo_st->PasswordMatrix)
+    {
+        MatrixInputActive = TRUE;
+    }
 
     switch (StartupInfo_st->FlagDebug)
     {
@@ -384,6 +390,32 @@ void MainWindow::checkConnection()
     {
         Stick20_ConfigurationChanged = FALSE;
         UpdateDynamicMenuEntrys ();
+
+        if (TRUE == StickNotInitated)
+        {
+            if (FALSE == StickNotInitated_DontAsk)
+            {
+                QMessageBox msgBox;
+                int ret;
+
+                msgBox.setText("Warning: Crypted Volume not secure\nSelect -Init crypted volume-");
+//                msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+//                msgBox.setDefaultButton(QMessageBox::Yes);
+                ret = msgBox.exec();
+            }
+        }
+        if (TRUE == SdCardNotErased)
+        {
+            if (FALSE == SdCardNotErased_DontAsk)
+            {
+                QMessageBox msgBox;
+                int ret;
+
+                msgBox.setText("Warning: Crypted Volume not secure\nSelect -Fill crypted volume with ramdom chars-");
+                ret = msgBox.exec();
+            }
+        }
+
     }
 }
 
@@ -496,7 +528,42 @@ void MainWindow::getSlotNames()
 
 /*******************************************************************************
 
+  generateComboBoxEntrys
+
+  Changes
+  Date      Author        Info
+  07.05.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+
+*******************************************************************************/
+
+void MainWindow::generateComboBoxEntrys()
+{
+    int i;
+
+    ui->slotComboBox->clear();
+
+    for (i=0;i<HOTP_SlotCount;i++)
+    {
+        ui->slotComboBox->addItem(QString("HOTP slot ").append(QString::number(i+1,10)).append(" [").append((char *)cryptostick->HOTPSlots[i]->slotName).append("]"));
+    }
+
+    for (i=0;i<TOTP_SlotCount;i++)
+    {
+        ui->slotComboBox->addItem(QString("TOTP slot ").append(QString::number(i+1,10)).append(" [").append((char *)cryptostick->TOTPSlots[i]->slotName).append("]"));
+    }
+    ui->slotComboBox->setCurrentIndex(0);
+
+//    i = ui->slotComboBox->currentIndex();
+}
+
+/*******************************************************************************
+
   generateMenu
+
 
   Reviews
   Date      Reviewer        Info
@@ -506,7 +573,7 @@ void MainWindow::getSlotNames()
 
 void MainWindow::generateMenu()
 {
-    int i;
+
 
 // Delete old menu
     if (NULL != trayMenu)
@@ -547,20 +614,7 @@ void MainWindow::generateMenu()
     trayMenu->addAction(quitAction);
     trayIcon->setContextMenu(trayMenu);
 
-    ui->slotComboBox->clear();
-
-    for (i=0;i<HOTP_SlotCount;i++)
-    {
-        ui->slotComboBox->addItem(QString("HOTP slot ").append(QString::number(i+1,10)).append(" [").append((char *)cryptostick->HOTPSlots[i]->slotName).append("]"));
-    }
-
-    for (i=0;i<TOTP_SlotCount;i++)
-    {
-        ui->slotComboBox->addItem(QString("TOTP slot ").append(QString::number(i+1,10)).append(" [").append((char *)cryptostick->TOTPSlots[i]->slotName).append("]"));
-    }
-    ui->slotComboBox->setCurrentIndex(0);
-
-    i = ui->slotComboBox->currentIndex();
+    generateComboBoxEntrys();
 }
 
 
@@ -615,7 +669,10 @@ void MainWindow::initActionsForStick20()
     Stick20ActionDestroyCryptedVolume = new QAction(tr("&Destroy crypted volume"), this);
     connect(Stick20ActionDestroyCryptedVolume, SIGNAL(triggered()), this, SLOT(startStick20DestroyCryptedVolume()));
 
-    Stick20ActionFillSDCardWithRandomChars = new QAction(tr("&Fill SD card with random chars"), this);
+    Stick20ActionInitCryptedVolume = new QAction(tr("&Init crypted volume"), this);
+    connect(Stick20ActionInitCryptedVolume, SIGNAL(triggered()), this, SLOT(startStick20DestroyCryptedVolume()));
+
+    Stick20ActionFillSDCardWithRandomChars = new QAction(tr("&Fill crypted volume with random chars"), this);
     connect(Stick20ActionFillSDCardWithRandomChars, SIGNAL(triggered()), this, SLOT(startStick20FillSDCardWithRandomChars()));
 
     Stick20ActionGetStickStatus = new QAction(tr("&Get stick status"), this);
@@ -630,8 +687,14 @@ void MainWindow::initActionsForStick20()
     Stick20ActionDebugAction = new QAction(tr("&Debug Action"), this);
     connect(Stick20ActionDebugAction, SIGNAL(triggered()), this, SLOT(startStick20DebugAction()));
 
-    Stick20ActionSetupHiddenVolume = new QAction(tr("&Setup hidden vloume"), this);
+    Stick20ActionSetupHiddenVolume = new QAction(tr("&Setup hidden volume"), this);
     connect(Stick20ActionSetupHiddenVolume, SIGNAL(triggered()), this, SLOT(startStick20SetupHiddenVolume()));
+
+    Stick20ActionClearNewSDCardFound = new QAction(tr("&Clear -Fill crypted volume with random chars-"), this);
+    connect(Stick20ActionClearNewSDCardFound, SIGNAL(triggered()), this, SLOT(startStick20ClearNewSdCardFound()));
+
+    Stick20ActionSetupPasswordMatrix = new QAction(tr("&Setup password matrix"), this);
+    connect(Stick20ActionSetupPasswordMatrix, SIGNAL(triggered()), this, SLOT(startStick20SetupPasswordMatrix()));
 
 }
 
@@ -801,6 +864,27 @@ void MainWindow::generateMenuForStick10()
 void MainWindow::generateMenuForStick20()
 {
     int i;
+    int AddSeperator;
+
+    AddSeperator = FALSE;
+
+    if (TRUE == StickNotInitated)
+    {
+        trayMenu->addAction(Stick20ActionInitCryptedVolume       );
+        AddSeperator = TRUE;
+    }
+
+    if (TRUE == SdCardNotErased)
+    {
+        trayMenu->addAction(Stick20ActionFillSDCardWithRandomChars  );
+        trayMenu->addAction(Stick20ActionClearNewSDCardFound  );
+        AddSeperator = TRUE;
+    }
+
+    if (TRUE == AddSeperator)
+    {
+        trayMenu->addSeparator();
+    }
 
     generateMenuOTP ();
 
@@ -827,8 +911,16 @@ void MainWindow::generateMenuForStick20()
     trayMenuSubConfigure->addAction(restoreAction);
     trayMenuSubConfigure->addAction(Stick20ActionChangeUserPIN);
     trayMenuSubConfigure->addAction(Stick20ActionChangeAdminPIN);
+    trayMenuSubConfigure->addAction(Stick20ActionSetupHiddenVolume);
+
+    if (TRUE == MatrixInputActive)
+    {
+        trayMenuSubConfigure->addAction(Stick20ActionSetupPasswordMatrix);
+    }
+
     trayMenuSubConfigure->addAction(Stick20ActionDestroyCryptedVolume       );
     trayMenuSubConfigure->addAction(Stick20ActionGetStickStatus             );
+
 
 
     if (TRUE == HiddenVolumeAccessable)
@@ -836,7 +928,7 @@ void MainWindow::generateMenuForStick20()
 
     }
 
-    if (TRUE == ExtendedlConfigActive)
+    if (TRUE == ExtendedConfigActive)
     {
         trayMenuSubSpecialConfigure = trayMenuSubConfigure->addMenu( "Special Configure" );
         trayMenuSubSpecialConfigure->addAction(Stick20ActionEnableFirmwareUpdate       );
@@ -867,21 +959,7 @@ void MainWindow::generateMenuForStick20()
 
 
 // Setup OTP combo box
-    ui->slotComboBox->clear();
-
-    for (i=0;i<HOTP_SlotCount;i++)
-    {
-        ui->slotComboBox->addItem(QString("HOTP slot ").append(QString::number(i+1,10)).append(" [").append((char *)cryptostick->HOTPSlots[i]->slotName).append("]"));
-    }
-
-    for (i=0;i<TOTP_SlotCount;i++)
-    {
-        ui->slotComboBox->addItem(QString("TOTP slot ").append(QString::number(i+1,10)).append(" [").append((char *)cryptostick->TOTPSlots[i]->slotName).append("]"));
-    }
-    ui->slotComboBox->setCurrentIndex(0);
-
-    i = ui->slotComboBox->currentIndex();
-
+    generateComboBoxEntrys ();
 
 }
 
@@ -1369,16 +1447,18 @@ void MainWindow::startMatrixPasswordDialog()
 void MainWindow::startStick20EnableCryptedVolume()
 {
     uint8_t password[40];
-    bool    ret;
+    bool           ret;
 
-    PasswordDialog dialog(this);
+    PasswordDialog dialog(MatrixInputActive,this);
     dialog.init("Enter user password");
+    dialog.cryptostick = cryptostick;
+
     ret = dialog.exec();
 
     if (Accepted == ret)
     {
-        password[0] = 'P';
-        dialog.getPassword ((char*)&password[1]);
+//        password[0] = 'P';
+        dialog.getPassword ((char*)password);
 
         stick20SendCommand (STICK20_CMD_ENABLE_CRYPTED_PARI,password);
     }
@@ -1423,14 +1503,16 @@ void MainWindow::startStick20EnableHiddenVolume()
     uint8_t password[40];
     bool    ret;
 
-    PasswordDialog dialog(this);
-    dialog.init("Enter hidden password");
+    PasswordDialog dialog(MatrixInputActive,this);
+    dialog.init("Enter password for hidden volume");
+    dialog.cryptostick = cryptostick;
+
     ret = dialog.exec();
 
     if (Accepted == ret)
     {
-        password[0] = 'P';
-        dialog.getPassword ((char*)&password[1]);
+//        password[0] = 'P';
+        dialog.getPassword ((char*)password);
 
         stick20SendCommand (STICK20_CMD_ENABLE_HIDDEN_CRYPTED_PARI,password);
     }
@@ -1477,14 +1559,16 @@ void MainWindow::startStick20EnableFirmwareUpdate()
     uint8_t password[40];
     bool    ret;
 
-    PasswordDialog dialog(this);
+    PasswordDialog dialog(MatrixInputActive,this);
     dialog.init("Enter admin password");
+    dialog.cryptostick = cryptostick;
+
     ret = dialog.exec();
 
     if (Accepted == ret)
     {
-        password[0] = 'P';
-        dialog.getPassword ((char*)&password[1]);
+//        password[0] = 'P';
+        dialog.getPassword ((char*)password);
 
         stick20SendCommand (STICK20_CMD_ENABLE_FIRMWARE_UPDATE,password);
     }
@@ -1568,14 +1652,16 @@ void MainWindow::startStick20ExportFirmwareToFile()
     uint8_t password[40];
     bool    ret;
 
-    PasswordDialog dialog(this);
+    PasswordDialog dialog(MatrixInputActive,this);
     dialog.init("Enter admin password");
+    dialog.cryptostick = cryptostick;
+
     ret = dialog.exec();
 
     if (Accepted == ret)
     {
-        password[0] = 'P';
-        dialog.getPassword ((char*)&password[1]);
+//        password[0] = 'P';
+        dialog.getPassword ((char*)password);
 
         stick20SendCommand (STICK20_CMD_EXPORT_FIRMWARE_TO_FILE,password);
     }
@@ -1599,14 +1685,16 @@ void MainWindow::startStick20DestroyCryptedVolume()
     uint8_t password[40];
     bool    ret;
 
-    PasswordDialog dialog(this);
+    PasswordDialog dialog(MatrixInputActive,this);
     dialog.init("Enter admin password");
+    dialog.cryptostick = cryptostick;
+
     ret = dialog.exec();
 
     if (Accepted == ret)
     {
-        password[0] = 'P';
-        dialog.getPassword ((char*)&password[1]);
+//        password[0] = 'P';
+        dialog.getPassword ((char*)password);
 
         stick20SendCommand (STICK20_CMD_GENERATE_NEW_KEYS,password);
     }
@@ -1631,19 +1719,53 @@ void MainWindow::startStick20FillSDCardWithRandomChars()
     uint8_t password[40];
     bool    ret;
 
-    PasswordDialog dialog(this);
+    PasswordDialog dialog(MatrixInputActive,this);
     dialog.init("Enter admin password");
+    dialog.cryptostick = cryptostick;
+
     ret = dialog.exec();
 
     if (Accepted == ret)
     {
-        password[0] = 'P';
-        dialog.getPassword ((char*)&password[1]);
+//        password[0] = 'P';
+        dialog.getPassword ((char*)password);
 
         stick20SendCommand (STICK20_CMD_FILL_SD_CARD_WITH_RANDOM_CHARS,password);
     }
 }
 
+/*******************************************************************************
+
+  startStick20ClearNewSdCardFound
+
+  Changes
+  Date      Author        Info
+  06.05.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void MainWindow::startStick20ClearNewSdCardFound()
+{
+    uint8_t password[40];
+    bool    ret;
+
+    PasswordDialog dialog(MatrixInputActive,this);
+    dialog.init("Enter admin password");
+    dialog.cryptostick = cryptostick;
+
+    ret = dialog.exec();
+
+    if (Accepted == ret)
+    {
+//        password[0] = 'P';
+        dialog.getPassword ((char*)password);
+
+        stick20SendCommand (STICK20_CMD_CLEAR_NEW_SD_CARD_FOUND,password);
+    }
+}
 
 /*******************************************************************************
 
@@ -1679,7 +1801,6 @@ void MainWindow::startStick20GetStickStatus()
     password[0] = 'P';
     password[1] = 0;
     stick20SendCommand (STICK20_CMD_GET_DEVICE_STATUS,password);
-
 }
 
 /*******************************************************************************
@@ -1700,14 +1821,16 @@ void MainWindow::startStick20SetReadonlyUncryptedVolume()
     uint8_t password[40];
     bool    ret;
 
-    PasswordDialog dialog(this);
+    PasswordDialog dialog(MatrixInputActive,this);
     dialog.init("Enter user password");
+    dialog.cryptostick = cryptostick;
+
     ret = dialog.exec();
 
     if (Accepted == ret)
     {
-        password[0] = 'P';
-        dialog.getPassword ((char*)&password[1]);
+//        password[0] = 'P';
+        dialog.getPassword ((char*)password);
 
         stick20SendCommand (STICK20_CMD_ENABLE_READONLY_UNCRYPTED_LUN,password);
     }
@@ -1732,20 +1855,50 @@ void MainWindow::startStick20SetReadWriteUncryptedVolume()
     uint8_t password[40];
     bool    ret;
 
-    PasswordDialog dialog(this);
+    PasswordDialog dialog(MatrixInputActive,this);
     dialog.init("Enter user password");
+    dialog.cryptostick = cryptostick;
+
     ret = dialog.exec();
 
     if (Accepted == ret)
     {
-        password[0] = 'P';
-        dialog.getPassword ((char*)&password[1]);
+//        password[0] = 'P';
+        dialog.getPassword ((char*)password);
 
         stick20SendCommand (STICK20_CMD_ENABLE_READWRITE_UNCRYPTED_LUN,password);
     }
 
 }
 
+
+/*******************************************************************************
+
+  startStick20SetupPasswordMatrix
+
+  Reviews
+  Date      Reviewer        Info
+  12.08.13  RB              First review
+
+*******************************************************************************/
+
+void MainWindow::startStick20SetupPasswordMatrix()
+{
+    QMessageBox          msgBox;
+    MatrixPasswordDialog dialog(this);
+
+    msgBox.setText("The selected lines must be greater then greatest password length");
+    msgBox.exec();
+
+    dialog.setModal (TRUE);
+
+    dialog.cryptostick        = cryptostick;
+    dialog.SetupInterfaceFlag = TRUE;
+
+    dialog.InitSecurePasswordDialog ();
+
+    dialog.exec();
+}
 
 /*******************************************************************************
 
@@ -1774,7 +1927,7 @@ void MainWindow::startStick20DebugAction()
 
     if (true == ret)
     {
-        stick20SendCommand (STICK20_CMD_SEND_HIDDENVOLUME_SETUP,(unsigned char*)&HVDialog.HV_Setup_st);
+        stick20SendCommand (STICK20_CMD_SEND_HIDDEN_VOLUME_SETUP,(unsigned char*)&HVDialog.HV_Setup_st);
     }
 
 
@@ -1849,7 +2002,7 @@ void MainWindow::startStick20SetupHiddenVolume()
 
     if (true == ret)
     {
-        stick20SendCommand (STICK20_CMD_SEND_HIDDENVOLUME_SETUP,(unsigned char*)&HVDialog.HV_Setup_st);
+        stick20SendCommand (STICK20_CMD_SEND_HIDDEN_VOLUME_SETUP,(unsigned char*)&HVDialog.HV_Setup_st);
     }
 }
 
@@ -1899,25 +2052,19 @@ int MainWindow::UpdateDynamicMenuEntrys (void)
     if (TRUE == HID_Stick20Configuration_st.StickKeysNotInitiated)
     {
         StickNotInitated  = TRUE;
-
-        if (FALSE == StickNotInitated_DontAsk)
-        {
-            QMessageBox msgBox;
-            int ret;
-
-            msgBox.setText("Init stick keys ?");
-            msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-            msgBox.setDefaultButton(QMessageBox::Yes);
-            ret = msgBox.exec();
-            if (Accepted == ret)
-            {
-//                ret = cryptostick->stick20CreateNewKeys (password);
-            }
-        }
     }
     else
     {
         StickNotInitated  = FALSE;
+    }
+
+    if (0 == (HID_Stick20Configuration_st.SDFillWithRandomChars_u8 & 0x01))
+    {
+        SdCardNotErased  = TRUE;
+    }
+    else
+    {
+        SdCardNotErased  = FALSE;
     }
 
     generateMenu();
@@ -2078,12 +2225,20 @@ int MainWindow::stick20SendCommand (uint8_t stick20Command, uint8_t *password)
         case STICK20_CMD_SEND_STARTUP                   :
             break;
 
-        case STICK20_CMD_SEND_HIDDENVOLUME_SETUP :
-        ret = cryptostick->stick20SendHiddenVolumeSetup ((HiddenVolumeSetup_tst *)password);
+        case STICK20_CMD_SEND_HIDDEN_VOLUME_SETUP :
+            ret = cryptostick->stick20SendHiddenVolumeSetup ((HiddenVolumeSetup_tst *)password);
             if (TRUE == ret)
             {
                 waitForAnswerFromStick20    = TRUE;
                 stopWhenStatusOKFromStick20 = FALSE;
+            }
+            break;
+
+        case STICK20_CMD_CLEAR_NEW_SD_CARD_FOUND        :
+            ret = cryptostick->stick20SendClearNewSdCardFound(password);
+            if (TRUE == ret)
+            {
+                waitForAnswerFromStick20 = TRUE;
             }
             break;
 
@@ -2149,6 +2304,14 @@ int MainWindow::stick20SendCommand (uint8_t stick20Command, uint8_t *password)
             case STICK20_CMD_ENABLE_READONLY_UNCRYPTED_LUN:
                NormalVolumeRWActive = FALSE;
                break;
+            case STICK20_CMD_CLEAR_NEW_SD_CARD_FOUND        :
+               HID_Stick20Configuration_st.SDFillWithRandomChars_u8 &= 0xFE;
+               UpdateDynamicMenuEntrys ();
+               break;
+            case STICK20_CMD_GENERATE_NEW_KEYS              :
+                HID_Stick20Configuration_st.StickKeysNotInitiated = FALSE;
+                UpdateDynamicMenuEntrys ();
+                break;
             default :
                 break;
         }
@@ -2743,10 +2906,15 @@ void MainWindow::on_eraseButton_clicked()
      int ret = msgBox.exec();
 
      uint8_t slotNo=ui->slotComboBox->currentIndex();
-     if (slotNo>=0&&slotNo<=1)
-         slotNo=slotNo+0x10;
-     else if (slotNo>=2&&slotNo<=5)
-         slotNo=slotNo+0x1E;
+
+     if ((slotNo >= 0) && (slotNo <= HOTP_SlotCount))
+     {
+         slotNo = slotNo+0x10;
+     }
+     else if ((slotNo > HOTP_SlotCount) && (slotNo <= TOTP_SlotCount + HOTP_SlotCount))
+     {
+         slotNo = slotNo + 0x20 - HOTP_SlotCount;
+     }
 
      switch (ret) {
        case QMessageBox::Yes:
@@ -2755,9 +2923,11 @@ void MainWindow::on_eraseButton_clicked()
             Sleep::msleep(1000);
             QApplication::restoreOverrideCursor();
             generateAllConfigs();
-             msgBox.setText("Slot erased!");
-              msgBox.setStandardButtons(QMessageBox::Ok);
-             msgBox.exec();
+
+            msgBox.setText("Slot erased!");
+            msgBox.setStandardButtons(QMessageBox::Ok);
+            msgBox.exec();
+
            break;
        case QMessageBox::No:
 

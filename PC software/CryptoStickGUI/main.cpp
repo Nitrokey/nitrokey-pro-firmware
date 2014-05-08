@@ -58,8 +58,8 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     StartupInfo_st.ExtendedConfigActive  = TRUE;
-    StartupInfo_st.FlagDebug      = DEBUG_STATUS_NO_DEBUGGING;
-    StartupInfo_st.PasswordMatrix = FALSE;
+    StartupInfo_st.FlagDebug             = DEBUG_STATUS_NO_DEBUGGING;
+    StartupInfo_st.PasswordMatrix        = FALSE;
 
 // Check for commandline parameter
     //    if (2 == argc)

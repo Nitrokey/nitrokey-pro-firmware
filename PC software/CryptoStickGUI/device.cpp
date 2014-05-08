@@ -367,10 +367,12 @@ int Device::getSlotName(uint8_t slotNo){
                  if ((slotNo >= 0x10) && (slotNo < 0x10 + HOTP_SlotCount))
                  {
                     HOTPSlots[slotNo&0x0F]->isProgrammed=false;
+                    HOTPSlots[slotNo&0x0F]->slotName[0] = 0;
                  }
                  else if ((slotNo >= 0x20) && (slotNo < 0x20 + TOTP_SlotCount))
                  {
                     TOTPSlots[slotNo&0x0F]->isProgrammed=false;
+                    TOTPSlots[slotNo&0x0F]->slotName[0] = 0;
                  }
              }
 
@@ -1606,7 +1608,7 @@ int Device::stick20SendHiddenVolumeSetup (HiddenVolumeSetup_tst *HV_Data_st)
 
     memcpy (data,HV_Data_st,sizeof (HiddenVolumeSetup_tst));
 
-    cmd = new Command (STICK20_CMD_SEND_HIDDENVOLUME_SETUP,data,sizeof (HiddenVolumeSetup_tst));
+    cmd = new Command (STICK20_CMD_SEND_HIDDEN_VOLUME_SETUP,data,sizeof (HiddenVolumeSetup_tst));
     res = sendCommand (cmd);
 
     return (TRUE);
