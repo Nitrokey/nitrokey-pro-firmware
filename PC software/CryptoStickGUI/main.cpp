@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
     StartupInfo_st.ExtendedConfigActive  = TRUE;
     StartupInfo_st.FlagDebug             = DEBUG_STATUS_NO_DEBUGGING;
     StartupInfo_st.PasswordMatrix        = FALSE;
+    StartupInfo_st.LockHardware          = FALSE;
 
 // Check for commandline parameter
     //    if (2 == argc)
@@ -81,6 +82,10 @@ int main(int argc, char *argv[])
         if (0 == strcmp (p,"-PWM"))
         {
             StartupInfo_st.PasswordMatrix = TRUE;
+        }
+        if (0 == strcmp (p,"-lockHardware"))
+        {
+            StartupInfo_st.LockHardware = TRUE;
         }
     }
 

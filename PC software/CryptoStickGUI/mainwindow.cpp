@@ -98,6 +98,7 @@ MainWindow::MainWindow(StartUpParameter_tst *StartupInfo_st,QWidget *parent) :
     StickNotInitated       = FALSE;
     SdCardNotErased        = FALSE;
     MatrixInputActive      = FALSE;
+    LockHardware           = FALSE;
 
     SdCardNotErased_DontAsk   = FALSE;
     StickNotInitated_DontAsk  = FALSE;
@@ -108,6 +109,12 @@ MainWindow::MainWindow(StartUpParameter_tst *StartupInfo_st,QWidget *parent) :
     {
         MatrixInputActive = TRUE;
     }
+
+    if (0 != StartupInfo_st->LockHardware)
+    {
+        LockHardware = TRUE;
+    }
+
 
     switch (StartupInfo_st->FlagDebug)
     {
@@ -398,7 +405,7 @@ void MainWindow::checkConnection()
                 QMessageBox msgBox;
                 int ret;
 
-                msgBox.setText("Warning: Crypted Volume not secure\nSelect -Init crypted volume-");
+                msgBox.setText("Warning: Encrypted Volume not secure\nSelect -Init encrypted volume-");
 //                msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 //                msgBox.setDefaultButton(QMessageBox::Yes);
                 ret = msgBox.exec();
@@ -411,7 +418,7 @@ void MainWindow::checkConnection()
                 QMessageBox msgBox;
                 int ret;
 
-                msgBox.setText("Warning: Crypted Volume not secure\nSelect -Fill crypted volume with ramdom chars-");
+                msgBox.setText("Warning: Encrypted Volume not secure\nSelect -Fill encrypted volume with ramdom chars-");
                 ret = msgBox.exec();
             }
         }
@@ -642,10 +649,10 @@ void MainWindow::initActionsForStick20()
     Stick20SetupAction = new QAction(tr("&Stick 20 Setup"), this);
     connect(Stick20SetupAction, SIGNAL(triggered()), this, SLOT(startStick20Setup()));
 
-    Stick20ActionEnableCryptedVolume = new QAction(tr("&Unlock volume"), this);
+    Stick20ActionEnableCryptedVolume = new QAction(tr("&Unlock encrypted volume"), this);
     connect(Stick20ActionEnableCryptedVolume, SIGNAL(triggered()), this, SLOT(startStick20EnableCryptedVolume()));
 
-    Stick20ActionDisableCryptedVolume = new QAction(tr("&Lock volume"), this);
+    Stick20ActionDisableCryptedVolume = new QAction(tr("&Lock encrypted volume"), this);
     connect(Stick20ActionDisableCryptedVolume, SIGNAL(triggered()), this, SLOT(startStick20DisableCryptedVolume()));
 
     Stick20ActionEnableHiddenVolume = new QAction(tr("&Unlock hidden volume"), this);
@@ -666,22 +673,22 @@ void MainWindow::initActionsForStick20()
     Stick20ActionExportFirmwareToFile = new QAction(tr("&Export firmware to file"), this);
     connect(Stick20ActionExportFirmwareToFile, SIGNAL(triggered()), this, SLOT(startStick20ExportFirmwareToFile()));
 
-    Stick20ActionDestroyCryptedVolume = new QAction(tr("&Destroy crypted volume"), this);
+    Stick20ActionDestroyCryptedVolume = new QAction(tr("&Destroy encrypted volume"), this);
     connect(Stick20ActionDestroyCryptedVolume, SIGNAL(triggered()), this, SLOT(startStick20DestroyCryptedVolume()));
 
-    Stick20ActionInitCryptedVolume = new QAction(tr("&Init crypted volume"), this);
+    Stick20ActionInitCryptedVolume = new QAction(tr("&Init encrypted volume"), this);
     connect(Stick20ActionInitCryptedVolume, SIGNAL(triggered()), this, SLOT(startStick20DestroyCryptedVolume()));
 
-    Stick20ActionFillSDCardWithRandomChars = new QAction(tr("&Fill crypted volume with random chars"), this);
+    Stick20ActionFillSDCardWithRandomChars = new QAction(tr("&Fill encrypted volume with random chars"), this);
     connect(Stick20ActionFillSDCardWithRandomChars, SIGNAL(triggered()), this, SLOT(startStick20FillSDCardWithRandomChars()));
 
     Stick20ActionGetStickStatus = new QAction(tr("&Get stick status"), this);
     connect(Stick20ActionGetStickStatus, SIGNAL(triggered()), this, SLOT(startStick20GetStickStatus()));
 
-    Stick20ActionSetReadonlyUncryptedVolume = new QAction(tr("&Set readonly uncrypted volume"), this);
+    Stick20ActionSetReadonlyUncryptedVolume = new QAction(tr("&Set readonly unencrypted volume"), this);
     connect(Stick20ActionSetReadonlyUncryptedVolume, SIGNAL(triggered()), this, SLOT(startStick20SetReadonlyUncryptedVolume()));
 
-    Stick20ActionSetReadWriteUncryptedVolume = new QAction(tr("&Set readwrite uncrypted volume"), this);
+    Stick20ActionSetReadWriteUncryptedVolume = new QAction(tr("&Set readwrite unencrypted volume"), this);
     connect(Stick20ActionSetReadWriteUncryptedVolume, SIGNAL(triggered()), this, SLOT(startStick20SetReadWriteUncryptedVolume()));
 
     Stick20ActionDebugAction = new QAction(tr("&Debug Action"), this);
@@ -690,11 +697,14 @@ void MainWindow::initActionsForStick20()
     Stick20ActionSetupHiddenVolume = new QAction(tr("&Setup hidden volume"), this);
     connect(Stick20ActionSetupHiddenVolume, SIGNAL(triggered()), this, SLOT(startStick20SetupHiddenVolume()));
 
-    Stick20ActionClearNewSDCardFound = new QAction(tr("&Clear -Fill crypted volume with random chars-"), this);
+    Stick20ActionClearNewSDCardFound = new QAction(tr("&Clear -Fill encrypted volume with random chars-"), this);
     connect(Stick20ActionClearNewSDCardFound, SIGNAL(triggered()), this, SLOT(startStick20ClearNewSdCardFound()));
 
     Stick20ActionSetupPasswordMatrix = new QAction(tr("&Setup password matrix"), this);
     connect(Stick20ActionSetupPasswordMatrix, SIGNAL(triggered()), this, SLOT(startStick20SetupPasswordMatrix()));
+
+    Stick20ActionLockStickHardware = new QAction(tr("&Lock stick hardware"), this);
+    connect(Stick20ActionLockStickHardware, SIGNAL(triggered()), this, SLOT(startStick20LockStickHardware()));
 
 }
 
@@ -1450,7 +1460,7 @@ void MainWindow::startStick20EnableCryptedVolume()
     bool           ret;
 
     PasswordDialog dialog(MatrixInputActive,this);
-    dialog.init("Enter user password");
+    dialog.init("Enter user PIN");
     dialog.cryptostick = cryptostick;
 
     ret = dialog.exec();
@@ -1560,7 +1570,7 @@ void MainWindow::startStick20EnableFirmwareUpdate()
     bool    ret;
 
     PasswordDialog dialog(MatrixInputActive,this);
-    dialog.init("Enter admin password");
+    dialog.init("Enter admin PIN");
     dialog.cryptostick = cryptostick;
 
     ret = dialog.exec();
@@ -1653,7 +1663,7 @@ void MainWindow::startStick20ExportFirmwareToFile()
     bool    ret;
 
     PasswordDialog dialog(MatrixInputActive,this);
-    dialog.init("Enter admin password");
+    dialog.init("Enter admin PIN");
     dialog.cryptostick = cryptostick;
 
     ret = dialog.exec();
@@ -1686,7 +1696,7 @@ void MainWindow::startStick20DestroyCryptedVolume()
     bool    ret;
 
     PasswordDialog dialog(MatrixInputActive,this);
-    dialog.init("Enter admin password");
+    dialog.init("Enter admin PIN");
     dialog.cryptostick = cryptostick;
 
     ret = dialog.exec();
@@ -1720,7 +1730,7 @@ void MainWindow::startStick20FillSDCardWithRandomChars()
     bool    ret;
 
     PasswordDialog dialog(MatrixInputActive,this);
-    dialog.init("Enter admin password");
+    dialog.init("Enter admin PIN");
     dialog.cryptostick = cryptostick;
 
     ret = dialog.exec();
@@ -1753,7 +1763,7 @@ void MainWindow::startStick20ClearNewSdCardFound()
     bool    ret;
 
     PasswordDialog dialog(MatrixInputActive,this);
-    dialog.init("Enter admin password");
+    dialog.init("Enter admin PIN");
     dialog.cryptostick = cryptostick;
 
     ret = dialog.exec();
@@ -1822,7 +1832,7 @@ void MainWindow::startStick20SetReadonlyUncryptedVolume()
     bool    ret;
 
     PasswordDialog dialog(MatrixInputActive,this);
-    dialog.init("Enter user password");
+    dialog.init("Enter user PIN");
     dialog.cryptostick = cryptostick;
 
     ret = dialog.exec();
@@ -1856,7 +1866,7 @@ void MainWindow::startStick20SetReadWriteUncryptedVolume()
     bool    ret;
 
     PasswordDialog dialog(MatrixInputActive,this);
-    dialog.init("Enter user password");
+    dialog.init("Enter user PIN");
     dialog.cryptostick = cryptostick;
 
     ret = dialog.exec();
@@ -1871,6 +1881,37 @@ void MainWindow::startStick20SetReadWriteUncryptedVolume()
 
 }
 
+/*******************************************************************************
+
+  startStick20LockStickHardware
+
+  Changes
+  Date      Author        Info
+  11.05.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void MainWindow::startStick20LockStickHardware()
+{
+    uint8_t password[40];
+    bool    ret;
+
+    PasswordDialog dialog(MatrixInputActive,this);
+    dialog.init("Enter admin PIN");
+    dialog.cryptostick = cryptostick;
+
+    ret = dialog.exec();
+
+    if (Accepted == ret)
+    {
+        dialog.getPassword ((char*)password);
+        stick20SendCommand (STICK20_CMD_SEND_LOCK_STICK_HARDWARE,password);
+    }
+
+}
 
 /*******************************************************************************
 
@@ -2151,7 +2192,7 @@ int MainWindow::stick20SendCommand (uint8_t stick20Command, uint8_t *password)
             break;
         case STICK20_CMD_GENERATE_NEW_KEYS              :
             {
-                msgBox.setText("The generation of new AES keys will destroy the crypted volume!");
+                msgBox.setText("The generation of new AES keys will destroy the encrypted volume!");
                 msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
                 msgBox.setDefaultButton(QMessageBox::No);
                 ret = msgBox.exec();
@@ -2167,7 +2208,7 @@ int MainWindow::stick20SendCommand (uint8_t stick20Command, uint8_t *password)
             break;
         case STICK20_CMD_FILL_SD_CARD_WITH_RANDOM_CHARS :
             {
-                msgBox.setText("This command fills the hole sd card with random chars. This will destroy all volumes!");
+                msgBox.setText("This command fills the encrypted volumes with random chars.\nThis will destroy all encrypted volumes!");
                 msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
                 msgBox.setDefaultButton(QMessageBox::No);
                 ret = msgBox.exec();

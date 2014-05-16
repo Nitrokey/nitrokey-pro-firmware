@@ -844,7 +844,7 @@ int Device::getPasswordRetryCount()
     if (res==-1)
         return ERR_SENDING;
     else{  //sending the command was successful
-        Sleep::msleep(100);
+        Sleep::msleep(1000);
         Response *resp=new Response();
         resp->getResponse(this);
 

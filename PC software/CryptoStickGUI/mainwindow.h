@@ -33,6 +33,7 @@ typedef struct {
     int  FlagDebug;
     int  ExtendedConfigActive;
     int  PasswordMatrix;
+    int  LockHardware;
 } StartUpParameter_tst;
 
 
@@ -48,6 +49,7 @@ public:
     bool DebugWindowActive;
     bool ExtendedConfigActive;
     bool MatrixInputActive;
+    bool LockHardware;
 
 protected:
      void closeEvent(QCloseEvent *event);
@@ -102,6 +104,7 @@ private:
     QAction *Stick20ActionSetupHiddenVolume;
     QAction *Stick20ActionClearNewSDCardFound;
     QAction *Stick20ActionSetupPasswordMatrix;
+    QAction *Stick20ActionLockStickHardware;
 
     QString DebugText;
 
@@ -195,6 +198,7 @@ void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void startStick20SetupHiddenVolume();
     void startStick20ClearNewSdCardFound();
     void startStick20SetupPasswordMatrix();
+    void startStick20LockStickHardware();
 };
 
 #endif // MAINWINDOW_H

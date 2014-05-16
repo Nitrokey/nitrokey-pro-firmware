@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Setup OTP</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QTabWidget" name="tabWidget">
@@ -100,7 +100,7 @@
         </rect>
        </property>
        <property name="inputMask">
-        <string>HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH</string>
+        <string>HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH; </string>
        </property>
        <property name="text">
         <string>00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00</string>
@@ -314,7 +314,7 @@
         </rect>
        </property>
        <property name="inputMask">
-        <string>NN</string>
+        <string>NN; </string>
        </property>
       </widget>
       <widget class="QLineEdit" name="ttEdit">
@@ -330,7 +330,7 @@
         </rect>
        </property>
        <property name="inputMask">
-        <string>NN</string>
+        <string>NN; </string>
        </property>
       </widget>
       <widget class="QLineEdit" name="muiEdit">
@@ -346,7 +346,7 @@
         </rect>
        </property>
        <property name="inputMask">
-        <string>HHHHHHHH</string>
+        <string>HHHHHHHH; </string>
        </property>
       </widget>
       <widget class="QLabel" name="label_7">
@@ -445,7 +445,7 @@
        </rect>
       </property>
       <property name="inputMask">
-       <string>xxxxxxxxxxxxxxx</string>
+       <string>xxxxxxxxxxxxxxx; </string>
       </property>
      </widget>
      <widget class="QGroupBox" name="hotpGroupBox">
@@ -525,7 +525,7 @@
         </rect>
        </property>
        <property name="inputMask">
-        <string>hhhhhhhhhhhhhhhh</string>
+        <string>hhhhhhhhhhhhhhhh; </string>
        </property>
        <property name="text">
         <string>0000000000000000</string>
@@ -803,7 +803,7 @@
      <x>0</x>
      <y>0</y>
      <width>602</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuCrypto_Stick_OTP_TOol">

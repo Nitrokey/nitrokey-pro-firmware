@@ -236,16 +236,16 @@ void Stick20ResponseDialog::checkStick20Status()
         switch (stick20Response->HID_Stick20Status_st.LastCommand_u8)
         {
             case STICK20_CMD_ENABLE_CRYPTED_PARI            :
-                OutputText.append (QString("Enable crypted volume"));
+                OutputText.append (QString("Enable encrypted volume"));
                 break;
             case STICK20_CMD_DISABLE_CRYPTED_PARI           :
-                OutputText.append (QString("Disable crypted volume"));
+                OutputText.append (QString("Disable encrypted volume"));
                 break;
             case STICK20_CMD_ENABLE_HIDDEN_CRYPTED_PARI     :
-                OutputText.append (QString("Enable crypted volume"));
+                OutputText.append (QString("Enable encrypted volume"));
                 break;
             case STICK20_CMD_DISABLE_HIDDEN_CRYPTED_PARI    :
-                OutputText.append (QString("Disable crypted volume"));
+                OutputText.append (QString("Disable encrypted volume"));
                 break;
             case STICK20_CMD_SEND_NEW_PASSWORD    :
                 OutputText.append (QString("Change PIN"));
@@ -266,10 +266,10 @@ void Stick20ResponseDialog::checkStick20Status()
                 OutputText.append (QString("Get device configuration"));
                 break;
             case STICK20_CMD_ENABLE_READONLY_UNCRYPTED_LUN  :
-                OutputText.append (QString("Enable readonly for uncrypted volume"));
+                OutputText.append (QString("Enable readonly for unencrypted volume"));
                 break;
             case STICK20_CMD_ENABLE_READWRITE_UNCRYPTED_LUN :
-                OutputText.append (QString("Enable readwrite for uncrypted volume"));
+                OutputText.append (QString("Enable readwrite for unencrypted volume"));
                 break;
             default :
                 break;
@@ -362,7 +362,7 @@ void Stick20ResponseDialog::checkStick20Status()
                 case STICK20_CMD_ENABLE_HIDDEN_CRYPTED_PARI     :
                     {
                         QMessageBox msgBox;
-                        msgBox.setText("Crypted volume was not enabled, please enable the crypted volume");
+                        msgBox.setText("Encrypted volume was not enabled, please enable the encrypted volume");
                         msgBox.exec();
                     }
                     break;
