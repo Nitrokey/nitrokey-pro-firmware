@@ -250,6 +250,7 @@ public:
     int stick20SendSetReadwriteToUncryptedVolume (uint8_t *Pindata);
     int stick20SendStartup (uint64_t localTime);
     int stick20SendHiddenVolumeSetup (HiddenVolumeSetup_tst *HV_Data_st);
+    int stick20LockFirmware (uint8_t *password);
 
     uint8_t cardSerial[4];
     uint8_t firmwareVersion[2];

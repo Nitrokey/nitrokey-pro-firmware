@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     stick20changepassworddialog.cpp \
     aboutdialog.cpp \
     stick20infodialog.cpp \
-    stick20hiddenvolumedialog.cpp
+    stick20hiddenvolumedialog.cpp \
+    stick20lockfirmwaredialog.cpp
 
 win32 {
 
@@ -68,7 +69,8 @@ HEADERS  += mainwindow.h \
     stick20changepassworddialog.h \
     aboutdialog.h \
     stick20infodialog.h \
-    stick20hiddenvolumedialog.h
+    stick20hiddenvolumedialog.h \
+    stick20lockfirmwaredialog.h
 
 FORMS    += mainwindow.ui \
     passworddialog.ui \
@@ -82,7 +84,8 @@ FORMS    += mainwindow.ui \
     stick20changepassworddialog.ui \
     aboutdialog.ui \
     stick20infodialog.ui \
-    stick20hiddenvolumedialog.ui
+    stick20hiddenvolumedialog.ui \
+    stick20lockfirmwaredialog.ui
 
 win32{
 LIBS= -lsetupapi

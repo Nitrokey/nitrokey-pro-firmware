@@ -111,7 +111,7 @@ typedef struct {
   unsigned char   ReadWriteFlagCryptedVolume_u8;        // Flag stores the read/write flag in the CPU flash   1 byte
   unsigned char   VersionInfo_au8[4];                   //                                                    4 byte
   unsigned char   ReadWriteFlagHiddenVolume_u8;         // Flag stores the read/write flag in the CPU flash   1 byte
-  unsigned char   StoredMatrixLength_u8;                // Not used                                           1 byte
+  unsigned char   FirmwareLocked_u8;                    //                                                    1 byte
   unsigned char   NewSDCardFound_u8;                    // Bit 0 new card found, bit 1-7 change counter       1 byte
   unsigned char   SDFillWithRandomChars_u8;             // Bit 0 new card found, bit 1-7 change counter       1 byte
   unsigned long   ActiveSD_CardID_u32;                  // Not used                                           4 byte

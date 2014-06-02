@@ -1614,6 +1614,38 @@ int Device::stick20SendHiddenVolumeSetup (HiddenVolumeSetup_tst *HV_Data_st)
     return (TRUE);
 }
 
+/*******************************************************************************
+
+  stick20LockFirmware
+
+  Changes
+  Date      Author        Info
+  02.06.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+int Device::stick20LockFirmware (uint8_t *password)
+{
+    uint8_t n;
+    int     res;
+    Command *cmd;
+
+    // Check password length
+    n = strlen ((const char*)password);
+    if (CS20_MAX_PASSWORD_LEN <= n)
+    {
+        return (false);
+    }
+
+    cmd = new Command(STICK20_CMD_SEND_LOCK_STICK_HARDWARE,password,n);
+    res = sendCommand(cmd);
+
+    return (true);
+}
+
 
 /*******************************************************************************
 

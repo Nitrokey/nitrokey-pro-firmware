@@ -103,6 +103,11 @@ void Stick20ResponseDialog::showStick20Configuration (int Status)
         OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.VersionInfo_au8[1])));
         OutputText.append(QString("\n"));
 
+        if (TRUE == HID_Stick20Configuration_st.FirmwareLocked_u8)
+        {
+            OutputText.append(QString("    *** Firmware is locked *** ")).append("\n");
+        }
+
         if (READ_WRITE_ACTIVE == HID_Stick20Configuration_st.ReadWriteFlagUncryptedVolume_u8)
         {
             OutputText.append(QString("Uncrypted volume     READ/WRITE mode ")).append("\n");

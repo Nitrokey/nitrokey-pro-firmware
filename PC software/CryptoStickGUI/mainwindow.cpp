@@ -40,6 +40,7 @@
 #include "stick20changepassworddialog.h"
 #include "stick20infodialog.h"
 #include "stick20hiddenvolumedialog.h"
+#include "stick20lockfirmwaredialog.h"
 
 #include <QTimer>
 #include <QMenu>
@@ -137,6 +138,7 @@ MainWindow::MainWindow(StartUpParameter_tst *StartupInfo_st,QWidget *parent) :
             DebugingStick20PoolingActive = FALSE;
             break;
     }
+
 
 
     ui->setupUi(this);
@@ -932,6 +934,10 @@ void MainWindow::generateMenuForStick20()
     trayMenuSubConfigure->addAction(Stick20ActionGetStickStatus             );
 
 
+    if (TRUE == LockHardware)
+    {
+        trayMenuSubConfigure->addAction(Stick20ActionLockStickHardware);
+    }
 
     if (TRUE == HiddenVolumeAccessable)
     {
@@ -1899,18 +1905,23 @@ void MainWindow::startStick20LockStickHardware()
     uint8_t password[40];
     bool    ret;
 
-    PasswordDialog dialog(MatrixInputActive,this);
-    dialog.init("Enter admin PIN");
-    dialog.cryptostick = cryptostick;
+    stick20LockFirmwareDialog dialog(this);
 
     ret = dialog.exec();
-
     if (Accepted == ret)
     {
-        dialog.getPassword ((char*)password);
-        stick20SendCommand (STICK20_CMD_SEND_LOCK_STICK_HARDWARE,password);
-    }
+        PasswordDialog dialog1(MatrixInputActive,this);
+        dialog1.init("Enter admin PIN");
+        dialog1.cryptostick = cryptostick;
 
+        ret = dialog1.exec();
+
+        if (Accepted == ret)
+        {
+            dialog1.getPassword ((char*)password);
+            stick20SendCommand (STICK20_CMD_SEND_LOCK_STICK_HARDWARE,password);
+        }
+    }
 }
 
 /*******************************************************************************
@@ -2282,7 +2293,13 @@ int MainWindow::stick20SendCommand (uint8_t stick20Command, uint8_t *password)
                 waitForAnswerFromStick20 = TRUE;
             }
             break;
-
+        case STICK20_CMD_SEND_LOCK_STICK_HARDWARE       :
+            ret = cryptostick->stick20LockFirmware (password);
+            if (TRUE == ret)
+            {
+                waitForAnswerFromStick20 = TRUE;
+            }
+            break;
         default :
             msgBox.setText("Stick20Dialog: Wrong combobox value! ");
             msgBox.exec();
