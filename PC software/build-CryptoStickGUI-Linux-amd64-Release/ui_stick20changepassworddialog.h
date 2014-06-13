@@ -1,8 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'stick20changepassworddialog.ui'
 **
-** Created: Mon Feb 24 21:36:19 2014
-**      by: Qt User Interface Compiler version 4.8.4
+** Created by: Qt User Interface Compiler version 4.8.6
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -40,43 +39,43 @@ public:
     {
         if (DialogChangePassword->objectName().isEmpty())
             DialogChangePassword->setObjectName(QString::fromUtf8("DialogChangePassword"));
-        DialogChangePassword->resize(264, 266);
+        DialogChangePassword->resize(202, 259);
         buttonBox = new QDialogButtonBox(DialogChangePassword);
         buttonBox->setObjectName(QString::fromUtf8("buttonBox"));
-        buttonBox->setGeometry(QRect(60, 220, 161, 32));
+        buttonBox->setGeometry(QRect(20, 210, 161, 32));
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
         label = new QLabel(DialogChangePassword);
         label->setObjectName(QString::fromUtf8("label"));
-        label->setGeometry(QRect(10, 10, 221, 31));
+        label->setGeometry(QRect(20, 10, 151, 31));
         QFont font;
         font.setPointSize(11);
         label->setFont(font);
         label->setAlignment(Qt::AlignCenter);
         lineEdit_OldPW = new QLineEdit(DialogChangePassword);
         lineEdit_OldPW->setObjectName(QString::fromUtf8("lineEdit_OldPW"));
-        lineEdit_OldPW->setGeometry(QRect(130, 60, 113, 20));
+        lineEdit_OldPW->setGeometry(QRect(70, 60, 113, 20));
         lineEdit_NewPW_1 = new QLineEdit(DialogChangePassword);
         lineEdit_NewPW_1->setObjectName(QString::fromUtf8("lineEdit_NewPW_1"));
-        lineEdit_NewPW_1->setGeometry(QRect(130, 100, 113, 20));
+        lineEdit_NewPW_1->setGeometry(QRect(70, 100, 113, 20));
         lineEdit_NewPW_2 = new QLineEdit(DialogChangePassword);
         lineEdit_NewPW_2->setObjectName(QString::fromUtf8("lineEdit_NewPW_2"));
-        lineEdit_NewPW_2->setGeometry(QRect(130, 140, 113, 20));
+        lineEdit_NewPW_2->setGeometry(QRect(70, 140, 113, 20));
         label_2 = new QLabel(DialogChangePassword);
         label_2->setObjectName(QString::fromUtf8("label_2"));
-        label_2->setGeometry(QRect(20, 60, 101, 20));
+        label_2->setGeometry(QRect(10, 60, 51, 20));
         label_2->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         label_3 = new QLabel(DialogChangePassword);
         label_3->setObjectName(QString::fromUtf8("label_3"));
-        label_3->setGeometry(QRect(20, 100, 101, 20));
+        label_3->setGeometry(QRect(10, 100, 51, 20));
         label_3->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         label_4 = new QLabel(DialogChangePassword);
         label_4->setObjectName(QString::fromUtf8("label_4"));
-        label_4->setGeometry(QRect(0, 140, 121, 20));
+        label_4->setGeometry(QRect(-10, 140, 71, 20));
         label_4->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         checkBox = new QCheckBox(DialogChangePassword);
         checkBox->setObjectName(QString::fromUtf8("checkBox"));
-        checkBox->setGeometry(QRect(100, 180, 141, 21));
+        checkBox->setGeometry(QRect(70, 180, 81, 21));
 
         retranslateUi(DialogChangePassword);
         QObject::connect(buttonBox, SIGNAL(accepted()), DialogChangePassword, SLOT(accept()));
@@ -87,12 +86,12 @@ public:
 
     void retranslateUi(QDialog *DialogChangePassword)
     {
-        DialogChangePassword->setWindowTitle(QApplication::translate("DialogChangePassword", "Dialog", 0, QApplication::UnicodeUTF8));
-        label->setText(QApplication::translate("DialogChangePassword", "Change password", 0, QApplication::UnicodeUTF8));
-        label_2->setText(QApplication::translate("DialogChangePassword", "Old password", 0, QApplication::UnicodeUTF8));
-        label_3->setText(QApplication::translate("DialogChangePassword", "New password", 0, QApplication::UnicodeUTF8));
-        label_4->setText(QApplication::translate("DialogChangePassword", "New password", 0, QApplication::UnicodeUTF8));
-        checkBox->setText(QApplication::translate("DialogChangePassword", "Show password", 0, QApplication::UnicodeUTF8));
+        DialogChangePassword->setWindowTitle(QApplication::translate("DialogChangePassword", "Change PIN", 0, QApplication::UnicodeUTF8));
+        label->setText(QApplication::translate("DialogChangePassword", "Change PIN", 0, QApplication::UnicodeUTF8));
+        label_2->setText(QApplication::translate("DialogChangePassword", "Old PIN", 0, QApplication::UnicodeUTF8));
+        label_3->setText(QApplication::translate("DialogChangePassword", "New PIN", 0, QApplication::UnicodeUTF8));
+        label_4->setText(QApplication::translate("DialogChangePassword", "New PIN", 0, QApplication::UnicodeUTF8));
+        checkBox->setText(QApplication::translate("DialogChangePassword", "Show PIN", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

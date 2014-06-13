@@ -1,8 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'stick20updatedialog.ui'
 **
-** Created: Mon Feb 24 21:36:19 2014
-**      by: Qt User Interface Compiler version 4.8.4
+** Created by: Qt User Interface Compiler version 4.8.6
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -50,8 +49,8 @@ public:
 
     void retranslateUi(QDialog *UpdateDialog)
     {
-        UpdateDialog->setWindowTitle(QApplication::translate("UpdateDialog", "Dialog", 0, QApplication::UnicodeUTF8));
-        label->setText(QApplication::translate("UpdateDialog", "<html><head/><body><p align=\"center\"><span style=\" font-size:16pt;\">Firmware update</span></p><p align=\"center\"><span style=\" font-size:9pt;\">When you select &quot;OK&quot; the stick entered the firmware </span></p><p align=\"center\"><span style=\" font-size:9pt;\">update modus. There is no way back ! Please </span></p><p align=\"center\"><span style=\" font-size:9pt;\">check the installation of the update software &quot;flip&quot;</span></p><p align=\"center\"><span style=\" font-size:9pt;\">from Atmel. This software was delieverd </span></p><p align=\"center\"><span style=\" font-size:9pt;\">with the Stick or you can download it from</span></p><p align=\"center\"><span style=\" font-size:9pt;\"><br/></span><a href=\"http://www.atmel.com/tools/FLIP.aspx\"><span style=\" font-size:9pt; text-decoration: underline; color:#0000ff;\">http://www.atmel.com/tools/FLIP.aspx</span></a></p><p><br/></p></body></html>", 0, QApplication::UnicodeUTF8));
+        UpdateDialog->setWindowTitle(QApplication::translate("UpdateDialog", "Update dialog", 0, QApplication::UnicodeUTF8));
+        label->setText(QApplication::translate("UpdateDialog", "<html><head/><body><p align=\"center\"><span style=\" font-size:16pt;\">Firmware update</span></p><p align=\"center\"><span style=\" font-size:9pt;\">When you select &quot;OK&quot; the stick entered the firmware </span></p><p align=\"center\"><span style=\" font-size:9pt;\">update modus. There is no way back ! Please </span></p><p align=\"center\"><span style=\" font-size:9pt;\">check the installation of the update software &quot;flip&quot;</span></p><p align=\"center\"><span style=\" font-size:9pt;\">from Atmel. This software was delieverd </span></p><p align=\"center\"><span style=\" font-size:9pt;\">with the stick or you can download it from</span></p><p align=\"center\"><span style=\" font-size:9pt;\"><br/></span><a href=\"http://www.atmel.com/tools/FLIP.aspx\"><span style=\" font-size:9pt; text-decoration: underline; color:#0000ff;\">http://www.atmel.com/tools/FLIP.aspx</span></a></p><p><br/></p></body></html>", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };
