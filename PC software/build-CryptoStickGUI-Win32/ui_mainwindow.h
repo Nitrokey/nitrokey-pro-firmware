@@ -270,7 +270,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 602, 25));
+        menuBar->setGeometry(QRect(0, 0, 602, 21));
         menuCrypto_Stick_OTP_TOol = new QMenu(menuBar);
         menuCrypto_Stick_OTP_TOol->setObjectName(QString::fromUtf8("menuCrypto_Stick_OTP_TOol"));
         MainWindow->setMenuBar(menuBar);
@@ -292,12 +292,12 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0, QApplication::UnicodeUTF8));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "Setup OTP", 0, QApplication::UnicodeUTF8));
         resetButton->setText(QApplication::translate("MainWindow", "Reload Configuration", 0, QApplication::UnicodeUTF8));
         groupBox->setTitle(QApplication::translate("MainWindow", "Secret key", 0, QApplication::UnicodeUTF8));
         hexRadioButton->setText(QApplication::translate("MainWindow", "Hex", 0, QApplication::UnicodeUTF8));
         base32RadioButton->setText(QApplication::translate("MainWindow", "Base 32", 0, QApplication::UnicodeUTF8));
-        secretEdit->setInputMask(QApplication::translate("MainWindow", "HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH", 0, QApplication::UnicodeUTF8));
+        secretEdit->setInputMask(QApplication::translate("MainWindow", "HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH HH; ", 0, QApplication::UnicodeUTF8));
         secretEdit->setText(QApplication::translate("MainWindow", "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00", 0, QApplication::UnicodeUTF8));
         label_3->setText(QApplication::translate("MainWindow", "Secret Key:", 0, QApplication::UnicodeUTF8));
         label_4->setText(QApplication::translate("MainWindow", "Input format:", 0, QApplication::UnicodeUTF8));
@@ -319,9 +319,9 @@ public:
         label->setText(QApplication::translate("MainWindow", "Slot:", 0, QApplication::UnicodeUTF8));
         groupBox_2->setTitle(QApplication::translate("MainWindow", "Token ID", 0, QApplication::UnicodeUTF8));
         tokenIDCheckBox->setText(QApplication::translate("MainWindow", "Send token ID", 0, QApplication::UnicodeUTF8));
-        ompEdit->setInputMask(QApplication::translate("MainWindow", "NN", 0, QApplication::UnicodeUTF8));
-        ttEdit->setInputMask(QApplication::translate("MainWindow", "NN", 0, QApplication::UnicodeUTF8));
-        muiEdit->setInputMask(QApplication::translate("MainWindow", "HHHHHHHH", 0, QApplication::UnicodeUTF8));
+        ompEdit->setInputMask(QApplication::translate("MainWindow", "NN; ", 0, QApplication::UnicodeUTF8));
+        ttEdit->setInputMask(QApplication::translate("MainWindow", "NN; ", 0, QApplication::UnicodeUTF8));
+        muiEdit->setInputMask(QApplication::translate("MainWindow", "HHHHHHHH; ", 0, QApplication::UnicodeUTF8));
         label_7->setText(QApplication::translate("MainWindow", "OMP:", 0, QApplication::UnicodeUTF8));
         label_8->setText(QApplication::translate("MainWindow", "TT:", 0, QApplication::UnicodeUTF8));
         label_9->setText(QApplication::translate("MainWindow", "MUI:", 0, QApplication::UnicodeUTF8));
@@ -333,13 +333,13 @@ public:
          << QApplication::translate("MainWindow", "DVORAK", 0, QApplication::UnicodeUTF8)
         );
         label_10->setText(QApplication::translate("MainWindow", "Keyboard layout (DISABLED FEATURE):", 0, QApplication::UnicodeUTF8));
-        nameEdit->setInputMask(QApplication::translate("MainWindow", "xxxxxxxxxxxxxxx", 0, QApplication::UnicodeUTF8));
+        nameEdit->setInputMask(QApplication::translate("MainWindow", "xxxxxxxxxxxxxxx; ", 0, QApplication::UnicodeUTF8));
         hotpGroupBox->setTitle(QApplication::translate("MainWindow", "OATH-HOTP Parameters", 0, QApplication::UnicodeUTF8));
         label_5->setText(QApplication::translate("MainWindow", "HOTP length:", 0, QApplication::UnicodeUTF8));
         digits6radioButton->setText(QApplication::translate("MainWindow", "6 digits", 0, QApplication::UnicodeUTF8));
         digits8radioButton->setText(QApplication::translate("MainWindow", "8 digits", 0, QApplication::UnicodeUTF8));
         label_6->setText(QApplication::translate("MainWindow", "Moving factor seed:", 0, QApplication::UnicodeUTF8));
-        counterEdit->setInputMask(QApplication::translate("MainWindow", "hhhhhhhhhhhhhhhh", 0, QApplication::UnicodeUTF8));
+        counterEdit->setInputMask(QApplication::translate("MainWindow", "hhhhhhhhhhhhhhhh; ", 0, QApplication::UnicodeUTF8));
         counterEdit->setText(QApplication::translate("MainWindow", "0000000000000000", 0, QApplication::UnicodeUTF8));
         setToZeroButton->setText(QApplication::translate("MainWindow", "Set to zero", 0, QApplication::UnicodeUTF8));
         setToRandomButton->setText(QApplication::translate("MainWindow", "Set to random", 0, QApplication::UnicodeUTF8));

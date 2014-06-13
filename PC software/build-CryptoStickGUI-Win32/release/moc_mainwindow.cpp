@@ -22,7 +22,7 @@ static const uint qt_meta_data_MainWindow[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-      62,   14, // methods
+      66,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -92,6 +92,10 @@ static const uint qt_meta_data_MainWindow[] = {
     1474,   11,   11,   11, 0x08,
     1515,   11,   11,   11, 0x08,
     1557,   11,   11,   11, 0x08,
+    1583,   11,   11,   11, 0x08,
+    1615,   11,   11,   11, 0x08,
+    1649,   11,   11,   11, 0x08,
+    1683,   11,   11,   11, 0x08,
 
        0        // eod
 };
@@ -144,6 +148,10 @@ static const char qt_meta_stringdata_MainWindow[] = {
     "startStick20SetReadonlyUncryptedVolume()\0"
     "startStick20SetReadWriteUncryptedVolume()\0"
     "startStick20DebugAction()\0"
+    "startStick20SetupHiddenVolume()\0"
+    "startStick20ClearNewSdCardFound()\0"
+    "startStick20SetupPasswordMatrix()\0"
+    "startStick20LockStickHardware()\0"
 };
 
 void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -215,6 +223,10 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 59: _t->startStick20SetReadonlyUncryptedVolume(); break;
         case 60: _t->startStick20SetReadWriteUncryptedVolume(); break;
         case 61: _t->startStick20DebugAction(); break;
+        case 62: _t->startStick20SetupHiddenVolume(); break;
+        case 63: _t->startStick20ClearNewSdCardFound(); break;
+        case 64: _t->startStick20SetupPasswordMatrix(); break;
+        case 65: _t->startStick20LockStickHardware(); break;
         default: ;
         }
     }
@@ -252,9 +264,9 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 62)
+        if (_id < 66)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 62;
+        _id -= 66;
     }
     return _id;
 }

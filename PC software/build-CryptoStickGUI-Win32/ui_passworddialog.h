@@ -29,6 +29,7 @@ public:
     QLineEdit *lineEdit;
     QCheckBox *checkBox;
     QLabel *label;
+    QCheckBox *checkBox_PasswordMatrix;
 
     void setupUi(QDialog *PasswordDialog)
     {
@@ -43,10 +44,11 @@ public:
         lineEdit = new QLineEdit(PasswordDialog);
         lineEdit->setObjectName(QString::fromUtf8("lineEdit"));
         lineEdit->setGeometry(QRect(30, 40, 351, 21));
+        lineEdit->setMaxLength(39);
         lineEdit->setEchoMode(QLineEdit::Password);
         checkBox = new QCheckBox(PasswordDialog);
         checkBox->setObjectName(QString::fromUtf8("checkBox"));
-        checkBox->setGeometry(QRect(30, 70, 341, 22));
+        checkBox->setGeometry(QRect(30, 70, 111, 22));
         QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -57,6 +59,11 @@ public:
         label->setGeometry(QRect(30, 10, 341, 21));
         sizePolicy.setHeightForWidth(label->sizePolicy().hasHeightForWidth());
         label->setSizePolicy(sizePolicy);
+        checkBox_PasswordMatrix = new QCheckBox(PasswordDialog);
+        checkBox_PasswordMatrix->setObjectName(QString::fromUtf8("checkBox_PasswordMatrix"));
+        checkBox_PasswordMatrix->setGeometry(QRect(230, 70, 131, 22));
+        sizePolicy.setHeightForWidth(checkBox_PasswordMatrix->sizePolicy().hasHeightForWidth());
+        checkBox_PasswordMatrix->setSizePolicy(sizePolicy);
 
         retranslateUi(PasswordDialog);
         QObject::connect(buttonBox, SIGNAL(accepted()), PasswordDialog, SLOT(accept()));
@@ -67,9 +74,10 @@ public:
 
     void retranslateUi(QDialog *PasswordDialog)
     {
-        PasswordDialog->setWindowTitle(QApplication::translate("PasswordDialog", "Dialog", 0, QApplication::UnicodeUTF8));
+        PasswordDialog->setWindowTitle(QApplication::translate("PasswordDialog", "Password dialog", 0, QApplication::UnicodeUTF8));
         checkBox->setText(QApplication::translate("PasswordDialog", "Show password", 0, QApplication::UnicodeUTF8));
         label->setText(QApplication::translate("PasswordDialog", "Enter card password:", 0, QApplication::UnicodeUTF8));
+        checkBox_PasswordMatrix->setText(QApplication::translate("PasswordDialog", "Use password matrix", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

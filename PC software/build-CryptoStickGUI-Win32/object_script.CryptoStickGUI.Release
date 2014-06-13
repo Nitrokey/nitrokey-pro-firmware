@@ -19,6 +19,9 @@ INPUT(
 ./release/stick20updatedialog.o
 ./release/stick20changepassworddialog.o
 ./release/aboutdialog.o
+./release/stick20infodialog.o
+./release/stick20hiddenvolumedialog.o
+./release/stick20lockfirmwaredialog.o
 ./release/hid_win.o
 ./release/moc_mainwindow.o
 ./release/moc_passworddialog.o
@@ -31,5 +34,8 @@ INPUT(
 ./release/moc_stick20updatedialog.o
 ./release/moc_stick20changepassworddialog.o
 ./release/moc_aboutdialog.o
+./release/moc_stick20infodialog.o
+./release/moc_stick20hiddenvolumedialog.o
+./release/moc_stick20lockfirmwaredialog.o
 ./release/qrc_resources.o
 );
