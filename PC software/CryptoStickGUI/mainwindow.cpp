@@ -681,7 +681,7 @@ void MainWindow::initActionsForStick20()
     Stick20ActionInitCryptedVolume = new QAction(tr("&Init encrypted volume"), this);
     connect(Stick20ActionInitCryptedVolume, SIGNAL(triggered()), this, SLOT(startStick20DestroyCryptedVolume()));
 
-    Stick20ActionFillSDCardWithRandomChars = new QAction(tr("&Fill encrypted volume with random chars"), this);
+    Stick20ActionFillSDCardWithRandomChars = new QAction(tr("&Initialize storage with random data"), this);
     connect(Stick20ActionFillSDCardWithRandomChars, SIGNAL(triggered()), this, SLOT(startStick20FillSDCardWithRandomChars()));
 
     Stick20ActionGetStickStatus = new QAction(tr("&Get stick status"), this);
@@ -699,7 +699,7 @@ void MainWindow::initActionsForStick20()
     Stick20ActionSetupHiddenVolume = new QAction(tr("&Setup hidden volume"), this);
     connect(Stick20ActionSetupHiddenVolume, SIGNAL(triggered()), this, SLOT(startStick20SetupHiddenVolume()));
 
-    Stick20ActionClearNewSDCardFound = new QAction(tr("&Clear -Fill encrypted volume with random chars-"), this);
+    Stick20ActionClearNewSDCardFound = new QAction(tr("&Clear - Initialize storage with random data"), this);
     connect(Stick20ActionClearNewSDCardFound, SIGNAL(triggered()), this, SLOT(startStick20ClearNewSdCardFound()));
 
     Stick20ActionSetupPasswordMatrix = new QAction(tr("&Setup password matrix"), this);
@@ -2219,7 +2219,7 @@ int MainWindow::stick20SendCommand (uint8_t stick20Command, uint8_t *password)
             break;
         case STICK20_CMD_FILL_SD_CARD_WITH_RANDOM_CHARS :
             {
-                msgBox.setText("This command fills the encrypted volumes with random chars.\nThis will destroy all encrypted volumes!");
+                msgBox.setText("This command fills the encrypted volumes with random data.\nThis will destroy all encrypted volumes!");
                 msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
                 msgBox.setDefaultButton(QMessageBox::No);
                 ret = msgBox.exec();

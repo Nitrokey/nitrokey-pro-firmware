@@ -59,7 +59,7 @@ void Stick20InfoDialog::showStick20Configuration (void)
 
     if (TRUE == HID_Stick20Configuration_st.StickKeysNotInitiated)
     {
-        OutputText.append(QString(" ***  Warning stick is not securce  ***")).append("\n");
+        OutputText.append(QString(" ***  Warning: Device is not secure  ***")).append("\n");
         OutputText.append(QString(" **  Select -Init encrypted volumes- **")).append("\n").append("\n");
     }
 
@@ -107,7 +107,7 @@ void Stick20InfoDialog::showStick20Configuration (void)
 
 
     OutputText.append(QString("\n"));
-    OutputText.append(QString("SD card infos\n"));
+    OutputText.append(QString("SD card info\n"));
 
     OutputText.append(QString(" ID     0x"));
     OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.ActiveSD_CardID_u32,16))).append("\n");
@@ -120,12 +120,12 @@ void Stick20InfoDialog::showStick20Configuration (void)
 
     if (0 == (HID_Stick20Configuration_st.SDFillWithRandomChars_u8 & 0x01))
     {
-        OutputText.append(QString(" *** Not erased with random chars ***\n"));
+        OutputText.append(QString(" *** Storage is not initialized with random data ***\n"));
     }
 
 
     OutputText.append(QString("\n"));
-    OutputText.append(QString("Smartcard infos\n"));
+    OutputText.append(QString("Smartcard info\n"));
 
     OutputText.append(QString(" ID     0x"));
     OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.ActiveSmartCardID_u32,16))).append("\n");

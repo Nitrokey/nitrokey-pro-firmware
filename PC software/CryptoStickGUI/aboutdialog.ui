@@ -36,7 +36,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Cryptostick 2.0</string>
+    <string>Crypto Stick</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
