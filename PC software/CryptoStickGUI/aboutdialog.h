@@ -22,6 +22,8 @@ public:
 private slots:
     void on_ButtonOK_clicked();
 
+    void on_ButtonStickStatus_clicked();
+
 private:
     Ui::AboutDialog *ui;
 };

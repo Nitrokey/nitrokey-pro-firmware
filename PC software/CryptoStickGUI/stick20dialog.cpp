@@ -57,7 +57,7 @@ typeOptionsComboboxStick20 tOptionsComboboxStick20[] =
     "Enable firmware update",                 STICK20_CMD_ENABLE_FIRMWARE_UPDATE,
     "Export firmware to file",                STICK20_CMD_EXPORT_FIRMWARE_TO_FILE,
     "Generate new AES keys",                  STICK20_CMD_GENERATE_NEW_KEYS,
-    "Fill SD card with random chars",         STICK20_CMD_FILL_SD_CARD_WITH_RANDOM_CHARS,
+    "Initialize storage with random data",     STICK20_CMD_FILL_SD_CARD_WITH_RANDOM_CHARS,
     "Get stick status - Todo",                STICK20_CMD_GET_DEVICE_STATUS,
     "Set readonly unencrypted volume",        STICK20_CMD_ENABLE_READONLY_UNCRYPTED_LUN,
     "Set readwrite unencrypted volume",       STICK20_CMD_ENABLE_READWRITE_UNCRYPTED_LUN,
@@ -114,7 +114,7 @@ Stick20Dialog::Stick20Dialog(QWidget *parent) :
     ui->comboBox->addItem (QString("Enable Firmware Update"));
     ui->comboBox->addItem (QString("Export Firmware To File"));
     ui->comboBox->addItem (QString("Generate New Keys"));
-    ui->comboBox->addItem (QString("Fill SD Card With Random Chars"));
+    ui->comboBox->addItem (QString("Initialize storage with random data"));
     ui->comboBox->addItem (QString("Get Stick Status - Todo"));
     ui->comboBox->addItem (QString("Set readonly Uncrypted Partition"));
     ui->comboBox->addItem (QString("Set readwrite Uncrypted Partition"));
@@ -302,7 +302,7 @@ void Stick20Dialog::on_buttonBox_accepted()
             break;
         case STICK20_CMD_FILL_SD_CARD_WITH_RANDOM_CHARS :
             {
-                msgBox.setText("This command fills the encrypted volume with random chars. \nThis will destroy the encrypted volume and all hidden volumes!");
+                msgBox.setText("This command initializes the storage with random data. \nThis will destroy the encrypted volume and all hidden volumes!");
                 msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
                 msgBox.setDefaultButton(QMessageBox::No);
                 ret = msgBox.exec();

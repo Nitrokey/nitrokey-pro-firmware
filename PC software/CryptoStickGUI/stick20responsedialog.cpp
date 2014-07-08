@@ -145,7 +145,7 @@ void Stick20ResponseDialog::showStick20Configuration (int Status)
 
         if (0 == (HID_Stick20Configuration_st.SDFillWithRandomChars_u8 & 0x01))
         {
-            OutputText.append(QString("*** Not filled with random chars - Fill Counter "));
+            OutputText.append(QString("*** Not initialized with random data - Fill Counter "));
             OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.SDFillWithRandomChars_u8 >> 1))).append("\n");
         }
         else
@@ -281,7 +281,7 @@ void Stick20ResponseDialog::checkStick20Status()
                 OutputText.append (QString("Generate new keys"));
                 break;
             case STICK20_CMD_FILL_SD_CARD_WITH_RANDOM_CHARS :
-                OutputText.append (QString("Fill SD card with random chars"));
+                OutputText.append (QString("Initialize storage with random data"));
                 break;
             case STICK20_CMD_GET_DEVICE_STATUS              :
                 OutputText.append (QString("Get device configuration"));

@@ -85,9 +85,9 @@
   <widget class="QSpinBox" name="intervalSpinBox">
    <property name="geometry">
     <rect>
-     <x>320</x>
+     <x>311</x>
      <y>10</y>
-     <width>42</width>
+     <width>51</width>
      <height>22</height>
     </rect>
    </property>
@@ -104,9 +104,9 @@
   <widget class="QLabel" name="intervalLabel">
    <property name="geometry">
     <rect>
-     <x>235</x>
+     <x>210</x>
      <y>10</y>
-     <width>81</width>
+     <width>111</width>
      <height>21</height>
     </rect>
    </property>

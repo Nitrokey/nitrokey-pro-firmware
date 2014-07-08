@@ -20,6 +20,7 @@
 #include "aboutdialog.h"
 #include "ui_aboutdialog.h"
 
+#include "stick20infodialog.h"
 #include "stick20responsedialog.h"
 
 AboutDialog::AboutDialog(QWidget *parent) :
@@ -96,9 +97,9 @@ void AboutDialog::GetStick20Status (void)
 void AboutDialog::showStick20Configuration (void)
 {
     QString OutputText;
-
+/*
     OutputText.append(QString("Crypto Stick Storage status\n\n"));
-
+*/
     if (false == cryptostick->activStick20)
     {
         OutputText.append(QString("*** No Crypto Stick Storage found ***\n"));
@@ -107,20 +108,20 @@ void AboutDialog::showStick20Configuration (void)
     }
 
     GetStick20Status ();
-
-
+/*
+    OutputText.append(QString("Firmware version     "));
+    OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.VersionInfo_au8[0])));
+    OutputText.append(QString("."));
+    OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.VersionInfo_au8[1])));
+    OutputText.append(QString("\n"));
+*/
     if (TRUE == HID_Stick20Configuration_st.StickKeysNotInitiated)
     {
         OutputText.append(QString(" ***  Warning stick is not securce  ***")).append("\n");
         OutputText.append(QString(" **  Select -Init encrypted volumes- **")).append("\n").append("\n");
     }
 
-    OutputText.append(QString("Firmware version     "));
-    OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.VersionInfo_au8[0])));
-    OutputText.append(QString("."));
-    OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.VersionInfo_au8[1])));
-    OutputText.append(QString("\n"));
-
+/*
     if (TRUE == HID_Stick20Configuration_st.FirmwareLocked_u8)
     {
         OutputText.append(QString("*** Firmware is locked *** ")).append("\n");
@@ -134,6 +135,35 @@ void AboutDialog::showStick20Configuration (void)
     {
         OutputText.append(QString("Unencrypted volume   READ ONLY mode ")).append("\n");
     }
+*/
+
+
+/*
+    OutputText.append(QString("SD change counter    "));
+    OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.NewSDCardFound_u8 >> 1))).append("\n");
+
+    OutputText.append(QString("SD erase counter     "));
+    OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.SDFillWithRandomChars_u8 >> 1))).append("\n");
+
+
+    OutputText.append(QString("\n"));
+    OutputText.append(QString("SD card infos\n"));
+
+    OutputText.append(QString(" ID     0x"));
+    OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.ActiveSD_CardID_u32,16))).append("\n");
+*/
+
+    if (0 != (HID_Stick20Configuration_st.NewSDCardFound_u8 & 0x01))
+    {
+        OutputText.append(QString(" *** New SD card found ***\n"));
+    }
+
+    if (0 == (HID_Stick20Configuration_st.SDFillWithRandomChars_u8 & 0x01))
+    {
+        OutputText.append(QString(" *** Not erased with random chars ***\n"));
+    }
+
+    OutputText.append(QString("\n"));
 
     if (0 != (HID_Stick20Configuration_st.VolumeActiceFlag_u8 & (1 << SD_CRYPTED_VOLUME_BIT_PLACE)))
     {
@@ -149,45 +179,25 @@ void AboutDialog::showStick20Configuration (void)
         OutputText.append(QString("Hidden volume        active")).append("\n");
     }
 
-
-
-    OutputText.append(QString("SD change counter    "));
-    OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.NewSDCardFound_u8 >> 1))).append("\n");
-
-    OutputText.append(QString("SD erase counter     "));
-    OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.SDFillWithRandomChars_u8 >> 1))).append("\n");
-
-
     OutputText.append(QString("\n"));
-    OutputText.append(QString("SD card infos\n"));
-
-    OutputText.append(QString(" ID     0x"));
-    OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.ActiveSD_CardID_u32,16))).append("\n");
-
-
-    if (0 != (HID_Stick20Configuration_st.NewSDCardFound_u8 & 0x01))
-    {
-        OutputText.append(QString(" *** New SD card found ***\n"));
-    }
-
-    if (0 == (HID_Stick20Configuration_st.SDFillWithRandomChars_u8 & 0x01))
-    {
-        OutputText.append(QString(" *** Not erased with random chars ***\n"));
-    }
-
-
-    OutputText.append(QString("\n"));
+/*
     OutputText.append(QString("Smartcard infos\n"));
 
     OutputText.append(QString(" ID     0x"));
     OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.ActiveSmartCardID_u32,16))).append("\n");
-
-    OutputText.append(QString(" Password retry counter\n"));
-    OutputText.append(QString("  Admin : "));
+*/
+    OutputText.append(QString("Password retry counter\n"));
+    OutputText.append(QString("Admin : "));
     OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.AdminPwRetryCount))).append("\n");
 
-    OutputText.append(QString("  User  : "));
+    OutputText.append(QString("User  : "));
     OutputText.append(QString("%1").arg(QString::number(HID_Stick20Configuration_st.UserPwRetryCount))).append("\n");
 
     ui->DeviceStatusLabel->setText(OutputText);
+}
+
+void AboutDialog::on_ButtonStickStatus_clicked()
+{
+    Stick20InfoDialog InfoDialog(this);
+    InfoDialog.exec();
 }
