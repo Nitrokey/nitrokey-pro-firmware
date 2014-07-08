@@ -4,7 +4,8 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui 
+CONFIG   += console
 
 TARGET = CryptoStickGUI
 TEMPLATE = app

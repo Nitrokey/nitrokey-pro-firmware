@@ -60,6 +60,7 @@ Stick20ResponseDialog::Stick20ResponseDialog(QWidget *parent) :
 
     Counter_u32            = 0;
     FlagNoStopWhenStatusOK = FALSE;
+    FlagNoShow             = FALSE;
     ResultValue            = FALSE;
 
     ui->setupUi(this);
@@ -72,6 +73,8 @@ Stick20ResponseDialog::Stick20ResponseDialog(QWidget *parent) :
     // Start timer for polling stick response
     ret = connect(pollStick20Timer, SIGNAL(timeout()), this, SLOT(checkStick20Status()));
     pollStick20Timer->start(100);
+
+//    hide ();
 }
 
 /*******************************************************************************
@@ -91,8 +94,6 @@ void Stick20ResponseDialog::showStick20Configuration (int Status)
 {
     QString OutputText;
 
-
-    Counter_u32 += 1;
 
     Status = 0;
     if (0 == Status)
@@ -191,8 +192,6 @@ void Stick20ResponseDialog::checkStick20StatusDebug(Response *stick20Response,in
 {
     QString OutputText;
 
-    Counter_u32 += 1;
-
     OutputText.append(QByteArray::number(Counter_u32,10)).append(" Calls\n");
 
     if (0 == Status)
@@ -219,17 +218,34 @@ void Stick20ResponseDialog::checkStick20StatusDebug(Response *stick20Response,in
   12.08.13  RB              First review
 
 *******************************************************************************/
+#define RESPONSE_DIALOG_TIME_TO_SHOW_DIALOG 30 // a 100 ms = 3 sec
 
 void Stick20ResponseDialog::checkStick20Status()
 {
     QString OutputText;
-
     int ret;
 
+    Counter_u32 += 1;
+/*
+    if (RESPONSE_DIALOG_TIME_TO_SHOW_DIALOG < Counter_u32)
+    {
+        FlagNoShow = false;
+    }
+    if (true == FlagNoShow)
+    {
+        hide ();
+    }
+    else
+    {
+        show ();
+    }
+*/
     // Get response data
     Response *stick20Response = new Response();
 
     ret = stick20Response->getResponse(cryptostick);
+
+
 
     if (true == DebugingActive)
     {
@@ -275,6 +291,9 @@ void Stick20ResponseDialog::checkStick20Status()
                 break;
             case STICK20_CMD_ENABLE_READWRITE_UNCRYPTED_LUN :
                 OutputText.append (QString("Enable readwrite for unencrypted volume"));
+                break;
+            case STICK20_CMD_PRODUCTION_TEST :
+                OutputText.append (QString("Production test"));
                 break;
             default :
                 break;
@@ -410,6 +429,45 @@ void Stick20ResponseDialog::NoStopWhenStatusOK()
     FlagNoStopWhenStatusOK = TRUE;
 }
 
+/*******************************************************************************
+
+  NoShowDialog
+
+  Changes
+  Date      Author        Info
+  02.07.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void Stick20ResponseDialog::NoShowDialog()
+{
+    FlagNoShow = TRUE;
+
+    hide ();
+}
+
+/*******************************************************************************
+
+  ShowDialog
+
+  Changes
+  Date      Author        Info
+  02.07.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void Stick20ResponseDialog::ShowDialog()
+{
+    FlagNoShow = FALSE;
+
+    show ();
+}
 /*******************************************************************************
 
   ~Stick20ResponseDialog

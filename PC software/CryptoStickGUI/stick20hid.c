@@ -57,6 +57,9 @@ HID_Stick20MatrixPasswordData_est   HID_Stick20MatrixPasswordData_st;
 int Stick20_ConfigurationChanged = FALSE;
 typeStick20Configuration_st         HID_Stick20Configuration_st;
 
+int Stick20_ProductionInfosChanged = FALSE;
+typeStick20ProductionInfos_st Stick20ProductionInfos_st;
+
 /*******************************************************************************
 
  External declarations
@@ -136,6 +139,7 @@ int HID_GetStick20Configuration (void)
 {
     unsigned char NewDebugBlock = 1;
     int len;
+    static typeStick20Configuration_st SavedConfiguration_st;
 
     DebugAppendText ("GetStick20Configuration\n");
 
@@ -146,7 +150,48 @@ int HID_GetStick20Configuration (void)
             &HID_Stick20ReceiveData_st.SendData_u8[0],
             sizeof (HID_Stick20Configuration_st));
 
-    Stick20_ConfigurationChanged = TRUE;
+    if (0 != memcmp((void*)&HID_Stick20Configuration_st,(void*)&SavedConfiguration_st,sizeof (typeStick20Configuration_st)))
+    {
+        Stick20_ConfigurationChanged = TRUE;
+        SavedConfiguration_st = HID_Stick20Configuration_st;
+    }
+
+    return (TRUE);
+}
+
+/*******************************************************************************
+
+  HID_GetStick20ProductionInfos
+
+  Changes
+  Date      Author        Info
+  07.07.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+int HID_GetStick20ProductionInfos (void)
+{
+    unsigned char NewDebugBlock = 1;
+    int len;
+    static typeStick20ProductionInfos_st SavedProductionInfos_st;
+
+    DebugAppendText ("GetStick20ProductionInfos");
+
+    NewDebugBlock = HID_Stick20ReceiveData_st.SendCounter_u8;
+    len = HID_Stick20ReceiveData_st.SendSize_u8;
+
+    memcpy (&Stick20ProductionInfos_st,
+            &HID_Stick20ReceiveData_st.SendData_u8[0],
+            sizeof (typeStick20ProductionInfos_st));
+
+    if (0 != memcmp((void*)&Stick20ProductionInfos_st,(void*)&SavedProductionInfos_st,sizeof (typeStick20ProductionInfos_st)))
+    {
+        Stick20_ProductionInfosChanged = TRUE;
+        SavedProductionInfos_st = Stick20ProductionInfos_st;
+    }
 
     return (TRUE);
 }
@@ -336,6 +381,9 @@ if (OUTPUT_CMD_STICK20_SEND_DATA_TYPE_NONE != HID_Stick20ReceiveData_st.SendData
             break;
         case OUTPUT_CMD_STICK20_SEND_DATA_TYPE_STATUS :
             HID_GetStick20Configuration ();
+            break;
+        case OUTPUT_CMD_STICK20_SEND_DATA_TYPE_PROD_INFO :
+            HID_GetStick20ProductionInfos ();
             break;
     }
     return (TRUE);

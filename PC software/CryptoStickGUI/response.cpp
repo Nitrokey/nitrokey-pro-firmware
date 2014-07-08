@@ -204,12 +204,12 @@ int Response::getResponse(Device *device)
 
      memset(reportBuffer,0,sizeof(reportBuffer));
 
-     if (NULL == device->handle)
+     if (NULL == device->dev_hid_handle)
      {
          return -1;
      }
 
-     res = hid_get_feature_report(device->handle, reportBuffer, sizeof(reportBuffer));
+     res = hid_get_feature_report(device->dev_hid_handle, reportBuffer, sizeof(reportBuffer));
 
 //     qDebug() << "get report size:" << res;
     if (res!=-1)

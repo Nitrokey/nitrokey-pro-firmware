@@ -34,6 +34,8 @@ typedef struct {
     int  ExtendedConfigActive;
     int  PasswordMatrix;
     int  LockHardware;
+    int  Cmd;
+    char *CmdLine;
 } StartUpParameter_tst;
 
 
@@ -109,6 +111,8 @@ private:
     QString DebugText;
 
 
+    int ExecStickCmd(char *Cmdline);
+
     void generateMenuOTP();
     void generateMenuForStick10();
     void initActionsForStick20();
@@ -124,13 +128,14 @@ private:
 
     void generateMenuForStick20();
     int  UpdateDynamicMenuEntrys (void);
+    void AnalyseProductionInfos();
 
 private slots:
     void checkConnection();
     void startConfiguration();
     void getCode(uint8_t slotNo);
-    void on_pushButton_clicked();
-    void on_pushButton_2_clicked();
+//    void on_pushButton_clicked();
+//    void on_pushButton_2_clicked();
     void on_writeButton_clicked();
     void displayCurrentSlotConfig();
     void displayCurrentGeneralConfig();
@@ -140,7 +145,7 @@ private slots:
     void on_base32RadioButton_toggled(bool checked);
     void on_setToZeroButton_clicked();
     void on_setToRandomButton_clicked();
-    void on_checkBox_2_toggled(bool checked);
+//    void on_checkBox_2_toggled(bool checked);
     void on_tokenIDCheckBox_toggled(bool checked);
     void on_writeGeneralConfigButton_clicked();
 

@@ -7,17 +7,21 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>351</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>About</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/images/CS_icon.png</normaloff>:/images/CS_icon.png</iconset>
   </property>
   <widget class="QPushButton" name="ButtonOK">
    <property name="geometry">
     <rect>
-     <x>280</x>
-     <y>250</y>
+     <x>240</x>
+     <y>300</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -29,14 +33,14 @@
   <widget class="QLabel" name="AboutLabel">
    <property name="geometry">
     <rect>
-     <x>110</x>
+     <x>30</x>
      <y>20</y>
-     <width>251</width>
-     <height>201</height>
+     <width>321</width>
+     <height>141</height>
     </rect>
    </property>
    <property name="text">
-    <string>Cryptostick 2.0</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Crypto Stick Storage&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;www.crypto-stick.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;www.crypto-stick.com&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://crypto-stick.com/start&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Instructions and help&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Copyright 2014 by Crypto Stick team. &lt;/p&gt;&lt;p&gt;This software is licensed under the &lt;a href=&quot;http://www.gnu.org/licenses/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GNU General Public License v3&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -44,18 +48,61 @@
    <property name="wordWrap">
     <bool>true</bool>
    </property>
+   <property name="openExternalLinks">
+    <bool>true</bool>
+   </property>
+   <property name="textInteractionFlags">
+    <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse</set>
+   </property>
   </widget>
-  <widget class="QGraphicsView" name="graphicsView">
+  <widget class="QLabel" name="DeviceStatusLabel">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>50</y>
-     <width>60</width>
-     <height>60</height>
+     <x>30</x>
+     <y>170</y>
+     <width>331</width>
+     <height>111</height>
     </rect>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+   </property>
+   <property name="textInteractionFlags">
+    <set>Qt::NoTextInteraction</set>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="ButtonStickStatus">
+   <property name="geometry">
+    <rect>
+     <x>54</x>
+     <y>300</y>
+     <width>91</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Detailed Status</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="IconLabel">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>10</y>
+     <width>81</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>ICON</string>
    </property>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

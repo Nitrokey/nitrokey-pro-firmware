@@ -60,7 +60,7 @@ Device::Device(int vid, int pid,int vidStick20, int pidStick20,int vidStick20Upd
 {
     int i;
 
-    handle=NULL;
+    dev_hid_handle=NULL;
     isConnected=false;
 
     this->vid=vid;
@@ -127,16 +127,16 @@ int Device::checkConnection()
 
     //handle = hid_open(vid,pid, NULL);
 
-    if (!handle)
+    if (!dev_hid_handle)
     {
         isConnected   = false;
         newConnection = true;
         return -1;
     }
     else{
-        res = hid_get_feature_report (handle, buf, 65);
+        res = hid_get_feature_report (dev_hid_handle, buf, 65);
         if (res < 0){ // Check it twice to avoid connection problem
-            res = hid_get_feature_report (handle, buf, 65);
+            res = hid_get_feature_report (dev_hid_handle, buf, 65);
             if (res < 0){
                 isConnected   = false;
                 newConnection = true;
@@ -186,13 +186,13 @@ void Device::connect()
     // Disable stick 20
     activStick20 = false;
 
-    handle = hid_open(vid,pid, NULL);
+    dev_hid_handle = hid_open(vid,pid, NULL);
 
     // Check for stick 20
-    if (NULL == handle)
+    if (NULL == dev_hid_handle)
     {
-        handle = hid_open(vidStick20,pidStick20, NULL);
-        if (NULL != handle)
+        dev_hid_handle = hid_open(vidStick20,pidStick20, NULL);
+        if (NULL != dev_hid_handle)
         {
             // Stick 20 found
             activStick20 = true;
@@ -248,7 +248,7 @@ int Device::sendCommand(Command *cmd)
          DebugAppendText (text);
     }
 */
-    err = hid_send_feature_report(handle, report, sizeof(report));
+    err = hid_send_feature_report(dev_hid_handle, report, sizeof(report));
 /*
     {
             char text[1000];
@@ -295,7 +295,7 @@ int Device::sendCommandGetResponse(Command *cmd, Response *resp)
 
     cmd->crc=crc;
 
-    err = hid_send_feature_report(handle, report, sizeof(report));
+    err = hid_send_feature_report(dev_hid_handle, report, sizeof(report));
 
     if (err==-1)
         return ERR_SENDING;
@@ -346,8 +346,8 @@ int Device::getSlotName(uint8_t slotNo){
          Response *resp=new Response();
          resp->getResponse(this);
 
-         qDebug() << cmd->crc;
-         qDebug() << resp->lastCommandCRC;
+//         qDebug() << cmd->crc;
+//         qDebug() << resp->lastCommandCRC;
 
          if (cmd->crc==resp->lastCommandCRC){ //the response was for the last command
              if (resp->lastCommandStatus==CMD_STATUS_OK)
@@ -433,8 +433,8 @@ int Device::eraseSlot(uint8_t slotNo)
         Response *resp=new Response();
         resp->getResponse(this);
 
-        qDebug() << cmd->crc;
-        qDebug() << resp->lastCommandCRC;
+//        qDebug() << cmd->crc;
+//        qDebug() << resp->lastCommandCRC;
 
         }
 
@@ -683,8 +683,8 @@ int Device::readSlot(uint8_t slotNo)
         Response *resp=new Response();
         resp->getResponse(this);
 
-        qDebug() << cmd->crc;
-        qDebug() << resp->lastCommandCRC;
+//        qDebug() << cmd->crc;
+//        qDebug() << resp->lastCommandCRC;
 
         if (cmd->crc==resp->lastCommandCRC){ //the response was for the last command
             if (resp->lastCommandStatus==CMD_STATUS_OK){
@@ -1641,6 +1641,36 @@ int Device::stick20LockFirmware (uint8_t *password)
     }
 
     cmd = new Command(STICK20_CMD_SEND_LOCK_STICK_HARDWARE,password,n);
+    res = sendCommand(cmd);
+
+    return (true);
+}
+
+
+
+/*******************************************************************************
+
+  stick20ProductionTest
+
+  Changes
+  Date      Author        Info
+  07.07.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+int Device::stick20ProductionTest (void)
+{
+    uint8_t n;
+    int     res;
+    uint8_t TestData[10];
+    Command *cmd;
+
+    n = 0;
+
+    cmd = new Command(STICK20_CMD_PRODUCTION_TEST,TestData,n);
     res = sendCommand(cmd);
 
     return (true);

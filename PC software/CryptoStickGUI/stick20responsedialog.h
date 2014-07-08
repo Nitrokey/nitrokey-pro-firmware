@@ -63,11 +63,14 @@ public:
 
     QTimer *pollStick20Timer;
     void NoStopWhenStatusOK();
+    void NoShowDialog();
+    void ShowDialog();
 
 private:
     Ui::Stick20ResponseDialog *ui;
     int Counter_u32;
     bool FlagNoStopWhenStatusOK;
+    bool FlagNoShow;
 
 private slots:
     void checkStick20Status();

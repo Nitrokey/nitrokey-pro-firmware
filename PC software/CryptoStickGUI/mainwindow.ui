@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Setup OTP</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/images/CS_icon.png</normaloff>:/images/CS_icon.png</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
@@ -816,7 +820,9 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>cancelButton</sender>

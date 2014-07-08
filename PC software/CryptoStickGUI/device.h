@@ -104,6 +104,8 @@ class Response;
 #define STICK20_CMD_SEND_CLEAR_STICK_KEYS_NOT_INITIATED (STICK20_CMD_START_VALUE + 22)
 #define STICK20_CMD_SEND_LOCK_STICK_HARDWARE            (STICK20_CMD_START_VALUE + 23)
 
+#define STICK20_CMD_PRODUCTION_TEST                     (STICK20_CMD_START_VALUE + 24)
+
 #define STATUS_READY           0x00
 #define STATUS_BUSY	           0x01
 #define STATUS_ERROR           0x02
@@ -200,7 +202,7 @@ class Device
 
 public:
     Device(int vid, int pid,int vidStick20, int pidStick20,int vidStick20UpdateMode, int pidStick20UpdateMode);
-    hid_device *handle;
+    hid_device *dev_hid_handle;
     int checkConnection();
     bool isConnected;
     int sendCommand(Command *cmd);
@@ -251,6 +253,7 @@ public:
     int stick20SendStartup (uint64_t localTime);
     int stick20SendHiddenVolumeSetup (HiddenVolumeSetup_tst *HV_Data_st);
     int stick20LockFirmware (uint8_t *password);
+    int stick20ProductionTest (void);
 
     uint8_t cardSerial[4];
     uint8_t firmwareVersion[2];

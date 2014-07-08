@@ -47,6 +47,7 @@
 #include <QDialog>
 #include <QtGui>
 #include <QDateTime>
+#include <QThread>
 
 enum DialogCode { Rejected, Accepted };     // Why not found ?
 
@@ -67,6 +68,16 @@ extern "C" void DebugClearText (void);
 
 *******************************************************************************/
 
+class OwnSleep : public QThread
+{
+public:
+    static void usleep(unsigned long usecs){QThread::usleep(usecs);}
+    static void msleep(unsigned long msecs){QThread::msleep(msecs);}
+    static void sleep (unsigned long secs) {QThread::sleep(secs);}
+};
+
+
+
 
 /*******************************************************************************
 
@@ -86,7 +97,7 @@ MainWindow::MainWindow(StartUpParameter_tst *StartupInfo_st,QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    bool ret;
+    int ret;
 
     HOTP_SlotCount = HOTP_SLOT_COUNT;
     TOTP_SlotCount = TOTP_SLOT_COUNT;
@@ -146,9 +157,19 @@ MainWindow::MainWindow(StartUpParameter_tst *StartupInfo_st,QWidget *parent) :
 
     cryptostick =  new Device(VID_STICK_OTP, PID_STICK_OTP,VID_STICK_20,PID_STICK_20,VID_STICK_20_UPDATE_MODE,PID_STICK_20_UPDATE_MODE);
 
+// Check for comamd line execution after init "cryptostick"
+    if (0 != StartupInfo_st->Cmd)
+    {
+        ret = ExecStickCmd (StartupInfo_st->CmdLine);
+        exit (ret);
+    }
+
+
     QTimer *timer = new QTimer(this);
     ret = connect(timer, SIGNAL(timeout()), this, SLOT(checkConnection()));
     timer->start(1000);
+
+
 
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setIcon(QIcon(":/images/CS_icon.png"));
@@ -183,6 +204,8 @@ MainWindow::MainWindow(StartUpParameter_tst *StartupInfo_st,QWidget *parent) :
         msgBox.exec();
     }
 
+
+
     quitAction = new QAction(tr("&Quit"), this);
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 
@@ -196,6 +219,7 @@ MainWindow::MainWindow(StartUpParameter_tst *StartupInfo_st,QWidget *parent) :
     connect(ActionAboutDialog, SIGNAL(triggered()), this, SLOT(startAboutDialog()));
 
     initActionsForStick20 ();
+
 
     // Init debug text
     DebugClearText ();
@@ -252,8 +276,115 @@ MainWindow::MainWindow(StartUpParameter_tst *StartupInfo_st,QWidget *parent) :
 
     generateMenu();
 
+
 }
 
+
+/*******************************************************************************
+
+  ExecStickCmd
+
+  Changes
+  Date      Author        Info
+  03.07.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+
+*******************************************************************************/
+#define MAX_CONNECT_WAIT_TIME_IN_SEC       10
+
+int MainWindow::ExecStickCmd(char *Cmdline)
+{
+    int i;
+    char *p;
+    bool ret;
+
+    printf ("Connect to crypto stick\n");
+
+// Wait for connect
+    for (i=0;i<MAX_CONNECT_WAIT_TIME_IN_SEC;i++)
+    {
+        if (cryptostick->isConnected == true)
+        {
+            break;
+        }
+        else
+        {
+            cryptostick->connect();
+            OwnSleep::sleep (1);
+            cryptostick->checkConnection();
+        }
+    }
+    if (MAX_CONNECT_WAIT_TIME_IN_SEC <= i)
+    {
+        printf ("ERROR: Can't get connection to crypto stick\n");
+        return (1);
+    }
+// Check device
+    printf ("Get connection to crypto stick\n");
+
+// Get command
+    p = strchr (Cmdline,'=');
+    if (NULL == p)
+    {
+        p = NULL;
+    }
+    else
+    {
+        *p = 0;
+        p++;  // Points now to 1. parameter
+    }
+
+    if (0 == strcmp (Cmdline,"unlockencrypted"))
+    {
+        uint8_t password[40];
+
+        strcpy ((char*)password,"P123456");
+
+        printf ("Unlock encrypted volume: ");
+
+        ret = cryptostick->stick20EnableCryptedPartition (password);
+
+        if (false == ret)
+        {
+            printf ("FAIL sending command via HID\n");
+            return (1);
+        }
+    }
+
+    if (0 == strcmp (Cmdline,"prodinfo"))
+    {
+        printf ("Send -get production infos-\n");
+
+        stick20SendCommand (STICK20_CMD_PRODUCTION_TEST,NULL);
+
+        ret = ret = cryptostick->stick20ProductionTest();
+
+/*
+        Stick20ResponseDialog ResponseDialog(this);
+        ResponseDialog.NoStopWhenStatusOK ();
+        ResponseDialog.cryptostick=cryptostick;
+        ResponseDialog.exec();
+        ret = ResponseDialog.ResultValue;
+*/
+
+        if (false == ret)
+        {
+            printf ("FAIL sending command via HID\n");
+            return (1);
+        }
+
+        if (TRUE == Stick20_ProductionInfosChanged)
+        {
+            Stick20_ProductionInfosChanged = FALSE;
+            AnalyseProductionInfos ();
+        }
+
+    }
+    return (0);
+}
 
 /*******************************************************************************
 
@@ -322,7 +453,128 @@ bool MainWindow::eventFilter (QObject *obj, QEvent *event)
 
 /*******************************************************************************
 
+  AnalyseProductionInfos
+
+  Changes
+  Date      Author        Info
+  07.07.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void MainWindow::AnalyseProductionInfos()
+{
+    char text[100];
+    bool ProductStateOK = TRUE;
+
+    printf ("\nGet production infos\n");
+
+    printf ("Firmware     %d.%d\n",Stick20ProductionInfos_st.FirmwareVersion_au8[0],Stick20ProductionInfos_st.FirmwareVersion_au8[1]);
+    printf ("CPU ID       0x%08x\n",Stick20ProductionInfos_st.CPU_CardID_u32);
+    printf ("Smartcard ID 0x%08x\n",Stick20ProductionInfos_st.SmartCardID_u32);
+    printf ("SD card ID   0x%08x\n",Stick20ProductionInfos_st.SD_CardID_u32);
+
+    printf ((char*)"\nSD card infos\n");
+    printf ("Manufacturer 0x%02x\n",Stick20ProductionInfos_st.SD_Card_Manufacturer_u8);
+    printf ("OEM          0x%04x\n",Stick20ProductionInfos_st.SD_Card_OEM_u16);
+    printf ("Manufa. date %d.%02d\n",Stick20ProductionInfos_st.SD_Card_ManufacturingYear_u8+2000,Stick20ProductionInfos_st.SD_Card_ManufacturingMonth_u8);
+    printf ("Write speed  %d kB/sec\n",Stick20ProductionInfos_st.SD_WriteSpeed_u16);
+
+// Check for SD card speed
+    if (5000 > Stick20ProductionInfos_st.SD_WriteSpeed_u16)
+    {
+       ProductStateOK = FALSE;
+       printf ((char*)"Speed error\n");
+    }
+
+// Valid manufacturers
+    if (    (0x74 != Stick20ProductionInfos_st.SD_Card_Manufacturer_u8)     // Transcend
+            && (0x03 != Stick20ProductionInfos_st.SD_Card_Manufacturer_u8)     // ScanDisk
+            && (0x73 != Stick20ProductionInfos_st.SD_Card_Manufacturer_u8)     // ? Amazon
+            && (0x28 != Stick20ProductionInfos_st.SD_Card_Manufacturer_u8)     // Lexar
+            && (0x1b != Stick20ProductionInfos_st.SD_Card_Manufacturer_u8)     // Samsung
+       )
+    {
+        ProductStateOK = FALSE;
+        printf ((char*)"Manufacturers error\n");
+    }
+
+// Write to log
+    {
+        FILE *fp;
+        char *LogFile = "prodlog.txt";
+
+        fp = fopen (LogFile,"a");
+        if (NULL != fp)
+        {
+            fprintf (fp,"CPU:0x%08x,",Stick20ProductionInfos_st.CPU_CardID_u32);
+            fprintf (fp,"SC:0x%08x,",Stick20ProductionInfos_st.SmartCardID_u32);
+            fprintf (fp,"SD:0x%08x,",Stick20ProductionInfos_st.SD_CardID_u32);
+            fprintf (fp,"SCM:0x%02x,",Stick20ProductionInfos_st.SD_Card_Manufacturer_u8);
+            fprintf (fp,"SCO:0x%04x,",Stick20ProductionInfos_st.SD_Card_OEM_u16);
+            fprintf (fp,"DAT:%d.%02d,",Stick20ProductionInfos_st.SD_Card_ManufacturingYear_u8+2000,Stick20ProductionInfos_st.SD_Card_ManufacturingMonth_u8);
+            fprintf (fp,"Speed:%d",Stick20ProductionInfos_st.SD_WriteSpeed_u16);
+            if (FALSE == ProductStateOK)
+            {
+                fprintf (fp,",*** FAIL");
+            }
+            fprintf (fp,"\n");
+            fclose (fp);
+        }
+        else
+        {
+            printf ((char*)"\n*** CAN'T WRITE TO LOG FILE -%s-***\n",LogFile);
+        }
+    }
+
+    if (TRUE == ProductStateOK)
+    {
+        printf ((char*)"\nStick OK\n");
+    }
+    else
+    {
+        printf ((char*)"\n**** Stick NOT OK ****\n");
+    }
+
+    DebugAppendText ("Production Infos\n");
+
+    sprintf ((char*)text,"Firmware     %d.%d\n",Stick20ProductionInfos_st.FirmwareVersion_au8[0],Stick20ProductionInfos_st.FirmwareVersion_au8[1]);
+    DebugAppendText ((char*)text);
+    sprintf ((char*)text,"CPU ID       0x%08x\n",Stick20ProductionInfos_st.CPU_CardID_u32);
+    DebugAppendText ((char*)text);
+    sprintf ((char*)text,"Smartcard ID 0x%08x\n",Stick20ProductionInfos_st.SmartCardID_u32);
+    DebugAppendText ((char*)text);
+    sprintf ((char*)text,"SD card ID   0x%08x\n",Stick20ProductionInfos_st.SD_CardID_u32);
+    DebugAppendText ((char*)text);
+
+
+    DebugAppendText ((char*)"Password retry count\n");
+    sprintf ((char*)text,"Admin        %d\n",Stick20ProductionInfos_st.SC_AdminPwRetryCount);
+    DebugAppendText ((char*)text);
+    sprintf ((char*)text,"User         %d\n",Stick20ProductionInfos_st.SC_UserPwRetryCount);
+    DebugAppendText ((char*)text);
+
+    DebugAppendText ((char*)"SD card infos\n");
+    sprintf ((char*)text,"Manufacturer 0x%02x\n",Stick20ProductionInfos_st.SD_Card_Manufacturer_u8);
+    DebugAppendText ((char*)text);
+    sprintf ((char*)text,"OEM          0x%04x\n",Stick20ProductionInfos_st.SD_Card_OEM_u16);
+    DebugAppendText ((char*)text);
+    sprintf ((char*)text,"Manufa. date %d.%02d\n",Stick20ProductionInfos_st.SD_Card_ManufacturingYear_u8+2000,Stick20ProductionInfos_st.SD_Card_ManufacturingMonth_u8);
+    DebugAppendText ((char*)text);
+    sprintf ((char*)text,"Write speed  %d kB/sec\n",Stick20ProductionInfos_st.SD_WriteSpeed_u16);
+    DebugAppendText ((char*)text);
+
+}
+
+/*******************************************************************************
+
   checkConnection
+
+  Changes
+  Date      Author        Info
+  07.07.14  RB            Implementation production infos
 
   Reviews
   Date      Reviewer        Info
@@ -426,6 +678,12 @@ void MainWindow::checkConnection()
         }
 
     }
+    if (TRUE == Stick20_ProductionInfosChanged)
+    {
+        Stick20_ProductionInfosChanged = FALSE;
+
+        AnalyseProductionInfos ();
+    }
 }
 
 /*******************************************************************************
@@ -482,7 +740,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
   13.08.13  RB              First review
 
 *******************************************************************************/
-
+/*
 void MainWindow::on_pushButton_clicked()
 {
     if (cryptostick->isConnected){
@@ -506,7 +764,7 @@ void MainWindow::on_pushButton_clicked()
         }
     }
 }
-
+*/
 /*******************************************************************************
 
   on_pushButton_2_clicked
@@ -516,11 +774,11 @@ void MainWindow::on_pushButton_clicked()
   13.08.13  RB              First review
 
 *******************************************************************************/
-
+/*
 void MainWindow::on_pushButton_2_clicked()
 {
 }
-
+*/
 /*******************************************************************************
 
   getSlotNames
@@ -1396,6 +1654,10 @@ void MainWindow::startAboutDialog()
 {
     AboutDialog dialog(this);
 
+    dialog.cryptostick = cryptostick;
+
+    dialog.showStick20Configuration ();
+
     dialog.exec();
 }
 
@@ -1974,14 +2236,15 @@ void MainWindow::startStick20DebugAction()
     int64_t crc;
     stick20HiddenVolumeDialog HVDialog(this);
 
-
+/*
     ret = HVDialog.exec();
 
     if (true == ret)
     {
         stick20SendCommand (STICK20_CMD_SEND_HIDDEN_VOLUME_SETUP,(unsigned char*)&HVDialog.HV_Setup_st);
     }
-
+*/
+    stick20SendCommand (STICK20_CMD_PRODUCTION_TEST,NULL);
 
     if (1)
     {
@@ -2300,6 +2563,14 @@ int MainWindow::stick20SendCommand (uint8_t stick20Command, uint8_t *password)
                 waitForAnswerFromStick20 = TRUE;
             }
             break;
+        case STICK20_CMD_PRODUCTION_TEST       :
+            ret = cryptostick->stick20ProductionTest();
+            if (TRUE == ret)
+            {
+                waitForAnswerFromStick20 = TRUE;
+            }
+            break;
+
         default :
             msgBox.setText("Stick20Dialog: Wrong combobox value! ");
             msgBox.exec();
@@ -2370,6 +2641,9 @@ int MainWindow::stick20SendCommand (uint8_t stick20Command, uint8_t *password)
                 HID_Stick20Configuration_st.StickKeysNotInitiated = FALSE;
                 UpdateDynamicMenuEntrys ();
                 break;
+            case STICK20_CMD_PRODUCTION_TEST       :
+                break;
+
             default :
                 break;
         }
@@ -2621,12 +2895,12 @@ void MainWindow::on_setToRandomButton_clicked()
   13.08.13  RB              First review
 
 *******************************************************************************/
-
+/*
 void MainWindow::on_checkBox_2_toggled(bool checked)
 {
     checked = checked;      // avoid warning
 }
-
+*/
 /*******************************************************************************
 
   on_tokenIDCheckBox_toggled

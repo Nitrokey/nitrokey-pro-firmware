@@ -65,6 +65,7 @@ void DebugAppendText (char *Text);
 #define OUTPUT_CMD_STICK20_SEND_DATA_TYPE_DEBUG       1
 #define OUTPUT_CMD_STICK20_SEND_DATA_TYPE_PW_DATA     2
 #define OUTPUT_CMD_STICK20_SEND_DATA_TYPE_STATUS      3
+#define OUTPUT_CMD_STICK20_SEND_DATA_TYPE_PROD_INFO   4
 
 
 #define OUTPUT_CMD_STICK20_SEND_DATA_SIZE            25
@@ -126,6 +127,28 @@ typedef struct {
 
 extern int Stick20_ConfigurationChanged;
 extern typeStick20Configuration_st HID_Stick20Configuration_st;
+
+
+
+/* Look for 4 byte alignment of 32 bit values */
+typedef struct {
+  unsigned char  FirmwareVersion_au8[4];               //                                                    4 byte  //  4
+  unsigned long  CPU_CardID_u32;                       //                                                    4 byte  //  8
+  unsigned long  SmartCardID_u32;                      //                                                    4 byte  // 12
+  unsigned long  SD_CardID_u32;                        //                                                    4 byte  // 16
+  unsigned char  SC_UserPwRetryCount;                  // User password retry count                          1 byte  // 17
+  unsigned char  SC_AdminPwRetryCount;                 // Admin password retry count                         1 byte  // 18
+  unsigned char  SD_Card_ManufacturingYear_u8;         //                                                    1 byte  // 19
+  unsigned char  SD_Card_ManufacturingMonth_u8;        //                                                    1 byte  // 20
+  unsigned short SD_Card_OEM_u16;                      //                                                    2 byte  // 22
+  unsigned short SD_WriteSpeed_u16;                    // in kbyte / sec                                     2 byte  // 24
+  unsigned char  SD_Card_Manufacturer_u8;              //                                                    1 byte  // 25
+} typeStick20ProductionInfos_st;                                                          // Sum   25 byte (Max 25 Byte) // not packed
+
+extern int Stick20_ProductionInfosChanged;
+extern typeStick20ProductionInfos_st Stick20ProductionInfos_st;
+
+
 
 
 

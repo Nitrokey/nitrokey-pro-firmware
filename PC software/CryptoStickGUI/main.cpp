@@ -61,31 +61,48 @@ int main(int argc, char *argv[])
     StartupInfo_st.FlagDebug             = DEBUG_STATUS_NO_DEBUGGING;
     StartupInfo_st.PasswordMatrix        = FALSE;
     StartupInfo_st.LockHardware          = FALSE;
+    StartupInfo_st.Cmd                   = FALSE;
 
 // Check for commandline parameter
     //    if (2 == argc)
     for (i=2;i<=argc;i++)
     {
         p = argv[i-1];
-        if (0 == strcmp (p,"-debug"))
+        if (0 == strcmp (p,"--debug"))
         {
             StartupInfo_st.FlagDebug = DEBUG_STATUS_LOCAL_DEBUG;
         }
-        if (0 == strcmp (p,"-debugAll"))
+        if (0 == strcmp (p,"--debugAll"))
         {
             StartupInfo_st.FlagDebug = DEBUG_STATUS_DEBUG_ALL;
         }     
-        if (0 == strcmp (p,"-configAll"))
+        if (0 == strcmp (p,"--configAll"))
         {
             StartupInfo_st.ExtendedConfigActive = TRUE;
         }
-        if (0 == strcmp (p,"-PWM"))
+        if (0 == strcmp (p,"--PWM"))
         {
             StartupInfo_st.PasswordMatrix = TRUE;
         }
-        if (0 == strcmp (p,"-lockHardware"))
+        if (0 == strcmp (p,"--lockHardware"))
         {
             StartupInfo_st.LockHardware = TRUE;
+        }
+        if (0 == strcmp (p,"--cmd"))
+        {
+            StartupInfo_st.Cmd = TRUE;
+            i++;
+            if (i > argc)
+            {
+                fprintf (stderr,"ERROR: Can't get command\n");
+                fflush(stderr);
+                exit (1);
+            }
+            else
+            {
+                p = argv[i-1];
+                StartupInfo_st.CmdLine = p;
+            }
         }
     }
 
