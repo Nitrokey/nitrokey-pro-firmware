@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>351</height>
+    <height>384</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,8 +20,8 @@
   <widget class="QPushButton" name="ButtonOK">
    <property name="geometry">
     <rect>
-     <x>240</x>
-     <y>310</y>
+     <x>230</x>
+     <y>340</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -40,7 +40,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Crypto Stick Storage&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;www.crypto-stick.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;www.crypto-stick.com&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://crypto-stick.com/start&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Instructions and help&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Copyright 2014 by Crypto Stick team. &lt;/p&gt;&lt;p&gt;This software is licensed under the &lt;a href=&quot;http://www.gnu.org/licenses/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GNU General Public License v3&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Crypto Stick Storage&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;www.crypto-stick.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;www.crypto-stick.com&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://crypto-stick.com/start&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Instructions and help&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Copyright 2014 by Crypto Stick team. &lt;/p&gt;&lt;p&gt;This software is licensed under the&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;http://www.gnu.org/licenses/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GNU General Public License v3&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -59,9 +59,9 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>170</y>
+     <y>200</y>
      <width>331</width>
-     <height>141</height>
+     <height>131</height>
     </rect>
    </property>
    <property name="font">
@@ -83,7 +83,7 @@
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>310</y>
+     <y>340</y>
      <width>91</width>
      <height>23</height>
     </rect>
@@ -95,8 +95,8 @@
   <widget class="QLabel" name="IconLabel">
    <property name="geometry">
     <rect>
-     <x>300</x>
-     <y>10</y>
+     <x>290</x>
+     <y>40</y>
      <width>81</width>
      <height>81</height>
     </rect>
@@ -109,7 +109,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>150</y>
+     <y>180</y>
      <width>111</width>
      <height>20</height>
     </rect>

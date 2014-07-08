@@ -34,6 +34,9 @@ public:
     explicit Stick20InfoDialog(QWidget *parent = 0);
     ~Stick20InfoDialog();
     
+private slots:
+    void on_pushButton_clicked();
+
 private:
     Ui::Stick20InfoDialog *ui;
 

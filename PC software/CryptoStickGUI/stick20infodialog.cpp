@@ -141,3 +141,8 @@ void Stick20InfoDialog::showStick20Configuration (void)
 
 
 }
+
+void Stick20InfoDialog::on_pushButton_clicked()
+{
+    done(true);
+}
