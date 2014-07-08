@@ -94,16 +94,26 @@ PasswordDialog::~PasswordDialog()
   Changes
   Date      Author        Info
   04.02.14  RB            Function created
+  07.07.14  RB              Retry counter added
 
   Reviews
   Date      Reviewer        Info
 
 *******************************************************************************/
 
-void PasswordDialog::init(char *text)
+void PasswordDialog::init(char *text,int RetryCount)
 {
-    ui->label->setText(tr(text));
+    char text1[20];
+
+    text1[0] = 0;
+    if (-1 != RetryCount)
+    {
+        sprintf (text1," (Tries left: %d)",RetryCount);
+    }
+    ui->label->setText(tr(text)+tr(text1));
 }
+
+
 
 /*******************************************************************************
 

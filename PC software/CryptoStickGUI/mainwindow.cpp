@@ -215,7 +215,7 @@ MainWindow::MainWindow(StartUpParameter_tst *StartupInfo_st,QWidget *parent) :
     DebugAction = new QAction(tr("&Debug"), this);
     connect(DebugAction, SIGNAL(triggered()), this, SLOT(startStickDebug()));
 
-    ActionAboutDialog = new QAction(tr("&About Crypto Stick"), this);
+    ActionAboutDialog = new QAction(tr("&About Crypto Stick - GUI V")+tr(GUI_VERSION), this);
     connect(ActionAboutDialog, SIGNAL(triggered()), this, SLOT(startAboutDialog()));
 
     initActionsForStick20 ();
@@ -1728,7 +1728,7 @@ void MainWindow::startStick20EnableCryptedVolume()
     bool           ret;
 
     PasswordDialog dialog(MatrixInputActive,this);
-    dialog.init("Enter user PIN");
+    dialog.init("Enter user PIN",HID_Stick20Configuration_st.UserPwRetryCount);
     dialog.cryptostick = cryptostick;
 
     ret = dialog.exec();
@@ -1782,7 +1782,7 @@ void MainWindow::startStick20EnableHiddenVolume()
     bool    ret;
 
     PasswordDialog dialog(MatrixInputActive,this);
-    dialog.init("Enter password for hidden volume");
+    dialog.init("Enter password for hidden volume",-1);
     dialog.cryptostick = cryptostick;
 
     ret = dialog.exec();
@@ -1838,7 +1838,7 @@ void MainWindow::startStick20EnableFirmwareUpdate()
     bool    ret;
 
     PasswordDialog dialog(MatrixInputActive,this);
-    dialog.init("Enter admin PIN");
+    dialog.init("Enter admin PIN",HID_Stick20Configuration_st.AdminPwRetryCount);
     dialog.cryptostick = cryptostick;
 
     ret = dialog.exec();
@@ -1931,7 +1931,7 @@ void MainWindow::startStick20ExportFirmwareToFile()
     bool    ret;
 
     PasswordDialog dialog(MatrixInputActive,this);
-    dialog.init("Enter admin PIN");
+    dialog.init("Enter admin PIN",HID_Stick20Configuration_st.AdminPwRetryCount);
     dialog.cryptostick = cryptostick;
 
     ret = dialog.exec();
@@ -1964,7 +1964,7 @@ void MainWindow::startStick20DestroyCryptedVolume()
     bool    ret;
 
     PasswordDialog dialog(MatrixInputActive,this);
-    dialog.init("Enter admin PIN");
+    dialog.init("Enter admin PIN",HID_Stick20Configuration_st.AdminPwRetryCount);
     dialog.cryptostick = cryptostick;
 
     ret = dialog.exec();
@@ -1998,7 +1998,7 @@ void MainWindow::startStick20FillSDCardWithRandomChars()
     bool    ret;
 
     PasswordDialog dialog(MatrixInputActive,this);
-    dialog.init("Enter admin PIN");
+    dialog.init("Enter admin PIN",HID_Stick20Configuration_st.AdminPwRetryCount);
     dialog.cryptostick = cryptostick;
 
     ret = dialog.exec();
@@ -2031,7 +2031,7 @@ void MainWindow::startStick20ClearNewSdCardFound()
     bool    ret;
 
     PasswordDialog dialog(MatrixInputActive,this);
-    dialog.init("Enter admin PIN");
+    dialog.init("Enter admin PIN",HID_Stick20Configuration_st.AdminPwRetryCount);
     dialog.cryptostick = cryptostick;
 
     ret = dialog.exec();
@@ -2100,7 +2100,7 @@ void MainWindow::startStick20SetReadonlyUncryptedVolume()
     bool    ret;
 
     PasswordDialog dialog(MatrixInputActive,this);
-    dialog.init("Enter user PIN");
+    dialog.init("Enter user PIN",HID_Stick20Configuration_st.UserPwRetryCount);
     dialog.cryptostick = cryptostick;
 
     ret = dialog.exec();
@@ -2134,7 +2134,7 @@ void MainWindow::startStick20SetReadWriteUncryptedVolume()
     bool    ret;
 
     PasswordDialog dialog(MatrixInputActive,this);
-    dialog.init("Enter user PIN");
+    dialog.init("Enter user PIN",HID_Stick20Configuration_st.UserPwRetryCount);
     dialog.cryptostick = cryptostick;
 
     ret = dialog.exec();
@@ -2173,7 +2173,7 @@ void MainWindow::startStick20LockStickHardware()
     if (Accepted == ret)
     {
         PasswordDialog dialog1(MatrixInputActive,this);
-        dialog1.init("Enter admin PIN");
+        dialog1.init("Enter admin PIN",HID_Stick20Configuration_st.AdminPwRetryCount);
         dialog1.cryptostick = cryptostick;
 
         ret = dialog1.exec();
@@ -2482,7 +2482,7 @@ int MainWindow::stick20SendCommand (uint8_t stick20Command, uint8_t *password)
             break;
         case STICK20_CMD_FILL_SD_CARD_WITH_RANDOM_CHARS :
             {
-                msgBox.setText("This command fills the encrypted volumes with random data.\nThis will destroy all encrypted volumes!");
+                msgBox.setText("This command fills the encrypted volumes with random data.\nThis will destroy all encrypted volumes!\nThis commands last very long > 1 hour for 32GB");
                 msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
                 msgBox.setDefaultButton(QMessageBox::No);
                 ret = msgBox.exec();
@@ -2491,7 +2491,8 @@ int MainWindow::stick20SendCommand (uint8_t stick20Command, uint8_t *password)
                     ret = cryptostick->stick20FillSDCardWithRandomChars (password,STICK20_FILL_SD_CARD_WITH_RANDOM_CHARS_ENCRYPTED_VOL);
                     if (TRUE == ret)
                     {
-                        waitForAnswerFromStick20 = TRUE;
+                        waitForAnswerFromStick20    = TRUE;
+                        stopWhenStatusOKFromStick20 = TRUE;
                     }
                 }
             }
@@ -2634,7 +2635,7 @@ int MainWindow::stick20SendCommand (uint8_t stick20Command, uint8_t *password)
                NormalVolumeRWActive = FALSE;
                break;
             case STICK20_CMD_CLEAR_NEW_SD_CARD_FOUND        :
-               HID_Stick20Configuration_st.SDFillWithRandomChars_u8 &= 0xFE;
+               HID_Stick20Configuration_st.SDFillWithRandomChars_u8 |= 0x01;
                UpdateDynamicMenuEntrys ();
                break;
             case STICK20_CMD_GENERATE_NEW_KEYS              :

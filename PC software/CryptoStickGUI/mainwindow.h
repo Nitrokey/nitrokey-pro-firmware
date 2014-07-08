@@ -25,6 +25,8 @@
 #include <QSystemTrayIcon>
 #include "device.h"
 
+#define GUI_VERSION      "0.6"
+
 namespace Ui {
 class MainWindow;
 }

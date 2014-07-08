@@ -292,9 +292,19 @@ void Stick20ResponseDialog::checkStick20Status()
             case STICK20_CMD_ENABLE_READWRITE_UNCRYPTED_LUN :
                 OutputText.append (QString("Enable readwrite for unencrypted volume"));
                 break;
+            case STICK20_CMD_CLEAR_NEW_SD_CARD_FOUND :
+                OutputText.append (QString("Clear - Initialize storage with random data"));
+                break;
             case STICK20_CMD_PRODUCTION_TEST :
                 OutputText.append (QString("Production test"));
                 break;
+            case STICK20_CMD_SEND_STARTUP :
+                OutputText.append (QString("Startup infos"));
+                break;
+            case STICK20_CMD_SEND_LOCK_STICK_HARDWARE :
+                OutputText.append (QString("Lock stick hardware"));
+                break;
+
             default :
                 break;
         }

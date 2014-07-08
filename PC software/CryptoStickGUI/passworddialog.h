@@ -41,7 +41,7 @@ public:
     explicit PasswordDialog(bool ShowMatrix,QWidget *parent = 0);
     ~PasswordDialog();
 
-    void init(char *text);
+    void init(char *text,int RetryCount);
     void getPassword(char *text);
 
 private slots:

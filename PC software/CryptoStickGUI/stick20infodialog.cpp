@@ -115,7 +115,7 @@ void Stick20InfoDialog::showStick20Configuration (void)
 
     if (0 != (HID_Stick20Configuration_st.NewSDCardFound_u8 & 0x01))
     {
-        OutputText.append(QString(" *** New SD card found ***\n"));
+//        OutputText.append(QString(" *** New SD card found ***\n"));
     }
 
     if (0 == (HID_Stick20Configuration_st.SDFillWithRandomChars_u8 & 0x01))
