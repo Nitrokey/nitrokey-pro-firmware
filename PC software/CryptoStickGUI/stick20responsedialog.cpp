@@ -384,6 +384,15 @@ void Stick20ResponseDialog::checkStick20Status()
                 case STICK20_CMD_GET_DEVICE_STATUS              :
                     showStick20Configuration (ret);
                     break;
+                case STICK20_CMD_FILL_SD_CARD_WITH_RANDOM_CHARS :
+                    {
+                            QMessageBox msgBox;
+                            msgBox.setText("Storage successfully initialized with random data");
+                            msgBox.exec();
+                    }
+                    done (TRUE);
+                    ResultValue = TRUE;
+                    break;
                 default :
                     break;
             }

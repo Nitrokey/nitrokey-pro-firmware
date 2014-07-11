@@ -124,6 +124,37 @@ void DebugAppendText (char *Text)
 }
 
 /** Only for debugging - End */
+/*******************************************************************************
+
+  HID_Stick20Init
+
+  Changes
+  Date      Author        Info
+  09.07.14  RB            Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+void HID_Stick20Init (void)
+{
+    HID_Stick20Configuration_st.MagicNumber_StickConfig_u16     = 0;
+    HID_Stick20Configuration_st.ReadWriteFlagUncryptedVolume_u8 = 0;
+    HID_Stick20Configuration_st.ReadWriteFlagCryptedVolume_u8   = 0;
+    memcpy (HID_Stick20Configuration_st.VersionInfo_au8,"----",4);
+    HID_Stick20Configuration_st.ReadWriteFlagHiddenVolume_u8    = 0;
+    HID_Stick20Configuration_st.FirmwareLocked_u8               = 0;
+    HID_Stick20Configuration_st.NewSDCardFound_u8               = 0;
+    HID_Stick20Configuration_st.SDFillWithRandomChars_u8        = 0;
+    HID_Stick20Configuration_st.ActiveSD_CardID_u32             = 0;
+    HID_Stick20Configuration_st.VolumeActiceFlag_u8             = 0;
+    HID_Stick20Configuration_st.NewSmartCardFound_u8            = 0;
+    HID_Stick20Configuration_st.UserPwRetryCount                = 99;
+    HID_Stick20Configuration_st.AdminPwRetryCount               = 99;
+    HID_Stick20Configuration_st.ActiveSmartCardID_u32           = 0;
+    HID_Stick20Configuration_st.StickKeysNotInitiated           = 0;
+}
 
 /*******************************************************************************
 

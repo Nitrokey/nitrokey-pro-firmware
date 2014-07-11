@@ -33,7 +33,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
     QPixmap small = image.scaled(70,70,Qt::KeepAspectRatio,Qt::FastTransformation);
 
     ui->IconLabel->setPixmap(small);
-
+    ui->HeaderLabel->setText(tr("Crypto Stick Utility - GUI V")+tr(GUI_VERSION));
 //    showStick20Configuration ();
 }
 
@@ -160,10 +160,10 @@ void AboutDialog::showStick20Configuration (void)
 
     if (0 == (HID_Stick20Configuration_st.SDFillWithRandomChars_u8 & 0x01))
     {
-        OutputText.append(QString(" *** Not erased with random chars ***\n"));
+        OutputText.append(QString(" *** Not erased with random chars ***\n\n"));
     }
 
-    OutputText.append(QString("\n"));
+//    OutputText.append(QString("\n"));
 
     if (0 != (HID_Stick20Configuration_st.VolumeActiceFlag_u8 & (1 << SD_CRYPTED_VOLUME_BIT_PLACE)))
     {

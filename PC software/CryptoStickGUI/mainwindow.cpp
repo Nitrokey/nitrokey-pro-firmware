@@ -215,7 +215,7 @@ MainWindow::MainWindow(StartUpParameter_tst *StartupInfo_st,QWidget *parent) :
     DebugAction = new QAction(tr("&Debug"), this);
     connect(DebugAction, SIGNAL(triggered()), this, SLOT(startStickDebug()));
 
-    ActionAboutDialog = new QAction(tr("&About Crypto Stick - GUI V")+tr(GUI_VERSION), this);
+    ActionAboutDialog = new QAction(tr("&About Crypto Stick"), this);
     connect(ActionAboutDialog, SIGNAL(triggered()), this, SLOT(startAboutDialog()));
 
     initActionsForStick20 ();
