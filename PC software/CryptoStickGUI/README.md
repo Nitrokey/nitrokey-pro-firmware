@@ -27,12 +27,6 @@ Based on: https://stackoverflow.com/questions/10934683/how-do-i-configure-qt-for
 6) <mxe root>/usr/i686-pc-mingw32/qt/bin/qmake -spec <mxe root>/usr/i686-pc-mingw32/qt/mkspecs/default -o Makefile ../CryptoStickGUI/CryptoStickGUI.pro
 7) make
 
-=Firmware=
-In the makefile you have to change the tool names according to your toolchain
-I changed them to "CC = arm-none-eabi-gcc" etc.
-In hw_config.c and platform_config.h you have to set up the USB
-disconnect pin, because I had to change it for my devboard.
-
 =Internals=
 All configuration data including OTP secrets are stored in clear text in the flash of Crypto Stick's Microcontroller. This is not tamper resistant and may only be used for low to medium security requirements.
 
@@ -52,15 +46,7 @@ To get a response, you just create a new object of class Response and do Respons
 https://www.assembla.com/code/cryptostick/git/nodes/master/PC%20software/CryptoStickGUI/response.h
 
 =To Dos=
-Other than libusb, HID API has the advantage that it uses native drivers on OSX. Consider migrating to it. https://github.com/signal11/hidapi 
-
-* Remove the windows showing the actual OTP values and copy the OTP value to the clipboard directly.
-
-* Change name to "Crypto Stick Tool". 
-
-* If the user enteres a wrong PIN, the dialog should state how many retries are left until the card gets locked.
-
-* incorporate help "?" buttons, as indicated in my mockup
+Other than libusb, HID API has the advantage that it uses native drivers on OSX. Consider migrating to it. https://github.com/signal11/hidapi
 
 * Make USB description and token ID configurable, e.g. through config file?
 

@@ -51,7 +51,7 @@
 #ifdef USE_STM3210B_EVAL
 
 #define USB_DISCONNECT                    GPIOA
-#define USB_DISCONNECT_PIN                GPIO_Pin_10
+#define USB_DISCONNECT_PIN                GPIO_Pin_15 // Use GPIO_Pin_10 for older PCB
 #define RCC_APB2Periph_GPIO_DISCONNECT    RCC_APB2Periph_GPIOA
 
 
