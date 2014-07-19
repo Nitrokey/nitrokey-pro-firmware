@@ -132,7 +132,7 @@ if (device_status==STATUS_RECEIVED_REPORT){
   numLockClicked=0; 
   //sendString("NumLock",7);
   
-  uint8_t slot_number=((uint8_t *)SLOTS_ADDRESS+GLOBAL_CONFIG_OFFSET)[0];
+  uint8_t slot_number=((uint8_t *)SLOTS_PAGE1_ADDRESS+GLOBAL_CONFIG_OFFSET)[0];
   if (slot_number<=1){
 	  uint8_t programmed=*((uint8_t *)hotp_slots[slot_number]);
 	   
@@ -158,7 +158,7 @@ if (device_status==STATUS_RECEIVED_REPORT){
   capsLockClicked=0;
   //sendString("CapsLock",8);
   
-  uint8_t slot_number=((uint8_t *)SLOTS_ADDRESS+GLOBAL_CONFIG_OFFSET)[1];
+  uint8_t slot_number=((uint8_t *)SLOTS_PAGE1_ADDRESS+GLOBAL_CONFIG_OFFSET)[1];
    if (slot_number<=1){
 	   uint8_t programmed=*((uint8_t *)hotp_slots[slot_number]);
 	   
@@ -184,7 +184,7 @@ if (device_status==STATUS_RECEIVED_REPORT){
   scrollLockClicked=0;
   //sendString("ScrollLock",10);
   
-  uint8_t slot_number=((uint8_t *)SLOTS_ADDRESS+GLOBAL_CONFIG_OFFSET)[2];
+  uint8_t slot_number=((uint8_t *)SLOTS_PAGE1_ADDRESS+GLOBAL_CONFIG_OFFSET)[2];
    if (slot_number<=1){
 	   uint8_t programmed=*((uint8_t *)hotp_slots[slot_number]);
 	   

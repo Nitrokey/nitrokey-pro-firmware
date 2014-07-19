@@ -28,12 +28,25 @@
 #include "string.h"
 #include "memory_ops.h"
 
-__I uint32_t hotp_slots[NUMBER_OF_HOTP_SLOTS]={SLOTS_ADDRESS+HOTP_SLOT1_OFFSET,SLOTS_ADDRESS+HOTP_SLOT2_OFFSET};
-__I uint32_t hotp_slot_counters[NUMBER_OF_HOTP_SLOTS]={SLOT1_COUNTER_ADDRESS,SLOT2_COUNTER_ADDRESS};
-__I uint32_t hotp_slot_offsets[NUMBER_OF_HOTP_SLOTS]={HOTP_SLOT1_OFFSET,HOTP_SLOT2_OFFSET};
+__I uint32_t hotp_slots[NUMBER_OF_HOTP_SLOTS]={SLOTS_PAGE1_ADDRESS+HOTP_SLOT1_OFFSET,SLOTS_PAGE1_ADDRESS+HOTP_SLOT2_OFFSET,
+					       SLOTS_PAGE1_ADDRESS+HOTP_SLOT3_OFFSET};
+__I uint32_t hotp_slot_counters[NUMBER_OF_HOTP_SLOTS]={SLOT1_COUNTER_ADDRESS,SLOT2_COUNTER_ADDRESS,SLOT3_COUNTER_ADDRESS};
+__I uint32_t hotp_slot_offsets[NUMBER_OF_HOTP_SLOTS]={HOTP_SLOT1_OFFSET,HOTP_SLOT2_OFFSET,HOTP_SLOT3_OFFSET};
 
-__I uint32_t totp_slots[NUMBER_OF_TOTP_SLOTS]={SLOTS_ADDRESS+TOTP_SLOT1_OFFSET,SLOTS_ADDRESS+TOTP_SLOT2_OFFSET,SLOTS_ADDRESS+TOTP_SLOT3_OFFSET,SLOTS_ADDRESS+TOTP_SLOT4_OFFSET};
-__I uint32_t totp_slot_offsets[NUMBER_OF_TOTP_SLOTS]={TOTP_SLOT1_OFFSET,TOTP_SLOT2_OFFSET,TOTP_SLOT3_OFFSET,TOTP_SLOT4_OFFSET};
+__I uint32_t totp_slots[NUMBER_OF_TOTP_SLOTS]={SLOTS_PAGE1_ADDRESS+TOTP_SLOT1_OFFSET,SLOTS_PAGE1_ADDRESS+TOTP_SLOT2_OFFSET,
+					       SLOTS_PAGE1_ADDRESS+TOTP_SLOT3_OFFSET,SLOTS_PAGE1_ADDRESS+TOTP_SLOT4_OFFSET,
+					       SLOTS_PAGE1_ADDRESS+TOTP_SLOT5_OFFSET,SLOTS_PAGE1_ADDRESS+TOTP_SLOT6_OFFSET,
+                                               SLOTS_PAGE1_ADDRESS+TOTP_SLOT7_OFFSET,SLOTS_PAGE1_ADDRESS+TOTP_SLOT8_OFFSET,
+					       SLOTS_PAGE1_ADDRESS+TOTP_SLOT9_OFFSET,SLOTS_PAGE1_ADDRESS+TOTP_SLOT10_OFFSET,
+                                               SLOTS_PAGE1_ADDRESS+TOTP_SLOT11_OFFSET,SLOTS_PAGE1_ADDRESS+TOTP_SLOT12_OFFSET,
+                                               SLOTS_PAGE1_ADDRESS+TOTP_SLOT13_OFFSET,SLOTS_PAGE1_ADDRESS+TOTP_SLOT14_OFFSET,
+                                               SLOTS_PAGE1_ADDRESS+TOTP_SLOT15_OFFSET};
+
+__I uint32_t totp_slot_offsets[NUMBER_OF_TOTP_SLOTS]={TOTP_SLOT1_OFFSET,TOTP_SLOT2_OFFSET,TOTP_SLOT3_OFFSET,
+						      TOTP_SLOT4_OFFSET,TOTP_SLOT5_OFFSET,TOTP_SLOT6_OFFSET,
+						      TOTP_SLOT7_OFFSET,TOTP_SLOT8_OFFSET,TOTP_SLOT9_OFFSET,
+						      TOTP_SLOT10_OFFSET,TOTP_SLOT11_OFFSET,TOTP_SLOT12_OFFSET,
+						      TOTP_SLOT13_OFFSET,TOTP_SLOT14_OFFSET,TOTP_SLOT15_OFFSET};
 
 uint8_t page_buffer[SLOT_PAGE_SIZE];
 
@@ -293,8 +306,17 @@ void backup_data(uint8_t *data,uint16_t len, uint32_t addr){
 
 void write_to_slot(uint8_t *data, uint16_t offset, uint16_t len){
 
+	//choose the proper slot page
+	uint32_t current_slot_address;
+	if(offset < 1024)
+		current_slot_address = SLOTS_PAGE1_ADDRESS;
+	else {
+		offset -=1024;
+		current_slot_address = SLOTS_PAGE2_ADDRESS;
+	}
+	
 	//copy entire page to ram
-	uint8_t *page=(uint8_t *)SLOTS_ADDRESS;
+	uint8_t *page=(uint8_t *)current_slot_address;
 	memcpy(page_buffer,page,SLOT_PAGE_SIZE);
 
 	//make changes to page
@@ -302,13 +324,13 @@ void write_to_slot(uint8_t *data, uint16_t offset, uint16_t len){
 
 
 	//write page to backup location
-	backup_data(page_buffer,SLOT_PAGE_SIZE,SLOTS_ADDRESS);
+	backup_data(page_buffer,SLOT_PAGE_SIZE,current_slot_address);
 
 	//write page to regular location
 
 	FLASH_Unlock();
-	FLASH_ErasePage(SLOTS_ADDRESS);
-	write_data_to_flash(page_buffer,SLOT_PAGE_SIZE,SLOTS_ADDRESS);
+	FLASH_ErasePage(current_slot_address);
+	write_data_to_flash(page_buffer,SLOT_PAGE_SIZE,current_slot_address);
 	FLASH_ProgramHalfWord(BACKUP_PAGE_ADDRESS+BACKUP_OK_OFFSET, 0x4F4B);
 	FLASH_Lock();
 

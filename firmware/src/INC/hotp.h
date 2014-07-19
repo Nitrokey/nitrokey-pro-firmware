@@ -18,15 +18,15 @@
 * along with GPF Crypto Stick. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define NUMBER_OF_HOTP_SLOTS 2
-#define NUMBER_OF_TOTP_SLOTS 4
+#define NUMBER_OF_HOTP_SLOTS 3
+#define NUMBER_OF_TOTP_SLOTS 15
 
 //Flash memory pages:
-//0x801E800
-//0x801EC00 <- slots
+//0x801E800 <- slots page 1
+//0x801EC00 <- slots page 2
 //0x801F000 <- slot 1 counter
 //0x801F400 <- slot 2 counter
-//0x801F800
+//0x801F800 <- slot 3 counter
 //0x801FC00 <- backup page
 
 
@@ -55,11 +55,13 @@ global config slot:
 
 */
 
-#define SLOT_PAGE_SIZE 1000 //less than actual page, so we can copy it to backup page with additional info
+#define SLOT_PAGE_SIZE 1000 //less than 2 actual page, so we can copy it to backup pages with additional info
 
-#define SLOTS_ADDRESS 0x801EC00
+#define SLOTS_PAGE1_ADDRESS 0x801E800
+#define SLOTS_PAGE2_ADDRESS 0x801EC00
 #define SLOT1_COUNTER_ADDRESS 0x801F000
 #define SLOT2_COUNTER_ADDRESS 0x801F400
+#define SLOT3_COUNTER_ADDRESS 0x801F800
 #define BACKUP_PAGE_ADDRESS 0x801FC00
 
 #define BACKUP_ADDRESS_OFFSET 1000
@@ -70,11 +72,23 @@ global config slot:
 
 #define HOTP_SLOT1_OFFSET 64
 #define HOTP_SLOT2_OFFSET 128
+#define HOTP_SLOT3_OFFSET 192
 
-#define TOTP_SLOT1_OFFSET 192
-#define TOTP_SLOT2_OFFSET 256
-#define TOTP_SLOT3_OFFSET 320
-#define TOTP_SLOT4_OFFSET 384
+#define TOTP_SLOT1_OFFSET 256
+#define TOTP_SLOT2_OFFSET 320
+#define TOTP_SLOT3_OFFSET 384
+#define TOTP_SLOT4_OFFSET 448
+#define TOTP_SLOT5_OFFSET 512
+#define TOTP_SLOT6_OFFSET 576
+#define TOTP_SLOT7_OFFSET 640
+#define TOTP_SLOT8_OFFSET 704
+#define TOTP_SLOT9_OFFSET 768
+#define TOTP_SLOT10_OFFSET 832
+#define TOTP_SLOT11_OFFSET 896
+#define TOTP_SLOT12_OFFSET 1088
+#define TOTP_SLOT13_OFFSET 1152
+#define TOTP_SLOT14_OFFSET 1216
+#define TOTP_SLOT15_OFFSET 1280
 
 #define SLOT_TYPE_OFFSET 0
 #define SLOT_NAME_OFFSET 1
