@@ -88,7 +88,7 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 			
 		case CMD_READ_SLOT:
 			//if (calculated_crc32==authorized_crc)
-			//cmd_read_slot(report,output);
+			cmd_read_slot(report,output);
 			//else
 			//not_authorized=1;
 			break;
@@ -189,7 +189,7 @@ uint8_t cmd_write_to_slot(uint8_t *report,uint8_t *output){
 	slot_tmp[0]=0x01; //marks slot as programmed
 	memcpy(slot_tmp+1,report+CMD_WTS_SLOT_NAME_OFFSET,49);
 
-	if (slot_no>=0x10&&slot_no<=0x12){//HOTP slot
+	if (slot_no>=0x10&&slot_no<=0x10+NUMBER_OF_HOTP_SLOTS){//HOTP slot
 		slot_no=slot_no&0x0F;
 		
 		uint64_t counter = getu64(report+CMD_WTS_COUNTER_OFFSET);
@@ -198,7 +198,7 @@ uint8_t cmd_write_to_slot(uint8_t *report,uint8_t *output){
 		
 
 	}
-	else if (slot_no>=0x20&&slot_no<=0x34){//TOTP slot
+	else if (slot_no>=0x20&&slot_no<=0x20+NUMBER_OF_TOTP_SLOTS){//TOTP slot
 		slot_no=slot_no&0x0F;
 		
 		write_to_slot(slot_tmp, totp_slot_offsets[slot_no], 64);
@@ -219,24 +219,26 @@ uint8_t cmd_write_to_slot(uint8_t *report,uint8_t *output){
 uint8_t cmd_read_slot_name(uint8_t *report,uint8_t *output){
 
 	uint8_t slot_no=report[1];
+	uint64_t counter;
 
-
-	if (slot_no>=0x10&&slot_no<=0x12){//HOTP slot
+	if (slot_no>=0x10&&slot_no<=0x10+NUMBER_OF_HOTP_SLOTS){//HOTP slot
 		slot_no=slot_no&0x0F;
 		uint8_t is_programmed=*((uint8_t *)(hotp_slots[slot_no]));
-		if (is_programmed==0x01)
-		memcpy(output+OUTPUT_CMD_RESULT_OFFSET,(uint8_t *)(hotp_slots[slot_no]+SLOT_NAME_OFFSET),15);
-		else
-		output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_SLOT_NOT_PROGRAMMED;
+		if (is_programmed==0x01){
+			memcpy(output+OUTPUT_CMD_RESULT_OFFSET,(uint8_t *)(hotp_slots[slot_no]+SLOT_NAME_OFFSET),15);
+		} else {
+			output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_SLOT_NOT_PROGRAMMED;
+		}
 
 	}
-	else if (slot_no>=0x20&&slot_no<=0x34){//TOTP slot
+	else if (slot_no>=0x20&&slot_no<=0x20+NUMBER_OF_TOTP_SLOTS){//TOTP slot
 		slot_no=slot_no&0x0F;
 		uint8_t is_programmed=*((uint8_t *)(totp_slots[slot_no]));
-		if (is_programmed==0x01)
-		memcpy(output+OUTPUT_CMD_RESULT_OFFSET,(uint8_t *)(totp_slots[slot_no]+SLOT_NAME_OFFSET),15);
-		else
-		output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_SLOT_NOT_PROGRAMMED;
+		if (is_programmed==0x01){
+			memcpy(output+OUTPUT_CMD_RESULT_OFFSET,(uint8_t *)(totp_slots[slot_no]+SLOT_NAME_OFFSET),15);
+		} else {
+			output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_SLOT_NOT_PROGRAMMED;
+		}
 
 	}
 	else{
@@ -250,44 +252,43 @@ uint8_t cmd_read_slot_name(uint8_t *report,uint8_t *output){
 
 
 uint8_t cmd_read_slot(uint8_t *report,uint8_t *output){
-/* Removed for security
- 
-	uint8_t slot_no=report[CMD_RS_SLOT_NUMBER_OFFSET];
+	
+	uint8_t slot_no=report[1];
+        uint64_t counter;
+
+        if (slot_no>=0x10&&slot_no<=0x10+NUMBER_OF_HOTP_SLOTS){//HOTP slot
+                slot_no=slot_no&0x0F;
+                uint8_t is_programmed=*((uint8_t *)(hotp_slots[slot_no]));
+                if (is_programmed==0x01){
+                        memcpy(output+OUTPUT_CMD_RESULT_OFFSET,(uint8_t *)(hotp_slots[slot_no]+SLOT_NAME_OFFSET),15);
+            		memcpy(output+OUTPUT_CMD_RESULT_OFFSET+15,(uint8_t *)(hotp_slots[slot_no]+CONFIG_OFFSET),1);
+                        memcpy(output+OUTPUT_CMD_RESULT_OFFSET+16,(uint8_t *)(hotp_slots[slot_no]+TOKEN_ID_OFFSET),13);
+                        counter=get_counter_value(hotp_slot_counters[slot_no]);
+                        memcpy(output+OUTPUT_CMD_RESULT_OFFSET+29,&counter,8);
+	        } else {
+                        output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_SLOT_NOT_PROGRAMMED;
+                }
+
+        }
+        else if (slot_no>=0x20&&slot_no<=0x20+NUMBER_OF_TOTP_SLOTS){//TOTP slot
+                slot_no=slot_no&0x0F;
+                uint8_t is_programmed=*((uint8_t *)(totp_slots[slot_no]));
+                if (is_programmed==0x01){
+                        memcpy(output+OUTPUT_CMD_RESULT_OFFSET,(uint8_t *)(totp_slots[slot_no]+SLOT_NAME_OFFSET),15);
+			memcpy(output+OUTPUT_CMD_RESULT_OFFSET+15,(uint8_t *)(totp_slots[slot_no]+CONFIG_OFFSET),1);
+                        memcpy(output+OUTPUT_CMD_RESULT_OFFSET+16,(uint8_t *)(totp_slots[slot_no]+TOKEN_ID_OFFSET),13);
+                } else {
+                        output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_SLOT_NOT_PROGRAMMED;
+                }
+
+        }
+        else{
+                output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_SLOT;
+
+        }
 
 
-	if (slot_no>=0x10&&slot_no<=0x11){//HOTP slot
-		slot_no=slot_no&0x0F;
-		uint8_t is_programmed=*((uint8_t *)(hotp_slots[slot_no]));
-		if (is_programmed==0x01){
-			memcpy(output+OUTPUT_CMD_RESULT_OFFSET,(uint8_t *)(hotp_slots[slot_no]+SECRET_OFFSET),34);
-			//memcpy(output+OUTPUT_CMD_RESULT_OFFSET+CMD_RS_OUTPUT_COUNTER_OFFSET,(uint8_t *)(hotp_slot_counters[slot_no]),8);
-			
-			uint64_t counter= get_counter_value(hotp_slot_counters[slot_no]);
-			memcpy(output+OUTPUT_CMD_RESULT_OFFSET+CMD_RS_OUTPUT_COUNTER_OFFSET,&counter,8);
-			
-			
-		}
-		else
-		output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_SLOT_NOT_PROGRAMMED;
-
-	}
-	else if (slot_no>=0x20&&slot_no<=0x23){//TOTP slot
-		slot_no=slot_no&0x0F;
-		uint8_t is_programmed=*((uint8_t *)(totp_slots[slot_no]));
-		if (is_programmed==0x01){
-			memcpy(output+OUTPUT_CMD_RESULT_OFFSET,(uint8_t *)(totp_slots[slot_no]+SECRET_OFFSET),34);
-			
-			
-		}
-		else
-		output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_SLOT_NOT_PROGRAMMED;
-
-	}
-	else{
-		output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_SLOT;
-	}
-*/
-	return 0;
+        return 0;
 }
 
 
@@ -299,7 +300,7 @@ uint8_t cmd_get_code(uint8_t *report,uint8_t *output){
 
 	uint8_t slot_no=report[CMD_GC_SLOT_NUMBER_OFFSET];
 	
-	if (slot_no>=0x10&&slot_no<=0x12){//HOTP slot
+	if (slot_no>=0x10&&slot_no<=0x10+NUMBER_OF_HOTP_SLOTS){//HOTP slot
 		slot_no=slot_no&0x0F;
 		uint8_t is_programmed=*((uint8_t *)(hotp_slots[slot_no]));
 		if (is_programmed==0x01){
@@ -315,7 +316,7 @@ uint8_t cmd_get_code(uint8_t *report,uint8_t *output){
 		output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_SLOT_NOT_PROGRAMMED;
 
 	}
-	else if (slot_no>=0x20&&slot_no<=0x34){//TOTP slot
+	else if (slot_no>=0x20&&slot_no<=0x20+NUMBER_OF_TOTP_SLOTS){//TOTP slot
 		slot_no=slot_no&0x0F;
 		uint8_t is_programmed=*((uint8_t *)(totp_slots[slot_no]));
 		if (is_programmed==0x01){
@@ -359,13 +360,13 @@ uint8_t cmd_erase_slot(uint8_t *report,uint8_t *output){
 	memset(slot_tmp,0xFF,64);
 	
 
-	if (slot_no>=0x10&&slot_no<=0x12){//HOTP slot
+	if (slot_no>=0x10&&slot_no<=0x10+NUMBER_OF_HOTP_SLOTS){//HOTP slot
 		slot_no=slot_no&0x0F;
 		write_to_slot(slot_tmp, hotp_slot_offsets[slot_no], 64);
 		
 
 	}
-	else if (slot_no>=0x20&&slot_no<=0x34){//TOTP slot
+	else if (slot_no>=0x20&&slot_no<=0x20+NUMBER_OF_TOTP_SLOTS){//TOTP slot
 		slot_no=slot_no&0x0F;	
 		write_to_slot(slot_tmp, totp_slot_offsets[slot_no], 64);
 		
