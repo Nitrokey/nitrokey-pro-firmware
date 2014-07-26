@@ -110,6 +110,7 @@ extern uint8_t page_buffer[SLOT_PAGE_SIZE];
 
 uint64_t endian_swap (uint64_t x);
 uint32_t dynamic_truncate (uint8_t * hmac_result);
+void erase_counter(uint8_t slot);
 void write_data_to_flash(uint8_t *data,uint16_t len,uint32_t addr);
 uint32_t get_hotp_value(uint64_t counter,uint8_t * secret,uint8_t secret_length,uint8_t len);
 uint64_t get_counter_value(uint32_t addr);

@@ -363,21 +363,15 @@ uint8_t cmd_erase_slot(uint8_t *report,uint8_t *output){
 	if (slot_no>=0x10&&slot_no<=0x10+NUMBER_OF_HOTP_SLOTS){//HOTP slot
 		slot_no=slot_no&0x0F;
 		write_to_slot(slot_tmp, hotp_slot_offsets[slot_no], 64);
-		
-
+		erase_counter(slot_no);
 	}
 	else if (slot_no>=0x20&&slot_no<=0x20+NUMBER_OF_TOTP_SLOTS){//TOTP slot
 		slot_no=slot_no&0x0F;	
 		write_to_slot(slot_tmp, totp_slot_offsets[slot_no], 64);
-		
-
 	}
 	else{
 		output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_SLOT;
-
-
 	}
-
 
 	return 0;
 }

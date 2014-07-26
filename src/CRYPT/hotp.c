@@ -304,6 +304,15 @@ void backup_data(uint8_t *data,uint16_t len, uint32_t addr){
 
 }
 
+void erase_counter(uint8_t slot){
+
+        FLASH_Unlock();
+        FLASH_ErasePage(hotp_slot_counters[slot]);
+	FLASH_Lock();
+
+}
+
+
 void write_to_slot(uint8_t *data, uint16_t offset, uint16_t len){
 
 	//choose the proper slot page
@@ -319,9 +328,14 @@ void write_to_slot(uint8_t *data, uint16_t offset, uint16_t len){
 	uint8_t *page=(uint8_t *)current_slot_address;
 	memcpy(page_buffer,page,SLOT_PAGE_SIZE);
 
+	//check if the secret from the tool is empty and if it is use the old secret
+	uint8_t *secret = (uint8_t *)(data+SECRET_OFFSET);
+	if(secret[0] == 0){
+		memcpy(data+SECRET_OFFSET,page_buffer+offset+SECRET_OFFSET,20);
+	}
+
 	//make changes to page
 	memcpy(page_buffer+offset,data,len);
-
 
 	//write page to backup location
 	backup_data(page_buffer,SLOT_PAGE_SIZE,current_slot_address);
