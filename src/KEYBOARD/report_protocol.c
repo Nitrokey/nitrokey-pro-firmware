@@ -136,6 +136,14 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 		case CMD_SET_TIME:
 			cmd_set_time(report,output);
 			break;	
+		
+		case CMD_TEST_COUNTER:
+			cmd_test_counter(report,output);
+			break;
+
+		case CMD_TEST_TIME:
+                        cmd_test_time(report,output);
+                        break;
 
 		default:
 			break;
@@ -452,3 +460,48 @@ uint8_t cmd_set_time(uint8_t *report,uint8_t *output){
 	}
 
 }
+
+uint8_t cmd_test_counter(uint8_t *report,uint8_t *output){
+
+	int i;
+	uint8_t  slot_no = report[CMD_DATA_OFFSET];	
+	uint16_t tests_number = getu16(report+CMD_DATA_OFFSET+1);
+	uint16_t results = 0;	
+	uint64_t counter = counter=get_counter_value(hotp_slot_counters[slot_no]);
+        uint64_t counter_new = 0;
+
+	for(i=0;i<tests_number;i++){
+		set_counter_value(hotp_slot_counters[slot_no], counter);
+		counter_new=get_counter_value(hotp_slot_counters[slot_no]);
+		if(counter == counter_new){
+			results++;
+		}
+	}
+
+	memcpy(output+OUTPUT_CMD_RESULT_OFFSET,&results,2);
+
+	return 0;
+}
+
+uint8_t cmd_test_time(uint8_t *report,uint8_t *output){
+
+        int i,err;
+	uint32_t time;
+	uint32_t read_time;
+	uint16_t tests_number = getu16(report+CMD_DATA_OFFSET+1);
+        uint16_t results = 0;
+
+	for(i=0;i<tests_number;i++){
+		time = (current_time - 1388534400)/60;
+		err = set_time_value(time);
+		read_time = get_time_value();
+                if(!err && read_time == time) {
+			results++;
+		}
+	}
+
+	memcpy(output+OUTPUT_CMD_RESULT_OFFSET,&results,2);
+
+	return 0;
+}
+
