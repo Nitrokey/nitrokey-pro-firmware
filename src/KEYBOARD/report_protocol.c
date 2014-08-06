@@ -467,7 +467,7 @@ uint8_t cmd_test_counter(uint8_t *report,uint8_t *output){
 	uint8_t  slot_no = report[CMD_DATA_OFFSET];	
 	uint16_t tests_number = getu16(report+CMD_DATA_OFFSET+1);
 	uint16_t results = 0;	
-	uint64_t counter = counter=get_counter_value(hotp_slot_counters[slot_no]);
+	uint64_t counter=get_counter_value(hotp_slot_counters[slot_no]);
         uint64_t counter_new = 0;
 
 	for(i=0;i<tests_number;i++){
