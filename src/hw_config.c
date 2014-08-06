@@ -21,6 +21,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
+#include "stm32f10x_systick.h"
 #include "hw_config.h"
 #include "sdcard.h"
 #include "platform_config.h"
@@ -284,6 +285,9 @@ RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, ENABLE);
 
 /* MAL configuration */
 	CCID_Init();	// set CCID default values
+
+/* Enable SysTick Counter for time in firmware*/
+	SysTick_CounterCmd(SysTick_Counter_Enable);
 
 }
 

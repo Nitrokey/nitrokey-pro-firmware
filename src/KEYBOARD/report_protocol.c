@@ -34,6 +34,7 @@
 #include "string.h"
 #include "memory_ops.h"
 #include "CcidLocalAccess.h"
+#include "time.h"
 
 __IO uint8_t temp_password[25];
 __IO uint8_t tmp_password_set=0;
@@ -131,7 +132,10 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 			//write_data_to_flash(report+REPORT_SECRET_VALUE_OFFSET,20,oath_slots[slot]+SECRET_OFFSET);
 			
 			//FLASH_Lock();
-			
+		
+		case CMD_SET_TIME:
+			cmd_set_time(report,output);
+			break;	
 
 		default:
 			break;
@@ -187,7 +191,7 @@ uint8_t cmd_write_to_slot(uint8_t *report,uint8_t *output){
 
 	memset(slot_tmp,0,64);
 	slot_tmp[0]=0x01; //marks slot as programmed
-	memcpy(slot_tmp+1,report+CMD_WTS_SLOT_NAME_OFFSET,49);
+	memcpy(slot_tmp+1,report+CMD_WTS_SLOT_NAME_OFFSET,51);
 
 	if (slot_no>=0x10&&slot_no<=0x10+NUMBER_OF_HOTP_SLOTS){//HOTP slot
 		slot_no=slot_no&0x0F;
@@ -217,7 +221,7 @@ uint8_t cmd_write_to_slot(uint8_t *report,uint8_t *output){
 
 
 uint8_t cmd_read_slot_name(uint8_t *report,uint8_t *output){
-
+ 
 	uint8_t slot_no=report[1];
 	uint64_t counter;
 
@@ -277,6 +281,7 @@ uint8_t cmd_read_slot(uint8_t *report,uint8_t *output){
                         memcpy(output+OUTPUT_CMD_RESULT_OFFSET,(uint8_t *)(totp_slots[slot_no]+SLOT_NAME_OFFSET),15);
 			memcpy(output+OUTPUT_CMD_RESULT_OFFSET+15,(uint8_t *)(totp_slots[slot_no]+CONFIG_OFFSET),1);
                         memcpy(output+OUTPUT_CMD_RESULT_OFFSET+16,(uint8_t *)(totp_slots[slot_no]+TOKEN_ID_OFFSET),13);
+			memcpy(output+OUTPUT_CMD_RESULT_OFFSET+29,(uint8_t *)(totp_slots[slot_no]+INTERVAL_OFFSET),2);
                 } else {
                         output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_SLOT_NOT_PROGRAMMED;
                 }
@@ -409,12 +414,41 @@ uint8_t cmd_authorize(uint8_t *report,uint8_t *output){
 	
 	if (tmp_password_set==1){
 	
-	if (memcmp(report+5,temp_password,25)==0)	
+	if (memcmp(report+5,temp_password,25)==0){	
 	authorized_crc=getu32(report+1);
-	else	
+	return 0;
+	} else {	
 	output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_PASSWORD;
-
+	return 1;
+	}
 	}
 	
 }
 
+
+uint8_t cmd_set_time(uint8_t *report,uint8_t *output){
+
+	int err;
+	uint64_t new_time = (getu64(report+CMD_DATA_OFFSET+1));
+	uint32_t old_time = get_time_value();
+        uint32_t new_time_minutes = (new_time - 1388534400)/60;
+
+	if(old_time==0){
+		output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_TIMESTAMP_WARNING;
+		return 1;
+        }        
+	
+	if(old_time <= new_time_minutes || old_time == 0xffffffff || *((uint8_t *)(report+CMD_DATA_OFFSET)) == 1){
+		current_time = new_time;
+		err = set_time_value(new_time_minutes);
+		if(err) {
+			output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_TIMESTAMP_WARNING;
+                	return 1;
+		}		
+		return 0;
+	} else {
+		 output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_TIMESTAMP_WARNING;
+		return 1;
+	}
+
+}

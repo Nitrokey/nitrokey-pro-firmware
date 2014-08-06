@@ -30,7 +30,9 @@
 #define CMD_FIRST_AUTHENTICATE 0x07
 #define CMD_AUTHORIZE 0x08
 #define CMD_GET_PASSWORD_RETRY_COUNT 0x09
+#define CMD_SET_TIME 0x0B
 
+#define CMD_DATA_OFFSET 0x01
 
 #define STATUS_READY 0x00
 #define STATUS_BUSY	 0x01
@@ -43,6 +45,7 @@
 #define CMD_STATUS_SLOT_NOT_PROGRAMMED 3
 #define CMD_STATUS_WRONG_PASSWORD 4
 #define CMD_STATUS_NOT_AUTHORIZED 5
+#define CMD_STATUS_TIMESTAMP_WARNING 6
 
 
 /*
@@ -180,4 +183,4 @@ uint8_t cmd_erase_slot(uint8_t *report,uint8_t *output);
 uint8_t cmd_first_authenticate(uint8_t *report,uint8_t *output);
 uint8_t cmd_authorize(uint8_t *report,uint8_t *output);
 uint8_t cmd_get_password_retry_count(uint8_t *report,uint8_t *output);
-
+uint8_t cmd_set_time(uint8_t *report,uint8_t *output);

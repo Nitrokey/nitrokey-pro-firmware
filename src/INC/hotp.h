@@ -22,6 +22,7 @@
 #define NUMBER_OF_TOTP_SLOTS 15
 
 //Flash memory pages:
+//0x801E400 <- time page
 //0x801E800 <- slots page 1
 //0x801EC00 <- slots page 2
 //0x801F000 <- slot 1 counter
@@ -39,6 +40,7 @@ slot structure:
 	MSB [x|x|x|x|x|send token id|send enter after code?|no. of digits 6/8] LSB
 12b token id
 1b keyboard layout
+2b TOTP interval value
 
 */
 
@@ -57,6 +59,7 @@ global config slot:
 
 #define SLOT_PAGE_SIZE 1000 //less than 2 actual page, so we can copy it to backup pages with additional info
 
+#define TIME_ADDRESS 0x801E400
 #define SLOTS_PAGE1_ADDRESS 0x801E800
 #define SLOTS_PAGE2_ADDRESS 0x801EC00
 #define SLOT1_COUNTER_ADDRESS 0x801F000
@@ -95,9 +98,9 @@ global config slot:
 #define SECRET_OFFSET 16
 #define CONFIG_OFFSET 36
 #define TOKEN_ID_OFFSET 37
+#define INTERVAL_OFFSET 50
 
-
-
+#define TIME_OFFSET 4
 
 extern __I uint32_t hotp_slots[NUMBER_OF_HOTP_SLOTS];
 extern __I uint32_t totp_slots[NUMBER_OF_TOTP_SLOTS];
@@ -106,7 +109,7 @@ extern __I uint32_t hotp_slot_offsets[NUMBER_OF_HOTP_SLOTS];
 extern __I uint32_t totp_slot_offsets[NUMBER_OF_TOTP_SLOTS];
 
 extern uint8_t page_buffer[SLOT_PAGE_SIZE];
-
+uint64_t current_time;
 
 uint64_t endian_swap (uint64_t x);
 uint32_t dynamic_truncate (uint8_t * hmac_result);
@@ -114,6 +117,8 @@ void erase_counter(uint8_t slot);
 void write_data_to_flash(uint8_t *data,uint16_t len,uint32_t addr);
 uint32_t get_hotp_value(uint64_t counter,uint8_t * secret,uint8_t secret_length,uint8_t len);
 uint64_t get_counter_value(uint32_t addr);
+uint32_t get_time_value(void);
+uint8_t set_time_value(uint32_t time);
 uint8_t set_counter_value(uint32_t addr, uint64_t counter);
 uint32_t get_code_from_hotp_slot(uint8_t slot);
 uint8_t increment_counter_page(uint32_t addr);

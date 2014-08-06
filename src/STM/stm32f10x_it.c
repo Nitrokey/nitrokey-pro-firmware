@@ -26,12 +26,14 @@
 #include "sdcard.h"
 #include "hw_config.h"
 #include "platform_config.h"
+#include "hotp.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 vu32 TimingDelay  = 0;
+vu32 TimeCounter = 100;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -157,6 +159,13 @@ void SysTick_Handler(void)
   {
     TimingDelay--;
   }
+  if (TimeCounter != 0x00)
+  {
+    TimeCounter--;
+  } else {
+    TimeCounter = 100;
+    current_time++;
+  } 
 }
 
 /******************************************************************************/

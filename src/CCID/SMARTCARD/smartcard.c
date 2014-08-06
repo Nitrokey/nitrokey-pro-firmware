@@ -262,7 +262,7 @@ void Delay(u32 nCount)
   TimingDelay = nCount;
 
   /* Enable the SysTick Counter */
-  SysTick_CounterCmd(SysTick_Counter_Enable);
+  //SysTick_CounterCmd(SysTick_Counter_Enable);
   
   while(TimingDelay != 0)
   {
@@ -272,10 +272,10 @@ void Delay(u32 nCount)
   }
 
   /* Disable the SysTick Counter */
-  SysTick_CounterCmd(SysTick_Counter_Disable);
+  //SysTick_CounterCmd(SysTick_Counter_Disable);
 
   /* Clear the SysTick Counter */
-  SysTick_CounterCmd(SysTick_Counter_Clear);
+  //SysTick_CounterCmd(SysTick_Counter_Clear);
 }
 
 /*******************************************************************************
@@ -290,17 +290,17 @@ void Delay_noUSBCheck (u32 nCount)
   TimingDelay = nCount;
 
   /* Enable the SysTick Counter */
-  SysTick_CounterCmd(SysTick_Counter_Enable);
+  //SysTick_CounterCmd(SysTick_Counter_Enable);
   
   while(TimingDelay != 0)
   {
   }
 
   /* Disable the SysTick Counter */
-  SysTick_CounterCmd(SysTick_Counter_Disable);
+  //SysTick_CounterCmd(SysTick_Counter_Disable);
 
   /* Clear the SysTick Counter */
-  SysTick_CounterCmd(SysTick_Counter_Clear);
+  //SysTick_CounterCmd(SysTick_Counter_Clear);
 }
 
 
