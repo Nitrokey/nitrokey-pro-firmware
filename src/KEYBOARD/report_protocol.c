@@ -196,10 +196,17 @@ uint8_t cmd_write_to_slot(uint8_t *report,uint8_t *output){
 
 	uint8_t slot_no=report[CMD_WTS_SLOT_NUMBER_OFFSET];
 	uint8_t slot_tmp[64];//this is will be the new slot contents
+	uint8_t slot_name[15];
 
 	memset(slot_tmp,0,64);
 	slot_tmp[0]=0x01; //marks slot as programmed
 	memcpy(slot_tmp+1,report+CMD_WTS_SLOT_NAME_OFFSET,51);
+	memcpy(slot_name,report+CMD_WTS_SLOT_NAME_OFFSET,15);
+
+	if(slot_name[0] == 0){
+		output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_NO_NAME_ERROR;
+		return 1;
+	}
 
 	if (slot_no>=0x10&&slot_no<=0x10+NUMBER_OF_HOTP_SLOTS){//HOTP slot
 		slot_no=slot_no&0x0F;
@@ -467,7 +474,7 @@ uint8_t cmd_test_counter(uint8_t *report,uint8_t *output){
 	uint8_t  slot_no = report[CMD_DATA_OFFSET];	
 	uint16_t tests_number = getu16(report+CMD_DATA_OFFSET+1);
 	uint16_t results = 0;	
-	uint64_t counter=get_counter_value(hotp_slot_counters[slot_no]);
+	uint64_t counter = get_counter_value(hotp_slot_counters[slot_no]);
         uint64_t counter_new = 0;
 
 	for(i=0;i<tests_number;i++){
