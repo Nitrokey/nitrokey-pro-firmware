@@ -51,6 +51,8 @@ int getAID(void);
 uint32_t getSerialNumber(void);
 uint8_t getByteOfData(uint8_t x);
 uint8_t cardAuthenticate(uint8_t *password);
+uint8_t userAuthenticate(uint8_t *password);
 uint8_t getPasswordRetryCount(void);
+uint8_t getUserPasswordRetryCount(void);
 #endif /* CCID_LOCAL_ACCESS */
 

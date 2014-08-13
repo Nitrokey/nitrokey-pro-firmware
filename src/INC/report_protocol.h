@@ -18,7 +18,7 @@
 * along with GPF Crypto Stick. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define FIRMWARE_VERSION 1
+#define FIRMWARE_VERSION 14
 
 #define CMD_GET_STATUS 0x00
 #define CMD_WRITE_TO_SLOT 0x01
@@ -33,6 +33,10 @@
 #define CMD_SET_TIME 0x0B
 #define CMD_TEST_COUNTER 0x0C
 #define CMD_TEST_TIME 0x0D
+#define CMD_USER_AUTHENTICATE 0x0E
+#define CMD_GET_USER_PASSWORD_RETRY_COUNT 0x0F
+#define CMD_USER_AUTHORIZE 0x10
+
 
 #define CMD_DATA_OFFSET 0x01
 
@@ -185,6 +189,9 @@ uint8_t cmd_erase_slot(uint8_t *report,uint8_t *output);
 uint8_t cmd_first_authenticate(uint8_t *report,uint8_t *output);
 uint8_t cmd_authorize(uint8_t *report,uint8_t *output);
 uint8_t cmd_get_password_retry_count(uint8_t *report,uint8_t *output);
+uint8_t cmd_user_authenticate(uint8_t *report,uint8_t *output);
+uint8_t cmd_user_authorize(uint8_t *report,uint8_t *output);
+uint8_t cmd_get_user_password_retry_count(uint8_t *report,uint8_t *output);
 uint8_t cmd_set_time(uint8_t *report,uint8_t *output);
 uint8_t cmd_test_counter(uint8_t *report,uint8_t *output);
 uint8_t cmd_test_time(uint8_t *report,uint8_t *output);

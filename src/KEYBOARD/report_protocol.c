@@ -39,6 +39,9 @@
 __IO uint8_t temp_password[25];
 __IO uint8_t tmp_password_set=0;
 __IO uint32_t authorized_crc=0xFFFFFFFF;
+__IO uint8_t temp_user_password[25];
+__IO uint8_t tmp_user_password_set=0;
+__IO uint32_t authorized_user_crc=0xFFFFFFFF;
 
 
 uint8_t parse_report(uint8_t *report,uint8_t *output){
@@ -95,7 +98,10 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 			break;
 			
 		case CMD_GET_CODE:
+			if(calculated_crc32==authorized_user_crc || *((uint8_t *)(SLOTS_PAGE1_ADDRESS+GLOBAL_CONFIG_OFFSET+3)) != 1)
 			cmd_get_code(report,output);
+			else
+			not_authorized=1;			
 			break;
 			
 		case CMD_WRITE_CONFIG:
@@ -120,6 +126,10 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 			cmd_authorize(report,output);
 			break;
 		
+		case CMD_USER_AUTHORIZE:
+                        cmd_user_authorize(report,output);
+                        break;
+
 		case CMD_GET_PASSWORD_RETRY_COUNT:
 			cmd_get_password_retry_count(report,output);
 			break;
@@ -133,16 +143,24 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 			
 			//FLASH_Lock();
 		
+		case CMD_GET_USER_PASSWORD_RETRY_COUNT:
+			cmd_get_user_password_retry_count(report,output);
+                        break;
+
+		case CMD_USER_AUTHENTICATE:
+			cmd_user_authenticate(report,output);
+                        break;
+
 		case CMD_SET_TIME:
 			cmd_set_time(report,output);
 			break;	
 		
 		case CMD_TEST_COUNTER:
-			cmd_test_counter(report,output);
+			//cmd_test_counter(report,output);
 			break;
 
 		case CMD_TEST_TIME:
-                        cmd_test_time(report,output);
+                        //cmd_test_time(report,output);
                         break;
 
 		default:
@@ -180,6 +198,7 @@ uint8_t cmd_get_status(uint8_t *report,uint8_t *output){
 	output[OUTPUT_CMD_RESULT_OFFSET+4]=(cardSerial>>16)&0xFF;
 	output[OUTPUT_CMD_RESULT_OFFSET+5]=(cardSerial>>24)&0xFF;
 	memcpy(output+OUTPUT_CMD_RESULT_OFFSET+6,(uint8_t *)SLOTS_PAGE1_ADDRESS+GLOBAL_CONFIG_OFFSET,3);
+	memcpy(output+OUTPUT_CMD_RESULT_OFFSET+9,(uint8_t *)SLOTS_PAGE1_ADDRESS+GLOBAL_CONFIG_OFFSET+3,2);
 
 	return 0;
 }
@@ -191,6 +210,14 @@ uint8_t cmd_get_password_retry_count(uint8_t *report,uint8_t *output){
 
 	return 0;
 }
+
+uint8_t cmd_get_user_password_retry_count(uint8_t *report,uint8_t *output){
+
+        output[OUTPUT_CMD_RESULT_OFFSET]=getUserPasswordRetryCount();
+
+        return 0;
+}
+
 
 uint8_t cmd_write_to_slot(uint8_t *report,uint8_t *output){
 
@@ -360,12 +387,12 @@ uint8_t cmd_get_code(uint8_t *report,uint8_t *output){
 
 uint8_t cmd_write_config(uint8_t *report,uint8_t *output){
 	
-	uint8_t slot_tmp[3];//this is will be the new slot contents
-	memset(slot_tmp,0,3);
+	uint8_t slot_tmp[5];//this is will be the new slot contents
+	memset(slot_tmp,0,5);
 
-	memcpy(slot_tmp,report+1,3);
+	memcpy(slot_tmp,report+1,5);
 
-	write_to_slot(slot_tmp,GLOBAL_CONFIG_OFFSET, 3);
+	write_to_slot(slot_tmp,GLOBAL_CONFIG_OFFSET, 5);
 	
 	return 0;
 	
@@ -424,6 +451,34 @@ uint8_t cmd_first_authenticate(uint8_t *report,uint8_t *output){
 
 }
 
+uint8_t cmd_user_authenticate(uint8_t *report,uint8_t *output){
+
+        uint8_t res=1;
+        uint8_t user_password[26];
+
+
+
+                memset(user_password,0,26);
+
+                memcpy(user_password,report+1,25);
+
+
+                res=userAuthenticate(user_password);
+
+                if (res==0){
+                        memcpy(temp_user_password,report+26,25);
+                        tmp_user_password_set=1;
+                        getAID();
+                        return 0;
+                }
+                else{
+                        output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_PASSWORD;
+                        return 1; //wrong card password
+                }
+
+
+}
+
 
 uint8_t cmd_authorize(uint8_t *report,uint8_t *output){
 	
@@ -440,6 +495,20 @@ uint8_t cmd_authorize(uint8_t *report,uint8_t *output){
 	
 }
 
+uint8_t cmd_user_authorize(uint8_t *report,uint8_t *output){
+
+        if (tmp_user_password_set==1){
+
+        if (memcmp(report+5,temp_user_password,25)==0){
+        authorized_user_crc=getu32(report+1);
+        return 0;
+        } else {
+        output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_PASSWORD;
+        return 1;
+        }
+        }
+
+}
 
 uint8_t cmd_set_time(uint8_t *report,uint8_t *output){
 
