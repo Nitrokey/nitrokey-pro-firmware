@@ -193,5 +193,9 @@ uint8_t cmd_user_authenticate(uint8_t *report,uint8_t *output);
 uint8_t cmd_user_authorize(uint8_t *report,uint8_t *output);
 uint8_t cmd_get_user_password_retry_count(uint8_t *report,uint8_t *output);
 uint8_t cmd_set_time(uint8_t *report,uint8_t *output);
+//START - OTP Test Routine --------------------------------
+/*
 uint8_t cmd_test_counter(uint8_t *report,uint8_t *output);
 uint8_t cmd_test_time(uint8_t *report,uint8_t *output);
+*/
+//END - OTP Test Routine ----------------------------------

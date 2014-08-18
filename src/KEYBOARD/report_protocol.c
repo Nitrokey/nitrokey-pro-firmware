@@ -154,14 +154,18 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 		case CMD_SET_TIME:
 			cmd_set_time(report,output);
 			break;	
-		
+				
+    		//START - OTP Test Routine --------------------------------
+		/*
 		case CMD_TEST_COUNTER:
-			//cmd_test_counter(report,output);
+			cmd_test_counter(report,output);
 			break;
 
 		case CMD_TEST_TIME:
-                        //cmd_test_time(report,output);
+                        cmd_test_time(report,output);
                         break;
+		*/
+    		//END - OTP Test Routine ----------------------------------
 
 		default:
 			break;
@@ -537,6 +541,8 @@ uint8_t cmd_set_time(uint8_t *report,uint8_t *output){
 
 }
 
+//START - OTP Test Routine --------------------------------
+/*
 uint8_t cmd_test_counter(uint8_t *report,uint8_t *output){
 
 	int i;
@@ -580,4 +586,5 @@ uint8_t cmd_test_time(uint8_t *report,uint8_t *output){
 
 	return 0;
 }
-
+*/
+//END - OTP Test Routine ----------------------------------
