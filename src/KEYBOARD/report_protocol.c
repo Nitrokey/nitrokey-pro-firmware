@@ -496,6 +496,8 @@ uint8_t cmd_authorize(uint8_t *report,uint8_t *output){
 	return 1;
 	}
 	}
+
+  	return 1;
 	
 }
 
@@ -511,6 +513,8 @@ uint8_t cmd_user_authorize(uint8_t *report,uint8_t *output){
         return 1;
         }
         }
+
+	return 1;
 
 }
 
