@@ -525,10 +525,13 @@ uint8_t cmd_set_time(uint8_t *report,uint8_t *output){
 	uint32_t old_time = get_time_value();
         uint32_t new_time_minutes = (new_time - 1388534400)/60;
 
-	if(old_time==0){
-		output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_TIMESTAMP_WARNING;
-		return 1;
-        }        
+	if (0 == report[CMD_DATA_OFFSET])   // Check valid time only at check time
+  	{
+		if(old_time==0){
+			output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_TIMESTAMP_WARNING;
+			return 1;
+        	}
+	}        
 	
 	if(old_time <= new_time_minutes || old_time == 0xffffffff || *((uint8_t *)(report+CMD_DATA_OFFSET)) == 1){
 		current_time = new_time;
