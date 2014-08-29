@@ -18,7 +18,7 @@
 * along with GPF Crypto Stick. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define FIRMWARE_VERSION 14
+#define FIRMWARE_VERSION 07
 
 #define CMD_GET_STATUS 0x00
 #define CMD_WRITE_TO_SLOT 0x01
