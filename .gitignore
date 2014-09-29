@@ -6,3 +6,8 @@ build-*-Debug
 .*
 !/.gitignore
 *.orig
+
+build/gcc/crypto.elf
+build/gcc/crypto.lss
+build/gcc/crypto.map
+
