@@ -391,12 +391,12 @@ uint8_t cmd_get_code(uint8_t *report,uint8_t *output){
 
 uint8_t cmd_write_config(uint8_t *report,uint8_t *output){
 	
-	uint8_t slot_tmp[5];//this is will be the new slot contents
-	memset(slot_tmp,0,5);
+	uint8_t slot_tmp[64]; //this will be the new slot contents
+	memset(slot_tmp,0,64);
 
-	memcpy(slot_tmp,report+1,5);
+	memcpy(slot_tmp,report+1,64);
 
-	write_to_slot(slot_tmp,GLOBAL_CONFIG_OFFSET, 5);
+	write_to_slot(slot_tmp,GLOBAL_CONFIG_OFFSET, 64);
 	
 	return 0;
 	
