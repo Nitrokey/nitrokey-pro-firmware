@@ -27,30 +27,33 @@
 
 
 
-#include "compiler.h"
-#include "preprocessor.h"
-#include "board.h"
-#include "gpio.h"
-#include "flashc.h"
-#include "string.h"
+//#include "compiler.h"
+//#include "preprocessor.h"
+//#include "board.h"
+//#include "gpio.h"
+//#include "flashc.h"
+//#include "string.h"
 #include "aes.h"
 #include "stdio.h"
+#include <string.h>
+#include <stdlib.h>
 
-#include "global.h"
-#include "tools.h"
-#include "TIME_MEASURING.h"
+//#include "global.h"
+//#include "tools.h"
+//#include "TIME_MEASURING.h"
 
+#include "smartcard.h"
 #include "password_safe.h"
-#include "HiddenVolume.h"
-#include "CCID/USART/ISO7816_USART.h"
-#include "CCID/USART/ISO7816_ADPU.h"
-#include "CCID/USART/ISO7816_Prot_T1.h"
-#include "CCID/LOCAL_ACCESS/OpenPGP_V20.h"
-#include "USB_CCID/USB_CCID.h"
-#include "FlashStorage.h"
-#include "HandleAesStorageKey.h"
-#include "OTP/keyboard.h"
-#include "LED_test.h"
+//#include "HiddenVolume.h"
+//#include "CCID/USART/ISO7816_USART.h"
+//#include "CCID/USART/ISO7816_ADPU.h"
+//#include "CCID/USART/ISO7816_Prot_T1.h"
+//#include "CCID/LOCAL_ACCESS/OpenPGP_V20.h"
+//#include "USB_CCID/USB_CCID.h"
+//#include "FlashStorage.h"
+//#include "HandleAesStorageKey.h"
+//#include "OTP/keyboard.h"
+//#include "LED_test.h"
 
 /*******************************************************************************
 
@@ -149,7 +152,7 @@ u8 PWS_WriteSlot (u8 Slot_u8, typePasswordSafeSlot_st *Slot_st)
     return (FALSE);
   }
 
-  LED_GreenOn ();
+  //LED_GreenOn ();
 
 // Activate data in slot
   Slot_st->SlotActiv_u8 = PWS_SLOT_ACTIV_TOKEN;
@@ -177,7 +180,7 @@ u8 PWS_WriteSlot (u8 Slot_u8, typePasswordSafeSlot_st *Slot_st)
   p = (void*)Slot_st;
   flashc_memcpy ((void*)WritePointer_pu8,p,PWS_SLOT_LENGTH,TRUE);
 
-  LED_GreenOff ();
+  //LED_GreenOff ();
 
   return (TRUE);
 }
@@ -224,7 +227,7 @@ u8 PWS_EraseSlot (u8 Slot_u8)
     return (FALSE);
   }
 
-  LED_GreenOn ();
+//  //LED_GreenOn ();
 
 // Clear data in slot
   memset ((char*)&Slot_st,0,sizeof (Slot_st));
@@ -252,7 +255,7 @@ u8 PWS_EraseSlot (u8 Slot_u8)
   p = (void*)&Slot_st;
   flashc_memcpy ((void*)WritePointer_pu8,p,PWS_SLOT_LENGTH,TRUE);
 
-  LED_GreenOff ();
+  //LED_GreenOff ();
 
   return (TRUE);
 }
@@ -288,7 +291,7 @@ u8 PWS_ReadSlot (u8 Slot_u8, typePasswordSafeSlot_st *Slot_st)
     return (FALSE);     // Aes key is not decrypted
   }
 
-  LED_GreenOn ();
+  //LED_GreenOn ();
 
 // Get read address
   ReadPointer_pu8 = (u8*)(PWS_FLASH_START_ADDRESS + PWS_SLOT_LENGTH * Slot_u8);
@@ -309,7 +312,7 @@ u8 PWS_ReadSlot (u8 Slot_u8, typePasswordSafeSlot_st *Slot_st)
   CI_LocalPrintf ("\n\r");
 #endif
 
-  LED_GreenOff ();
+  //LED_GreenOff ();
 
   return (TRUE);
 }
@@ -533,7 +536,7 @@ u8 PWS_WriteSlotData_2 (u8 Slot_u8,u8 *Loginname_pu8)
 
   if (FALSE == PWS_WriteSlot (Slot_u8,&PWS_BufferSlot_st))
   {
-    LED_GreenOff ();
+    //LED_GreenOff ();
     return (FALSE);
   }
 
@@ -559,7 +562,8 @@ u32 BuildPasswordSafeKey_u32 (void)
   u8 Key_au8[AES_KEYSIZE_256_BIT];
 
   CI_TickLocalPrintf ("BuildPasswordSafeKey_u32\r\n");
-  LA_RestartSmartcard_u8 ();
+  RestartSmartcard ();
+  //LA_RestartSmartcard_u8 ();
 
 // Get a random number for the master key
   if (FALSE == GetRandomNumber_u32 (AES_KEYSIZE_256_BIT/2,Key_au8))
@@ -736,7 +740,7 @@ u8 PWS_SendData (u8 Slot_u8,u8 Kind_u8)
   u8  SendString_au8[40];
   u32 Ret_u32;
 
-  LED_GreenOn ();
+  //LED_GreenOn ();
 
   switch (Kind_u8)
   {
@@ -765,7 +769,7 @@ u8 PWS_SendData (u8 Slot_u8,u8 Kind_u8)
 
   }
 
-  LED_GreenOff ();
+  //LED_GreenOff ();
 
   return (TRUE);
 }
