@@ -260,21 +260,49 @@ unsigned short CcidSelectOpenPGPApp (void)
 
 unsigned short CcidGetData (unsigned char cP1,unsigned char cP2,unsigned char *nRetSize)
 {
-	unsigned short cRet;
+    unsigned short cRet;
 
-	tSCT.cAPDULength = CCID_SIZE_GETDATA;
+    tSCT.cAPDULength = CCID_SIZE_GETDATA;
 
-	tSCT.cAPDU[CCID_CLA] = 0x00;
-	tSCT.cAPDU[CCID_INS] = 0xCA;
-	tSCT.cAPDU[CCID_P1]  = cP1;
-	tSCT.cAPDU[CCID_P2]  = cP2;
-	tSCT.cAPDU[CCID_LC]  = 0;						// LE = 256
+    tSCT.cAPDU[CCID_CLA] = 0x00;
+    tSCT.cAPDU[CCID_INS] = 0xCA;
+    tSCT.cAPDU[CCID_P1]  = cP1;
+    tSCT.cAPDU[CCID_P2]  = cP2;
+    tSCT.cAPDU[CCID_LC]  = 0;						// LE = 256
 
-	cRet = SendAPDU (&tSCT);
+    cRet = SendAPDU (&tSCT);
 
-	*nRetSize = tSCT.cAPDUAnswerLength;
+    *nRetSize = tSCT.cAPDUAnswerLength;
 
-	return (cRet);
+    return (cRet);
+}
+
+/*******************************************************************************
+
+  CcidChangePin
+
+*******************************************************************************/
+
+unsigned short CcidChangePin (unsigned char cPinNr,const char *szPin, const char* szNewPin)
+{
+    unsigned short cRet;
+
+    tSCT.cAPDULength = strlen (szPin) + strlen (szNewPin);
+
+    tSCT.cAPDU[CCID_CLA] = 0x00;
+    tSCT.cAPDU[CCID_INS] = 0x24;
+    tSCT.cAPDU[CCID_P1]  = 0x00;
+    tSCT.cAPDU[CCID_P2]  = 0x80+cPinNr;
+    tSCT.cAPDU[CCID_LC]  = tSCT.cAPDULength;
+
+    strcpy ((char*)&tSCT.cAPDU[CCID_DATA],szPin);
+    strcpy ((char*)&tSCT.cAPDU[CCID_DATA] + strlen (szPin), szNewPin);
+
+    tSCT.cAPDULength += CCID_DATA;
+
+    cRet = SendAPDU (&tSCT);
+
+    return (cRet);
 }
 
 /*******************************************************************************
@@ -588,6 +616,41 @@ uint8_t userAuthenticate(uint8_t *password){
 return 0;
 }
 
+uint8_t changeUserPin(uint8_t* password, uint8_t* new_password){
+    InitSCTStruct (&tSCT);
+    
+    unsigned short cRet;
+    unsigned char nReturnSize;
+
+    CcidSelectOpenPGPApp ();
+    cRet = CcidChangePin (1,password, new_password);
+
+
+    if (APDU_ANSWER_COMMAND_CORRECT != cRet)
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+uint8_t changeAdminPin(uint8_t* password, uint8_t* new_password){
+    InitSCTStruct (&tSCT);
+    
+    unsigned short cRet;
+    unsigned char nReturnSize;
+
+    CcidSelectOpenPGPApp ();
+    cRet = CcidChangePin (3,password, new_password);
+
+
+    if (APDU_ANSWER_COMMAND_CORRECT != cRet)
+    {
+        return -1;
+    }
+
+    return 0;
+}
 
 uint8_t getPasswordRetryCount(){
 	
