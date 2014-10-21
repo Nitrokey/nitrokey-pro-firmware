@@ -28,6 +28,8 @@
 #ifndef PASSWORD_SAFE_H_
 #define PASSWORD_SAFE_H_
 
+#include "stm32f10x.h"
+
 void IBN_PWS_Tests (unsigned char nParamsGet_u8,unsigned char CMD_u8,unsigned int Param_u32,unsigned char *String_pu8);
 
 #define FLASH_PAGE_SIZE 512 // AVR
