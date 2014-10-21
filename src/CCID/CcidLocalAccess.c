@@ -349,6 +349,47 @@ unsigned short CcidDecipher (unsigned char *nRetSize)
 	return (cRet);
 }
 
+
+
+/*******************************************************************************
+
+  CcidGetChallenge
+
+*******************************************************************************/
+
+unsigned short CcidGetChallenge (int nReceiveLength, unsigned char *nReceiveData)
+{
+  int     cRet;
+  int     n;
+
+  // Command
+  tSCT.cAPDU[CCID_CLA]    = 0x00; 
+  tSCT.cAPDU[CCID_INS]    = 0x84;
+  tSCT.cAPDU[CCID_P1]     = 0x00; 
+  tSCT.cAPDU[CCID_P2]     = 0x00;
+
+// Send data
+  tSCT.cAPDU[CCID_LC]     = 0;
+//  tSCT.cAPDU[CCID_DATA]   = 0;
+
+// Something to receive
+  //tSCT.cAPDU.nLe      = nReceiveLength; // nReceiveLength;
+  tSCT.cAPDU[CCID_DATA] = nReceiveLength;
+
+  // cRet = ISO7816_SendAPDU_Le_NoLc ( &tSCT );
+  cRet = SendAPDU(&tSCT);
+
+  n = tSCT.cAPDUAnswerLength;
+  if (n < nReceiveLength)  
+  {    
+    n = nReceiveLength;
+  }    
+
+  memcpy (nReceiveData, &(tSCTcAPDU[CCID_DATA]), n);
+
+  return cRet;
+}
+
 /*******************************************************************************
 
   AccessTestGPG
