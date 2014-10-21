@@ -155,6 +155,15 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 			cmd_set_time(report,output);
 			break;	
 				
+        case CMD_CHANGE_USER_PIN:
+            cmd_change_user_pin(report, output);
+            break;
+
+        case CMD_CHANGE_ADMIN_PIN:
+            cmd_change_admin_pin(report, output);
+            break;
+
+
     		//START - OTP Test Routine --------------------------------
 		/*
 		case CMD_TEST_COUNTER:
@@ -483,6 +492,66 @@ uint8_t cmd_user_authenticate(uint8_t *report,uint8_t *output){
 
 }
 
+
+uint8_t cmd_change_user_pin (uint8_t *report, uint8_t *output)
+{
+    uint8_t res = 1;
+    uint8_t old_pin[26];
+    uint8_t new_pin[26];
+
+    memset(old_pin, 0, 26);
+    memset(new_pin, 0, 26);
+
+    memcpy(old_pin, report+1 , 25);
+    memcpy(new_pin, report+26 , 25);
+
+    res = userAuthenticate(old_pin);
+    if (res != 0 )
+    {
+        output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_PASSWORD;
+        return 1; //wrong card password
+    }
+
+    res = changeUserPin(old_pin, new_pin);
+    if (0 == res) {
+        return 0;
+    }
+    else 
+    {
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
+        return 1;
+    }
+}
+
+uint8_t cmd_change_admin_pin (uint8_t *report, uint8_t *output)
+{
+    uint8_t res = 1;
+    uint8_t old_admin_pin[26];
+    uint8_t new_admin_pin[26];
+
+    memset(old_admin_pin, 0, 26);
+    memset(new_admin_pin, 0, 26);
+
+    memcpy(old_admin_pin, report+1 , 25);
+    memcpy(new_admin_pin, report+26 , 25);
+
+    res = cardAuthenticate(old_admin_pin);
+    if (res != 0 )
+    {
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
+        return 1;
+    }
+
+    res = changeAdminPin(old_admin_pin, new_admin_pin);
+    if (0 == res) {
+        return 0;
+    }
+    else 
+    {
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
+        return 1;
+    }
+}
 
 uint8_t cmd_authorize(uint8_t *report,uint8_t *output){
 	
