@@ -518,7 +518,7 @@ uint8_t cmd_change_user_pin (uint8_t *report, uint8_t *output)
     }
     else 
     {
-        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_ERROR_CHANGING_USER_PASSWORD;
         return 1;
     }
 }
@@ -548,7 +548,7 @@ uint8_t cmd_change_admin_pin (uint8_t *report, uint8_t *output)
     }
     else 
     {
-        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_ERROR_CHANGING_ADMIN_PASSWORD;
         return 1;
     }
 }
