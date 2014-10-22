@@ -43,7 +43,8 @@
 #define APDU_ANSWER_RECEIVE_CRC_ERROR			0xA000					/* Receive CRC error  */
 #define APDU_ANSWER_RECEIVE_INCORRECT			0xA001					/* Receive wrong answer struct  */
 #define APDU_ANSWER_CHAINED_DATA    			0xA002					/* Receive chained data  */
-																	  
+
+#define APDU_MAX_RESPONSE_LEN       500
 
 void CcidLocalAccessTest (void);
 
@@ -54,5 +55,6 @@ uint8_t cardAuthenticate(uint8_t *password);
 uint8_t userAuthenticate(uint8_t *password);
 uint8_t getPasswordRetryCount(void);
 uint8_t getUserPasswordRetryCount(void);
+uint32_t getRandomNumber (uint32_t Size_u32, uint8_t *Data_pu8);
 #endif /* CCID_LOCAL_ACCESS */
 

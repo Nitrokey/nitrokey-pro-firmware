@@ -21,6 +21,7 @@
 		to do : CRC check of receive TPDU data
 */
 
+
 #include "stm32f10x.h"
 #include "platform_config.h"
 #include "hw_config.h"
@@ -30,6 +31,7 @@
 #include "CCID_Ifd_protocol.h"
 #include "CcidLocalAccess.h"
 
+#include "time.h"
 
 #define CCID_TRANSFER_BUFFER_MAX		256
 
@@ -368,26 +370,70 @@ unsigned short CcidGetChallenge (int nReceiveLength, unsigned char *nReceiveData
   tSCT.cAPDU[CCID_P1]     = 0x00; 
   tSCT.cAPDU[CCID_P2]     = 0x00;
 
-// Send data
   tSCT.cAPDU[CCID_LC]     = 0;
-//  tSCT.cAPDU[CCID_DATA]   = 0;
 
 // Something to receive
   //tSCT.cAPDU.nLe      = nReceiveLength; // nReceiveLength;
-  tSCT.cAPDU[CCID_DATA] = nReceiveLength;
+ 
+  // Encode Le 
+  if (nReceiveLength > 255)
+  {
+    tSCT.cAPDU[CCID_DATA] = 0;
+    tSCT.cAPDU[CCID_DATA + 1] = (unsigned char) nReceiveLength >> 8;
+    tSCT.cAPDU[CCID_DATA + 2] = (unsigned char) (nReceiveLength & 0xFF);
+  }
+  else
+    tSCT.cAPDU[CCID_DATA] = nReceiveLength;
 
   // cRet = ISO7816_SendAPDU_Le_NoLc ( &tSCT );
   cRet = SendAPDU(&tSCT);
 
   n = tSCT.cAPDUAnswerLength;
-  if (n < nReceiveLength)  
-  {    
+  if (n < nReceiveLength)
+  {
     n = nReceiveLength;
-  }    
+  }
 
-  memcpy (nReceiveData, &(tSCTcAPDU[CCID_DATA]), n);
+  memcpy (nReceiveData, &(tSCT.cAPDU[CCID_DATA]), n);
 
   return cRet;
+}
+
+
+/*******************************************************************************
+
+    GetRandomNumber_u32
+
+*******************************************************************************/
+
+u32 getRandomNumber (u32 Size_u32, u8 *Data_pu8)
+{
+    u32 Ret_u32;
+    u32 i;
+    time_t  now;
+    static u8 FlasgTimeIsSet_u8 = FALSE;
+
+    // Size ok ?
+    if (APDU_MAX_RESPONSE_LEN <= Size_u32)
+    {
+        return (FALSE);
+    }
+
+    // Get a random number from smartcard
+    Ret_u32 = CcidGetChallenge (Size_u32, Data_pu8);
+
+    #ifdef GENERATE_RANDOM_NUMBER_WITH_2ND_SOURCE
+    // Paranoia: if the random number is not really random, xor it with another random number from a second source
+    if (FALSE == FlasgTimeIsSet_u8)
+    {
+        time (&now);                      // Get the local time
+        srand (now + Data_pu8[0]);        // Init the local random generator
+        FlasgTimeIsSet_u8 = TRUE;
+    }
+
+    for (i=0;i<Size_u32;i++)
+        Data_pu8[i] = Data_pu8[i] ^ (u8)(rand () % 256);
+    #endif
 }
 
 /*******************************************************************************
