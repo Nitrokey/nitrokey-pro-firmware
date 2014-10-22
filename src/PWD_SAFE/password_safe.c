@@ -61,7 +61,7 @@
 
 *******************************************************************************/
 
-#define ENABLE_IBN_PWS_TESTS
+//#define ENABLE_IBN_PWS_TESTS
 //#define ENABLE_IBN_PWS_TESTS_ENCRYPTION
 
 #ifdef ENABLE_IBN_PWS_TESTS
@@ -164,11 +164,15 @@ u8 PWS_WriteSlot (u8 Slot_u8, typePasswordSafeSlot_st *Slot_st)
 #endif
 
 // Encrypt data (max 256 byte per encryption)
-  AES_StorageKeyEncryption (PWS_SLOT_LENGTH,(void*)Slot_st,AesKeyPointer_pu8, AES_PMODE_CIPHER);
+  void* Slot_st_encrypted = malloc(PWS_SLOT_LENGTH);
+  aes_context *aes_ctx;
+  aes_setkey_enc (aes_ctx, AesKeyPointer_pu8, 256);
+  aes_crypt_ecb (aes_ctx, AES_ENCRYPT, (unsigned char*)&Slot_st, (unsigned char*)Slot_st_encrypted);
+  // AES_StorageKeyEncryption (PWS_SLOT_LENGTH, (void*)Slot_st, AesKeyPointer_pu8, AES_PMODE_CIPHER);
 
 #ifdef ENABLE_IBN_PWS_TESTS_ENCRYPTION
   CI_LocalPrintf ("PWS_WriteSlot encrypted  : ");
-  HexPrint (PWS_SLOT_LENGTH, &Slot_st);
+  HexPrint (PWS_SLOT_LENGTH, &Slot_st_encrypted);
   CI_LocalPrintf ("\n\r");
 #endif
 
@@ -177,7 +181,7 @@ u8 PWS_WriteSlot (u8 Slot_u8, typePasswordSafeSlot_st *Slot_st)
   WritePointer_pu8 = (u8*)(PWS_FLASH_START_ADDRESS + PWS_SLOT_LENGTH * Slot_u8);
 
 // Write to flash
-  p = (void*)Slot_st;
+  p = (void*)Slot_st_encrypted;
   flashc_memcpy ((void*)WritePointer_pu8,p,PWS_SLOT_LENGTH,TRUE);
 
   //LED_GreenOff ();
@@ -239,12 +243,17 @@ u8 PWS_EraseSlot (u8 Slot_u8)
   CI_LocalPrintf ("\n\r");
 #endif
 
-// Encrypt data (max 256 byte per encryption)
-  AES_StorageKeyEncryption (PWS_SLOT_LENGTH,(void*)&Slot_st,AesKeyPointer_pu8, AES_PMODE_CIPHER);
+// Encrypt data (max 256 byte per encryption) 
+  void* Slot_st_encrypted = malloc(PWS_SLOT_LENGTH);
+  aes_context *aes_ctx;
+  aes_setkey_enc (aes_ctx, AesKeyPointer_pu8, 256);
+  aes_crypt_ecb (aes_ctx, AES_ENCRYPT, (unsigned char*)&Slot_st, (unsigned char*)Slot_st_encrypted);
+
+  // AES_StorageKeyEncryption (PWS_SLOT_LENGTH,(void*)&Slot_st,AesKeyPointer_pu8, AES_PMODE_CIPHER);
 
 #ifdef ENABLE_IBN_PWS_TESTS_ENCRYPTION
   CI_LocalPrintf ("PWS_EraseSlot encrypted  : ");
-  HexPrint (PWS_SLOT_LENGTH, &Slot_st);
+  HexPrint (PWS_SLOT_LENGTH, &Slot_st_encrypted);
   CI_LocalPrintf ("\n\r");
 #endif
 
@@ -252,7 +261,7 @@ u8 PWS_EraseSlot (u8 Slot_u8)
   WritePointer_pu8 = (u8*)(PWS_FLASH_START_ADDRESS + PWS_SLOT_LENGTH * Slot_u8);
 
 // Write to flash
-  p = (void*)&Slot_st;
+  p = (void*)&Slot_st_encrypted;
   flashc_memcpy ((void*)WritePointer_pu8,p,PWS_SLOT_LENGTH,TRUE);
 
   //LED_GreenOff ();
@@ -303,12 +312,17 @@ u8 PWS_ReadSlot (u8 Slot_u8, typePasswordSafeSlot_st *Slot_st)
   CI_LocalPrintf ("\n\r");
 #endif
 
-// Decrypt data (max 256 byte per encryption)
-  AES_StorageKeyEncryption (PWS_SLOT_LENGTH,(void*)Slot_st,AesKeyPointer_pu8, AES_PMODE_DECIPHER);
+// Decrypt data (max 256 byte per encryption)  
+  void* Slot_st_decrypted = malloc(PWS_SLOT_LENGTH);
+  aes_context *aes_ctx;
+  aes_setkey_enc (aes_ctx, AesKeyPointer_pu8, 256);
+  aes_crypt_ecb (aes_ctx, AES_DECRYPT, (unsigned char*)&Slot_st, (unsigned char*)Slot_st_decrypted);
+
+//  AES_StorageKeyEncryption (PWS_SLOT_LENGTH,(void*)Slot_st,AesKeyPointer_pu8, AES_PMODE_DECIPHER);
 
 #ifdef ENABLE_IBN_PWS_TESTS_ENCRYPTION
   CI_LocalPrintf ("PWS_ReadSlot decrypted  : ");
-  HexPrint (PWS_SLOT_LENGTH, Slot_st);
+  HexPrint (PWS_SLOT_LENGTH, Slot_st_decrypted);
   CI_LocalPrintf ("\n\r");
 #endif
 
@@ -566,14 +580,14 @@ u32 BuildPasswordSafeKey_u32 (void)
   //LA_RestartSmartcard_u8 ();
 
 // Get a random number for the master key
-  if (FALSE == GetRandomNumber_u32 (AES_KEYSIZE_256_BIT/2,Key_au8))
+  if (FALSE == getRandomNumber (AES_KEYSIZE_256_BIT/2,Key_au8))
   {
     CI_LocalPrintf ("GetRandomNumber fails 1\n\r");
     return (FALSE);
   }
 
 // Get a random number for the master key
-  if (FALSE == GetRandomNumber_u32 (AES_KEYSIZE_256_BIT/2,&Key_au8[AES_KEYSIZE_256_BIT/2]))
+  if (FALSE == getRandomNumber (AES_KEYSIZE_256_BIT/2,&Key_au8[AES_KEYSIZE_256_BIT/2]))
   {
     CI_LocalPrintf ("GetRandomNumber fails 2\n\r");
     return (FALSE);
