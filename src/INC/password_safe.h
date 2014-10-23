@@ -32,11 +32,12 @@
 
 void IBN_PWS_Tests (unsigned char nParamsGet_u8,unsigned char CMD_u8,unsigned int Param_u32,unsigned char *String_pu8);
 
-#define FLASH_PAGE_SIZE 512 // AVR
+// #define FLASH_PAGE_SIZE 512 // AVR
+#define FLASH_PAGE_SIZE 1024 // stm32f10x
 
 
 #define FLASH_START             0x80000000
-#define PWS_FLASH_START_PAGE    4096
+#define PWS_FLASH_START_PAGE    2048
 #define PWS_FLASH_START_ADDRESS (0x80000000 + PWS_FLASH_START_PAGE * FLASH_PAGE_SIZE + (512*0)) // 0x80200000
 
 
