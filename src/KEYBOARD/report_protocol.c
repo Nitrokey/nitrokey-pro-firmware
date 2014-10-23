@@ -35,6 +35,7 @@
 #include "memory_ops.h"
 #include "CcidLocalAccess.h"
 #include "time.h"
+#include "password_safe.h"
 
 __IO uint8_t temp_password[25];
 __IO uint8_t tmp_password_set=0;
@@ -154,65 +155,88 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 		case CMD_SET_TIME:
 			cmd_set_time(report,output);
 			break;	
-				
-    		//START - OTP Test Routine --------------------------------
-		/*
-		case CMD_TEST_COUNTER:
-			cmd_test_counter(report,output);
-			break;
+	
+        // Password Safe functions		
+        case CMD_GET_PW_SAFE_SLOT_STATUS:
+            break;
+        case CMD_GET_PW_SAFE_SLOT_NAME:
+            break;
+        case CMD_GET_PW_SAFE_SLOT_PASSWORD:
+            break;
+        case CMD_GET_PW_SAFE_SLOT_LOGINNAME:
+            break;
+        case CMD_SET_PW_SAFE_SLOT_DATA_1:
+            break;
+        case CMD_SET_PW_SAFE_SLOT_DATA_2:
+            break;
+        case CMD_PW_SAFE_ERASE_SLOT:
+            break;
+        case CMD_PW_SAFE_ENABLE:
+            break;
+        case CMD_PW_SAFE_INIT_KEY:
+            break;
+        case CMD_PW_SAFE_SEND_DATA:
+            break;
 
-		case CMD_TEST_TIME:
-                        cmd_test_time(report,output);
-                        break;
-		*/
-    		//END - OTP Test Routine ----------------------------------
 
-		default:
-			break;
+        //START - OTP Test Routine --------------------------------
+            /*
+            case CMD_TEST_COUNTER:
+                cmd_test_counter(report,output);
+                break;
 
-		}
-		
-		if (not_authorized)
-		output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_NOT_AUTHORIZED;
-		
-		if (calculated_crc32==authorized_crc)
-		authorized_crc=0xFFFFFFFF;
+            case CMD_TEST_TIME:
+                            cmd_test_time(report,output);
+                            break;
+            */
+                //END - OTP Test Routine ----------------------------------
 
-	}
-	else
-	output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_CRC;
+            default:
+                break;
 
-	CRC_ResetDR();
-	calculated_crc32=CRC_CalcBlockCRC((uint32_t*) output, KEYBOARD_FEATURE_COUNT/4-1);
+            }
+            
+            if (not_authorized)
+            output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_NOT_AUTHORIZED;
+            
+            if (calculated_crc32==authorized_crc)
+            authorized_crc=0xFFFFFFFF;
 
-	output[OUTPUT_CRC_OFFSET]=calculated_crc32&0xFF;
-	output[OUTPUT_CRC_OFFSET+1]=(calculated_crc32>>8)&0xFF;
-	output[OUTPUT_CRC_OFFSET+2]=(calculated_crc32>>16)&0xFF;
-	output[OUTPUT_CRC_OFFSET+3]=(calculated_crc32>>24)&0xFF;
+        }
+        else
+        output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_CRC;
 
-	return 0;
-}
+        CRC_ResetDR();
+        calculated_crc32=CRC_CalcBlockCRC((uint32_t*) output, KEYBOARD_FEATURE_COUNT/4-1);
+
+        output[OUTPUT_CRC_OFFSET]=calculated_crc32&0xFF;
+        output[OUTPUT_CRC_OFFSET+1]=(calculated_crc32>>8)&0xFF;
+        output[OUTPUT_CRC_OFFSET+2]=(calculated_crc32>>16)&0xFF;
+        output[OUTPUT_CRC_OFFSET+3]=(calculated_crc32>>24)&0xFF;
+
+        return 0;
+    }
 
 uint8_t cmd_get_status(uint8_t *report,uint8_t *output){
 
-	output[OUTPUT_CMD_RESULT_OFFSET]=FIRMWARE_VERSION&0xFF;
-	output[OUTPUT_CMD_RESULT_OFFSET+1]=(FIRMWARE_VERSION>>8)&0xFF;
-	output[OUTPUT_CMD_RESULT_OFFSET+2]=cardSerial&0xFF;
-	output[OUTPUT_CMD_RESULT_OFFSET+3]=(cardSerial>>8)&0xFF;
-	output[OUTPUT_CMD_RESULT_OFFSET+4]=(cardSerial>>16)&0xFF;
-	output[OUTPUT_CMD_RESULT_OFFSET+5]=(cardSerial>>24)&0xFF;
-	memcpy(output+OUTPUT_CMD_RESULT_OFFSET+6,(uint8_t *)SLOTS_PAGE1_ADDRESS+GLOBAL_CONFIG_OFFSET,3);
-	memcpy(output+OUTPUT_CMD_RESULT_OFFSET+9,(uint8_t *)SLOTS_PAGE1_ADDRESS+GLOBAL_CONFIG_OFFSET+3,2);
+    output[OUTPUT_CMD_RESULT_OFFSET]=FIRMWARE_VERSION&0xFF;
+    output[OUTPUT_CMD_RESULT_OFFSET+1]=(FIRMWARE_VERSION>>8)&0xFF;
+    output[OUTPUT_CMD_RESULT_OFFSET+2]=cardSerial&0xFF;
+    output[OUTPUT_CMD_RESULT_OFFSET+3]=(cardSerial>>8)&0xFF;
+    output[OUTPUT_CMD_RESULT_OFFSET+4]=(cardSerial>>16)&0xFF;
+    output[OUTPUT_CMD_RESULT_OFFSET+5]=(cardSerial>>24)&0xFF;
+    memcpy(output+OUTPUT_CMD_RESULT_OFFSET+6,(uint8_t *)SLOTS_PAGE1_ADDRESS+GLOBAL_CONFIG_OFFSET,3);
+    memcpy(output+OUTPUT_CMD_RESULT_OFFSET+9,(uint8_t *)SLOTS_PAGE1_ADDRESS+GLOBAL_CONFIG_OFFSET+3,2);
 
-	return 0;
+    return 0;
 }
 
 
 uint8_t cmd_get_password_retry_count(uint8_t *report,uint8_t *output){
 
-	output[OUTPUT_CMD_RESULT_OFFSET]=getPasswordRetryCount();
+    output[OUTPUT_CMD_RESULT_OFFSET]=getPasswordRetryCount();
 
-	return 0;
+    return 0;
 }
 
 uint8_t cmd_get_user_password_retry_count(uint8_t *report,uint8_t *output){
@@ -225,27 +249,27 @@ uint8_t cmd_get_user_password_retry_count(uint8_t *report,uint8_t *output){
 
 uint8_t cmd_write_to_slot(uint8_t *report,uint8_t *output){
 
-	uint8_t slot_no=report[CMD_WTS_SLOT_NUMBER_OFFSET];
-	uint8_t slot_tmp[64];//this is will be the new slot contents
-	uint8_t slot_name[15];
+    uint8_t slot_no=report[CMD_WTS_SLOT_NUMBER_OFFSET];
+    uint8_t slot_tmp[64];//this is will be the new slot contents
+    uint8_t slot_name[15];
 
-	memset(slot_tmp,0,64);
-	slot_tmp[0]=0x01; //marks slot as programmed
-	memcpy(slot_tmp+1,report+CMD_WTS_SLOT_NAME_OFFSET,51);
-	memcpy(slot_name,report+CMD_WTS_SLOT_NAME_OFFSET,15);
+    memset(slot_tmp,0,64);
+    slot_tmp[0]=0x01; //marks slot as programmed
+    memcpy(slot_tmp+1,report+CMD_WTS_SLOT_NAME_OFFSET,51);
+    memcpy(slot_name,report+CMD_WTS_SLOT_NAME_OFFSET,15);
 
-	if(slot_name[0] == 0){
-		output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_NO_NAME_ERROR;
-		return 1;
-	}
+    if(slot_name[0] == 0){
+        output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_NO_NAME_ERROR;
+        return 1;
+    }
 
-	if (slot_no>=0x10&&slot_no<=0x10+NUMBER_OF_HOTP_SLOTS){//HOTP slot
-		slot_no=slot_no&0x0F;
-		
-		uint64_t counter = getu64(report+CMD_WTS_COUNTER_OFFSET);
-		set_counter_value(hotp_slot_counters[slot_no], counter);
-		write_to_slot(slot_tmp, hotp_slot_offsets[slot_no], 64);
-		
+    if (slot_no>=0x10&&slot_no<=0x10+NUMBER_OF_HOTP_SLOTS){//HOTP slot
+        slot_no=slot_no&0x0F;
+        
+        uint64_t counter = getu64(report+CMD_WTS_COUNTER_OFFSET);
+            set_counter_value(hotp_slot_counters[slot_no], counter);
+            write_to_slot(slot_tmp, hotp_slot_offsets[slot_no], 64);
+            
 
 	}
 	else if (slot_no>=0x20&&slot_no<=0x20+NUMBER_OF_TOTP_SLOTS){//TOTP slot
@@ -547,6 +571,184 @@ uint8_t cmd_set_time(uint8_t *report,uint8_t *output){
 	}
 
 }
+
+
+uint8_t cmd_getPasswordSafeStatus(uint8_t *report,uint8_t *output)
+{
+    uint8_t  Data_u8[PWS_SLOT_COUNT];
+    uint32_t Ret_u32;
+
+    Ret_u32 = PWS_GetAllSlotStatus (Data_u8);
+    if (TRUE == Ret_u32)
+    {    
+      memcpy ( &output[OUTPUT_CMD_RESULT_OFFSET], Data_u8, PWS_SLOT_COUNT);
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
+    }    
+    else 
+    {    
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_NOT_AUTHORIZED;
+    }    
+
+    return (0);
+}
+
+uint8_t cmd_getPasswordSafeSlotName(uint8_t *report,uint8_t *output)
+{
+    uint32_t Ret_u32;
+
+    Ret_u32 = PWS_GetSlotName (report[1], &output[OUTPUT_CMD_RESULT_OFFSET]);
+    if (TRUE == Ret_u32)
+    {
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
+    }
+    else
+    {
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_NOT_AUTHORIZED;
+    }
+
+    return (0);
+}
+
+uint8_t cmd_getPasswordSafeSlotPassword(uint8_t *report,uint8_t *output)
+{
+    uint32_t Ret_u32;
+
+    Ret_u32 = PWS_GetSlotPassword (report[1],&output[OUTPUT_CMD_RESULT_OFFSET]);
+    if (TRUE == Ret_u32)
+    {
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
+    }
+    else
+    {
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_NOT_AUTHORIZED;
+    }
+
+    return (0);
+}
+
+uint8_t cmd_getPasswordSafeSlotLoginName(uint8_t *report,uint8_t *output)
+{
+    uint32_t Ret_u32;
+
+    Ret_u32 = PWS_GetSlotLoginName (report[1],&output[OUTPUT_CMD_RESULT_OFFSET]);
+    if (TRUE == Ret_u32)
+    {
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
+    }
+    else
+    {
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_NOT_AUTHORIZED;
+    }
+
+    return (0);
+}
+
+uint8_t cmd_getPasswordSafeSetSlotData_1(uint8_t *report,uint8_t *output)
+{
+    uint32_t Ret_u32;
+
+    // Slot name, Slot password. Don't write it into flash
+    Ret_u32 = PWS_WriteSlotData_1 (report[1],&report[2],&report[2+PWS_SLOTNAME_LENGTH]);
+
+    if (TRUE == Ret_u32)
+    {
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
+    }
+    else
+    {
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_NOT_AUTHORIZED;
+    }
+
+    return (0);
+}
+
+uint8_t cmd_getPasswordSafeSetSlotData_2(uint8_t *report,uint8_t *output)
+{
+    u32 Ret_u32;
+
+    // Slot login name and write to flash
+    Ret_u32 = PWS_WriteSlotData_2 (report[1], &report[2]);
+
+    if (TRUE == Ret_u32)
+    {
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
+    }
+    else
+    {
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_NOT_AUTHORIZED;
+    }
+
+    return (0);
+}
+
+uint8_t cmd_getPasswordSafeEraseSlot(uint8_t *report,uint8_t *output)
+{
+    u32 Ret_u32;
+
+    Ret_u32 = PWS_EraseSlot (report[1]);
+    if (TRUE == Ret_u32)
+    {
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
+    }
+    else
+    {
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_NOT_AUTHORIZED;
+    }
+
+    return (0);
+}
+
+uint8_t cmd_getPasswordSafeEnable(uint8_t *report,uint8_t *output)
+{
+    u32 Ret_u32;
+
+    Ret_u32 = PWS_EnableAccess (&report[1]);
+    if (TRUE == Ret_u32)
+    {
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
+    }
+    else
+    {
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
+    }
+
+    return (0);
+}
+
+uint8_t cmd_getPasswordSafeInitKey(uint8_t *report,uint8_t *output)
+{
+    u32 Ret_u32;
+
+    Ret_u32 = PWS_InitKey ();
+    if (TRUE == Ret_u32)
+    {
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
+    }
+    else
+    {
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_NOT_AUTHORIZED;
+    }
+
+    return (0)
+}
+
+uint8_t cmd_getPasswordSafeSendData(uint8_t *report,uint8_t *output)
+{
+    u32 Ret_u32;
+
+    Ret_u32 = PWS_SendData (report[1],report[2]);
+    if (TRUE == Ret_u32)
+    {
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
+    }
+    else
+    {
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_NOT_AUTHORIZED;
+    }
+
+    return (0);
+}
+
 
 //START - OTP Test Routine --------------------------------
 /*

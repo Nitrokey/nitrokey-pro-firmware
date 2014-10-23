@@ -36,7 +36,16 @@
 #define CMD_USER_AUTHENTICATE 0x0E
 #define CMD_GET_USER_PASSWORD_RETRY_COUNT 0x0F
 #define CMD_USER_AUTHORIZE 0x10
-
+#define CMD_GET_PW_SAFE_SLOT_STATUS       0x60
+#define CMD_GET_PW_SAFE_SLOT_NAME         0x61
+#define CMD_GET_PW_SAFE_SLOT_PASSWORD     0x62
+#define CMD_GET_PW_SAFE_SLOT_LOGINNAME    0x63
+#define CMD_SET_PW_SAFE_SLOT_DATA_1       0x64
+#define CMD_SET_PW_SAFE_SLOT_DATA_2       0x65
+#define CMD_PW_SAFE_ERASE_SLOT            0x66
+#define CMD_PW_SAFE_ENABLE                0x67
+#define CMD_PW_SAFE_INIT_KEY              0x68
+#define CMD_PW_SAFE_SEND_DATA             0x69
 
 #define CMD_DATA_OFFSET 0x01
 
@@ -193,6 +202,18 @@ uint8_t cmd_user_authenticate(uint8_t *report,uint8_t *output);
 uint8_t cmd_user_authorize(uint8_t *report,uint8_t *output);
 uint8_t cmd_get_user_password_retry_count(uint8_t *report,uint8_t *output);
 uint8_t cmd_set_time(uint8_t *report,uint8_t *output);
+
+uint8_t cmd_getPasswordSafeStatus(uint8_t *report,uint8_t *output);
+uint8_t cmd_getPasswordSafeSlotName(uint8_t *report,uint8_t *output);
+uint8_t cmd_getPasswordSafeSlotPassword(uint8_t *report,uint8_t *output);
+uint8_t cmd_getPasswordSafeSlotLoginName(uint8_t *report,uint8_t *output);
+uint8_t cmd_getPasswordSafeSetSlotData_1(uint8_t *report,uint8_t *output);
+uint8_t cmd_getPasswordSafeSetSlotData_2(uint8_t *report,uint8_t *output);
+uint8_t cmd_getPasswordSafeEraseSlot(uint8_t *report,uint8_t *output);
+uint8_t cmd_getPasswordSafeEnable(uint8_t *report,uint8_t *output);
+uint8_t cmd_getPasswordSafeInitKey(uint8_t *report,uint8_t *output);
+uint8_t cmd_getPasswordSafeSendData(uint8_t *report,uint8_t *output);
+
 //START - OTP Test Routine --------------------------------
 /*
 uint8_t cmd_test_counter(uint8_t *report,uint8_t *output);
