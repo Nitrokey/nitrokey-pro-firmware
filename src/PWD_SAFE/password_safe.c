@@ -39,9 +39,10 @@
 #include <stdlib.h>
 
 //#include "global.h"
-//#include "tools.h"
+#include "tools.h"
 //#include "TIME_MEASURING.h"
 
+#include "CcidLocalAccess.h"
 #include "smartcard.h"
 #include "password_safe.h"
 //#include "HiddenVolume.h"
@@ -50,8 +51,8 @@
 //#include "CCID/USART/ISO7816_Prot_T1.h"
 //#include "CCID/LOCAL_ACCESS/OpenPGP_V20.h"
 //#include "USB_CCID/USB_CCID.h"
-//#include "FlashStorage.h"
-//#include "HandleAesStorageKey.h"
+#include "FlashStorage.h"
+#include "HandleAesStorageKey.h"
 //#include "OTP/keyboard.h"
 //#include "LED_test.h"
 
@@ -165,9 +166,9 @@ u8 PWS_WriteSlot (u8 Slot_u8, typePasswordSafeSlot_st *Slot_st)
 
 // Encrypt data (max 256 byte per encryption)
   void* Slot_st_encrypted = malloc(PWS_SLOT_LENGTH);
-  aes_context *aes_ctx;
-  aes_setkey_enc (aes_ctx, AesKeyPointer_pu8, 256);
-  aes_crypt_ecb (aes_ctx, AES_ENCRYPT, (unsigned char*)&Slot_st, (unsigned char*)Slot_st_encrypted);
+  aes_context aes_ctx;
+  aes_setkey_enc (&aes_ctx, AesKeyPointer_pu8, 256);
+  aes_crypt_ecb (&aes_ctx, AES_ENCRYPT, (unsigned char*)&Slot_st, (unsigned char*)Slot_st_encrypted);
   // AES_StorageKeyEncryption (PWS_SLOT_LENGTH, (void*)Slot_st, AesKeyPointer_pu8, AES_PMODE_CIPHER);
 
 #ifdef ENABLE_IBN_PWS_TESTS_ENCRYPTION
@@ -182,7 +183,7 @@ u8 PWS_WriteSlot (u8 Slot_u8, typePasswordSafeSlot_st *Slot_st)
 
 // Write to flash
   p = (void*)Slot_st_encrypted;
-  flashc_memcpy ((void*)WritePointer_pu8,p,PWS_SLOT_LENGTH,TRUE);
+  // flashc_memcpy ((void*)WritePointer_pu8,p,PWS_SLOT_LENGTH,TRUE);
 
   //LED_GreenOff ();
 
@@ -245,9 +246,9 @@ u8 PWS_EraseSlot (u8 Slot_u8)
 
 // Encrypt data (max 256 byte per encryption) 
   void* Slot_st_encrypted = malloc(PWS_SLOT_LENGTH);
-  aes_context *aes_ctx;
-  aes_setkey_enc (aes_ctx, AesKeyPointer_pu8, 256);
-  aes_crypt_ecb (aes_ctx, AES_ENCRYPT, (unsigned char*)&Slot_st, (unsigned char*)Slot_st_encrypted);
+  aes_context aes_ctx;
+  aes_setkey_enc (&aes_ctx, AesKeyPointer_pu8, 256);
+  aes_crypt_ecb (&aes_ctx, AES_ENCRYPT, (unsigned char*)&Slot_st, (unsigned char*)Slot_st_encrypted);
 
   // AES_StorageKeyEncryption (PWS_SLOT_LENGTH,(void*)&Slot_st,AesKeyPointer_pu8, AES_PMODE_CIPHER);
 
@@ -262,7 +263,7 @@ u8 PWS_EraseSlot (u8 Slot_u8)
 
 // Write to flash
   p = (void*)&Slot_st_encrypted;
-  flashc_memcpy ((void*)WritePointer_pu8,p,PWS_SLOT_LENGTH,TRUE);
+  // flashc_memcpy ((void*)WritePointer_pu8,p,PWS_SLOT_LENGTH,TRUE);
 
   //LED_GreenOff ();
 
@@ -314,9 +315,9 @@ u8 PWS_ReadSlot (u8 Slot_u8, typePasswordSafeSlot_st *Slot_st)
 
 // Decrypt data (max 256 byte per encryption)  
   void* Slot_st_decrypted = malloc(PWS_SLOT_LENGTH);
-  aes_context *aes_ctx;
-  aes_setkey_enc (aes_ctx, AesKeyPointer_pu8, 256);
-  aes_crypt_ecb (aes_ctx, AES_DECRYPT, (unsigned char*)&Slot_st, (unsigned char*)Slot_st_decrypted);
+  aes_context aes_ctx;
+  aes_setkey_enc (&aes_ctx, AesKeyPointer_pu8, 256);
+  aes_crypt_ecb (&aes_ctx, AES_DECRYPT, (unsigned char*)&Slot_st, (unsigned char*)Slot_st_decrypted);
 
 //  AES_StorageKeyEncryption (PWS_SLOT_LENGTH,(void*)Slot_st,AesKeyPointer_pu8, AES_PMODE_DECIPHER);
 
