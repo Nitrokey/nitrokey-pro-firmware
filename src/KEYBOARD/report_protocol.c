@@ -158,24 +158,34 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 	
         // Password Safe functions		
         case CMD_GET_PW_SAFE_SLOT_STATUS:
+            cmd_getPasswordSafeStatus(report, output);
             break;
         case CMD_GET_PW_SAFE_SLOT_NAME:
+            cmd_getPasswordSafeSlotName(report, output);
             break;
         case CMD_GET_PW_SAFE_SLOT_PASSWORD:
+            cmd_getPasswordSafeSlotPassword(report, output);
             break;
         case CMD_GET_PW_SAFE_SLOT_LOGINNAME:
+            cmd_getPasswordSafeSlotLoginName(report, output);
             break;
         case CMD_SET_PW_SAFE_SLOT_DATA_1:
+            cmd_getPasswordSafeSetSlotData_1(report, output);
             break;
         case CMD_SET_PW_SAFE_SLOT_DATA_2:
+            cmd_getPasswordSafeSetSlotData_2(report, output);
             break;
         case CMD_PW_SAFE_ERASE_SLOT:
+            cmd_getPasswordSafeEraseSlot(report, output);
             break;
         case CMD_PW_SAFE_ENABLE:
+            cmd_getPasswordSafeEnable(report, output);
             break;
         case CMD_PW_SAFE_INIT_KEY:
+            cmd_getPasswordSafeInitKey(report, output);
             break;
         case CMD_PW_SAFE_SEND_DATA:
+            cmd_getPasswordSafeSendData(report, output);
             break;
 
 
@@ -328,42 +338,42 @@ uint8_t cmd_read_slot_name(uint8_t *report,uint8_t *output){
 uint8_t cmd_read_slot(uint8_t *report,uint8_t *output){
 	
 	uint8_t slot_no=report[1];
-        uint64_t counter;
+    uint64_t counter;
 
-        if (slot_no>=0x10&&slot_no<=0x10+NUMBER_OF_HOTP_SLOTS){//HOTP slot
-                slot_no=slot_no&0x0F;
-                uint8_t is_programmed=*((uint8_t *)(hotp_slots[slot_no]));
-                if (is_programmed==0x01){
-                        memcpy(output+OUTPUT_CMD_RESULT_OFFSET,(uint8_t *)(hotp_slots[slot_no]+SLOT_NAME_OFFSET),15);
-            		memcpy(output+OUTPUT_CMD_RESULT_OFFSET+15,(uint8_t *)(hotp_slots[slot_no]+CONFIG_OFFSET),1);
-                        memcpy(output+OUTPUT_CMD_RESULT_OFFSET+16,(uint8_t *)(hotp_slots[slot_no]+TOKEN_ID_OFFSET),13);
-                        counter=get_counter_value(hotp_slot_counters[slot_no]);
-                        memcpy(output+OUTPUT_CMD_RESULT_OFFSET+29,&counter,8);
-	        } else {
-                        output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_SLOT_NOT_PROGRAMMED;
-                }
+    if (slot_no>=0x10&&slot_no<=0x10+NUMBER_OF_HOTP_SLOTS){//HOTP slot
+            slot_no=slot_no&0x0F;
+            uint8_t is_programmed=*((uint8_t *)(hotp_slots[slot_no]));
+            if (is_programmed==0x01){
+                    memcpy(output+OUTPUT_CMD_RESULT_OFFSET,(uint8_t *)(hotp_slots[slot_no]+SLOT_NAME_OFFSET),15);
+                memcpy(output+OUTPUT_CMD_RESULT_OFFSET+15,(uint8_t *)(hotp_slots[slot_no]+CONFIG_OFFSET),1);
+                    memcpy(output+OUTPUT_CMD_RESULT_OFFSET+16,(uint8_t *)(hotp_slots[slot_no]+TOKEN_ID_OFFSET),13);
+                    counter=get_counter_value(hotp_slot_counters[slot_no]);
+                    memcpy(output+OUTPUT_CMD_RESULT_OFFSET+29,&counter,8);
+        } else {
+                    output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_SLOT_NOT_PROGRAMMED;
+            }
 
-        }
-        else if (slot_no>=0x20&&slot_no<=0x20+NUMBER_OF_TOTP_SLOTS){//TOTP slot
-                slot_no=slot_no&0x0F;
-                uint8_t is_programmed=*((uint8_t *)(totp_slots[slot_no]));
-                if (is_programmed==0x01){
-                        memcpy(output+OUTPUT_CMD_RESULT_OFFSET,(uint8_t *)(totp_slots[slot_no]+SLOT_NAME_OFFSET),15);
-			memcpy(output+OUTPUT_CMD_RESULT_OFFSET+15,(uint8_t *)(totp_slots[slot_no]+CONFIG_OFFSET),1);
-                        memcpy(output+OUTPUT_CMD_RESULT_OFFSET+16,(uint8_t *)(totp_slots[slot_no]+TOKEN_ID_OFFSET),13);
-			memcpy(output+OUTPUT_CMD_RESULT_OFFSET+29,(uint8_t *)(totp_slots[slot_no]+INTERVAL_OFFSET),2);
-                } else {
-                        output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_SLOT_NOT_PROGRAMMED;
-                }
+    }
+    else if (slot_no>=0x20&&slot_no<=0x20+NUMBER_OF_TOTP_SLOTS){//TOTP slot
+        slot_no=slot_no&0x0F;
+        uint8_t is_programmed=*((uint8_t *)(totp_slots[slot_no]));
+        if (is_programmed==0x01){
+                    memcpy(output+OUTPUT_CMD_RESULT_OFFSET,(uint8_t *)(totp_slots[slot_no]+SLOT_NAME_OFFSET),15);
+        memcpy(output+OUTPUT_CMD_RESULT_OFFSET+15,(uint8_t *)(totp_slots[slot_no]+CONFIG_OFFSET),1);
+                    memcpy(output+OUTPUT_CMD_RESULT_OFFSET+16,(uint8_t *)(totp_slots[slot_no]+TOKEN_ID_OFFSET),13);
+        memcpy(output+OUTPUT_CMD_RESULT_OFFSET+29,(uint8_t *)(totp_slots[slot_no]+INTERVAL_OFFSET),2);
+            } else {
+                    output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_SLOT_NOT_PROGRAMMED;
+            }
 
-        }
-        else{
-                output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_SLOT;
+    }
+    else{
+            output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_SLOT;
 
-        }
+    }
 
 
-        return 0;
+    return 0;
 }
 
 
@@ -481,65 +491,57 @@ uint8_t cmd_first_authenticate(uint8_t *report,uint8_t *output){
 
 uint8_t cmd_user_authenticate(uint8_t *report,uint8_t *output){
 
-        uint8_t res=1;
-        uint8_t user_password[26];
+    uint8_t res=1;
+    uint8_t user_password[26];
 
+    memset(user_password,0,26);
+    memcpy(user_password,report+1,25);
 
+    res=userAuthenticate(user_password);
 
-                memset(user_password,0,26);
-
-                memcpy(user_password,report+1,25);
-
-
-                res=userAuthenticate(user_password);
-
-                if (res==0){
-                        memcpy(temp_user_password,report+26,25);
-                        tmp_user_password_set=1;
-                        getAID();
-                        return 0;
-                }
-                else{
-                        output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_PASSWORD;
-                        return 1; //wrong card password
-                }
-
-
+    if (res==0){
+        memcpy(temp_user_password,report+26,25);
+        tmp_user_password_set=1;
+        getAID();
+        return 0;
+    }
+    else{
+        output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_PASSWORD;
+        return 1; //wrong card password
+    }
 }
 
 
 uint8_t cmd_authorize(uint8_t *report,uint8_t *output){
 	
 	if (tmp_password_set==1){
-	
-	if (memcmp(report+5,temp_password,25)==0){	
-	authorized_crc=getu32(report+1);
-	return 0;
-	} else {	
-	output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_PASSWORD;
-	return 1;
-	}
+        
+        if (memcmp(report+5,temp_password,25)==0){	
+            authorized_crc=getu32(report+1);
+            return 0;
+        } else {	
+            output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_PASSWORD;
+            return 1;
+	    }
 	}
 
   	return 1;
-	
 }
 
 uint8_t cmd_user_authorize(uint8_t *report,uint8_t *output){
 
-        if (tmp_user_password_set==1){
+    if (tmp_user_password_set==1){
 
         if (memcmp(report+5,temp_user_password,25)==0){
-        authorized_user_crc=getu32(report+1);
-        return 0;
+            authorized_user_crc=getu32(report+1);
+            return 0;
         } else {
-        output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_PASSWORD;
+            output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_PASSWORD;
         return 1;
         }
-        }
+    }
 
 	return 1;
-
 }
 
 uint8_t cmd_set_time(uint8_t *report,uint8_t *output){
@@ -729,7 +731,7 @@ uint8_t cmd_getPasswordSafeInitKey(uint8_t *report,uint8_t *output)
         output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_NOT_AUTHORIZED;
     }
 
-    return (0)
+    return (0);
 }
 
 uint8_t cmd_getPasswordSafeSendData(uint8_t *report,uint8_t *output)
