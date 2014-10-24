@@ -47,6 +47,8 @@
 #define CMD_PW_SAFE_INIT_KEY              0x68
 #define CMD_PW_SAFE_SEND_DATA             0x69
 
+#define CMD_DETECT_SC_AES   0x71
+
 #define CMD_DATA_OFFSET 0x01
 
 #define STATUS_READY 0x00
@@ -54,14 +56,15 @@
 #define STATUS_ERROR 0x02
 #define STATUS_RECEIVED_REPORT 0x03
 
-#define CMD_STATUS_OK 0
-#define CMD_STATUS_WRONG_CRC 1
-#define CMD_STATUS_WRONG_SLOT 2
-#define CMD_STATUS_SLOT_NOT_PROGRAMMED 3
-#define CMD_STATUS_WRONG_PASSWORD 4
-#define CMD_STATUS_NOT_AUTHORIZED 5
-#define CMD_STATUS_TIMESTAMP_WARNING 6
-#define CMD_STATUS_NO_NAME_ERROR 7
+#define CMD_STATUS_OK                   0
+#define CMD_STATUS_WRONG_CRC            1
+#define CMD_STATUS_WRONG_SLOT           2
+#define CMD_STATUS_SLOT_NOT_PROGRAMMED  3
+#define CMD_STATUS_WRONG_PASSWORD       4
+#define CMD_STATUS_NOT_AUTHORIZED       5
+#define CMD_STATUS_TIMESTAMP_WARNING    6
+#define CMD_STATUS_NO_NAME_ERROR        7
+#define CMD_STATUS_NOT_SUPPORTED        8
 
 /*
 Output report
@@ -213,6 +216,7 @@ uint8_t cmd_getPasswordSafeEraseSlot(uint8_t *report,uint8_t *output);
 uint8_t cmd_getPasswordSafeEnable(uint8_t *report,uint8_t *output);
 uint8_t cmd_getPasswordSafeInitKey(uint8_t *report,uint8_t *output);
 uint8_t cmd_getPasswordSafeSendData(uint8_t *report,uint8_t *output);
+uint8_t cmd_detectSmartCardAES(uint8_t *report, uint8_t *output);
 
 //START - OTP Test Routine --------------------------------
 /*
