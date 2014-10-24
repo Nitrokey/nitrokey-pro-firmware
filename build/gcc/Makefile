@@ -68,6 +68,7 @@ TARGET = crypto
 SRC = 		../../src/main.c                                         \
 			../../src/hw_config.c                                         \
 			../../src/test_code.c                                         \
+			../../src/tools.c	\
 			../../src/memory_ops.c			\
 			../../src/CCID/Ccid_usb.c                                         \
 			../../src/CCID/Ifd_protocol.c                                         \
@@ -121,6 +122,9 @@ SRC = 		../../src/main.c                                         \
 			../../src/USB/usb_bot.c                                         \
 			../../src/USB/usb_pwr.c                                         \
 			../../src/USB/usb_istr.c                                         \
+			../../src/PWD_SAFE/FlashStorage.c	\
+			../../src/PWD_SAFE/HandleAesStorageKey.c	\
+			../../src/PWD_SAFE/password_safe.c	\
 
 			
 # List C source files here which must be compiled in ARM-Mode.
