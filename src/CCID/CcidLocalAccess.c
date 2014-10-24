@@ -712,4 +712,36 @@ uint8_t getUserPasswordRetryCount(){
         return tSCT.cAPDU[4];
 }
 
+uint8_t isAesSupported (void) {
+
+    InitSCTStruct (&tSCT);
+    
+    CcidSelectOpenPGPApp();
+    
+ 	unsigned short cRet;
+
+    /* TODO: First we must authenticate the user */
+
+
+    tSCT.cAPDULength = 17;
+	tSCT.cAPDU[CCID_CLA] = 0x00;
+	tSCT.cAPDU[CCID_INS] = 0x2A;
+	tSCT.cAPDU[CCID_P1]  = 0x80;
+	tSCT.cAPDU[CCID_P2]  = 0x86;
+	tSCT.cAPDU[CCID_LC]  = tSCT.cAPDULength;
+
+    char test_data[16] = {0x02, // Use AES to DECIPHER
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F};
+
+	strcpy (( char*) &tSCT.cAPDU[CCID_DATA], test_data);
+
+	cRet = SendAPDU (&tSCT);
+
+    // TODO: What happens if there is no AES key ??
+    
+    if (cRet == APDU_ANSWER_COMMAND_CORRECT) 
+        return TRUE;
+    else
+        return FALSE;
+}
 

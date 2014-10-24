@@ -188,6 +188,9 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
             cmd_getPasswordSafeSendData(report, output);
             break;
 
+        case CMD_DETECT_SC_AES:
+            cmd_detectSmartCardAES(report, output);
+            break;
 
         //START - OTP Test Routine --------------------------------
             /*
@@ -751,6 +754,22 @@ uint8_t cmd_getPasswordSafeSendData(uint8_t *report,uint8_t *output)
     return (0);
 }
 
+uint8_t cmd_detectSmartCardAES(uint8_t *report, uint8_t *output)
+{
+    u32 Ret_u32;
+    
+    Ret_u32 = isAesSupported ();
+
+    if (TRUE == Ret_u32)
+    {
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
+    }
+    else
+    {
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_NOT_SUPPORTED;
+    }
+    return (0);
+}
 
 //START - OTP Test Routine --------------------------------
 /*

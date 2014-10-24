@@ -58,6 +58,6 @@ uint8_t userAuthenticate(uint8_t *password);
 uint8_t getPasswordRetryCount(void);
 uint8_t getUserPasswordRetryCount(void);
 uint32_t getRandomNumber (uint32_t Size_u32, uint8_t *Data_pu8);
-uint8_t isAesSupported();
+uint8_t isAesSupported(void);
 #endif /* CCID_LOCAL_ACCESS */
 
