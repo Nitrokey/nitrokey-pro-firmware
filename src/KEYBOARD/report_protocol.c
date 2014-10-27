@@ -500,7 +500,7 @@ uint8_t cmd_user_authenticate(uint8_t *report,uint8_t *output){
     memset(user_password,0,26);
     memcpy(user_password,report+1,25);
 
-    res=userAuthenticate(user_password);
+    res = res=userAuthenticate(user_password);
 
     if (res==0){
         memcpy(temp_user_password,report+26,25);
@@ -757,7 +757,18 @@ uint8_t cmd_getPasswordSafeSendData(uint8_t *report,uint8_t *output)
 uint8_t cmd_detectSmartCardAES(uint8_t *report, uint8_t *output)
 {
     u32 Ret_u32;
-    
+    uint8_t user_password[26];
+
+    memset(user_password,0,26);
+    memcpy(user_password, report, 26);
+
+
+    Ret_u32 = testSendUserPW2(user_password);
+    if (FALSE == Ret_u32) {
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
+        return (0);
+    }
+
     Ret_u32 = isAesSupported ();
 
     if (TRUE == Ret_u32)
