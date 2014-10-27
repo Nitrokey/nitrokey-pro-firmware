@@ -28,7 +28,7 @@
  */
 
 //#include "polarssl/config.h"
-//#define POLARSSL_AES_C
+#define POLARSSL_AES_C
 //#define POLARSSL_SELF_TEST
 
 #if defined(POLARSSL_AES_C)
