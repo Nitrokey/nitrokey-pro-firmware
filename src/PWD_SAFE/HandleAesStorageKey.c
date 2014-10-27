@@ -24,7 +24,7 @@
  *      Author: RB
  */
 
-#include <stdio.h>
+//#include <stdio.h>
 #include <stdlib.h>
 #include "string.h"
 #include "tools.h"
@@ -161,7 +161,7 @@ u32 BuildNewAesStorageKey_u32 (u8 *MasterKey_pu8)
   DelayMs (10);
 
 /* SC AES key decryption */
-  if (FALSE == LA_OpenPGP_V20_Test_ScAESKey (AES_KEYSIZE_256_BIT,Buffer_au8))
+  if (FALSE == testScAesKey (AES_KEYSIZE_256_BIT,Buffer_au8))
   {
     return (FALSE);
   }
@@ -259,7 +259,7 @@ u32 BuildNewAesMasterKey_u32 (u8 *AdminPW_pu8,u8 *MasterKey_pu8)
   DelayMs (10);
 
 // Store master key in smartcard
-  if (FALSE == LA_OpenPGP_V20_Test_SendAESMasterKey (AES_KEYSIZE_256_BIT,MasterKey_pu8))
+  if (FALSE == sendAESMasterKey (AES_KEYSIZE_256_BIT,MasterKey_pu8))
   {
 #ifdef LOCAL_DEBUG
   //CI_TickLocalPrintf ("SendAESMasterKey fails\r\n");
@@ -448,7 +448,7 @@ u32 DecryptKeyViaSmartcard_u32 (u8 *StorageKey_pu8)
 #endif
 
 /* SC AES key decryption */
-  if (FALSE == LA_OpenPGP_V20_Test_ScAESKey (AES_KEYSIZE_256_BIT,StorageKey_pu8))
+  if (FALSE == testScAesKey (AES_KEYSIZE_256_BIT,StorageKey_pu8))
   {
 #ifdef LOCAL_DEBUG
     //CI_LocalPrintf ("Smartcard access failed\r\n");
@@ -486,7 +486,7 @@ u32 DecryptKeyViaSmartcard_u32 (u8 *StorageKey_pu8)
 u32 GetStorageKey_u32 (u8 *UserPW_pu8, u8 *StorageKey_pu8)
 {
 /* Enable smartcard */
-  if (FALSE == LA_OpenPGP_V20_Test_SendUserPW2 (UserPW_pu8))
+  if (FALSE == testSendUserPW2 (UserPW_pu8))
   {
     return (FALSE);
   }

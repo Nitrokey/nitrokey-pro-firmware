@@ -34,7 +34,7 @@
 //#include "flashc.h"
 //#include "string.h"
 #include "aes.h"
-#include "stdio.h"
+//#include "stdio.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -264,6 +264,7 @@ u8 PWS_EraseSlot (u8 Slot_u8)
 // Write to flash
   p = (void*)&Slot_st_encrypted;
   // flashc_memcpy ((void*)WritePointer_pu8,p,PWS_SLOT_LENGTH,TRUE);
+  write_data_to_flash (Slot_st_encrypted, PWS_SLOT_LENGTH, WritePointer_pu8);
 
   //LED_GreenOff ();
 
@@ -660,7 +661,7 @@ u8 PWS_EnableAccess (u8 *password)
 
   CI_LocalPrintf ("PWS_EnableAccess: ");
 
-  Ret_u32 = LA_SC_SendVerify (2,(unsigned char *)password); // 2 = user pw
+  Ret_u32 = CcidVerifyPin (2,(unsigned char *)password); // 2 = user pw
   if (TRUE != Ret_u32)
   {
     CI_LocalPrintf (" *** FAIL ***\r\n");
