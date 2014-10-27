@@ -870,9 +870,6 @@ uint8_t isAesSupported (void) {
 
  	unsigned short cRet;
 
-    /* TODO: First we must authenticate the user */
-
-
     tSCT.cAPDULength = 17;
 	tSCT.cAPDU[CCID_CLA] = 0x00;
 	tSCT.cAPDU[CCID_INS] = 0x2A;
@@ -887,12 +884,24 @@ uint8_t isAesSupported (void) {
 
 	cRet = SendAPDU (&tSCT);
 
-    // TODO: What happens if there is no AES key ??
+    /* Possible answers and intepretations:
+    *
+    * APDU_ANSWER_COMMAND_CORRECT (SW1=90, SW2=00)
+    *   Successfully used AES module to decipher => AES module exists
+    *
+    * APDU_ANSWER_REF_DATA_NOT_FOUND (SW1=6A, SW2=88)
+    *   AES key not found => AES module exists, and the error is at the non existing key
+    *
+    * APDU_ANSWER_USE_CONDIT_NOT_SATISFIED (SW1=6A, SW2=85)
+    *   AES module doen't exist
+    *
+    */
 
-    if (cRet == APDU_ANSWER_COMMAND_CORRECT)
-        return TRUE;
-    else
+    // Determine if AES module exists
+    if (cRet == APDU_ANSWER_USE_CONDIT_NOT_SATISFIED)
         return FALSE;
+    else
+        return TRUE;
 }
 
 uint8_t sendAESMasterKey (int nLen, unsigned char *pcMasterKey)
