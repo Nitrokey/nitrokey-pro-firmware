@@ -107,10 +107,11 @@ u8 ReadScId (u32 *ScId_u32);
 */
 u8 WriteXorPatternToFlash (u8 *XorPattern_pu8);
 u8 ReadXorPatternFromFlash (u8 *XorPattern_pu8);
-/*
+
 u8 WritePasswordSafeKey (u8 *data);
 u8 ReadPasswordSafeKey (u8 *data);
 
+/*
 u8 WriteNewSdCardFoundToFlash (u32 *SdId_u32);
 u8 SetSdCardFilledWithRandomsToFlash (void);
 u8 ClearNewSdCardFoundToFlash (void);
