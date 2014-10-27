@@ -48,6 +48,13 @@
 
 #define APDU_MAX_RESPONSE_LEN       500
 
+
+// Definitions for APDU
+#define ISO7816_APDU_MAX_RESPONSE_LEN   500
+#define ISO7816_APDU_SEND_HEADER_LEN      5
+#define ISO7816_MAX_APDU_DATA           500
+#define ISO7816_APDU_OFERHEAD             4         // for Le+Lc and checksum
+
 void CcidLocalAccessTest (void);
 
 int getAID(void);
@@ -59,5 +66,8 @@ uint8_t getPasswordRetryCount(void);
 uint8_t getUserPasswordRetryCount(void);
 uint32_t getRandomNumber (uint32_t Size_u32, uint8_t *Data_pu8);
 uint8_t isAesSupported(void);
+uint8_t sendAESMasterKey (int nLen, unsigned char *pcMasterKey);
+uint8_t testScAesKey(int nLen, unsigned char *pcKey);
+uint8_t testSendUserPW2 (unsigned char *pcPW);
 #endif /* CCID_LOCAL_ACCESS */
 
