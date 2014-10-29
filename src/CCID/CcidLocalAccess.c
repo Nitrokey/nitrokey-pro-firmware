@@ -863,26 +863,29 @@ uint8_t getUserPasswordRetryCount(){
 }
 
 uint8_t isAesSupported (void) {
-
     InitSCTStruct (&tSCT);
 
     CcidSelectOpenPGPApp();
 
  	unsigned short cRet;
 
-    tSCT.cAPDULength = 17;
 	tSCT.cAPDU[CCID_CLA] = 0x00;
 	tSCT.cAPDU[CCID_INS] = 0x2A;
 	tSCT.cAPDU[CCID_P1]  = 0x80;
 	tSCT.cAPDU[CCID_P2]  = 0x86;
-	tSCT.cAPDU[CCID_LC]  = tSCT.cAPDULength;
+	tSCT.cAPDU[CCID_LC]  = 17;
 
-    char test_data[16] = {0x02, // Use AES to DECIPHER
-        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F};
+    char test_data[17] = {0x02, // Use AES to DECIPHER
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 
+        0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F};
+	memcpy (( char*) &tSCT.cAPDU[CCID_DATA], test_data, 17);
+    tSCT.cAPDU[CCID_DATA+16] = 0;
+    tSCT.cAPDU[CCID_DATA+17] = 0;
+    tSCT.cAPDU[CCID_DATA+18] = 0;
 
-	strcpy (( char*) &tSCT.cAPDU[CCID_DATA], test_data);
-
+    tSCT.cAPDULength = 5 + 17;
 	cRet = SendAPDU (&tSCT);
+
 
     /* Possible answers and intepretations:
     *
@@ -892,16 +895,16 @@ uint8_t isAesSupported (void) {
     * APDU_ANSWER_REF_DATA_NOT_FOUND (SW1=6A, SW2=88)
     *   AES key not found => AES module exists, and the error is at the non existing key
     *
-    * APDU_ANSWER_USE_CONDIT_NOT_SATISFIED (SW1=6A, SW2=85)
+    * APDU_ANSWER_USE_CONDIT_NOT_SATISFIED (SW1=69, SW2=85)
     *   AES module doen't exist
     *
     */
 
     // Determine if AES module exists
-    if (cRet == APDU_ANSWER_USE_CONDIT_NOT_SATISFIED)
-        return FALSE;
-    else
+    if ( (APDU_ANSWER_COMMAND_CORRECT == cRet) || (APDU_ANSWER_REF_DATA_NOT_FOUND == cRet))
         return TRUE;
+    else
+        return FALSE;
 }
 
 uint8_t sendAESMasterKey (int nLen, unsigned char *pcMasterKey)
@@ -962,21 +965,20 @@ uint8_t testScAesKey (int nLen, unsigned char *pcKey)
 
 uint8_t testSendUserPW2 (unsigned char *pcPW)
 {
-  int nRet;
+  unsigned short nRet;
   int n;
 
   n = strlen ((char *)pcPW);
 
   //CI_LocalPrintf ("Send user password  : ");
   nRet = CcidVerifyPin (2, pcPW);
-  if (FALSE == nRet)
+  if (APDU_ANSWER_COMMAND_CORRECT == nRet)
   {
     //CI_LocalPrintf ("fail\n\r");
-    return (FALSE);
+    return (TRUE);
   }
   //CI_LocalPrintf ("OK \n\r");
 
-  return (TRUE);
+  return (FALSE);
 }
-
 

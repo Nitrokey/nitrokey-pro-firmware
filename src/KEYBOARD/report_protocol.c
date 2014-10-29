@@ -100,23 +100,23 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 			
 		case CMD_GET_CODE:
 			if(calculated_crc32==authorized_user_crc || *((uint8_t *)(SLOTS_PAGE1_ADDRESS+GLOBAL_CONFIG_OFFSET+3)) != 1)
-			cmd_get_code(report,output);
+                cmd_get_code(report,output);
 			else
-			not_authorized=1;			
+                not_authorized=1;			
 			break;
 			
 		case CMD_WRITE_CONFIG:
 			if (calculated_crc32==authorized_crc)
-			cmd_write_config(report,output);
+                cmd_write_config(report,output);
 			else
-			not_authorized=1;
+                not_authorized=1;
 			break;
 			
 		case CMD_ERASE_SLOT:
 			if (calculated_crc32==authorized_crc)
-			cmd_erase_slot(report,output);
+                cmd_erase_slot(report,output);
 			else
-			not_authorized=1;
+                not_authorized=1;
 			break;
 			
 		case CMD_FIRST_AUTHENTICATE:
@@ -128,8 +128,8 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 			break;
 		
 		case CMD_USER_AUTHORIZE:
-                        cmd_user_authorize(report,output);
-                        break;
+            cmd_user_authorize(report,output);
+            break;
 
 		case CMD_GET_PASSWORD_RETRY_COUNT:
 			cmd_get_password_retry_count(report,output);
@@ -146,11 +146,11 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 		
 		case CMD_GET_USER_PASSWORD_RETRY_COUNT:
 			cmd_get_user_password_retry_count(report,output);
-                        break;
+            break;
 
 		case CMD_USER_AUTHENTICATE:
 			cmd_user_authenticate(report,output);
-                        break;
+            break;
 
 		case CMD_SET_TIME:
 			cmd_set_time(report,output);
@@ -204,8 +204,9 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
             */
                 //END - OTP Test Routine ----------------------------------
 
-            default:
-                break;
+        default: // Non of the above cases was selected => unknown command
+            output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_UNKNOWN_COMMAND;
+            break;
 
             }
             
@@ -217,7 +218,7 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 
         }
         else
-        output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_CRC;
+            output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_CRC;
 
         CRC_ResetDR();
         calculated_crc32=CRC_CalcBlockCRC((uint32_t*) output, KEYBOARD_FEATURE_COUNT/4-1);
@@ -756,22 +757,21 @@ uint8_t cmd_getPasswordSafeSendData(uint8_t *report,uint8_t *output)
 
 uint8_t cmd_detectSmartCardAES(uint8_t *report, uint8_t *output)
 {
-    u32 Ret_u32;
-    uint8_t user_password[26];
+    unsigned short ret;
+    unsigned char user_password[26];
 
     memset(user_password,0,26);
-    memcpy(user_password, report, 26);
+    memcpy(user_password, report+1, 25);
 
-
-    Ret_u32 = testSendUserPW2(user_password);
-    if (FALSE == Ret_u32) {
+    ret = CcidVerifyPin (2, user_password);
+    if (APDU_ANSWER_COMMAND_CORRECT != ret) {
         output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
         return (0);
     }
 
-    Ret_u32 = isAesSupported ();
+    ret = isAesSupported ();
 
-    if (TRUE == Ret_u32)
+    if (TRUE == ret)
     {
         output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
     }
