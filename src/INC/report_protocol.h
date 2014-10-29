@@ -65,6 +65,7 @@
 #define CMD_STATUS_TIMESTAMP_WARNING    6
 #define CMD_STATUS_NO_NAME_ERROR        7
 #define CMD_STATUS_NOT_SUPPORTED        8
+#define CMD_STATUS_UNKNOWN_COMMAND      9
 
 /*
 Output report
