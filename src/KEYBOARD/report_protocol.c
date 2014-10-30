@@ -706,10 +706,22 @@ uint8_t cmd_getPasswordSafeEraseSlot(uint8_t *report,uint8_t *output)
 
 uint8_t cmd_getPasswordSafeEnable(uint8_t *report,uint8_t *output)
 {
-    u32 Ret_u32;
+    u8 ret;
 
-    Ret_u32 = PWS_EnableAccess (&report[1]);
-    if (TRUE == Ret_u32)
+    ret = PWS_EnableAccess (&report[1]);
+    if (CMD_STATUS_OK != ret)
+    {
+        output[OUTPUT_CMD_STATUS_OFFSET] = ret;
+    }
+    else
+    {
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
+    }
+
+    return 0;
+
+
+    if (TRUE == ret)
     {
         output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
     }
