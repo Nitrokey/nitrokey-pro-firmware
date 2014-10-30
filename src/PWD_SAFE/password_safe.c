@@ -45,6 +45,8 @@
 #include "CcidLocalAccess.h"
 #include "smartcard.h"
 #include "password_safe.h"
+#include "report_protocol.h"
+
 //#include "HiddenVolume.h"
 //#include "CCID/USART/ISO7816_USART.h"
 //#include "CCID/USART/ISO7816_ADPU.h"
@@ -630,6 +632,7 @@ u8 PWS_DecryptedPasswordSafeKey (void)
   ReadPasswordSafeKey (DecryptedPasswordSafeKey_au8);
 
 // Decrypt the slots key of the hidden volumes
+
   if (FALSE == DecryptKeyViaSmartcard_u32 (DecryptedPasswordSafeKey_au8))
   {
     return (FALSE);
@@ -657,27 +660,28 @@ u8 PWS_DecryptedPasswordSafeKey (void)
 
 u8 PWS_EnableAccess (u8 *password)
 {
-  u32 Ret_u32;
+  unsigned short ret;
 
   CI_LocalPrintf ("PWS_EnableAccess: ");
 
-  Ret_u32 = CcidVerifyPin (2,(unsigned char *)password); // 2 = user pw
-  if (TRUE != Ret_u32)
+  ret = CcidVerifyPin (2,(unsigned char *)password); // 2 = user pw
+  if (APDU_ANSWER_COMMAND_CORRECT != ret)
   {
     CI_LocalPrintf (" *** FAIL ***\r\n");
-    return (FALSE);
+    return CMD_STATUS_WRONG_PASSWORD;
   }
 
-  Ret_u32 = PWS_DecryptedPasswordSafeKey ();
-  if (TRUE != Ret_u32)
+  ret = PWS_DecryptedPasswordSafeKey ();
+
+  if (TRUE != ret)
   {
     CI_LocalPrintf (" *** FAIL ***. Can't decrypt key\r\n");
-    return (FALSE);
+    return FALSE;
   }
 
   CI_LocalPrintf ("OK\r\n");
 
-  return (TRUE);
+  return CMD_STATUS_OK;
 }
 
 
