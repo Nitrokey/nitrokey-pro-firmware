@@ -676,7 +676,7 @@ u8 PWS_EnableAccess (u8 *password)
   if (TRUE != ret)
   {
     CI_LocalPrintf (" *** FAIL ***. Can't decrypt key\r\n");
-    return FALSE;
+    return CMD_STATUS_AES_DEC_FAILED;
   }
 
   CI_LocalPrintf ("OK\r\n");
