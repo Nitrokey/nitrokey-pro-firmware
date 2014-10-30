@@ -709,28 +709,8 @@ uint8_t cmd_getPasswordSafeEnable(uint8_t *report,uint8_t *output)
     u8 ret;
 
     ret = PWS_EnableAccess (&report[1]);
-    if (CMD_STATUS_OK != ret)
-    {
-        output[OUTPUT_CMD_STATUS_OFFSET] = ret;
-    }
-    else
-    {
-        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
-    }
-
+    output[OUTPUT_CMD_STATUS_OFFSET] = ret;
     return 0;
-
-
-    if (TRUE == ret)
-    {
-        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
-    }
-    else
-    {
-        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
-    }
-
-    return (0);
 }
 
 uint8_t cmd_getPasswordSafeInitKey(uint8_t *report,uint8_t *output)
