@@ -484,6 +484,11 @@ int CcidAesDecSub (int nSendLength,unsigned char *cSendData,int nReceiveLength, 
 // Something to receive
   tSCT.cAPDU[CCID_DATA + 1 + nSendLength]      = nSendLength; // nReceiveLength;
 
+  tSCT.cAPDULength = 5              // APDU header
+                    +1              // AES key selector
+                    +nSendLength;   // Payload
+
+
   nRet = SendAPDU (&tSCT);
 
   n = tSCT.cAPDUAnswerLength;
@@ -526,6 +531,7 @@ uint8_t CcidAesDec (int nSendLength,unsigned char *cSendData,int nReceiveLength,
   {
     // Decrypt first 16 Byte
     nRet = CcidAesDecSub (16,cSendData,16,cReceiveData);
+
     if ( tSCT.cAPDUAnswerStatus != APDU_ANSWER_COMMAND_CORRECT )
     {
       return (FALSE);
@@ -945,6 +951,7 @@ uint8_t testScAesKey (int nLen, unsigned char *pcKey)
   memset (acBufferOut, 0, nLen);
 
   nRet = CcidAesDec ( nLen, pcKey, nLen, acBufferOut);
+
   if (TRUE == nRet)
   {
     //CI_LocalPrintf ("Decrypted AES key  : ");
