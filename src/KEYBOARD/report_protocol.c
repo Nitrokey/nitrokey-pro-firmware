@@ -170,10 +170,10 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
             cmd_getPasswordSafeSlotLoginName(report, output);
             break;
         case CMD_SET_PW_SAFE_SLOT_DATA_1:
-            cmd_getPasswordSafeSetSlotData_1(report, output);
+            cmd_setPasswordSafeSetSlotData_1(report, output);
             break;
         case CMD_SET_PW_SAFE_SLOT_DATA_2:
-            cmd_getPasswordSafeSetSlotData_2(report, output);
+            cmd_setPasswordSafeSetSlotData_2(report, output);
             break;
         case CMD_PW_SAFE_ERASE_SLOT:
             cmd_getPasswordSafeEraseSlot(report, output);
@@ -586,14 +586,14 @@ uint8_t cmd_getPasswordSafeStatus(uint8_t *report,uint8_t *output)
 
     Ret_u32 = PWS_GetAllSlotStatus (Data_u8);
     if (TRUE == Ret_u32)
-    {    
+    {
       memcpy ( &output[OUTPUT_CMD_RESULT_OFFSET], Data_u8, PWS_SLOT_COUNT);
       output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
-    }    
+    }
     else 
-    {    
+    {
       output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_NOT_AUTHORIZED;
-    }    
+    }
 
     return (0);
 }
@@ -649,7 +649,7 @@ uint8_t cmd_getPasswordSafeSlotLoginName(uint8_t *report,uint8_t *output)
     return (0);
 }
 
-uint8_t cmd_getPasswordSafeSetSlotData_1(uint8_t *report,uint8_t *output)
+uint8_t cmd_setPasswordSafeSetSlotData_1(uint8_t *report,uint8_t *output)
 {
     uint32_t Ret_u32;
 
@@ -668,7 +668,7 @@ uint8_t cmd_getPasswordSafeSetSlotData_1(uint8_t *report,uint8_t *output)
     return (0);
 }
 
-uint8_t cmd_getPasswordSafeSetSlotData_2(uint8_t *report,uint8_t *output)
+uint8_t cmd_setPasswordSafeSetSlotData_2(uint8_t *report,uint8_t *output)
 {
     u32 Ret_u32;
 
