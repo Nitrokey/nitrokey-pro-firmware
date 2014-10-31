@@ -167,11 +167,17 @@ u8 PWS_WriteSlot (u8 Slot_u8, typePasswordSafeSlot_st *Slot_st)
 #endif
 
 // Encrypt data (max 256 byte per encryption)
-  void* Slot_st_encrypted = malloc(PWS_SLOT_LENGTH);
+  unsigned char Slot_st_encrypted[PWS_SLOT_LENGTH];
   aes_context aes_ctx;
   aes_setkey_enc (&aes_ctx, AesKeyPointer_pu8, 256);
-  aes_crypt_ecb (&aes_ctx, AES_ENCRYPT, (unsigned char*)&Slot_st, (unsigned char*)Slot_st_encrypted);
-  // AES_StorageKeyEncryption (PWS_SLOT_LENGTH, (void*)Slot_st, AesKeyPointer_pu8, AES_PMODE_CIPHER);
+  int i;
+  for (i=0; i<PWS_SLOT_LENGTH; i+=16) {
+      aes_crypt_ecb (&aes_ctx, AES_ENCRYPT, 
+                    &(((unsigned char*)(Slot_st))[i]), 
+                    &(Slot_st_encrypted[i]));
+    }
+  
+  memcpy( Slot_st, Slot_st_encrypted, PWS_SLOT_LENGTH);
 
 #ifdef ENABLE_IBN_PWS_TESTS_ENCRYPTION
   CI_LocalPrintf ("PWS_WriteSlot encrypted  : ");
@@ -183,9 +189,12 @@ u8 PWS_WriteSlot (u8 Slot_u8, typePasswordSafeSlot_st *Slot_st)
 // Get write address
   WritePointer_pu8 = (u8*)(PWS_FLASH_START_ADDRESS + PWS_SLOT_LENGTH * Slot_u8);
 
+
 // Write to flash
   p = (void*)Slot_st_encrypted;
-  // flashc_memcpy ((void*)WritePointer_pu8,p,PWS_SLOT_LENGTH,TRUE);
+	FLASH_Unlock();
+	write_data_to_flash( p, PWS_SLOT_LENGTH, WritePointer_pu8);
+	FLASH_Lock();
 
   //LED_GreenOff ();
 
@@ -247,13 +256,16 @@ u8 PWS_EraseSlot (u8 Slot_u8)
 #endif
 
 // Encrypt data (max 256 byte per encryption) 
-  void* Slot_st_encrypted = malloc(PWS_SLOT_LENGTH);
+  unsigned char Slot_st_encrypted[PWS_SLOT_LENGTH];
   aes_context aes_ctx;
   aes_setkey_enc (&aes_ctx, AesKeyPointer_pu8, 256);
-  aes_crypt_ecb (&aes_ctx, AES_ENCRYPT, (unsigned char*)&Slot_st, (unsigned char*)Slot_st_encrypted);
-
-  // AES_StorageKeyEncryption (PWS_SLOT_LENGTH,(void*)&Slot_st,AesKeyPointer_pu8, AES_PMODE_CIPHER);
-
+  int i;
+  for (i=0; i<PWS_SLOT_LENGTH; i+=16) {
+      aes_crypt_ecb (&aes_ctx, AES_ENCRYPT,
+                    &(((unsigned char*)(&Slot_st))[i]), 
+                    &(Slot_st_encrypted[i]));
+    }
+  
 #ifdef ENABLE_IBN_PWS_TESTS_ENCRYPTION
   CI_LocalPrintf ("PWS_EraseSlot encrypted  : ");
   HexPrint (PWS_SLOT_LENGTH, &Slot_st_encrypted);
@@ -265,8 +277,9 @@ u8 PWS_EraseSlot (u8 Slot_u8)
 
 // Write to flash
   p = (void*)&Slot_st_encrypted;
-  // flashc_memcpy ((void*)WritePointer_pu8,p,PWS_SLOT_LENGTH,TRUE);
-  write_data_to_flash (Slot_st_encrypted, PWS_SLOT_LENGTH, WritePointer_pu8);
+    FLASH_Unlock();
+    write_data_to_flash (Slot_st_encrypted, PWS_SLOT_LENGTH, WritePointer_pu8);
+    FLASH_Lock();
 
   //LED_GreenOff ();
 
@@ -307,29 +320,38 @@ u8 PWS_ReadSlot (u8 Slot_u8, typePasswordSafeSlot_st *Slot_st)
   //LED_GreenOn ();
 
 // Get read address
-  ReadPointer_pu8 = (u8*)(PWS_FLASH_START_ADDRESS + PWS_SLOT_LENGTH * Slot_u8);
-  memcpy (Slot_st,ReadPointer_pu8,PWS_SLOT_LENGTH);
+  ReadPointer_pu8 = (u8*)(PWS_FLASH_START_ADDRESS + (PWS_SLOT_LENGTH * Slot_u8));
+  memcpy (Slot_st, ReadPointer_pu8, PWS_SLOT_LENGTH);
 
+/*
 #ifdef ENABLE_IBN_PWS_TESTS_ENCRYPTION
   CI_LocalPrintf ("PWS_ReadSlot encrypted  : ");
   HexPrint (PWS_SLOT_LENGTH, Slot_st);
   CI_LocalPrintf ("\n\r");
 #endif
+*/
 
-// Decrypt data (max 256 byte per encryption)  
-  void* Slot_st_decrypted = malloc(PWS_SLOT_LENGTH);
+// Decrypt data (max 256 byte per encryption)
+  unsigned char Slot_st_decrypted[PWS_SLOT_LENGTH];
   aes_context aes_ctx;
-  aes_setkey_enc (&aes_ctx, AesKeyPointer_pu8, 256);
-  aes_crypt_ecb (&aes_ctx, AES_DECRYPT, (unsigned char*)&Slot_st, (unsigned char*)Slot_st_decrypted);
+  aes_setkey_dec (&aes_ctx, AesKeyPointer_pu8, 256);
+  // TODO: Create aes_crypt_ecb with length as parameter and break the input internally
+  int i;
+  for (i=0; i<PWS_SLOT_LENGTH; i+=16) {
+      aes_crypt_ecb (&aes_ctx, AES_DECRYPT, 
+                    &(((unsigned char*)(Slot_st))[i]), 
+                    &(Slot_st_decrypted[i]));
+    }
+  
+   memcpy( (unsigned char*)(Slot_st), Slot_st_decrypted, PWS_SLOT_LENGTH);
 
-//  AES_StorageKeyEncryption (PWS_SLOT_LENGTH,(void*)Slot_st,AesKeyPointer_pu8, AES_PMODE_DECIPHER);
-
+/*
 #ifdef ENABLE_IBN_PWS_TESTS_ENCRYPTION
   CI_LocalPrintf ("PWS_ReadSlot decrypted  : ");
   HexPrint (PWS_SLOT_LENGTH, Slot_st_decrypted);
   CI_LocalPrintf ("\n\r");
 #endif
-
+*/
   //LED_GreenOff ();
 
   return (TRUE);
@@ -358,10 +380,10 @@ u8 PWS_GetAllSlotStatus (u8 *StatusArray_pu8)
 #elif (defined __ICCAVR32__)
   #pragma data_alignment = 4
 #endif
-  typePasswordSafeSlot_st Slot_st;
+  typePasswordSafeSlot_st Slot_st; 
 
-// Clear the output arry
-  memset (StatusArray_pu8,0,PWS_SLOT_COUNT);
+// Clear the output array
+  memset (StatusArray_pu8, 0, PWS_SLOT_COUNT);
 
 // Check for user password enable
   if (FALSE == PWS_GetDecryptedPasswordSafeKey(&AesKeyPointer_pu8))
@@ -370,7 +392,7 @@ u8 PWS_GetAllSlotStatus (u8 *StatusArray_pu8)
     return (FALSE);     // Aes key is not decrypted
   }
 
-  for (i=0;i<PWS_SLOT_COUNT;i++)
+  for (i=0; i<PWS_SLOT_COUNT; i++)
   {
     if (TRUE == PWS_ReadSlot (i, &Slot_st))
     {
@@ -527,9 +549,9 @@ u8 PWS_WriteSlotData_1 (u8 Slot_u8,u8 *Name_pu8, u8 *Password_pu8)
 // Clear the output array
   memset (&PWS_BufferSlot_st,0,sizeof (PWS_BufferSlot_st));
 
-  memcpy (PWS_BufferSlot_st.SlotName_au8,Name_pu8,PWS_SLOTNAME_LENGTH);
-  memcpy (PWS_BufferSlot_st.SlotPassword_au8,Password_pu8,PWS_PASSWORD_LENGTH);
-  memcpy (PWS_BufferSlot_st.SlotName_au8,Name_pu8,PWS_LOGINNAME_LENGTH);
+  memcpy (PWS_BufferSlot_st.SlotName_au8, Name_pu8, PWS_SLOTNAME_LENGTH);
+  memcpy (PWS_BufferSlot_st.SlotPassword_au8, Password_pu8, PWS_PASSWORD_LENGTH);
+  memcpy (PWS_BufferSlot_st.SlotName_au8, Name_pu8, PWS_LOGINNAME_LENGTH);
 
   return (TRUE);
 }
@@ -550,7 +572,7 @@ u8 PWS_WriteSlotData_1 (u8 Slot_u8,u8 *Name_pu8, u8 *Password_pu8)
 u8 PWS_WriteSlotData_2 (u8 Slot_u8,u8 *Loginname_pu8)
 {
 
-  memcpy (PWS_BufferSlot_st.SlotLoginName_au8,Loginname_pu8,PWS_LOGINNAME_LENGTH);
+  memcpy (PWS_BufferSlot_st.SlotLoginName_au8, Loginname_pu8, PWS_LOGINNAME_LENGTH);
 
   if (FALSE == PWS_WriteSlot (Slot_u8,&PWS_BufferSlot_st))
   {
@@ -744,7 +766,7 @@ u8 PWS_GetDecryptedPasswordSafeKey (u8 **Key_pu8)
 
 /*******************************************************************************
 
-  PWS_GetDecryptedPasswordSafeKey
+  PWS_SendData
 
   Changes
   Date      Reviewer        Info
