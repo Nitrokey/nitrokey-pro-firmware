@@ -181,23 +181,26 @@ u8 PWS_WriteSlot (u8 Slot_u8, typePasswordSafeSlot_st *Slot_st)
 
 #ifdef ENABLE_IBN_PWS_TESTS_ENCRYPTION
   CI_LocalPrintf ("PWS_WriteSlot encrypted  : ");
-  HexPrint (PWS_SLOT_LENGTH, &Slot_st_encrypted);
+  HexPrint (PWS_SLOT_LENGTH, Slot_st_encrypted);
   CI_LocalPrintf ("\n\r");
 #endif
 
-
 // Get write address
-  WritePointer_pu8 = (u8*)(PWS_FLASH_START_ADDRESS + PWS_SLOT_LENGTH * Slot_u8);
-
+  WritePointer_pu8 = (u8*)(PWS_FLASH_START_ADDRESS + (PWS_SLOT_LENGTH * Slot_u8));
 
 // Write to flash
-  p = (void*)Slot_st_encrypted;
+    uint8_t page_buffer[FLASH_PAGE_SIZE];
+    uint8_t *page = (uint8_t*) PWS_FLASH_START_ADDRESS;
+    memcpy(page_buffer, page, FLASH_PAGE_SIZE);
+    memcpy(page_buffer + (PWS_SLOT_LENGTH * Slot_u8), Slot_st_encrypted, PWS_SLOT_LENGTH);
+
+    p = (void*)Slot_st_encrypted;
 	FLASH_Unlock();
-	write_data_to_flash( p, PWS_SLOT_LENGTH, WritePointer_pu8);
+    FLASH_ErasePage(PWS_FLASH_START_ADDRESS);
+	write_data_to_flash( page_buffer, FLASH_PAGE_SIZE, PWS_FLASH_START_ADDRESS);
 	FLASH_Lock();
 
   //LED_GreenOff ();
-
   return (TRUE);
 }
 
@@ -246,7 +249,7 @@ u8 PWS_EraseSlot (u8 Slot_u8)
 //  //LED_GreenOn ();
 
 // Clear data in slot
-  memset ((char*)&Slot_st,0,sizeof (Slot_st));
+  memset ((char*)&Slot_st, 0, PWS_SLOT_LENGTH);
   Slot_st.SlotActiv_u8 = PWS_SLOT_INACTIV_TOKEN;
 
 #ifdef ENABLE_IBN_PWS_TESTS_ENCRYPTION
@@ -266,23 +269,30 @@ u8 PWS_EraseSlot (u8 Slot_u8)
                     &(Slot_st_encrypted[i]));
     }
   
+  memcpy( (char*)&Slot_st, Slot_st_encrypted, PWS_SLOT_LENGTH);
+
 #ifdef ENABLE_IBN_PWS_TESTS_ENCRYPTION
   CI_LocalPrintf ("PWS_EraseSlot encrypted  : ");
-  HexPrint (PWS_SLOT_LENGTH, &Slot_st_encrypted);
+  HexPrint (PWS_SLOT_LENGTH, Slot_st_encrypted);
   CI_LocalPrintf ("\n\r");
 #endif
 
 // Get write address
-  WritePointer_pu8 = (u8*)(PWS_FLASH_START_ADDRESS + PWS_SLOT_LENGTH * Slot_u8);
+  WritePointer_pu8 = (u8*)(PWS_FLASH_START_ADDRESS + (PWS_SLOT_LENGTH * Slot_u8));
 
 // Write to flash
-  p = (void*)&Slot_st_encrypted;
-    FLASH_Unlock();
-    write_data_to_flash (Slot_st_encrypted, PWS_SLOT_LENGTH, WritePointer_pu8);
-    FLASH_Lock();
+    uint8_t page_buffer[FLASH_PAGE_SIZE];
+    uint8_t *page = (uint8_t*) PWS_FLASH_START_ADDRESS;
+    memcpy(page_buffer, page, FLASH_PAGE_SIZE);
+    memcpy(page_buffer + (PWS_SLOT_LENGTH * Slot_u8), Slot_st_encrypted, PWS_SLOT_LENGTH);
+
+    p = (void*)Slot_st_encrypted;
+	FLASH_Unlock();
+    FLASH_ErasePage(PWS_FLASH_START_ADDRESS);
+	write_data_to_flash( page_buffer, FLASH_PAGE_SIZE, PWS_FLASH_START_ADDRESS);
+	FLASH_Lock();
 
   //LED_GreenOff ();
-
   return (TRUE);
 }
 
