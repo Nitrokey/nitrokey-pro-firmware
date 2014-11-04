@@ -215,7 +215,7 @@ unsigned short SendAPDU (typeSmartcardTransfer *tSCT)
 		return (tSCT->cAPDUAnswerStatus);
 	}
 
-// Chained answer ?
+    // Chained answer ?
 	while (0 != (tSCT->cTPDU[CCID_TPDU_PCD] & CCID_TPDU_CHAINING_FLAG))
 	{
  		GenerateChainedTPDU (tSCT);
@@ -407,14 +407,14 @@ unsigned short CcidGetChallenge (int nReceiveLength, unsigned char *nReceiveData
 unsigned short CcidPutAesKey(unsigned char cKeyLen, unsigned char *pcAES_Key)
 {
   int     nRet;
-
-//  Correct key len ?
+  
+  //  Correct key len ?
   if ((16 != cKeyLen) && (32 != cKeyLen))
   {
     return (FALSE);
   }
 
-//  Correct buffer length ?
+  //  Correct buffer length ?
   if (ISO7816_MAX_APDU_DATA + ISO7816_APDU_SEND_HEADER_LEN + ISO7816_APDU_OFERHEAD <= cKeyLen)
   {
     return (FALSE);
@@ -424,19 +424,23 @@ unsigned short CcidPutAesKey(unsigned char cKeyLen, unsigned char *pcAES_Key)
   {
     return (FALSE);
   }
-// Command
+
+
+  // Command
   tSCT.cAPDU[CCID_CLA]     = 0x00;
   tSCT.cAPDU[CCID_INS]     = 0xDA;
   tSCT.cAPDU[CCID_P1]      = 0x00;
   tSCT.cAPDU[CCID_P2]      = 0xD5;
 
-// Send password
+  // Send password
   tSCT.cAPDU[CCID_LC]      = cKeyLen;
-  memcpy (tSCT.cAPDU[CCID_DATA], pcAES_Key, cKeyLen);
+  
+  memcpy ( &(tSCT.cAPDU[CCID_DATA]), pcAES_Key, cKeyLen);
 
-// Nothing to receive
+  // Nothing to receive
   // tSCT.tAPDU.nLe      = 0;
 
+  tSCT.cAPDULength = 4 +1 + cKeyLen;
   nRet = SendAPDU(&tSCT);    //ISO7816_SendAPDU_NoLe_Lc (tSC);
 
   return (nRet);
@@ -805,11 +809,10 @@ uint8_t cardAuthenticate(uint8_t *password){
 
 	if (APDU_ANSWER_COMMAND_CORRECT != cRet)
 	{
-		return 1;
+		return FALSE;
 	}
 
-
-return 0;
+    return TRUE;
 }
 
 uint8_t userAuthenticate(uint8_t *password){
@@ -922,7 +925,6 @@ uint8_t sendAESMasterKey (int nLen, unsigned char *pcMasterKey)
   ////CI_LocalPrintf ("\r\n");
 
   nRet = CcidPutAesKey (nLen, pcMasterKey);
-
   if (FALSE == nRet)
   {
     ////CI_LocalPrintf ("fail\n\r");
@@ -930,7 +932,10 @@ uint8_t sendAESMasterKey (int nLen, unsigned char *pcMasterKey)
   }
 
   ////CI_LocalPrintf ("OK \n\r");
-  return (TRUE);
+  if (APDU_ANSWER_COMMAND_CORRECT == nRet)
+      return (TRUE);
+  else
+      return nRet; //(FALSE);
 }
 
 uint8_t testScAesKey (int nLen, unsigned char *pcKey)
