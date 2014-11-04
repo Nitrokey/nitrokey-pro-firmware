@@ -116,7 +116,15 @@ typeStick20Configuration_st StickConfiguration_st;
 u8 WriteAESStorageKeyToUserPage (u8 *data)
 {
   // flashc_memcpy(FLASHC_USER_PAGE,data,32,TRUE);
-  write_data_to_flash (data, 32, FLASHC_USER_PAGE);
+  unsigned char page_buffer[FLASH_PAGE_SIZE];
+  memcpy (page_buffer, FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
+  memcpy (page_buffer, data, 32);
+
+  FLASH_Unlock();
+  FLASH_ErasePage(FLASHC_USER_PAGE);
+  write_data_to_flash (page_buffer, FLASH_PAGE_SIZE, FLASHC_USER_PAGE);
+  FLASH_Lock();
+
   return (TRUE);
 }
 
@@ -232,7 +240,16 @@ u8 WriteStickConfigurationToUserPage (void)
   StickConfiguration_st.VersionInfo_au8[3]              = 0;               // Build number not used
 
   // flashc_memcpy(FLASHC_USER_PAGE + 72,&StickConfiguration_st,30,TRUE);
-  write_data_to_flash ( (u8*)&StickConfiguration_st, 30, FLASHC_USER_PAGE + 72);
+
+  uint8_t page_buffer [FLASH_PAGE_SIZE];
+  memcpy(page_buffer, FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
+  memcpy(page_buffer +72, (u8*)&StickConfiguration_st, 30);
+
+  FLASH_Unlock();
+  FLASH_ErasePage(FLASHC_USER_PAGE);
+  write_data_to_flash ( page_buffer, FLASH_PAGE_SIZE, FLASHC_USER_PAGE );
+  FLASH_Lock();
+
   return (TRUE);
 }
 
@@ -954,10 +971,17 @@ u8 ReadScId (u32 *ScId_u32)
 
 u8 WriteXorPatternToFlash (u8 *XorPattern_pu8)
 {
-  // flashc_memcpy(FLASHC_USER_PAGE + 146,XorPattern_pu8,32,TRUE);
-  write_data_to_flash ( XorPattern_pu8, 32, FLASHC_USER_PAGE + 146);
+    // flashc_memcpy(FLASHC_USER_PAGE + 146,XorPattern_pu8,32,TRUE);
+    unsigned char page_buffer[FLASH_PAGE_SIZE];
+    memcpy (page_buffer, FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
+    memcpy (page_buffer +146, XorPattern_pu8, 32);
 
-  return (TRUE);
+    FLASH_Unlock();
+    FLASH_ErasePage(FLASHC_USER_PAGE);
+    write_data_to_flash ( page_buffer, FLASH_PAGE_SIZE, FLASHC_USER_PAGE);
+    FLASH_Lock();
+
+    return (TRUE);
 }
 
 /*******************************************************************************
@@ -1001,7 +1025,16 @@ u8 ReadXorPatternFromFlash (u8 *XorPattern_pu8)
 
 u8 WritePasswordSafeKey (u8 *data)
 {
-  memcpy ((void*)(FLASHC_USER_PAGE + 178),data,32);
+//  memcpy ((void*)(FLASHC_USER_PAGE + 178),data,32);
+
+  unsigned char page_buffer [FLASH_PAGE_SIZE];
+  memcpy(page_buffer, FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
+  memcpy(page_buffer +178, data, 32);
+
+  FLASH_Unlock();
+  FLASH_ErasePage (FLASHC_USER_PAGE);
+  write_data_to_flash (page_buffer, FLASH_PAGE_SIZE, FLASHC_USER_PAGE);
+  FLASH_Lock();
   return (TRUE);
 }
 
@@ -1053,6 +1086,10 @@ u32 EraseLocalFlashKeyValues_u32 (void)
   u32 i;
   u32 i1;
 
+  uint8_t page_buffer[FLASH_PAGE_SIZE];
+  uint8_t *page;
+
+    
 // Clear user page
   for (i1=0;i1<7;i1++)
   {
@@ -1061,7 +1098,13 @@ u32 EraseLocalFlashKeyValues_u32 (void)
       EraseStoreData_au8[i] = (u8)(rand () % 256);
     }
     // flashc_memcpy((void*)FLASHC_USER_PAGE,EraseStoreData_au8,256,TRUE);
-    write_data_to_flash ( EraseStoreData_au8, 256, FLASHC_USER_PAGE);
+    memcpy(page_buffer, FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
+    memcpy(page_buffer, EraseStoreData_au8, 256);
+    FLASH_Unlock();
+    FLASH_ErasePage(FLASHC_USER_PAGE);
+    write_data_to_flash ( page_buffer, FLASH_PAGE_SIZE, FLASHC_USER_PAGE);
+    FLASH_Lock();
+
   }
 
   // flashc_erase_user_page (TRUE);
@@ -1081,8 +1124,15 @@ u32 EraseLocalFlashKeyValues_u32 (void)
     }
     // flashc_memcpy((void*)(PWS_FLASH_START_ADDRESS    ),EraseStoreData_au8,256,TRUE);
     // flashc_memcpy((void*)(PWS_FLASH_START_ADDRESS+256),EraseStoreData_au8,256,TRUE);
-    write_data_to_flash ( EraseStoreData_au8, 256, PWS_FLASH_START_ADDRESS);
-    write_data_to_flash ( EraseStoreData_au8, 256, PWS_FLASH_START_ADDRESS + 256);
+
+    memcpy(page_buffer, PWS_FLASH_START_ADDRESS, FLASH_PAGE_SIZE);
+    memcpy(page_buffer, EraseStoreData_au8, 256);
+    memcpy(page_buffer+256, EraseStoreData_au8, 256);
+    FLASH_Unlock();
+    FLASH_ErasePage(PWS_FLASH_START_ADDRESS);
+    write_data_to_flash ( page_buffer, FLASH_PAGE_SIZE, PWS_FLASH_START_ADDRESS);
+    FLASH_Lock();
+
   }
 
   // flashc_erase_page(PWS_FLASH_START_PAGE,TRUE);
@@ -1110,6 +1160,7 @@ u32 EraseLocalFlashKeyValues_u32 (void)
   }
 
 // Clear hidden volumes
+/*
   for (i1=0;i1<7;i1++)
   {
     for (i=0;i<256;i++)
@@ -1126,6 +1177,6 @@ u32 EraseLocalFlashKeyValues_u32 (void)
   {
     // flashc_erase_page(HV_FLASH_START_PAGE+i,TRUE);
   }
-
+*/
   return (TRUE);
 }
