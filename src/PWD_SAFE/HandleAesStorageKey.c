@@ -29,6 +29,7 @@
 #include "string.h"
 #include "tools.h"
 #include "CcidLocalAccess.h"
+#include "report_protocol.h"
 #include "smartcard.h"
 #include "aes.h"
 //#include "flashc.h"
@@ -93,74 +94,75 @@
 
 u32 BuildNewAesStorageKey_u32 (u8 *MasterKey_pu8)
 {
-//  u32 Ret_u32;
+  //  u32 Ret_u32;
   u8  StorageKey_au8[AES_KEYSIZE_256_BIT];
   u8  Buffer_au8[AES_KEYSIZE_256_BIT];
 
-#ifdef LOCAL_DEBUG
+  #ifdef LOCAL_DEBUG
   //CI_TickLocalPrintf ("BuildNewAesStorageKey\r\n");
-#endif
-// Wait for next smartcard cmd
+  #endif
+  // Wait for next smartcard cmd
   DelayMs (10);
 
-// Get a random number for the storage key
+  // Get a random number for the storage key
   if (FALSE == getRandomNumber (AES_KEYSIZE_256_BIT/2,StorageKey_au8))
   {
-#ifdef LOCAL_DEBUG
+    #ifdef LOCAL_DEBUG
     //CI_LocalPrintf ("GetRandomNumber fails\n\r");
-#endif
+    #endif
     return (FALSE);
   }
 
-// Get a random number for the storage key
+  // Get a random number for the storage key
   if (FALSE == getRandomNumber (AES_KEYSIZE_256_BIT/2,&StorageKey_au8[AES_KEYSIZE_256_BIT/2]))
   {
-#ifdef LOCAL_DEBUG
+    #ifdef LOCAL_DEBUG
     //CI_LocalPrintf ("GetRandomNumber fails\n\r");
-#endif
+    #endif
     return (FALSE);
   }
 
-#ifdef LOCAL_DEBUG
+  #ifdef LOCAL_DEBUG
   //CI_LocalPrintf ("Uncrypted storage key       : ");
   //HexPrint (AES_KEYSIZE_256_BIT,StorageKey_au8);
   //CI_LocalPrintf ("\r\n");
-#endif
+  #endif
 
   memcpy (Buffer_au8,StorageKey_au8,AES_KEYSIZE_256_BIT);
 
   // Local encryption of the storage key
-  void* Buffer_au8_encrypted = malloc(AES_KEYSIZE_256_BIT);
-  aes_context aes_ctx;
-  aes_setkey_enc (&aes_ctx, MasterKey_pu8, 256);
-  aes_crypt_ecb (&aes_ctx, AES_ENCRYPT, Buffer_au8, Buffer_au8_encrypted);
+  unsigned char  Buffer_au8_encrypted [AES_KEYSIZE_256_BIT];
+//  aes_context aes_ctx;
+//  aes_setkey_enc (&aes_ctx, MasterKey_pu8, 256);
+//  aes_crypt_ecb (&aes_ctx, AES_ENCRYPT, Buffer_au8, Buffer_au8_encrypted);
 //  AES_StorageKeyEncryption (AES_KEYSIZE_256_BIT, Buffer_au8, MasterKey_pu8, AES_PMODE_CIPHER);
 
-#ifdef LOCAL_DEBUG
+  #ifdef LOCAL_DEBUG
   //CI_LocalPrintf ("Local encrypted storage key : ");
   //HexPrint (AES_KEYSIZE_256_BIT,Buffer_au8_encrypted);
   //CI_LocalPrintf ("\r\n");
-#endif
+  #endif
 
-// Store the encrypted storage key in USER PAGE
+  // Store the encrypted storage key in USER PAGE
   WriteAESStorageKeyToUserPage (Buffer_au8_encrypted);
 
-#ifdef LOCAL_DEBUG_CHECK_KEY_GENERATION
-// Test the storage key
+  #ifdef LOCAL_DEBUG_CHECK_KEY_GENERATION
+  // Test the storage key
 
-// Wait for next smartcard cmd
+  // Wait for next smartcard cmd
   DelayMs (10);
 
-/* Enable smartcard */
+
+  /* Enable smartcard */
   if (FALSE == LA_OpenPGP_V20_Test_SendUserPW2 ((u8*)"123456"))
   {
     return (FALSE);
   }
 
-// Wait for next smartcard cmd
+  // Wait for next smartcard cmd
   DelayMs (10);
 
-/* SC AES key decryption */
+  /* SC AES key decryption */
   if (FALSE == testScAesKey (AES_KEYSIZE_256_BIT,Buffer_au8))
   {
     return (FALSE);
@@ -169,13 +171,11 @@ u32 BuildNewAesStorageKey_u32 (u8 *MasterKey_pu8)
   //CI_LocalPrintf ("SC decrypted storage key    : ");
   //HexPrint (AES_KEYSIZE_256_BIT,Buffer_au8);
   //CI_LocalPrintf ("\r\n");
+  #endif
 
-#endif
-
-// Clear the critical memory
+  // Clear the critical memory
   memset (StorageKey_au8,0,AES_KEYSIZE_256_BIT);
   memset (Buffer_au8,0,AES_KEYSIZE_256_BIT);
-
 
   return (TRUE);
 
@@ -201,75 +201,78 @@ u32 BuildNewAesStorageKey_u32 (u8 *MasterKey_pu8)
 
 u32 BuildNewAesMasterKey_u32 (u8 *AdminPW_pu8,u8 *MasterKey_pu8)
 {
-#ifdef LOCAL_DEBUG
-  //CI_TickLocalPrintf ("BuildNewAesMasterKey_u32\r\n");
-#endif
-  RestartSmartcard ();
-  // LA_RestartSmartcard_u8 ();
+    #ifdef LOCAL_DEBUG
+    //CI_TickLocalPrintf ("BuildNewAesMasterKey_u32\r\n");
+    #endif
+    RestartSmartcard ();
+    // LA_RestartSmartcard_u8 ();
 
-// Wait for next smartcard cmd
-//  DelayMs (10);
+    // Wait for next smartcard cmd
+    DelayMs (10);
 
-#ifdef LOCAL_DEBUG
+    #ifdef LOCAL_DEBUG
     //CI_LocalPrintf ("GetRandomNumber\n\r");
-#endif
+    #endif
 
-// Get a random number for the master key
-  if (FALSE == getRandomNumber (AES_KEYSIZE_256_BIT/2,MasterKey_pu8))
-  {
-#ifdef LOCAL_DEBUG
-    //CI_LocalPrintf ("GetRandomNumber fails\n\r");
-#endif
+    // Get a random number for the master key
+    if (FALSE == getRandomNumber (AES_KEYSIZE_256_BIT/2, MasterKey_pu8))
+    {
+        #ifdef LOCAL_DEBUG
+        //CI_LocalPrintf ("GetRandomNumber fails\n\r");
+        #endif
+        return (FALSE);
+    }
+
+    // Get a random number for the master key
+    if (FALSE == getRandomNumber (AES_KEYSIZE_256_BIT/2, &MasterKey_pu8[AES_KEYSIZE_256_BIT/2]))
+    {
+        #ifdef LOCAL_DEBUG
+        //CI_LocalPrintf ("GetRandomNumber fails\n\r");
+        #endif
+        return (FALSE);
+    }
+
+    // Wait for next smartcard cmd
+    DelayMs (10);
+
+    #ifdef LOCAL_DEBUG
+    //CI_TickLocalPrintf ("Send AdminPW -%s-\r\n",AdminPW_pu8);
+    #endif
+    // Unlock smartcard for sending master key
+    // if (FALSE == LA_OpenPGP_V20_Test_SendAdminPW (AdminPW_pu8))
+    if (FALSE == cardAuthenticate (AdminPW_pu8))
+    {
+        #ifdef LOCAL_DEBUG
+        //CI_TickLocalPrintf ("AdminPW wrong\r\n");
+        #endif
+        return (FALSE);
+    }
+
+
+    #ifdef LOCAL_DEBUG
+    //CI_TickLocalPrintf ("AES Masterkey : ");
+    //HexPrint (AES_KEYSIZE_256_BIT,MasterKey_pu8);
+    //CI_TickLocalPrintf ("\r\n");
+    #endif
+
+    // Wait for next smartcard cmd
+    DelayMs (10);
+
+    // Store master key in smartcard
+    int ret = sendAESMasterKey (AES_KEYSIZE_256_BIT, MasterKey_pu8);
+    if (TRUE != ret)
+    {
+      #ifdef LOCAL_DEBUG
+      //CI_TickLocalPrintf ("SendAESMasterKey fails\r\n");
+      #endif
     return (FALSE);
-  }
+    }
 
-// Get a random number for the master key
-  if (FALSE == getRandomNumber (AES_KEYSIZE_256_BIT/2,&MasterKey_pu8[AES_KEYSIZE_256_BIT/2]))
-  {
-#ifdef LOCAL_DEBUG
-    //CI_LocalPrintf ("GetRandomNumber fails\n\r");
-#endif
-    return (FALSE);
-  }
+    RestartSmartcard();
 
-// Wait for next smartcard cmd
-  DelayMs (10);
+    ClearStickKeysNotInitatedToFlash ();
 
-#ifdef LOCAL_DEBUG
-  //CI_TickLocalPrintf ("Send AdminPW -%s-\r\n",AdminPW_pu8);
-#endif
-// Unlock smartcard for sending master key
-  // if (FALSE == LA_OpenPGP_V20_Test_SendAdminPW (AdminPW_pu8))
-  if (FALSE == cardAuthenticate (AdminPW_pu8))
-  {
-#ifdef LOCAL_DEBUG
-  //CI_TickLocalPrintf ("AdminPW wrong\r\n");
-#endif
-    return (FALSE);
-  }
-
-
-#ifdef LOCAL_DEBUG
-  //CI_TickLocalPrintf ("AES Masterkey : ");
-  //HexPrint (AES_KEYSIZE_256_BIT,MasterKey_pu8);
-  //CI_TickLocalPrintf ("\r\n");
-#endif
-
-// Wait for next smartcard cmd
-  DelayMs (10);
-
-// Store master key in smartcard
-  if (FALSE == sendAESMasterKey (AES_KEYSIZE_256_BIT,MasterKey_pu8))
-  {
-#ifdef LOCAL_DEBUG
-  //CI_TickLocalPrintf ("SendAESMasterKey fails\r\n");
-#endif
-    return (FALSE);
-  }
-
-  ClearStickKeysNotInitatedToFlash ();
-
-  return (TRUE);
+    return (TRUE);
 }
 
 
@@ -294,33 +297,33 @@ u32 BuildNewXorPattern_u32 (void)
   time_t  now;
   u32     i;
 
-#ifdef LOCAL_DEBUG
+  #ifdef LOCAL_DEBUG
   //CI_TickLocalPrintf ("BuildNewXorPattern_u32\r\n");
-#endif
+  #endif
 
   RestartSmartcard ();
   //  LA_RestartSmartcard_u8 ();
 
 
-#ifdef LOCAL_DEBUG
-    //CI_LocalPrintf ("GetRandomNumber\n\r");
-#endif
+  #ifdef LOCAL_DEBUG
+  //CI_LocalPrintf ("GetRandomNumber\n\r");
+  #endif
 
-// Get a random number for the master key
+  // Get a random number for the master key
   if (FALSE == getRandomNumber (AES_KEYSIZE_256_BIT/2,XorPattern_au8))
   {
-#ifdef LOCAL_DEBUG
+    #ifdef LOCAL_DEBUG
     //CI_LocalPrintf ("GetRandomNumber fails\n\r");
-#endif
+    #endif
     return (FALSE);
   }
 
-// Get a random number for the master key
+  // Get a random number for the master key
   if (FALSE == getRandomNumber (AES_KEYSIZE_256_BIT/2,&XorPattern_au8[AES_KEYSIZE_256_BIT/2]))
   {
-#ifdef LOCAL_DEBUG
+    #ifdef LOCAL_DEBUG
     //CI_LocalPrintf ("GetRandomNumber fails\n\r");
-#endif
+    #endif
     return (FALSE);
   }
 
@@ -391,38 +394,37 @@ u32 BuildStorageKeys_u32 (u8 *AdminPW_pu8)
 #ifdef LOCAL_DEBUG
   //CI_TickLocalPrintf ("AdminPW wrong\r\n");
 #endif
-    return (FALSE);
+    return CMD_STATUS_WRONG_PASSWORD;
   }
 
   Ret_u32 = EraseLocalFlashKeyValues_u32 ();
   if (FALSE == Ret_u32)
   {
-    return (FALSE);
+    return CMD_STATUS_AES_CREATE_KEY_FAILED;
   }
-
 
   Ret_u32 = BuildNewXorPattern_u32 ();
   if (FALSE == Ret_u32)
   {
-    return (FALSE);
+    return CMD_STATUS_AES_CREATE_KEY_FAILED;
   }
 
-  Ret_u32 = BuildNewAesMasterKey_u32 (AdminPW_pu8,MasterKey_au8);
-  if (FALSE == Ret_u32)
+  Ret_u32 = BuildNewAesMasterKey_u32 (AdminPW_pu8, MasterKey_au8);
+  if (TRUE != Ret_u32)
   {
-    return (FALSE);
+    return CMD_STATUS_AES_CREATE_KEY_FAILED;
   }
 
   Ret_u32 = BuildNewAesStorageKey_u32 (MasterKey_au8);
   if (FALSE == Ret_u32)
   {
-    return (FALSE);
+    return CMD_STATUS_AES_CREATE_KEY_FAILED;
   }
 
 // Clear the critical memory
   memset (MasterKey_au8,0,AES_KEYSIZE_256_BIT);
 
-  return (TRUE);
+  return CMD_STATUS_OK;
 }
 
 
