@@ -192,6 +192,10 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
             cmd_detectSmartCardAES(report, output);
             break;
 
+        case CMD_NEW_AES_KEY:
+            cmd_newAesKey(report, output);
+            break;
+
         //START - OTP Test Routine --------------------------------
             /*
             case CMD_TEST_COUNTER:
@@ -470,27 +474,21 @@ uint8_t cmd_first_authenticate(uint8_t *report,uint8_t *output){
 	uint8_t res=1;	
 	uint8_t card_password[26];
 	
-
-		
-		memset(card_password,0,26);
-		
-		memcpy(card_password,report+1,25);
-		
-		
-		res=cardAuthenticate(card_password);
-		
-		if (res==0){
-			memcpy(temp_password,report+26,25);
-			tmp_password_set=1;
-			getAID();
-			return 0;
-		}
-		else{
-			output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_PASSWORD;
-			return 1; //wrong card password
-		}
-	
-
+    memset(card_password,0,26);
+    memcpy(card_password,report+1,25);
+    
+    res = cardAuthenticate(card_password);
+    
+    if (res==TRUE){
+        memcpy(temp_password,report+26,25);
+        tmp_password_set=1;
+        getAID();
+        return 0;
+    }
+    else{
+        output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_PASSWORD;
+        return 1; //wrong card password
+    }
 }
 
 uint8_t cmd_user_authenticate(uint8_t *report,uint8_t *output){
@@ -773,6 +771,29 @@ uint8_t cmd_detectSmartCardAES(uint8_t *report, uint8_t *output)
     }
     return (0);
 }
+
+uint8_t cmd_newAesKey(uint8_t* report, uint8_t* output)
+{
+    u32 ret;
+/*
+    unsigned char admin_password[26];
+    memset(admin_password, 0, 26);
+    memcpy(admin_password, report+1, 25);
+*/
+    ret = BuildPasswordSafeKey_u32();
+    if (TRUE == ret)
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
+    else
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_AES_CREATE_KEY_FAILED;
+
+    return 0;
+/*
+    ret = BuildStorageKeys_u32 (admin_password);
+    output[OUTPUT_CMD_STATUS_OFFSET] = ret;
+    return (0);
+*/
+}
+
 
 //START - OTP Test Routine --------------------------------
 /*
