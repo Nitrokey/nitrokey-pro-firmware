@@ -10,4 +10,5 @@ build-*-Debug
 build/gcc/crypto.elf
 build/gcc/crypto.lss
 build/gcc/crypto.map
-
+build/gcc/crypto.hex
+build/gcc/crypto.sym
