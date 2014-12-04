@@ -23,7 +23,6 @@
  *      Author: RB
  */
 
-// #include <avr32/io.h>
 #include <stdlib.h>
 #include <stddef.h>
 // #include "compiler.h"
@@ -42,7 +41,6 @@
 #include "tools.h"
 // #include "OTP/report_protocol.h"
 #include "FlashStorage.h"
-// #include "HiddenVolume.h"
 // #include "OTP\\hotp.h"
 #include "password_safe.h"
 #include "hotp.h"
@@ -59,8 +57,6 @@ typeStick20Configuration_st StickConfiguration_st;
 #define FLASHC_USER_PAGE 0x801dc00
 
 /*
-
-*//*
 
   Userpage layout
   PAGE: 0x801DC00
@@ -79,30 +75,6 @@ typeStick20Configuration_st StickConfiguration_st;
 
 */
 
-/*******************************************************************************
-
- Global declarations
-
-*******************************************************************************/
-/*
-
-*/
-/*******************************************************************************
-
- External declarations
-
-*******************************************************************************/
-/*
-
-*/
-/*******************************************************************************
-
- Local declarations
-
-*******************************************************************************/
-/*
-
-*/
 /*******************************************************************************
 
   WriteAESStorageKeyToUserPage
@@ -1159,24 +1131,5 @@ u32 EraseLocalFlashKeyValues_u32 (void)
     // flashc_erase_page(OTP_FLASH_START_PAGE+i,TRUE);
   }
 
-// Clear hidden volumes
-/*
-  for (i1=0;i1<7;i1++)
-  {
-    for (i=0;i<256;i++)
-    {
-      EraseStoreData_au8[i] = (u8)(rand () % 256);
-    }
-    for (i=0;i<2;i++)
-    {
-      // flashc_memcpy((void*)(HV_MAGIC_NUMBER_ADDRESS+i*512    ),EraseStoreData_au8,256,TRUE);
-      // flashc_memcpy((void*)(HV_MAGIC_NUMBER_ADDRESS+i*512+256),EraseStoreData_au8,256,TRUE);
-    }
-  }
-  for (i=0;i<10;i++)
-  {
-    // flashc_erase_page(HV_FLASH_START_PAGE+i,TRUE);
-  }
-*/
   return (TRUE);
 }
