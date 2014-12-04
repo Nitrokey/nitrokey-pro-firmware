@@ -55,24 +55,6 @@
 
 #define AES_KEYSIZE_256_BIT     32        // 32 * 8 = 256
 
-/*******************************************************************************
-
- Global declarations
-
-*******************************************************************************/
-
-/*******************************************************************************
-
- External declarations
-
-*******************************************************************************/
-
-/*******************************************************************************
-
- Local declarations
-
-*******************************************************************************/
-
 
 /*******************************************************************************
 
@@ -132,9 +114,14 @@ u32 BuildNewAesStorageKey_u32 (u8 *MasterKey_pu8)
 
   // Local encryption of the storage key
   unsigned char  Buffer_au8_encrypted [AES_KEYSIZE_256_BIT];
-//  aes_context aes_ctx;
-//  aes_setkey_enc (&aes_ctx, MasterKey_pu8, 256);
-//  aes_crypt_ecb (&aes_ctx, AES_ENCRYPT, Buffer_au8, Buffer_au8_encrypted);
+  aes_context aes_ctx;
+  aes_setkey_enc (&aes_ctx, MasterKey_pu8, 256);
+  int i;
+  for (i=0; i<AES_KEYSIZE_256_BIT; i+=16) {
+    aes_crypt_ecb ( &aes_ctx, AES_ENCRYPT, 
+                    &(Buffer_au8[i]),
+                    &(Buffer_au8_encrypted[i]));
+  }
 //  AES_StorageKeyEncryption (AES_KEYSIZE_256_BIT, Buffer_au8, MasterKey_pu8, AES_PMODE_CIPHER);
 
   #ifdef LOCAL_DEBUG
