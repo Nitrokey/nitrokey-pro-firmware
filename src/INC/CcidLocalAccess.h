@@ -43,7 +43,7 @@
 #define APDU_ANSWER_RECEIVE_CRC_ERROR			0xA000					/* Receive CRC error  */
 #define APDU_ANSWER_RECEIVE_INCORRECT			0xA001					/* Receive wrong answer struct  */
 #define APDU_ANSWER_CHAINED_DATA    			0xA002					/* Receive chained data  */
-																	  
+#define APDU_ANSWER_SEL_FILE_TERM_STATE         0x6285
 
 void CcidLocalAccessTest (void);
 
