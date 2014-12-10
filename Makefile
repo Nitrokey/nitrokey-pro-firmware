@@ -13,14 +13,19 @@ firmware:
 
 
 flash-versaloon:
-	sudo $(OPENOCD_BIN)/openocd gdb_memory_map disable 			\
+	export OPENOCD_BIN=
+	cd scripts && \
+	./flash-versaloon.sh
+
+#flash-versaloon:
+#	sudo $(OPENOCD_BIN)/openocd gdb_memory_map disable 			\
 								-f interface/vsllink-swd.cfg 	\
 								-f target/stm32f1x.cfg 			\
 								-c init -c reset -c halt 		\
 								-c "stm32f1x unlock 0"			\
 								-c shutdown						\
 								-c exit							
-	sudo $(OPENOCD_BIN)/openocd gdb_memory_map disable 			\
+#	sudo $(OPENOCD_BIN)/openocd gdb_memory_map disable 			\
 								-f interface/vsllink-swd.cfg 	\
 								-f target/stm32f1x.cfg			\
 								-c init -c reset -c halt		\
