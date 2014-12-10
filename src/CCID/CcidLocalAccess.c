@@ -540,7 +540,7 @@ unsigned int CcidFactoryReset(void)
         cRet = SendAPDU (&tSCT);
         
         // ACTIVATE FILE
-        if ( == cRet) { // Card in termination state
+        if (APDU_ANSWER_SEL_FILE_TERM_STATE == cRet) { // Card in termination state
             tSCT.cAPDU[CCID_CLA] = 0x00;
             tSCT.cAPDU[CCID_INS] = 0x44;
             tSCT.cAPDU[CCID_P1]  = 0x04;

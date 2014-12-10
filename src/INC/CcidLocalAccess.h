@@ -22,7 +22,7 @@
 
 #ifdef NOT_USED
 #define APDU_ANSWER_T0_COMMAND_CORRECT 0x6100  /* Command correct, xx bytes available in response (normally used under T=0 or for commands under any protocol with long response data that cannot be transmitted in one response) */
-#define APDU_ANSWER_				0x6285					/* Selected file in termination state */
+#define APDU_ANSWER_SEL_FILE_TERM_STATE 0x6285					/* Selected file in termination state */
 #define APDU_ANSWER_				0x6581					/* Memory failure */
 #define APDU_ANSWER_				0x6700					/* Wrong length (Lc and/or Le) */
 #define APDU_ANSWER_				0x6882					/* Secure messaging not supported */
