@@ -81,9 +81,9 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 
 		case CMD_WRITE_TO_SLOT:
 			if (calculated_crc32==authorized_crc)
-			cmd_write_to_slot(report,output);
+			    cmd_write_to_slot(report,output);
 			else
-			not_authorized=1;
+                not_authorized=1;
 			break;
 
 		case CMD_READ_SLOT_NAME:
@@ -99,23 +99,23 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 			
 		case CMD_GET_CODE:
 			if(calculated_crc32==authorized_user_crc || *((uint8_t *)(SLOTS_PAGE1_ADDRESS+GLOBAL_CONFIG_OFFSET+3)) != 1)
-			cmd_get_code(report,output);
+                cmd_get_code(report,output);
 			else
-			not_authorized=1;			
+                not_authorized=1;
 			break;
 			
 		case CMD_WRITE_CONFIG:
 			if (calculated_crc32==authorized_crc)
-			cmd_write_config(report,output);
+                cmd_write_config(report,output);
 			else
-			not_authorized=1;
+                not_authorized=1;
 			break;
 			
 		case CMD_ERASE_SLOT:
 			if (calculated_crc32==authorized_crc)
-			cmd_erase_slot(report,output);
+                cmd_erase_slot(report,output);
 			else
-			not_authorized=1;
+                not_authorized=1;
 			break;
 			
 		case CMD_FIRST_AUTHENTICATE:
@@ -127,8 +127,8 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 			break;
 		
 		case CMD_USER_AUTHORIZE:
-                        cmd_user_authorize(report,output);
-                        break;
+            cmd_user_authorize(report,output);
+            break;
 
 		case CMD_GET_PASSWORD_RETRY_COUNT:
 			cmd_get_password_retry_count(report,output);
@@ -145,11 +145,15 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 		
 		case CMD_GET_USER_PASSWORD_RETRY_COUNT:
 			cmd_get_user_password_retry_count(report,output);
-                        break;
+            break;
 
 		case CMD_USER_AUTHENTICATE:
 			cmd_user_authenticate(report,output);
-                        break;
+            break;
+
+        case CMD_FACTORY_RESET:
+            cmd_factory_reset(report, output);
+            break;
 
 		case CMD_SET_TIME:
 			cmd_set_time(report,output);
@@ -173,14 +177,14 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 		}
 		
 		if (not_authorized)
-		output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_NOT_AUTHORIZED;
+            output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_NOT_AUTHORIZED;
 		
 		if (calculated_crc32==authorized_crc)
-		authorized_crc=0xFFFFFFFF;
+            authorized_crc=0xFFFFFFFF;
 
 	}
 	else
-	output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_CRC;
+	    output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_CRC;
 
 	CRC_ResetDR();
 	calculated_crc32=CRC_CalcBlockCRC((uint32_t*) output, KEYBOARD_FEATURE_COUNT/4-1);
@@ -516,6 +520,26 @@ uint8_t cmd_user_authorize(uint8_t *report,uint8_t *output){
 
 	return 1;
 
+}
+
+
+uint8_t cmd_factory_reset(uint8_t* report, uint8_t* output) {
+    uint8_t res=1;
+    uint8_t admin_password[26];
+
+    memset(admin_password, 0, 26);
+    memcpy(admin_password, report+1, 25);
+
+    res = factoryReset(admin_password);
+
+    if (0==res) {
+        return 0;
+    }
+    else
+    {
+        output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_PASSWORD;
+        return 1;
+    }
 }
 
 uint8_t cmd_set_time(uint8_t *report,uint8_t *output){

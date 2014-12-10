@@ -36,6 +36,7 @@
 #define CMD_USER_AUTHENTICATE 0x0E
 #define CMD_GET_USER_PASSWORD_RETRY_COUNT 0x0F
 #define CMD_USER_AUTHORIZE 0x10
+#define CMD_FACTORY_RESET 0x13
 
 
 #define CMD_DATA_OFFSET 0x01
@@ -191,6 +192,7 @@ uint8_t cmd_authorize(uint8_t *report,uint8_t *output);
 uint8_t cmd_get_password_retry_count(uint8_t *report,uint8_t *output);
 uint8_t cmd_user_authenticate(uint8_t *report,uint8_t *output);
 uint8_t cmd_user_authorize(uint8_t *report,uint8_t *output);
+uint8_t cmd_factory_reset(uint8_t* report, uint8_t* output);
 uint8_t cmd_get_user_password_retry_count(uint8_t *report,uint8_t *output);
 uint8_t cmd_set_time(uint8_t *report,uint8_t *output);
 //START - OTP Test Routine --------------------------------
