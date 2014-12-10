@@ -1,7 +1,7 @@
 ROOT_DIR=$(CURDIR)
 BUILD_DIR=$(ROOT_DIR)/build/gcc
 SCRIPT_DIR=$(ROOT_DIR)/scripts
-OPENOCD_BIN?=/home/cyc0/Projects/openocd/build/bin
+OPENOCD_BIN?=~/Projects/openocd/build/bin
 
 .PHONY: firmware flash-versaloon clean
 
