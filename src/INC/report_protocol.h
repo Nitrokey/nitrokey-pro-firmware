@@ -36,6 +36,8 @@
 #define CMD_USER_AUTHENTICATE 0x0E
 #define CMD_GET_USER_PASSWORD_RETRY_COUNT 0x0F
 #define CMD_USER_AUTHORIZE 0x10
+#define CMD_LOCK_DEVICE                   0x12
+
 #define CMD_GET_PW_SAFE_SLOT_STATUS       0x60
 #define CMD_GET_PW_SAFE_SLOT_NAME         0x61
 #define CMD_GET_PW_SAFE_SLOT_PASSWORD     0x62
@@ -221,6 +223,7 @@ uint8_t cmd_getPasswordSafeInitKey(uint8_t *report,uint8_t *output);
 uint8_t cmd_getPasswordSafeSendData(uint8_t *report,uint8_t *output);
 uint8_t cmd_detectSmartCardAES(uint8_t *report, uint8_t *output);
 uint8_t cmd_newAesKey(uint8_t* report, uint8_t* output);
+uint8_t cmd_lockDevice(uint8_t* report, uint8_t* output);
 
 
 //START - OTP Test Routine --------------------------------

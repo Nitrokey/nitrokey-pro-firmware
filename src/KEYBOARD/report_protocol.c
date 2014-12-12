@@ -188,6 +188,10 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
             cmd_getPasswordSafeSendData(report, output);
             break;
 
+        case CMD_LOCK_DEVICE:
+            cmd_lockDevice(report, output);
+            break;
+
         case CMD_DETECT_SC_AES:
             cmd_detectSmartCardAES(report, output);
             break;
@@ -792,6 +796,13 @@ uint8_t cmd_newAesKey(uint8_t* report, uint8_t* output)
     output[OUTPUT_CMD_STATUS_OFFSET] = ret;
     return (0);
 */
+}
+
+
+uint8_t cmd_lockDevice(uint8_t* report, uint8_t* output)
+{
+    // Disable password safe
+    PWS_DisableKey ();
 }
 
 
