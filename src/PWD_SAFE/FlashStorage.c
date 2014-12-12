@@ -25,23 +25,10 @@
 
 #include <stdlib.h>
 #include <stddef.h>
-// #include "compiler.h"
-// #include "flashc.h"
 #include "string.h"
 
-/*
-#include "conf_access.h"
-#include "conf_sd_mmc_mci.h"
-#include "sd_mmc_mci.h"
-#include "sd_mmc_mci_mem.h"
-
-
-#include "global.h"
-*/
 #include "tools.h"
-// #include "OTP/report_protocol.h"
 #include "FlashStorage.h"
-// #include "OTP\\hotp.h"
 #include "password_safe.h"
 #include "hotp.h"
 
