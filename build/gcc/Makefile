@@ -63,68 +63,68 @@ RUN_MODE=ROM_RUN
 # Target file name (without extension).
 TARGET = crypto
 
-
-# Folder structure
-SRC_DIR=$(CURDIR)/../../src/
-
 # List C source files here. (C dependencies are automatically generated.)
 # use file-extension c for "c-only"-files
-SRC = 		$(SRC_DIR)/main.c                                         \
-			$(SRC_DIR)/hw_config.c                                         \
-			$(SRC_DIR)/test_code.c                                         \
-			$(SRC_DIR)/utils/memory_ops.c			\
-			$(SRC_DIR)/CCID/Ccid_usb.c                                         \
-			$(SRC_DIR)/CCID/Ifd_protocol.c                                         \
-			$(SRC_DIR)/CCID/Crd.c                                         \
-			$(SRC_DIR)/CCID/Ifd_ccid.c                                         \
-			$(SRC_DIR)/CCID/CcidLocalAccess.c                                         \
-			$(SRC_DIR)/CCID/SMARTCARD/smartcard.c                                         \
-			$(SRC_DIR)/CCID/CCIDHID_USB/CCIDHID_usb_prop.c                                         \
-			$(SRC_DIR)/CCID/CCIDHID_USB/CCIDHID_usb_desc.c                                         \
-			$(SRC_DIR)/SD_DISK/SD_USB/usb_desc.c                                         \
-			$(SRC_DIR)/SD_DISK/SD_USB/usb_prop.c                                         \
-			$(SRC_DIR)/STM/stm32f10x_systick.c                                         \
-			$(SRC_DIR)/STM/stm32f10x_it.c                                         \
-			$(SRC_DIR)/STM/Libraries/CMSIS/Core/CM3/core_cm3.c                                         \
-			$(SRC_DIR)/STM/Libraries/CMSIS/Core/CM3/system_stm32f10x.c                                         \
-			$(SRC_DIR)/STM/Libraries/CMSIS/Core/CM3/startup/gcc/startup_stm32f10x_hd.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/misc.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_adc.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_can.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_crc.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_dac.c        \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_fsmc.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_gpio.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_i2c.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_iwdg.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_rcc.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_sdio.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32_USB-FS-Device_Driver/src/usb_core.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32_USB-FS-Device_Driver/src/usb_init.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32_USB-FS-Device_Driver/src/usb_int.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32_USB-FS-Device_Driver/src/usb_mem.c                                         \
-			$(SRC_DIR)/STM/Libraries/STM32_USB-FS-Device_Driver/src/usb_regs.c                                         \
-			$(SRC_DIR)/CRYPT/AES/aes.c                                         \
-			$(SRC_DIR)/CRYPT/SHA1/sha1.c                                         \
-			$(SRC_DIR)/CRYPT/SHA1/hmac-sha1.c                                         \
-			$(SRC_DIR)/hotp/hotp.c                                         \
-			$(SRC_DIR)/KEYBOARD/keyboard.c                                         \
-			$(SRC_DIR)/KEYBOARD/report_protocol.c                                         \
-			$(SRC_DIR)/USB/usb_endp.c                                         \
-			$(SRC_DIR)/USB/usb_bot.c                                         \
-			$(SRC_DIR)/USB/usb_pwr.c                                         \
-			$(SRC_DIR)/USB/usb_istr.c                                         \
+SRC = 		../../src/main.c                                         \
+			../../src/hw_config.c                                         \
+			../../src/test_code.c                                         \
+			../../src/tools.c	\
+			../../src/utils/memory_ops.c			\
+			../../src/CCID/Ccid_usb.c                                         \
+			../../src/CCID/Ifd_protocol.c                                         \
+			../../src/CCID/Crd.c                                         \
+			../../src/CCID/Ifd_ccid.c                                         \
+			../../src/CCID/CcidLocalAccess.c                                         \
+			../../src/CCID/SMARTCARD/smartcard.c                                         \
+			../../src/CCID/CCIDHID_USB/CCIDHID_usb_prop.c                                         \
+			../../src/CCID/CCIDHID_USB/CCIDHID_usb_desc.c                                         \
+			../../src/SD_DISK/SD_USB/usb_desc.c                                         \
+			../../src/SD_DISK/SD_USB/usb_prop.c                                         \
+			../../src/STM/stm32f10x_systick.c                                         \
+			../../src/STM/stm32f10x_it.c                                         \
+			../../src/STM/Libraries/CMSIS/Core/CM3/core_cm3.c                                         \
+			../../src/STM/Libraries/CMSIS/Core/CM3/system_stm32f10x.c                                         \
+			../../src/STM/Libraries/CMSIS/Core/CM3/startup/gcc/startup_stm32f10x_hd.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/misc.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_adc.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_can.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_crc.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_dac.c        \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_fsmc.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_gpio.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_i2c.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_iwdg.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_rcc.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_sdio.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c                                         \
+			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c                                         \
+			../../src/STM/Libraries/STM32_USB-FS-Device_Driver/src/usb_core.c                                         \
+			../../src/STM/Libraries/STM32_USB-FS-Device_Driver/src/usb_init.c                                         \
+			../../src/STM/Libraries/STM32_USB-FS-Device_Driver/src/usb_int.c                                         \
+			../../src/STM/Libraries/STM32_USB-FS-Device_Driver/src/usb_mem.c                                         \
+			../../src/STM/Libraries/STM32_USB-FS-Device_Driver/src/usb_regs.c                                         \
+			../../src/CRYPT/AES/aes.c                                         \
+			../../src/CRYPT/SHA1/sha1.c                                         \
+			../../src/CRYPT/SHA1/hmac-sha1.c                                         \
+			../../src/hotp/hotp.c                                         \
+			../../src/KEYBOARD/keyboard.c                                         \
+			../../src/KEYBOARD/report_protocol.c                                         \
+			../../src/USB/usb_endp.c                                         \
+			../../src/USB/usb_bot.c                                         \
+			../../src/USB/usb_pwr.c                                         \
+			../../src/USB/usb_istr.c                                         \
+			../../src/PWD_SAFE/FlashStorage.c	\
+			../../src/PWD_SAFE/HandleAesStorageKey.c	\
+			../../src/PWD_SAFE/password_safe.c	\
 
 			
 # List C source files here which must be compiled in ARM-Mode.
@@ -179,10 +179,10 @@ DEBUG = dwarf-2
 
 # List any extra directories to look for include files here.
 #     Each directory must be seperated by a space.
-EXTRAINCDIRS = $(SRC_DIR)/INC                                             \
-               $(SRC_DIR)/STM/Libraries/CMSIS/Core/CM3                    \
-			   $(SRC_DIR)/STM/Libraries/STM32_USB-FS-Device_Driver/inc    \
-			   $(SRC_DIR)/STM/Libraries/STM32F10x_StdPeriph_Driver/inc
+EXTRAINCDIRS = ../../src/INC                                             \
+               ../../src/STM/Libraries/CMSIS/Core/CM3                    \
+			   ../../src/STM/Libraries/STM32_USB-FS-Device_Driver/inc    \
+			   ../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/inc
 
 
 # List any extra directories to look for library files here.
