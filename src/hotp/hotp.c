@@ -28,10 +28,17 @@
 #include "string.h"
 #include "memory_ops.h"
 
-__I uint32_t hotp_slots[NUMBER_OF_HOTP_SLOTS]={SLOTS_PAGE1_ADDRESS+HOTP_SLOT1_OFFSET,SLOTS_PAGE1_ADDRESS+HOTP_SLOT2_OFFSET,
-					       SLOTS_PAGE1_ADDRESS+HOTP_SLOT3_OFFSET};
-__I uint32_t hotp_slot_counters[NUMBER_OF_HOTP_SLOTS]={SLOT1_COUNTER_ADDRESS,SLOT2_COUNTER_ADDRESS,SLOT3_COUNTER_ADDRESS};
-__I uint32_t hotp_slot_offsets[NUMBER_OF_HOTP_SLOTS]={HOTP_SLOT1_OFFSET,HOTP_SLOT2_OFFSET,HOTP_SLOT3_OFFSET};
+__I uint32_t hotp_slots[NUMBER_OF_HOTP_SLOTS]={SLOTS_PAGE1_ADDRESS+HOTP_SLOT1_OFFSET,
+                                               SLOTS_PAGE1_ADDRESS+HOTP_SLOT2_OFFSET,
+                                               SLOTS_PAGE1_ADDRESS+HOTP_SLOT3_OFFSET};
+
+__I uint32_t hotp_slot_counters[NUMBER_OF_HOTP_SLOTS]={ SLOT1_COUNTER_ADDRESS,
+                                                        SLOT2_COUNTER_ADDRESS,
+                                                        SLOT3_COUNTER_ADDRESS};
+
+__I uint32_t hotp_slot_offsets[NUMBER_OF_HOTP_SLOTS]={  HOTP_SLOT1_OFFSET,
+                                                        HOTP_SLOT2_OFFSET,
+                                                        HOTP_SLOT3_OFFSET};
 
 __I uint32_t totp_slots[NUMBER_OF_TOTP_SLOTS]={SLOTS_PAGE1_ADDRESS+TOTP_SLOT1_OFFSET,SLOTS_PAGE1_ADDRESS+TOTP_SLOT2_OFFSET,
 					       SLOTS_PAGE1_ADDRESS+TOTP_SLOT3_OFFSET,SLOTS_PAGE1_ADDRESS+TOTP_SLOT4_OFFSET,

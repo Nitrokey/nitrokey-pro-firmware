@@ -34,21 +34,21 @@ __IO uint8_t PrevXferComplete = 1;
 
 void sendChar(uint8_t chr){
 
-		keyboardBuffer[0]=0;
-		keyboardBuffer[3]=0;
+    keyboardBuffer[0]=0;
+    keyboardBuffer[3]=0;
 		
 		if (chr>='A'&&chr<='Z'){	
-		keyboardBuffer[0]=MOD_SHIFT_LEFT;
-		keyboardBuffer[3]=chr-61;
+            keyboardBuffer[0]=MOD_SHIFT_LEFT;
+            keyboardBuffer[3]=chr-61;
 		}
 		else if (chr>='a'&&chr<='z'){	
-		keyboardBuffer[3]=chr-93;
+            keyboardBuffer[3]=chr-93;
 		}
 		else if (chr>='0'&&chr<='9'){
-		if (chr=='0')
-		keyboardBuffer[3]=39;
-		else
-		keyboardBuffer[3]=chr-19;
+            if (chr=='0')
+                keyboardBuffer[3]=39;
+            else
+                keyboardBuffer[3]=chr-19;
 		}
 		
   sendKeys(keyboardBuffer);
@@ -137,3 +137,13 @@ sendChar(string[i]);
 
 }
 
+
+void sendTab (void)
+{
+  keyboardBuffer[3] = KEY_TAB;
+  sendKeys(keyboardBuffer);   
+
+  keyboardBuffer[0]=0;
+  keyboardBuffer[3]=0;
+  sendKeys(keyboardBuffer);
+}
