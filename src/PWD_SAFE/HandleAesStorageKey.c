@@ -540,12 +540,25 @@ u8 CheckStorageKey_u8 (void)
 
 
 *******************************************************************************/
-
 u8 StartupCheck_u8 (void)
 {
+  u8 CheckStatus_u8 = TRUE;
+
+  if (FALSE == PWS_CheckPasswordSafeKey_u8 ())
+  {
+    CheckStatus_u8 = FALSE;
+  }
+
+/*
   if (TRUE == CheckStorageKey_u8 ())
   {
     return (TRUE);        // Keys ok
+  }
+*/
+
+  if (TRUE == CheckStatus_u8)
+  {
+    return (TRUE);
   }
 
   //CI_LocalPrintf ("*** AES keys unsecure ***\r\n");

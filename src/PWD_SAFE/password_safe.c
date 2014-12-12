@@ -719,7 +719,30 @@ u8 PWS_EnableAccess (u8 *password)
 
 /*******************************************************************************
 
-  PWS_EnableAccess
+  PWS_DisableKey
+
+  Changes
+  Date      Reviewer        Info
+  18.10.14  RB              Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+u8 PWS_DisableKey (void)
+{
+  memset (DecryptedPasswordSafeKey_au8,0,AES_KEYSIZE_256_BIT);
+
+  DecryptedPasswordSafeKey_u8 = FALSE;
+
+  return (TRUE);
+}
+
+
+/*******************************************************************************
+
+  PWS_InitKey
 
   Changes
   Date      Reviewer        Info
@@ -741,6 +764,35 @@ u8 PWS_InitKey (void)
   {
     CI_LocalPrintf ("PWS_InitKey: *** FAIL ***\r\n");
     return (FALSE);
+  }
+
+  return (TRUE);
+}
+
+
+/*******************************************************************************
+  PWS_CheckPasswordSafeKey_u8
+
+  Changes
+  Date      Reviewer        Info
+  02.12.14  RB              Function created
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+u8 PWS_CheckPasswordSafeKey_u8 (void)
+{
+  u8 Key_au8[AES_KEYSIZE_256_BIT];
+  u32 *p_pu32;
+
+  ReadPasswordSafeKey (Key_au8);
+
+  p_pu32 = (u32*)&Key_au8[0];
+  if ((u32)0xFFFFFFFF == *p_pu32)
+  {
+    return (FALSE);   // No key generated - this is a security leak
   }
 
   return (TRUE);
