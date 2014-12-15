@@ -217,6 +217,10 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
             cmd_change_admin_pin(report, output);
             break;
 
+        case CMD_UNLOCK_USER_PASSOWRD:
+            cmd_unblock_pin(report, output);
+            break;
+
         //START - OTP Test Routine --------------------------------
             /*
             case CMD_TEST_COUNTER:
@@ -601,6 +605,35 @@ uint8_t cmd_change_admin_pin (uint8_t *report, uint8_t *output)
     else 
     {
         output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_ERROR_CHANGING_ADMIN_PASSWORD;
+        return 1;
+    }
+}
+
+uint8_t cmd_unblock_pin (uint8_t *report, uint8_t *output)
+{
+    uint8_t res = 1;
+    uint8_t admin_pin[26];
+    uint8_t new_pin[26];
+
+    memset(admin_pin, 0, 26);
+    memset(new_pin, 0, 26);
+
+    memcpy(admin_pin, report+1, 25);
+    memcpy(new_pin, report+26+1, 25);
+
+    res = cardAuthenticate(admin_pin);
+    if (TRUE != res)
+    {
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
+        return 1;
+    }
+
+    res = unblockPin( new_pin );
+    if (0 == res)
+    {
+        return 0;
+    }else{
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_ERROR_UNBLOCKING_PIN;
         return 1;
     }
 }
