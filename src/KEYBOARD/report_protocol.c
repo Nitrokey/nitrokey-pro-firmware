@@ -635,6 +635,7 @@ uint8_t cmd_factory_reset(uint8_t* report, uint8_t* output) {
     res = factoryReset(admin_password);
 
     if (0==res) {
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
         return 0;
     }
     else
