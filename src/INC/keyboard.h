@@ -93,6 +93,8 @@
 #define KEY_LEFT     80
 #define KEY_RIGHT    79
 
+#define KEY_TAB      43
+
 extern volatile uint8_t numLockClicked;
 extern volatile uint8_t capsLockClicked;
 extern volatile uint8_t scrollLockClicked;

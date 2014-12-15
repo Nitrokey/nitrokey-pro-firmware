@@ -68,7 +68,8 @@ TARGET = crypto
 SRC = 		../../src/main.c                                         \
 			../../src/hw_config.c                                         \
 			../../src/test_code.c                                         \
-			../../src/memory_ops.c			\
+			../../src/tools.c	\
+			../../src/utils/memory_ops.c			\
 			../../src/CCID/Ccid_usb.c                                         \
 			../../src/CCID/Ifd_protocol.c                                         \
 			../../src/CCID/Crd.c                                         \
@@ -114,13 +115,16 @@ SRC = 		../../src/main.c                                         \
 			../../src/CRYPT/AES/aes.c                                         \
 			../../src/CRYPT/SHA1/sha1.c                                         \
 			../../src/CRYPT/SHA1/hmac-sha1.c                                         \
-			../../src/CRYPT/hotp.c                                         \
+			../../src/hotp/hotp.c                                         \
 			../../src/KEYBOARD/keyboard.c                                         \
 			../../src/KEYBOARD/report_protocol.c                                         \
 			../../src/USB/usb_endp.c                                         \
 			../../src/USB/usb_bot.c                                         \
 			../../src/USB/usb_pwr.c                                         \
 			../../src/USB/usb_istr.c                                         \
+			../../src/PWD_SAFE/FlashStorage.c	\
+			../../src/PWD_SAFE/HandleAesStorageKey.c	\
+			../../src/PWD_SAFE/password_safe.c	\
 
 			
 # List C source files here which must be compiled in ARM-Mode.
@@ -274,6 +278,7 @@ LDFLAGS = -nostartfiles -Wl,-Map=$(TARGET).map,--cref
 LDFLAGS += -lc
 LDFLAGS += $(NEWLIBLPC) $(MATH_LIB)
 LDFLAGS += -lc -lgcc 
+LDFLAGS += -lrdimon
 LDFLAGS += $(CPLUSPLUS_LIB)
 LDFLAGS += $(patsubst %,-L%,$(EXTRA_LIBDIRS))
 LDFLAGS += $(patsubst %,-l%,$(EXTRA_LIBS))

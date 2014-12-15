@@ -36,9 +36,23 @@
 #define CMD_USER_AUTHENTICATE 0x0E
 #define CMD_GET_USER_PASSWORD_RETRY_COUNT 0x0F
 #define CMD_USER_AUTHORIZE 0x10
-#define CMD_CHANGE_USER_PIN 0x12
-#define CMD_CHANGE_ADMIN_PIN 0x13
+#define CMD_LOCK_DEVICE                   0x12
+#define CMD_CHANGE_USER_PIN 0x14
+#define CMD_CHANGE_ADMIN_PIN 0x15
 
+#define CMD_GET_PW_SAFE_SLOT_STATUS       0x60
+#define CMD_GET_PW_SAFE_SLOT_NAME         0x61
+#define CMD_GET_PW_SAFE_SLOT_PASSWORD     0x62
+#define CMD_GET_PW_SAFE_SLOT_LOGINNAME    0x63
+#define CMD_SET_PW_SAFE_SLOT_DATA_1       0x64
+#define CMD_SET_PW_SAFE_SLOT_DATA_2       0x65
+#define CMD_PW_SAFE_ERASE_SLOT            0x66
+#define CMD_PW_SAFE_ENABLE                0x67
+#define CMD_PW_SAFE_INIT_KEY              0x68
+#define CMD_PW_SAFE_SEND_DATA             0x69
+
+#define CMD_DETECT_SC_AES   0x6a
+#define CMD_NEW_AES_KEY     0x6b
 
 #define CMD_DATA_OFFSET 0x01
 
@@ -47,16 +61,20 @@
 #define STATUS_ERROR 0x02
 #define STATUS_RECEIVED_REPORT 0x03
 
-#define CMD_STATUS_OK 0
-#define CMD_STATUS_WRONG_CRC 1
-#define CMD_STATUS_WRONG_SLOT 2
-#define CMD_STATUS_SLOT_NOT_PROGRAMMED 3
-#define CMD_STATUS_WRONG_PASSWORD 4
-#define CMD_STATUS_NOT_AUTHORIZED 5
-#define CMD_STATUS_TIMESTAMP_WARNING 6
-#define CMD_STATUS_NO_NAME_ERROR 7
-#define CMD_STATUS_ERROR_CHANGING_USER_PASSWORD 8
-#define CMD_STATUS_ERROR_CHANGING_ADMIN_PASSWORD 9
+#define CMD_STATUS_OK                               0
+#define CMD_STATUS_WRONG_CRC                        1
+#define CMD_STATUS_WRONG_SLOT                       2
+#define CMD_STATUS_SLOT_NOT_PROGRAMMED              3
+#define CMD_STATUS_WRONG_PASSWORD                   4
+#define CMD_STATUS_NOT_AUTHORIZED                   5
+#define CMD_STATUS_TIMESTAMP_WARNING                6
+#define CMD_STATUS_NO_NAME_ERROR                    7
+#define CMD_STATUS_NOT_SUPPORTED                    8
+#define CMD_STATUS_UNKNOWN_COMMAND                  9
+#define CMD_STATUS_AES_DEC_FAILED                   10
+#define CMD_STATUS_AES_CREATE_KEY_FAILED            11
+#define CMD_STATUS_ERROR_CHANGING_USER_PASSWORD     12
+#define CMD_STATUS_ERROR_CHANGING_ADMIN_PASSWORD    13
 
 /*
 Output report
@@ -197,8 +215,24 @@ uint8_t cmd_user_authenticate(uint8_t *report,uint8_t *output);
 uint8_t cmd_user_authorize(uint8_t *report,uint8_t *output);
 uint8_t cmd_get_user_password_retry_count(uint8_t *report,uint8_t *output);
 uint8_t cmd_set_time(uint8_t *report,uint8_t *output);
+
+uint8_t cmd_getPasswordSafeStatus(uint8_t *report,uint8_t *output);
+uint8_t cmd_getPasswordSafeSlotName(uint8_t *report,uint8_t *output);
+uint8_t cmd_getPasswordSafeSlotPassword(uint8_t *report,uint8_t *output);
+uint8_t cmd_getPasswordSafeSlotLoginName(uint8_t *report,uint8_t *output);
+uint8_t cmd_setPasswordSafeSetSlotData_1(uint8_t *report,uint8_t *output);
+uint8_t cmd_setPasswordSafeSetSlotData_2(uint8_t *report,uint8_t *output);
+uint8_t cmd_getPasswordSafeEraseSlot(uint8_t *report,uint8_t *output);
+uint8_t cmd_getPasswordSafeEnable(uint8_t *report,uint8_t *output);
+uint8_t cmd_getPasswordSafeInitKey(uint8_t *report,uint8_t *output);
+uint8_t cmd_getPasswordSafeSendData(uint8_t *report,uint8_t *output);
+
+uint8_t cmd_detectSmartCardAES(uint8_t *report, uint8_t *output);
+uint8_t cmd_newAesKey(uint8_t* report, uint8_t* output);
+uint8_t cmd_lockDevice(uint8_t* report, uint8_t* output);
 uint8_t cmd_change_user_pin(uint8_t *report, uint8_t *output);
 uint8_t cmd_change_admin_pin(uint8_t *report, uint8_t *output);
+
 
 //START - OTP Test Routine --------------------------------
 /*
