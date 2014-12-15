@@ -570,7 +570,7 @@ uint8_t cmd_change_admin_pin (uint8_t *report, uint8_t *output)
     memcpy(new_admin_pin, report+26 , 25);
 
     res = cardAuthenticate(old_admin_pin);
-    if (res != 0 )
+    if (res != TRUE )
     {
         output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
         return 1;
