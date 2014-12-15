@@ -1012,14 +1012,6 @@ uint8_t unblockPin(uint8_t* new_pin)
 
     CcidSelectOpenPGPApp ();
 
-/*
-    cRet = cardAuthenticate(admin_pin);
-    if ( == cRet)
-    {
-        return -1;
-    }
-*/
-
     cRet = CcidUnblockPin (new_pin);
     if ( APDU_ANSWER_COMMAND_CORRECT != cRet)
     {

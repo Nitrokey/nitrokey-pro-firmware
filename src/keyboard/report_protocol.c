@@ -615,18 +615,8 @@ uint8_t cmd_unblock_pin (uint8_t *report, uint8_t *output)
     uint8_t admin_pin[26];
     uint8_t new_pin[26];
 
-    memset(admin_pin, 0, 26);
     memset(new_pin, 0, 26);
-
-    memcpy(admin_pin, report+1, 25);
-    memcpy(new_pin, report+26+1, 25);
-
-    res = cardAuthenticate(admin_pin);
-    if (TRUE != res)
-    {
-        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
-        return 1;
-    }
+    memcpy(new_pin, report+1, 25);
 
     res = unblockPin( new_pin );
     if (0 == res)
