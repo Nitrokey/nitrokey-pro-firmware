@@ -217,7 +217,7 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
             cmd_change_admin_pin(report, output);
             break;
 
-        case CMD_UNLOCK_USER_PASSOWRD:
+        case CMD_UNLOCK_USER_PASSWORD:
             cmd_unblock_pin(report, output);
             break;
 
