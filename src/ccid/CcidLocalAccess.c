@@ -1,4 +1,4 @@
-t/*
+/*
 * Author: Copyright (C) Rudolf Boeddeker 				Date: 2010-02-01
 *
 * This file is part of Nitrokey.
