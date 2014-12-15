@@ -1,4 +1,4 @@
-/*
+t/*
 * Author: Copyright (C) Rudolf Boeddeker 				Date: 2010-02-01
 *
 * This file is part of Nitrokey.
@@ -334,6 +334,38 @@ unsigned short CcidVerifyPin (unsigned char cPinNr,const char *szPin)
 	return (cRet);
 }
 
+
+/*******************************************************************************
+
+  CcidUnblockPin
+
+*******************************************************************************/
+
+unsigned short CcidUnblockPin (unsigned char* new_pin)
+{
+    unsigned short nRet;
+    int new_pin_len = strlen(new_pin);
+
+    // Command
+    tSCT.cAPDU[CCID_CLA]     = 0x00;
+    tSCT.cAPDU[CCID_INS]     = 0x2C;
+    tSCT.cAPDU[CCID_P1]      = 0x02;
+    tSCT.cAPDU[CCID_P2]      = 0x81;
+
+    // Send password
+    tSCT.cAPDU[CCID_LC]      = new_pin_len;
+
+    // New password
+    memcpy (tSCT.cAPDU[CCID_DATA] , new_pin, new_pin_len);
+
+    // Nothing to receive
+//    tSCT.cAPDU[].nLe      = 0;
+
+    nRet = SendAPDU (&tSCT);
+    return (nRet);
+}
+
+
 /*******************************************************************************
 
   CcidDecipher
@@ -413,7 +445,6 @@ unsigned short CcidGetChallenge (int nReceiveLength, unsigned char *nReceiveData
   else
     tSCT.cAPDU[CCID_DATA] = nReceiveLength;
 
-  // cRet = ISO7816_SendAPDU_Le_NoLc ( &tSCT );
   cRet = SendAPDU(&tSCT);
 
   n = tSCT.cAPDUAnswerLength;
@@ -470,7 +501,7 @@ unsigned short CcidPutAesKey(unsigned int cKeyLen, unsigned char *pcAES_Key)
   // tSCT.tAPDU.nLe      = 0;
 
   tSCT.cAPDULength = 4 +1 + cKeyLen;
-  nRet = SendAPDU(&tSCT);    //ISO7816_SendAPDU_NoLe_Lc (tSC);
+  nRet = SendAPDU(&tSCT);
 
   return (nRet);
 }
@@ -937,9 +968,9 @@ uint8_t factoryReset(uint8_t* password) {
     return 0;
 }
 
-uint8_t changeUserPin(uint8_t* password, uint8_t* new_password){
+uint8_t changeUserPin(uint8_t* password, uint8_t* new_password) {
     InitSCTStruct (&tSCT);
-    
+
     unsigned short cRet;
     unsigned char nReturnSize;
 
@@ -966,6 +997,31 @@ uint8_t changeAdminPin(uint8_t* password, uint8_t* new_password){
 
 
     if (APDU_ANSWER_COMMAND_CORRECT != cRet)
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+uint8_t unblockPin(uint8_t* new_pin)
+{
+    InitSCTStruct (&tSCT);
+
+    unsigned short cRet;
+
+    CcidSelectOpenPGPApp ();
+
+/*
+    cRet = cardAuthenticate(admin_pin);
+    if ( == cRet)
+    {
+        return -1;
+    }
+*/
+
+    cRet = CcidUnblockPin (new_pin);
+    if ( APDU_ANSWER_COMMAND_CORRECT != cRet)
     {
         return -1;
     }
