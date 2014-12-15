@@ -21,6 +21,7 @@
 		to do : CRC check of receive TPDU data
 */
 
+
 #include "stm32f10x.h"
 #include "platform_config.h"
 #include "hw_config.h"
@@ -30,22 +31,23 @@
 #include "CCID_Ifd_protocol.h"
 #include "CcidLocalAccess.h"
 
+#include "time.h"
 
-#define CCID_TRANSFER_BUFFER_MAX		256
+#define CCID_TRANSFER_BUFFER_MAX    256
 
-#define CCID_TPDU_OVERHEAD 					4
-#define CCID_TPDU_PROLOG  					3
-#define CCID_TPDU_ANSWER_OVERHEAD  	6
+#define CCID_TPDU_OVERHEAD          4
+#define CCID_TPDU_PROLOG            3
+#define CCID_TPDU_ANSWER_OVERHEAD   6
 
 
-#define CCID_TPDU_NAD				 0
-#define CCID_TPDU_PCD				 1
-#define CCID_TPDU_LENGTH 		 2
-#define CCID_TPDU_DATASTART	 3
+#define CCID_TPDU_NAD           0
+#define CCID_TPDU_PCD           1
+#define CCID_TPDU_LENGTH        2
+#define CCID_TPDU_DATASTART     3
 
-#define CCID_TPDU_R_BLOCK_FLAG								0x80
-#define CCID_TPDU_R_BLOCK_SEQUENCE_FLAG 			0x10
-#define CCID_TPDU_CHAINING_FLAG								0x20
+#define CCID_TPDU_R_BLOCK_FLAG          0x80
+#define CCID_TPDU_R_BLOCK_SEQUENCE_FLAG 0x10
+#define CCID_TPDU_CHAINING_FLAG         0x20
 
 
 #define CCID_CLA  0
@@ -57,20 +59,20 @@
 
 /*******************************************************************************
 
-  Definition of smartcard transfer struct 
+  Definition of smartcard transfer struct
 
 *******************************************************************************/
 
 
-typedef struct 
+typedef struct
 {
-	unsigned char  		cAPDULength;
-	unsigned short		cAPDUAnswerStatus;
-	unsigned char			cAPDUAnswerLength;
-	unsigned char  		cTPDUSequence;
-	unsigned char  		cTPDULength;
-	unsigned char			cAPDU[CCID_TRANSFER_BUFFER_MAX];
-	unsigned char			cTPDU[CCID_TRANSFER_BUFFER_MAX+CCID_TPDU_OVERHEAD];
+	unsigned char   cAPDULength;
+	unsigned short  cAPDUAnswerStatus;
+	unsigned char   cAPDUAnswerLength;
+	unsigned char   cTPDUSequence;
+	unsigned char   cTPDULength;
+	unsigned char   cAPDU[CCID_TRANSFER_BUFFER_MAX];
+	unsigned char   cTPDU[CCID_TRANSFER_BUFFER_MAX+CCID_TPDU_OVERHEAD];
 } typeSmartcardTransfer;
 
 static typeSmartcardTransfer tSCT;
@@ -116,16 +118,16 @@ unsigned char GenerateCRC (unsigned char *pData,unsigned char cLength)
 
 void GenerateTPDU (typeSmartcardTransfer *tSCT)
 {
-	tSCT->cTPDU[CCID_TPDU_NAD]    = 0;																		// Node Address (NAD)
-	tSCT->cTPDU[CCID_TPDU_PCD]    = (tSCT->cTPDUSequence & 1) << 6;			  // Protocol Control Byte
+	tSCT->cTPDU[CCID_TPDU_NAD]    = 0;                                  // Node Address (NAD)
+	tSCT->cTPDU[CCID_TPDU_PCD]    = (tSCT->cTPDUSequence & 1) << 6;     // Protocol Control Byte
 	tSCT->cTPDU[CCID_TPDU_LENGTH] = tSCT->cAPDULength;
 
-	tSCT->cTPDULength = tSCT->cAPDULength + CCID_TPDU_OVERHEAD; 					// the length of the TPDU
-	tSCT->cTPDUSequence++;																								// switch sequence
+	tSCT->cTPDULength = tSCT->cAPDULength + CCID_TPDU_OVERHEAD;         // the length of the TPDU
+	tSCT->cTPDUSequence++;                                              // switch sequence
 
 	memcpy (&tSCT->cTPDU[CCID_TPDU_DATASTART],tSCT->cAPDU,tSCT->cAPDULength); // copy APDU data
 
- 	tSCT->cTPDU[tSCT->cAPDULength+CCID_TPDU_OVERHEAD-1] = 								// set CRC at end of data
+ 	tSCT->cTPDU[tSCT->cAPDULength+CCID_TPDU_OVERHEAD-1] =                                               // set CRC at end of data
 						GenerateCRC ((unsigned char*)&tSCT->cTPDU,tSCT->cAPDULength+CCID_TPDU_PROLOG);
 }
 
@@ -137,12 +139,12 @@ void GenerateTPDU (typeSmartcardTransfer *tSCT)
 
 void GenerateChainedTPDU (typeSmartcardTransfer *tSCT)
 {
-	tSCT->cTPDU[CCID_TPDU_NAD]    = 0;												// Node Address (NAD)
-	tSCT->cTPDU[CCID_TPDU_PCD]    = ((tSCT->cTPDUSequence & 1) << 4) + CCID_TPDU_R_BLOCK_FLAG;			  // Protocol Control Byte
+	tSCT->cTPDU[CCID_TPDU_NAD]    = 0;          // Node Address (NAD)
+	tSCT->cTPDU[CCID_TPDU_PCD]    = ((tSCT->cTPDUSequence & 1) << 4) + CCID_TPDU_R_BLOCK_FLAG;  // Protocol Control Byte
 	tSCT->cTPDU[CCID_TPDU_LENGTH] = 0;
 
-	tSCT->cTPDULength = CCID_TPDU_OVERHEAD; 									// the length of the TPDU
-	tSCT->cTPDUSequence++;																		// switch sequence
+	tSCT->cTPDULength = CCID_TPDU_OVERHEAD; // the length of the TPDU
+	tSCT->cTPDUSequence++;                  // switch sequence
 
  	tSCT->cTPDU[CCID_TPDU_OVERHEAD-1] = GenerateCRC ((unsigned char*)&tSCT->cTPDU,CCID_TPDU_PROLOG);
 }
@@ -162,34 +164,33 @@ unsigned short SendTPDU (typeSmartcardTransfer *tSCT)
 
 // Send TPDU to smartcard an receive answer
 	CRD_SendCommand ((unsigned char*) tSCT->cTPDU,
-									                  tSCT->cTPDULength,
-																	  CCID_TRANSFER_BUFFER_MAX,
-									 (unsigned int*) &nAnswerLength);
+                    tSCT->cTPDULength,
+                    CCID_TRANSFER_BUFFER_MAX,
+                    (unsigned int*) &nAnswerLength);
 
 
-	if (CCID_TPDU_ANSWER_OVERHEAD > nAnswerLength)
-	{																																					// answer length incorrect
-		tSCT->cAPDUAnswerStatus = APDU_ANSWER_RECEIVE_INCORRECT;
+	if (CCID_TPDU_ANSWER_OVERHEAD > nAnswerLength)  // answer length incorrect
+	{		tSCT->cAPDUAnswerStatus = APDU_ANSWER_RECEIVE_INCORRECT;
 		return (tSCT->cAPDUAnswerStatus);
 	}
 
-	if (0 != (tSCT->cTPDU[CCID_TPDU_PCD] & CCID_TPDU_CHAINING_FLAG))					// chained data
+	if (0 != (tSCT->cTPDU[CCID_TPDU_PCD] & CCID_TPDU_CHAINING_FLAG))    // chained data
 	{
-		nOverhead               = CCID_TPDU_ANSWER_OVERHEAD - 2;								// no status data
+		nOverhead               = CCID_TPDU_ANSWER_OVERHEAD - 2;    // no status data
 		tSCT->cAPDUAnswerStatus = APDU_ANSWER_CHAINED_DATA;
 	}
 	else
 	{
 		nOverhead = CCID_TPDU_ANSWER_OVERHEAD;
-		tSCT->cAPDUAnswerStatus  = tSCT->cTPDU[nAnswerLength-3] << 8; 					  // Statusbyte SW1
-		tSCT->cAPDUAnswerStatus += tSCT->cTPDU[nAnswerLength-2];	             	  // Statusbyte SW2
+		tSCT->cAPDUAnswerStatus  = tSCT->cTPDU[nAnswerLength-3] << 8;   // Statusbyte SW1
+		tSCT->cAPDUAnswerStatus += tSCT->cTPDU[nAnswerLength-2];        // Statusbyte SW2
 	}
-	 
+
 	memcpy (&tSCT->cAPDU[tSCT->cAPDUAnswerLength],
 	        &tSCT->cTPDU[CCID_TPDU_DATASTART],
-					 nAnswerLength - nOverhead);	 																		// add new data to receive data
+					 nAnswerLength - nOverhead);    // add new data to receive data
 
-	tSCT->cAPDUAnswerLength += nAnswerLength - nOverhead;		  								// add length of recieved data
+	tSCT->cAPDUAnswerLength += nAnswerLength - nOverhead;   // add length of recieved data
 
 	return (tSCT->cAPDUAnswerStatus);
 }
@@ -209,18 +210,18 @@ unsigned short SendAPDU (typeSmartcardTransfer *tSCT)
 
 	SendTPDU (tSCT);
 
-	if (APDU_ANSWER_RECEIVE_INCORRECT == tSCT->cAPDUAnswerStatus)								// return on error ??
+	if (APDU_ANSWER_RECEIVE_INCORRECT == tSCT->cAPDUAnswerStatus)   // return on error ??
 	{
 		return (tSCT->cAPDUAnswerStatus);
 	}
 
-// Chained answer ?
+    // Chained answer ?
 	while (0 != (tSCT->cTPDU[CCID_TPDU_PCD] & CCID_TPDU_CHAINING_FLAG))
 	{
  		GenerateChainedTPDU (tSCT);
 		SendTPDU (tSCT);
 
-		if ((APDU_ANSWER_CHAINED_DATA    != tSCT->cAPDUAnswerStatus)	&&							// return on error ??
+		if ((APDU_ANSWER_CHAINED_DATA    != tSCT->cAPDUAnswerStatus) &&	    // return on error ??
 		    (APDU_ANSWER_COMMAND_CORRECT != tSCT->cAPDUAnswerStatus))
 		{
 			return (tSCT->cAPDUAnswerStatus);
@@ -260,21 +261,49 @@ unsigned short CcidSelectOpenPGPApp (void)
 
 unsigned short CcidGetData (unsigned char cP1,unsigned char cP2,unsigned char *nRetSize)
 {
-	unsigned short cRet;
+    unsigned short cRet;
 
-	tSCT.cAPDULength = CCID_SIZE_GETDATA;
+    tSCT.cAPDULength = CCID_SIZE_GETDATA;
 
-	tSCT.cAPDU[CCID_CLA] = 0x00;
-	tSCT.cAPDU[CCID_INS] = 0xCA;
-	tSCT.cAPDU[CCID_P1]  = cP1;
-	tSCT.cAPDU[CCID_P2]  = cP2;
-	tSCT.cAPDU[CCID_LC]  = 0;						// LE = 256
+    tSCT.cAPDU[CCID_CLA] = 0x00;
+    tSCT.cAPDU[CCID_INS] = 0xCA;
+    tSCT.cAPDU[CCID_P1]  = cP1;
+    tSCT.cAPDU[CCID_P2]  = cP2;
+    tSCT.cAPDU[CCID_LC]  = 0;						// LE = 256
 
-	cRet = SendAPDU (&tSCT);
+    cRet = SendAPDU (&tSCT);
 
-	*nRetSize = tSCT.cAPDUAnswerLength;
+    *nRetSize = tSCT.cAPDUAnswerLength;
 
-	return (cRet);
+    return (cRet);
+}
+
+/*******************************************************************************
+
+  CcidChangePin
+
+*******************************************************************************/
+
+unsigned short CcidChangePin (unsigned char cPinNr,const char *szPin, const char* szNewPin)
+{
+    unsigned short cRet;
+
+    tSCT.cAPDULength = strlen (szPin) + strlen (szNewPin);
+
+    tSCT.cAPDU[CCID_CLA] = 0x00;
+    tSCT.cAPDU[CCID_INS] = 0x24;
+    tSCT.cAPDU[CCID_P1]  = 0x00;
+    tSCT.cAPDU[CCID_P2]  = 0x80+cPinNr;
+    tSCT.cAPDU[CCID_LC]  = tSCT.cAPDULength;
+
+    strcpy ((char*)&tSCT.cAPDU[CCID_DATA],szPin);
+    strcpy ((char*)&tSCT.cAPDU[CCID_DATA] + strlen (szPin), szNewPin);
+
+    tSCT.cAPDULength += CCID_DATA;
+
+    cRet = SendAPDU (&tSCT);
+
+    return (cRet);
 }
 
 /*******************************************************************************
@@ -317,7 +346,7 @@ unsigned short CcidVerifyPin (unsigned char cPinNr,const char *szPin)
 unsigned short CcidDecipher (unsigned char *nRetSize)
 {
 	unsigned short cRet;
-	unsigned char cDecipherString[CCID_DECIPHER_STRING_SIZE] = 
+	unsigned char cDecipherString[CCID_DECIPHER_STRING_SIZE] =
 	{
 		0x40,0xA3,0xBE,0x75,0xFA,0xF4,0x3E,0xAB,0xBB,0x8C,0xD8,0xB3,0x31,0x96,0x81,0xCF,
 		0x3A,0x09,0x85,0x8D,0x2A,0x4A,0x18,0x6F,0x13,0x4D,0x3D,0x11,0x22,0x72,0xFA,0x66,
@@ -347,6 +376,252 @@ unsigned short CcidDecipher (unsigned char *nRetSize)
 	*nRetSize = tSCT.cAPDUAnswerLength;
 
 	return (cRet);
+}
+
+
+
+/*******************************************************************************
+
+  CcidGetChallenge
+
+*******************************************************************************/
+
+unsigned short CcidGetChallenge (int nReceiveLength, unsigned char *nReceiveData)
+{
+  int     cRet;
+  int     n;
+
+  // Command
+  tSCT.cAPDU[CCID_CLA]    = 0x00;
+  tSCT.cAPDU[CCID_INS]    = 0x84;
+  tSCT.cAPDU[CCID_P1]     = 0x00;
+  tSCT.cAPDU[CCID_P2]     = 0x00;
+
+  tSCT.cAPDU[CCID_LC]     = 0;
+
+// Something to receive
+  //tSCT.cAPDU.nLe      = nReceiveLength; // nReceiveLength;
+
+  // Encode Le
+  if (nReceiveLength > 255)
+  {
+    tSCT.cAPDU[CCID_DATA] = 0;
+    tSCT.cAPDU[CCID_DATA + 1] = (unsigned char) nReceiveLength >> 8;
+    tSCT.cAPDU[CCID_DATA + 2] = (unsigned char) (nReceiveLength & 0xFF);
+  }
+  else
+    tSCT.cAPDU[CCID_DATA] = nReceiveLength;
+
+  // cRet = ISO7816_SendAPDU_Le_NoLc ( &tSCT );
+  cRet = SendAPDU(&tSCT);
+
+  n = tSCT.cAPDUAnswerLength;
+  if (n < nReceiveLength)
+  {
+    n = nReceiveLength;
+  }
+
+  memcpy (nReceiveData, &(tSCT.cAPDU[CCID_DATA]), n);
+
+  return cRet;
+}
+
+
+/*******************************************************************************
+
+    CcidPutAesKey
+
+*******************************************************************************/
+unsigned short CcidPutAesKey(unsigned char cKeyLen, unsigned char *pcAES_Key)
+{
+  int     nRet;
+  
+  //  Correct key len ?
+  if ((16 != cKeyLen) && (32 != cKeyLen))
+  {
+    return (FALSE);
+  }
+
+  //  Correct buffer length ?
+  if (ISO7816_MAX_APDU_DATA + ISO7816_APDU_SEND_HEADER_LEN + ISO7816_APDU_OFERHEAD <= cKeyLen)
+  {
+    return (FALSE);
+  }
+
+  if (FALSE == RestartSmartcard() )
+  {
+    return (FALSE);
+  }
+
+
+  // Command
+  tSCT.cAPDU[CCID_CLA]     = 0x00;
+  tSCT.cAPDU[CCID_INS]     = 0xDA;
+  tSCT.cAPDU[CCID_P1]      = 0x00;
+  tSCT.cAPDU[CCID_P2]      = 0xD5;
+
+  // Send password
+  tSCT.cAPDU[CCID_LC]      = cKeyLen;
+  
+  memcpy ( &(tSCT.cAPDU[CCID_DATA]), pcAES_Key, cKeyLen);
+
+  // Nothing to receive
+  // tSCT.tAPDU.nLe      = 0;
+
+  tSCT.cAPDULength = 4 +1 + cKeyLen;
+  nRet = SendAPDU(&tSCT);    //ISO7816_SendAPDU_NoLe_Lc (tSC);
+
+  return (nRet);
+}
+
+
+/*******************************************************************************
+
+    CcidAesDecSub
+
+*******************************************************************************/
+int CcidAesDecSub (int nSendLength,unsigned char *cSendData,int nReceiveLength, unsigned char *cReceiveData)
+{
+  int     nRet;
+  int     n;
+
+#ifdef DEBUG_OPENPGP_SHOW_CALLS
+  // CI_TickLocalPrintf ("ISO7816: Call AES_Dec_SUB\r\n");
+#endif
+
+//  Correct key len ?
+  if ((16 != nSendLength) && (32 != nSendLength))
+  {
+    return (FALSE);
+  }
+
+/* Don't restart because the password access is lost
+  if (FALSE == LA_SC_StartSmartcard ())
+  {
+    return (FALSE);
+  }
+*/
+// Command
+  tSCT.cAPDU[CCID_CLA]     = 0x00;
+  tSCT.cAPDU[CCID_INS]     = 0x2A;
+  tSCT.cAPDU[CCID_P1]      = 0x80;
+  tSCT.cAPDU[CCID_P2]      = 0x86;
+
+// Send cryptogram
+  tSCT.cAPDU[CCID_LC]      = nSendLength+1;
+  tSCT.cAPDU[CCID_DATA]     = 0x02;           // AES key
+
+  memcpy (&tSCT.cAPDU[CCID_DATA+1],cSendData,nSendLength);
+
+// Something to receive
+  tSCT.cAPDU[CCID_DATA + 1 + nSendLength]      = nSendLength; // nReceiveLength;
+
+  tSCT.cAPDULength = 5              // APDU header
+                    +1              // AES key selector
+                    +nSendLength;   // Payload
+
+
+  nRet = SendAPDU (&tSCT);
+
+  n = tSCT.cAPDUAnswerLength;
+  if (n < nReceiveLength)
+  {
+    n = nReceiveLength;
+  }
+
+  memcpy (cReceiveData,&(tSCT.cAPDU[CCID_DATA]),n);
+
+  return (nRet);
+}
+
+
+/*******************************************************************************
+
+    CcidAesDec
+
+*******************************************************************************/
+uint8_t CcidAesDec (int nSendLength,unsigned char *cSendData,int nReceiveLength, unsigned char *cReceiveData)
+{
+  int     nRet;
+
+//  128 bit key ?
+  if (16 == nSendLength)
+  {
+    nRet = CcidAesDecSub (nSendLength,cSendData,nReceiveLength,cReceiveData);
+
+    if (tSCT.cAPDUAnswerStatus != APDU_ANSWER_COMMAND_CORRECT)   // Sc send no ok
+    {
+      return (FALSE);
+    }
+
+    return TRUE;
+  }
+
+
+//  256 bit key ?
+  if (32 == nSendLength)
+  {
+    // Decrypt first 16 Byte
+    nRet = CcidAesDecSub (16,cSendData,16,cReceiveData);
+
+    if ( tSCT.cAPDUAnswerStatus != APDU_ANSWER_COMMAND_CORRECT )
+    {
+      return (FALSE);
+    }
+
+    if (FALSE == nRet)
+    {
+      return (FALSE);
+    }
+
+    // Decrypt second 16 Byte
+    nRet = CcidAesDecSub (16,&cSendData[16],16,&cReceiveData[16]);
+
+    if ( tSCT.cAPDUAnswerStatus != APDU_ANSWER_COMMAND_CORRECT )
+    {
+      return (FALSE);
+    }
+    return TRUE;
+  }
+
+  return (FALSE);
+}
+
+
+/*******************************************************************************
+
+    GetRandomNumber_u32
+
+*******************************************************************************/
+
+u32 getRandomNumber (u32 Size_u32, u8 *Data_pu8)
+{
+    u32 Ret_u32;
+    u32 i;
+    time_t  now;
+    static u8 FlasgTimeIsSet_u8 = FALSE;
+
+    // Size ok ?
+    if (APDU_MAX_RESPONSE_LEN <= Size_u32)
+    {
+        return (FALSE);
+    }
+
+    // Get a random number from smartcard
+    Ret_u32 = CcidGetChallenge (Size_u32, Data_pu8);
+
+    #ifdef GENERATE_RANDOM_NUMBER_WITH_2ND_SOURCE
+    // Paranoia: if the random number is not really random, xor it with another random number from a second source
+    if (FALSE == FlasgTimeIsSet_u8)
+    {
+        time (&now);                      // Get the local time
+        srand (now + Data_pu8[0]);        // Init the local random generator
+        FlasgTimeIsSet_u8 = TRUE;
+    }
+
+    for (i=0;i<Size_u32;i++)
+        Data_pu8[i] = Data_pu8[i] ^ (u8)(rand () % 256);
+    #endif
 }
 
 /*******************************************************************************
@@ -498,7 +773,7 @@ void CcidLocalAccessTest (void)
  	InitSCTStruct (&tSCT);
 
   SmartCardInitInterface ();
-	
+
 /* Access sequence like gpg */
  	AccessTestGPG ();
 
@@ -610,15 +885,14 @@ uint8_t cardAuthenticate(uint8_t *password){
 
 	CcidSelectOpenPGPApp ();
 	cRet = CcidVerifyPin (3,password);
-	
+
 
 	if (APDU_ANSWER_COMMAND_CORRECT != cRet)
 	{
-		return 1;
+		return FALSE;
 	}
-	
 
-return 0;	
+    return TRUE;
 }
 
 uint8_t userAuthenticate(uint8_t *password){
@@ -656,8 +930,44 @@ uint8_t factoryReset(uint8_t* password) {
     return 0;
 }
 
+uint8_t changeUserPin(uint8_t* password, uint8_t* new_password){
+    InitSCTStruct (&tSCT);
+    
+    unsigned short cRet;
+    unsigned char nReturnSize;
+
+    CcidSelectOpenPGPApp ();
+    cRet = CcidChangePin (1,password, new_password);
+
+
+    if (APDU_ANSWER_COMMAND_CORRECT != cRet)
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+uint8_t changeAdminPin(uint8_t* password, uint8_t* new_password){
+    InitSCTStruct (&tSCT);
+    
+    unsigned short cRet;
+    unsigned char nReturnSize;
+
+    CcidSelectOpenPGPApp ();
+    cRet = CcidChangePin (3,password, new_password);
+
+
+    if (APDU_ANSWER_COMMAND_CORRECT != cRet)
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
 uint8_t getPasswordRetryCount(){
-	
+
 	InitSCTStruct (&tSCT);
 
 	unsigned short cRet;
@@ -692,4 +1002,126 @@ uint8_t getUserPasswordRetryCount(){
         return tSCT.cAPDU[4];
 }
 
+uint8_t isAesSupported (void) {
+    InitSCTStruct (&tSCT);
+
+    CcidSelectOpenPGPApp();
+
+ 	unsigned short cRet;
+
+	tSCT.cAPDU[CCID_CLA] = 0x00;
+	tSCT.cAPDU[CCID_INS] = 0x2A;
+	tSCT.cAPDU[CCID_P1]  = 0x80;
+	tSCT.cAPDU[CCID_P2]  = 0x86;
+	tSCT.cAPDU[CCID_LC]  = 17;
+
+    char test_data[17] = {0x02, // Use AES to DECIPHER
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 
+        0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F};
+	memcpy (( char*) &tSCT.cAPDU[CCID_DATA], test_data, 17);
+    tSCT.cAPDU[CCID_DATA+16] = 0;
+    tSCT.cAPDU[CCID_DATA+17] = 0;
+    tSCT.cAPDU[CCID_DATA+18] = 0;
+
+    tSCT.cAPDULength = 5 + 17;
+	cRet = SendAPDU (&tSCT);
+
+
+    /* Possible answers and intepretations:
+    *
+    * APDU_ANSWER_COMMAND_CORRECT (SW1=90, SW2=00)
+    *   Successfully used AES module to decipher => AES module exists
+    *
+    * APDU_ANSWER_REF_DATA_NOT_FOUND (SW1=6A, SW2=88)
+    *   AES key not found => AES module exists, and the error is at the non existing key
+    *
+    * APDU_ANSWER_USE_CONDIT_NOT_SATISFIED (SW1=69, SW2=85)
+    *   AES module doen't exist
+    *
+    */
+
+    // Determine if AES module exists
+    if ( (APDU_ANSWER_COMMAND_CORRECT == cRet) || (APDU_ANSWER_REF_DATA_NOT_FOUND == cRet))
+        return TRUE;
+    else
+        return FALSE;
+}
+
+uint8_t sendAESMasterKey (int nLen, unsigned char *pcMasterKey)
+{
+  int nRet;
+
+  ////CI_LocalPrintf ("Put AES master key     : ");
+  //HexPrint (nLen,pcMasterKey);
+  ////CI_LocalPrintf ("\r\n");
+
+  nRet = CcidPutAesKey (nLen, pcMasterKey);
+  if (FALSE == nRet)
+  {
+    ////CI_LocalPrintf ("fail\n\r");
+    return (FALSE);
+  }
+
+  ////CI_LocalPrintf ("OK \n\r");
+  if (APDU_ANSWER_COMMAND_CORRECT == nRet)
+      return (TRUE);
+  else
+      return nRet; //(FALSE);
+}
+
+uint8_t testScAesKey (int nLen, unsigned char *pcKey)
+{
+  int nRet;
+  unsigned char acBufferOut[32];
+
+  //CI_LocalPrintf ("Encrypted AES key  : ");
+  // HexPrint (nLen,pcKey);
+  //CI_LocalPrintf ("\r\n");
+
+  if (32 < nLen)
+  {
+    //CI_LocalPrintf ("len fail\n\r");
+    return (FALSE);
+  }
+
+  memset (acBufferOut, 0, nLen);
+
+  nRet = CcidAesDec ( nLen, pcKey, nLen, acBufferOut);
+
+  if (TRUE == nRet)
+  {
+    //CI_LocalPrintf ("Decrypted AES key  : ");
+    //HexPrint (nLen,acBufferOut);
+    //CI_LocalPrintf ("\r\n");
+  }
+  else
+  {
+    memset (pcKey,0,nLen);
+    //CI_LocalPrintf ("fail\n\r");
+    return (FALSE);
+  }
+
+  memcpy (pcKey,acBufferOut,nLen);
+
+  return (TRUE);
+}
+
+uint8_t testSendUserPW2 (unsigned char *pcPW)
+{
+  unsigned short nRet;
+  int n;
+
+  n = strlen ((char *)pcPW);
+
+  //CI_LocalPrintf ("Send user password  : ");
+  nRet = CcidVerifyPin (2, pcPW);
+  if (APDU_ANSWER_COMMAND_CORRECT == nRet)
+  {
+    //CI_LocalPrintf ("fail\n\r");
+    return (TRUE);
+  }
+  //CI_LocalPrintf ("OK \n\r");
+
+  return (FALSE);
+}
 

@@ -34,6 +34,7 @@
 #include "CCIDHID_usb_prop.h"
 #include "string.h"
 #include "CcidLocalAccess.h"
+#include "HandleAesStorageKey.h"
 
 
 
@@ -117,6 +118,8 @@ check_backups();
 SmartCardInitInterface ();
 
 USB_Start ();
+
+StartupCheck_u8();
 		
 /* Endless loop after USB startup  */
   while (1)

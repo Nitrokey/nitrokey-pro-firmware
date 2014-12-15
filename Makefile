@@ -1,19 +1,18 @@
 ROOT_DIR=$(CURDIR)
 BUILD_DIR=$(ROOT_DIR)/build/gcc
 SCRIPT_DIR=$(ROOT_DIR)/scripts
-OPENOCD_BIN?=~/Projects/openocd/build/bin
+OPENOCD_BIN?=
 
 .PHONY: firmware flash-versaloon clean
 
 firmware:
 	cd $(BUILD_DIR) && \
 	make && \
-	cd - && \
-	mv $(BUILD_DIR)/crypto.elf .
+	cd - && 
+#	mv $(BUILD_DIR)/crypto.elf .
 
-
+#Reminder:	export OPENOCD_BIN=$(OPENOCD_BIN) 
 flash-versaloon:
-	export OPENOCD_BIN=
 	cd scripts && \
 	./flash-versaloon.sh
 
