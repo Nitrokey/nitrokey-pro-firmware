@@ -55,7 +55,7 @@
 #define CMD_DETECT_SC_AES                 0x6a
 #define CMD_NEW_AES_KEY                   0x6b
 
-#define CMD_DATA_OFFSET t0x01
+#define CMD_DATA_OFFSET 0x01
 
 #define STATUS_READY 0x00
 #define STATUS_BUSY	 0x01
