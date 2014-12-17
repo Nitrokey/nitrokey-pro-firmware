@@ -616,10 +616,10 @@ uint8_t cmd_unblock_pin (uint8_t *report, uint8_t *output)
     uint8_t new_pin[25];
 
     memset(admin_pin, 0, 25);
-    memcpy(admin_pin, report, 25);
+    memcpy(admin_pin, report+1, 25);
 
     memset(new_pin, 0, 25);
-    memcpy(new_pin, &(report[25]), 25);
+    memcpy(new_pin, &(report[26]), 25);
 
 
     res = cardAuthenticate(admin_pin);
@@ -632,6 +632,7 @@ uint8_t cmd_unblock_pin (uint8_t *report, uint8_t *output)
     res = unblockPin(new_pin);
     if (0 == res)
     {
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
         return 0;
     }else{
         output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_ERROR_UNBLOCKING_PIN;

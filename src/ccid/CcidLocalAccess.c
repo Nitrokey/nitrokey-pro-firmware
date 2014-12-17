@@ -351,15 +351,12 @@ unsigned short CcidUnblockPin (unsigned char* new_pin)
     tSCT.cAPDU[CCID_INS]     = 0x2C;
     tSCT.cAPDU[CCID_P1]      = 0x02;
     tSCT.cAPDU[CCID_P2]      = 0x81;
-
-    // Send password
     tSCT.cAPDU[CCID_LC]      = new_pin_len;
 
     // New password
-    memcpy (tSCT.cAPDU[CCID_DATA] , new_pin, new_pin_len);
+    strcpy ((char*)&tSCT.cAPDU[CCID_DATA] , new_pin);
 
-    // Nothing to receive
-//    tSCT.cAPDU[].nLe      = 0;
+    tSCT.cAPDULength =CCID_DATA + new_pin_len;
 
     nRet = SendAPDU (&tSCT);
     return (nRet);
