@@ -1,10 +1,10 @@
-= Crypto Stick firmware =
+= Nitrokey Pro firmware =
 
-This is the firmware for the Crypto Stick 1.4 which includes the OATH feature.
+This is the firmware for Nitrokey Pro which includes the OATH feature.
 
 == Compiling on Ubuntu Linux ==
 1) Install gcc-arm-none-eabi from https://launchpad.net/gcc-arm-embedded
-2) change to cryptostick.oath/firmware/build/gcc
+2) go to build/gcc
 3) make
 
 == Flashing ==

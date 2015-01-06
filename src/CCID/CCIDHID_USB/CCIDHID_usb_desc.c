@@ -3,20 +3,20 @@
 *												STMicroelectronics	 			
 *												MCD Application Team			Date:	04/27/2009
 *
-* This file is part of GPF Crypto Stick.
+* This file is part of Nitrokey.
 *
-* GPF Crypto Stick is free software: you can redistribute it and/or modify
+* Nitrokey is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation, either version 3 of the License, or
 * any later version.
 *
-* GPF Crypto Stick is distributed in the hope that it will be useful,
+* Nitrokey is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details.
 *
 * You should have received a copy of the GNU General Public License
-* along with GPF Crypto Stick. If not, see <http://www.gnu.org/licenses/>.
+* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
 */
 
 /* Includes ------------------------------------------------------------------*/
@@ -241,10 +241,8 @@ const uint8_t CCID_StringVendor[CCID_SIZ_STRING_VENDOR] =
   {
     CCID_SIZ_STRING_VENDOR, 		/* Size of manufaturer string */
     0x03,           						/* bDescriptorType = String descriptor */
-    /* Manufacturer: "Crypto Stick" */
-    'C', 0, 'r', 0, 'y', 0, 'p', 0, 't', 0, 'o', 0, ' ', 0, 'S', 0,
-    't', 0, 'i', 0, 'c', 0, 'k', 0
-
+    /* Manufacturer: "Nitrokey" */
+    'N', 0, 'i', 0, 't', 0, 'r', 0, 'o', 0, 'k', 0, 'e', 0, 'y', 0
   };
 
 
@@ -252,11 +250,9 @@ const uint8_t CCID_StringProduct[CCID_SIZ_STRING_PRODUCT] =
   {
     CCID_SIZ_STRING_PRODUCT,
     0x03,
-    /* Product name: "Crypto Stick v1.4" */
-    'C', 0, 'r', 0, 'y', 0, 'p', 0, 't', 0, 'o', 0, ' ', 0, 'S', 0,
-    't', 0, 'i', 0, 'c', 0, 'k', 0, ' ', 0, 'v', 0, '1', 0, '.', 0,
-	  '4', 0
-
+    /* Product name: "Nitrokey Pro" */
+    'N', 0, 'i', 0, 't', 0, 'r', 0, 'o', 0, 'k', 0, 'e', 0, 'y', 0,
+    'P', 0, 'r', 0, 'o'
   };
 
 
