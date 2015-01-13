@@ -54,6 +54,7 @@
 
 #define CMD_DETECT_SC_AES                 0x6a
 #define CMD_NEW_AES_KEY                   0x6b
+#define GET_PRO_DEBUG                     0x6c
 
 #define CMD_DATA_OFFSET 0x01
 
@@ -92,6 +93,7 @@ size	offset	description
 #define OUTPUT_CMD_CRC_OFFSET 2
 #define OUTPUT_CMD_STATUS_OFFSET 6
 #define OUTPUT_CMD_RESULT_OFFSET 7
+#define OUTPUT_CMD_RESULT_LENGTH 53
 #define OUTPUT_CRC_OFFSET 60
 
 
@@ -236,6 +238,7 @@ uint8_t cmd_change_user_pin(uint8_t *report, uint8_t *output);
 uint8_t cmd_change_admin_pin(uint8_t *report, uint8_t *output);
 
 
+uint8_t cmd_getProDebug(uint8_t *report, uint8_t *output);
 //START - OTP Test Routine --------------------------------
 /*
 uint8_t cmd_test_counter(uint8_t *report,uint8_t *output);

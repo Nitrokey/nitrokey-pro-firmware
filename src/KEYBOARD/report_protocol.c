@@ -206,6 +206,10 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
             cmd_newAesKey(report, output);
             break;
 
+        case GET_PRO_DEBUG:
+            cmd_getProDebug(report, output);
+            break;
+
         case CMD_CHANGE_USER_PIN:
             cmd_change_user_pin(report, output);
             break;
@@ -891,6 +895,21 @@ uint8_t cmd_newAesKey(uint8_t* report, uint8_t* output)
     output[OUTPUT_CMD_STATUS_OFFSET] = ret;
     return (0);
 */
+}
+
+
+uint8_t cmd_getProDebug(uint8_t *report, uint8_t *output)
+{
+    u32 ret;
+
+    unsigned char data[OUTPUT_CMD_RESULT_LENGTH];
+    unsigned int data_length=0;
+
+    GetDebug(data, &data_length);
+
+    output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
+    memcpy (output + OUTPUT_CMD_RESULT_OFFSET, data, data_length);
+    return (0);
 }
 
 
