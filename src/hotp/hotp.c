@@ -392,16 +392,13 @@ void backup_data(uint8_t *data,uint16_t len, uint32_t addr){
 	FLASH_ProgramWord(BACKUP_PAGE_ADDRESS+BACKUP_ADDRESS_OFFSET, addr);
 
 	FLASH_Lock();
-
-
 }
 
-void erase_counter(uint8_t slot){
-
-        FLASH_Unlock();
-        FLASH_ErasePage(hotp_slot_counters[slot]);
+void erase_counter(uint8_t slot)
+{
+    FLASH_Unlock();
+    FLASH_ErasePage(hotp_slot_counters[slot]);
 	FLASH_Lock();
-
 }
 
 
