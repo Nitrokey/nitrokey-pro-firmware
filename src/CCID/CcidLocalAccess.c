@@ -30,6 +30,7 @@
 #include "smartcard.h"
 #include "CCID_Ifd_protocol.h"
 #include "CcidLocalAccess.h"
+#include "hotp.h"
 
 #include "time.h"
 
@@ -548,8 +549,8 @@ uint8_t CcidAesDec (int nSendLength,unsigned char *cSendData,int nReceiveLength,
   if (16 == nSendLength)
   {
     nRet = CcidAesDecSub (nSendLength,cSendData,nReceiveLength,cReceiveData);
-
-    if (tSCT.cAPDUAnswerStatus != APDU_ANSWER_COMMAND_CORRECT)   // Sc send no ok
+    return nRet;
+    if (nRet != APDU_ANSWER_COMMAND_CORRECT)   // Sc send no ok
     {
       return (FALSE);
     }
@@ -563,8 +564,8 @@ uint8_t CcidAesDec (int nSendLength,unsigned char *cSendData,int nReceiveLength,
   {
     // Decrypt first 16 Byte
     nRet = CcidAesDecSub (16,cSendData,16,cReceiveData);
-
-    if ( tSCT.cAPDUAnswerStatus != APDU_ANSWER_COMMAND_CORRECT )
+    return nRet;
+    if ( nRet != APDU_ANSWER_COMMAND_CORRECT )
     {
       return (FALSE);
     }
@@ -576,8 +577,8 @@ uint8_t CcidAesDec (int nSendLength,unsigned char *cSendData,int nReceiveLength,
 
     // Decrypt second 16 Byte
     nRet = CcidAesDecSub (16,&cSendData[16],16,&cReceiveData[16]);
-
-    if ( tSCT.cAPDUAnswerStatus != APDU_ANSWER_COMMAND_CORRECT )
+    return nRet;
+    if ( nRet != APDU_ANSWER_COMMAND_CORRECT )
     {
       return (FALSE);
     }
@@ -905,16 +906,35 @@ return 0;
 
 uint8_t factoryReset(uint8_t* password) {
     unsigned short cRet;
-    
+
+    // Reset smart card
     CcidSelectOpenPGPApp ();
-    
+
     cRet = CcidVerifyPin (3, password);
     if (APDU_ANSWER_COMMAND_CORRECT != cRet)
         return 1;
 
     cRet = CcidFactoryReset();
     if(APDU_ANSWER_COMMAND_CORRECT != cRet)
-        return 1;
+        return 0;
+
+    // Erase OTP slots
+    uint8_t slot_no;
+    uint8_t slot_tmp[64];
+    memset(slot_tmp,0xFF,64);
+
+    for( slot_no = 0; slot_no < NUMBER_OF_HOTP_SLOTS; slot_no++) // HOTP slots
+    {
+        write_to_slot(slot_tmp, hotp_slot_offsets[slot_no], 64);
+        erase_counter(slot_no);
+    }
+    for( slot_no = 0; slot_no < NUMBER_OF_TOTP_SLOTS; slot_no++) //TOTP slots
+    {
+        write_to_slot(slot_tmp, totp_slot_offsets[slot_no], 64);
+    }
+
+    // Default flash memory
+
 
     return 0;
 }
@@ -1060,57 +1080,67 @@ uint8_t sendAESMasterKey (int nLen, unsigned char *pcMasterKey)
 
 uint8_t testScAesKey (int nLen, unsigned char *pcKey)
 {
-  int nRet;
-  unsigned char acBufferOut[32];
+    int nRet;
+    unsigned char acBufferOut[32];
 
-  //CI_LocalPrintf ("Encrypted AES key  : ");
-  // HexPrint (nLen,pcKey);
-  //CI_LocalPrintf ("\r\n");
-
-  if (32 < nLen)
-  {
-    //CI_LocalPrintf ("len fail\n\r");
-    return (FALSE);
-  }
-
-  memset (acBufferOut, 0, nLen);
-
-  nRet = CcidAesDec ( nLen, pcKey, nLen, acBufferOut);
-
-  if (TRUE == nRet)
-  {
-    //CI_LocalPrintf ("Decrypted AES key  : ");
-    //HexPrint (nLen,acBufferOut);
+    //CI_LocalPrintf ("Encrypted AES key  : ");
+    // HexPrint (nLen,pcKey);
     //CI_LocalPrintf ("\r\n");
-  }
-  else
-  {
-    memset (pcKey,0,nLen);
-    //CI_LocalPrintf ("fail\n\r");
-    return (FALSE);
-  }
 
-  memcpy (pcKey,acBufferOut,nLen);
+    if (32 < nLen)
+    {
+        //CI_LocalPrintf ("len fail\n\r");
+        return (FALSE);
+    }
 
-  return (TRUE);
+    memset (acBufferOut, 0, nLen);
+
+    nRet = CcidAesDec ( nLen, pcKey, nLen, acBufferOut);
+
+    switch(nRet)
+    {
+        case APDU_ANSWER_COMMAND_CORRECT:
+            memcpy (pcKey,acBufferOut,nLen);
+            return TRUE;
+        case APDU_ANSWER_REF_DATA_NOT_FOUND:
+            memset (pcKey,0,nLen);
+            return FALSE;
+    }
+/*
+    if (APDU_ANSWER_COMMAND_CORRECT == nRet)
+    {
+        //CI_LocalPrintf ("Decrypted AES key  : ");
+        //HexPrint (nLen,acBufferOut);
+        //CI_LocalPrintf ("\r\n");
+    }
+    else
+    {
+        memset (pcKey,0,nLen);
+        //CI_LocalPrintf ("fail\n\r");
+        return (FALSE);
+    }
+
+    memcpy (pcKey,acBufferOut,nLen);
+    return (TRUE);
+*/
 }
 
 uint8_t testSendUserPW2 (unsigned char *pcPW)
 {
-  unsigned short nRet;
-  int n;
+    unsigned short nRet;
+    int n;
 
-  n = strlen ((char *)pcPW);
+    n = strlen ((char *)pcPW);
 
-  //CI_LocalPrintf ("Send user password  : ");
-  nRet = CcidVerifyPin (2, pcPW);
-  if (APDU_ANSWER_COMMAND_CORRECT == nRet)
-  {
-    //CI_LocalPrintf ("fail\n\r");
-    return (TRUE);
-  }
-  //CI_LocalPrintf ("OK \n\r");
+    //CI_LocalPrintf ("Send user password  : ");
+    nRet = CcidVerifyPin (2, pcPW);
+    if (APDU_ANSWER_COMMAND_CORRECT == nRet)
+    {
+        //CI_LocalPrintf ("fail\n\r");
+        return (TRUE);
+    }
+    //CI_LocalPrintf ("OK \n\r");
 
-  return (FALSE);
+    return (FALSE);
 }
 
