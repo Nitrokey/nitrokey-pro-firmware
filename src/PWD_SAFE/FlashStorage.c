@@ -1103,6 +1103,7 @@ u32 EraseLocalFlashKeyValues_u32 (void)
   // CheckForNewSdCard ();             // Get SD ID
 
 // Clear password safe
+
   for (i1=0;i1<7;i1++)
   {
     for (i=0;i<256;i++)
@@ -1112,7 +1113,7 @@ u32 EraseLocalFlashKeyValues_u32 (void)
     // flashc_memcpy((void*)(PWS_FLASH_START_ADDRESS    ),EraseStoreData_au8,256,TRUE);
     // flashc_memcpy((void*)(PWS_FLASH_START_ADDRESS+256),EraseStoreData_au8,256,TRUE);
 
-    memcpy(page_buffer, PWS_FLASH_START_ADDRESS, FLASH_PAGE_SIZE);
+//    memcpy(page_buffer, PWS_FLASH_START_ADDRESS, FLASH_PAGE_SIZE);
     memcpy(page_buffer, EraseStoreData_au8, 256);
     memcpy(page_buffer+256, EraseStoreData_au8, 256);
     FLASH_Unlock();
@@ -1121,6 +1122,7 @@ u32 EraseLocalFlashKeyValues_u32 (void)
     FLASH_Lock();
 
   }
+
 
   // flashc_erase_page(PWS_FLASH_START_PAGE,TRUE);
 

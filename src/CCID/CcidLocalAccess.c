@@ -934,7 +934,7 @@ uint8_t factoryReset(uint8_t* password) {
     }
 
     // Default flash memory
-
+    EraseLocalFlashKeyValues_u32();
 
     return 0;
 }
