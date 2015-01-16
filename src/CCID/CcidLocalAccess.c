@@ -784,6 +784,47 @@ void CcidLocalAccessTest (void)
 
 }
 
+/*
+ * Needs Admin Authentication before called
+ */
+unsigned int CcidFactoryReset(void)
+{
+ 	unsigned short cRet;
+
+    // TERMINATE DF
+	tSCT.cAPDU[CCID_CLA] = 0x00;
+	tSCT.cAPDU[CCID_INS] = 0xE6;
+	tSCT.cAPDU[CCID_P1]  = 0x00;
+	tSCT.cAPDU[CCID_P2]  = 0x00;
+	tSCT.cAPDU[CCID_LC]  = 0;
+	tSCT.cAPDULength = 4;
+	cRet = SendAPDU (&tSCT);
+
+    // Select OpenPGP application
+    if (APDU_ANSWER_COMMAND_CORRECT == cRet) {
+        cRet = CcidSelectOpenPGPApp();
+
+        // ACTIVATE FILE
+        if (APDU_ANSWER_SEL_FILE_TERM_STATE == cRet) { // Card in termination state
+            tSCT.cAPDU[CCID_CLA] = 0x00;
+            tSCT.cAPDU[CCID_INS] = 0x44;
+            tSCT.cAPDU[CCID_P1]  = 0x00;
+            tSCT.cAPDU[CCID_P2]  = 0x00;
+            tSCT.cAPDU[CCID_LC]  = 0;
+            tSCT.cAPDULength = 4;
+            cRet = SendAPDU (&tSCT);
+            
+            return (cRet);
+        }
+        else
+            return (cRet);
+    }
+    else
+        return (cRet);
+    
+
+	return (cRet);
+}
 
 int getAID(void){
 
@@ -860,6 +901,22 @@ uint8_t userAuthenticate(uint8_t *password){
 
 
 return 0;
+}
+
+uint8_t factoryReset(uint8_t* password) {
+    unsigned short cRet;
+    
+    CcidSelectOpenPGPApp ();
+    
+    cRet = CcidVerifyPin (3, password);
+    if (APDU_ANSWER_COMMAND_CORRECT != cRet)
+        return 1;
+
+    cRet = CcidFactoryReset();
+    if(APDU_ANSWER_COMMAND_CORRECT != cRet)
+        return 1;
+
+    return 0;
 }
 
 uint8_t changeUserPin(uint8_t* password, uint8_t* new_password){

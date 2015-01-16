@@ -41,6 +41,8 @@ typeStick20Configuration_st StickConfiguration_st;
 
 *******************************************************************************/
 
+unsigned int debug_len = 0;
+
 #define FLASHC_USER_PAGE 0x801dc00
 
 /*
@@ -59,8 +61,34 @@ typeStick20Configuration_st StickConfiguration_st;
  142 - 145    ID of sc card (4 byte)
  146 - 177    XOR mask for sc tranfered keys (32 byte)
  178 - 209    Password safe key (32 byte)
-
+ 210 -        Debug
 */
+
+
+
+void WriteDebug (u8* data, unsigned int length)
+{
+    unsigned char page_buffer[FLASH_PAGE_SIZE];
+    memcpy (page_buffer, FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
+    memcpy (page_buffer+210, data, length);
+
+    debug_len += length;
+
+    FLASH_Unlock();
+    FLASH_ErasePage(FLASHC_USER_PAGE);
+    write_data_to_flash (page_buffer, FLASH_PAGE_SIZE, FLASHC_USER_PAGE);
+    FLASH_Lock();
+}
+
+
+void GetDebug (u8* data, unsigned int* length)
+{
+    unsigned char page_buffer[FLASH_PAGE_SIZE];
+    memcpy (page_buffer, FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
+    memcpy (data, page_buffer+210, debug_len);
+    *length = debug_len;
+    debug_len = 0;
+}
 
 /*******************************************************************************
 

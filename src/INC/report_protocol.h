@@ -20,25 +20,26 @@
 
 #define FIRMWARE_VERSION 07
 
-#define CMD_GET_STATUS 0x00
-#define CMD_WRITE_TO_SLOT 0x01
-#define CMD_READ_SLOT_NAME 0x02
-#define CMD_READ_SLOT 0x03
-#define CMD_GET_CODE 0x04
-#define CMD_WRITE_CONFIG 0x05
-#define CMD_ERASE_SLOT 0x06
-#define CMD_FIRST_AUTHENTICATE 0x07
-#define CMD_AUTHORIZE 0x08
-#define CMD_GET_PASSWORD_RETRY_COUNT 0x09
-#define CMD_SET_TIME 0x0B
-#define CMD_TEST_COUNTER 0x0C
-#define CMD_TEST_TIME 0x0D
-#define CMD_USER_AUTHENTICATE 0x0E
-#define CMD_GET_USER_PASSWORD_RETRY_COUNT 0x0F
-#define CMD_USER_AUTHORIZE 0x10
-#define CMD_LOCK_DEVICE                   0x12
-#define CMD_CHANGE_USER_PIN 0x14
-#define CMD_CHANGE_ADMIN_PIN 0x15
+#define CMD_GET_STATUS                      0x00
+#define CMD_WRITE_TO_SLOT                   0x01
+#define CMD_READ_SLOT_NAME                  0x02
+#define CMD_READ_SLOT                       0x03
+#define CMD_GET_CODE                        0x04
+#define CMD_WRITE_CONFIG                    0x05
+#define CMD_ERASE_SLOT                      0x06
+#define CMD_FIRST_AUTHENTICATE              0x07
+#define CMD_AUTHORIZE                       0x08
+#define CMD_GET_PASSWORD_RETRY_COUNT        0x09
+#define CMD_SET_TIME                        0x0B
+#define CMD_TEST_COUNTER                    0x0C
+#define CMD_TEST_TIME                       0x0D
+#define CMD_USER_AUTHENTICATE               0x0E
+#define CMD_GET_USER_PASSWORD_RETRY_COUNT   0x0F
+#define CMD_USER_AUTHORIZE                  0x10
+#define CMD_LOCK_DEVICE                     0x12
+#define CMD_FACTORY_RESET                   0x13
+#define CMD_CHANGE_USER_PIN                 0x14
+#define CMD_CHANGE_ADMIN_PIN                0x15
 
 #define CMD_GET_PW_SAFE_SLOT_STATUS       0x60
 #define CMD_GET_PW_SAFE_SLOT_NAME         0x61
@@ -51,8 +52,9 @@
 #define CMD_PW_SAFE_INIT_KEY              0x68
 #define CMD_PW_SAFE_SEND_DATA             0x69
 
-#define CMD_DETECT_SC_AES   0x6a
-#define CMD_NEW_AES_KEY     0x6b
+#define CMD_DETECT_SC_AES                 0x6a
+#define CMD_NEW_AES_KEY                   0x6b
+#define GET_PRO_DEBUG                     0x6c
 
 #define CMD_DATA_OFFSET 0x01
 
@@ -91,6 +93,7 @@ size	offset	description
 #define OUTPUT_CMD_CRC_OFFSET 2
 #define OUTPUT_CMD_STATUS_OFFSET 6
 #define OUTPUT_CMD_RESULT_OFFSET 7
+#define OUTPUT_CMD_RESULT_LENGTH 53
 #define OUTPUT_CRC_OFFSET 60
 
 
@@ -213,6 +216,7 @@ uint8_t cmd_authorize(uint8_t *report,uint8_t *output);
 uint8_t cmd_get_password_retry_count(uint8_t *report,uint8_t *output);
 uint8_t cmd_user_authenticate(uint8_t *report,uint8_t *output);
 uint8_t cmd_user_authorize(uint8_t *report,uint8_t *output);
+uint8_t cmd_factory_reset(uint8_t* report, uint8_t* output);
 uint8_t cmd_get_user_password_retry_count(uint8_t *report,uint8_t *output);
 uint8_t cmd_set_time(uint8_t *report,uint8_t *output);
 
@@ -234,6 +238,7 @@ uint8_t cmd_change_user_pin(uint8_t *report, uint8_t *output);
 uint8_t cmd_change_admin_pin(uint8_t *report, uint8_t *output);
 
 
+uint8_t cmd_getProDebug(uint8_t *report, uint8_t *output);
 //START - OTP Test Routine --------------------------------
 /*
 uint8_t cmd_test_counter(uint8_t *report,uint8_t *output);
