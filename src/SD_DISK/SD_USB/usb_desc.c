@@ -3,20 +3,20 @@
 *												STMicroelectronics	 			
 *												MCD Application Team			Date:	04/27/2009
 *
-* This file is part of GPF Crypto Stick.
+* This file is part of Nitrokey.
 *
-* GPF Crypto Stick is free software: you can redistribute it and/or modify
+* Nitrokey is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation, either version 3 of the License, or
 * any later version.
 *
-* GPF Crypto Stick is distributed in the hope that it will be useful,
+* Nitrokey is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 * GNU General Public License for more details.
 *
 * You should have received a copy of the GNU General Public License
-* along with GPF Crypto Stick. If not, see <http://www.gnu.org/licenses/>.
+* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "usb_desc.h"
@@ -110,19 +110,19 @@ const uint8_t MASS_StringVendor[MASS_SIZ_STRING_VENDOR] =
     MASS_SIZ_STRING_VENDOR, 						/* Size of manufaturer string */
     0x03,           										/* bDescriptorType = String descriptor */
 
-/* Manufacturer: "CryptoStick" - 11 * 2 + 2 = 24 byte*/
-		'C', 0, 'r', 0, 'y', 0, 'p', 0, 't', 0, 'o', 0, 'S', 0, 't', 0, 'i', 0,	'c', 0, 
-		'k', 0
+/* Manufacturer: "Nitrokey" - 8 * 2 + 2 = 18 byte*/
+		'N', 0, 'i', 0, 't', 0, 'r', 0, 'o', 0, 'k', 0, 'e', 0, 'y'
 };
 
 const uint8_t MASS_StringProduct[MASS_SIZ_STRING_PRODUCT] =
   {
     MASS_SIZ_STRING_PRODUCT,
     0x03,
-/* Product name: "CryptoStick 2.0  SD device" - 26 * 2 + 2 = 54 byte */
-		'C', 0, 'r', 0, 'y', 0, 'p', 0, 't', 0, 'o', 0, 'S', 0, 't', 0, 'i', 0,	'c', 0, 
-		'k', 0, ' ', 0, '2', 0, '.', 0, '0', 0, ' ', 0, ' ', 0, 'S', 0, 'D', 0, ' ', 0, 
-		'd', 0, 'e', 0, 'v', 0, 'i', 0, 'c', 0, 'e', 0,
+/* Product name: "Nitrokey Storage SD device" - 26 * 2 + 2 = 54 byte */
+		'N', 0, 'i', 0, 't', 0, 'r', 0, 'o', 0, 'k', 0, 'e', 0, 'y', 0, ' ', 0,
+        'S', 0,	't', 0, 'o', 0, 'r', 0, 'a', 0, 'g', 0, 'e', 
+        ' ', 0, 'S', 0, 'D', 0, ' ', 0, 
+		'd', 0, 'e', 0, 'v', 0, 'i', 0, 'c', 0, 'e', 0
   };
 
 uint8_t MASS_StringSerial[MASS_SIZ_STRING_SERIAL] =
@@ -139,7 +139,7 @@ const uint8_t MASS_StringInterface[MASS_SIZ_STRING_INTERFACE] =
 {
     MASS_SIZ_STRING_INTERFACE,
     0x03,
-/* Interface 0: "CryptoStick SD" - 14 * 2 + 2 = 30 byte */
+/* Interface 0: "Nitrokey SD" - 11 * 2 + 2 = 24 byte */
 		'C', 0, 'r', 0, 'y', 0, 'p', 0, 't', 0, 'o', 0, 'S', 0, 't', 0, 'i', 0,	'c', 0, 
 		'k', 0, ' ', 0, 'S', 0, 'D'
 };
