@@ -791,7 +791,6 @@ unsigned int CcidFactoryReset(void)
 {
  	unsigned short cRet;
 
-
     // TERMINATE DF
 	tSCT.cAPDU[CCID_CLA] = 0x00;
 	tSCT.cAPDU[CCID_INS] = 0xE6;
@@ -803,22 +802,13 @@ unsigned int CcidFactoryReset(void)
 
     // Select OpenPGP application
     if (APDU_ANSWER_COMMAND_CORRECT == cRet) {
-        tSCT.cAPDU[CCID_CLA] = 0x00;
-        tSCT.cAPDU[CCID_INS] = 0xA4;
-        tSCT.cAPDU[CCID_P1]  = 0x04;
-        tSCT.cAPDU[CCID_P2]  = 0x00;
-        tSCT.cAPDU[CCID_LC]  = 6;
+        cRet = CcidSelectOpenPGPApp();
 
-        char pgpApp[6] = {0xD2, 0x76, 0x00, 0x01, 0x24, 0x01}; 
-        strcpy ((char*)&tSCT.cAPDU[CCID_DATA], pgpApp);
-        tSCT.cAPDULength = 5+6;
-        cRet = SendAPDU (&tSCT);
-        
         // ACTIVATE FILE
         if (APDU_ANSWER_SEL_FILE_TERM_STATE == cRet) { // Card in termination state
             tSCT.cAPDU[CCID_CLA] = 0x00;
             tSCT.cAPDU[CCID_INS] = 0x44;
-            tSCT.cAPDU[CCID_P1]  = 0x04;
+            tSCT.cAPDU[CCID_P1]  = 0x00;
             tSCT.cAPDU[CCID_P2]  = 0x00;
             tSCT.cAPDU[CCID_LC]  = 0;
             tSCT.cAPDULength = 4;
@@ -834,7 +824,6 @@ unsigned int CcidFactoryReset(void)
     
 
 	return (cRet);
-   
 }
 
 int getAID(void){
