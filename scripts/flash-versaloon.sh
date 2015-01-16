@@ -17,4 +17,4 @@ sudo $OPENOCD_BIN/openocd gdb_memory_map disable 			    \
 								-c "verify_image ../build/gcc/crypto.elf" 			 \
 								-c "reset run"							\
 								-c exit
-
+exit 0

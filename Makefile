@@ -8,7 +8,7 @@ OPENOCD_BIN?=
 firmware:
 	cd $(BUILD_DIR) && \
 	make && \
-	cd - && 
+	cd -
 #	mv $(BUILD_DIR)/crypto.elf .
 
 #Reminder:	export OPENOCD_BIN=$(OPENOCD_BIN) 
