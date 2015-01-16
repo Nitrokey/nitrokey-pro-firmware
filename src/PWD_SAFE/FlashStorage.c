@@ -41,8 +41,6 @@ typeStick20Configuration_st StickConfiguration_st;
 
 *******************************************************************************/
 
-unsigned int debug_len = 0;
-
 #define FLASHC_USER_PAGE 0x801dc00
 
 /*
@@ -66,18 +64,25 @@ unsigned int debug_len = 0;
 
 
 
-void WriteDebug (u8* data, unsigned int length)
+unsigned int debug_len = 0;
+unsigned char* debug_mem = NULL;
+
+int WriteDebug (u8* data, unsigned int length)
 {
+    if ( (debug_len+length) > 53)
+        return -1;
+
     unsigned char page_buffer[FLASH_PAGE_SIZE];
     memcpy (page_buffer, FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
-    memcpy (page_buffer+210, data, length);
-
-    debug_len += length;
+    memcpy (page_buffer+210+debug_len, data, length);
 
     FLASH_Unlock();
     FLASH_ErasePage(FLASHC_USER_PAGE);
     write_data_to_flash (page_buffer, FLASH_PAGE_SIZE, FLASHC_USER_PAGE);
     FLASH_Lock();
+
+    debug_len += length;
+    return 0;
 }
 
 
@@ -85,8 +90,9 @@ void GetDebug (u8* data, unsigned int* length)
 {
     unsigned char page_buffer[FLASH_PAGE_SIZE];
     memcpy (page_buffer, FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
-    memcpy (data, page_buffer+210, debug_len);
-    *length = debug_len;
+    memcpy (data, page_buffer+210, 53); //debug_len);
+    *length = 53; //debug_len;
+
     debug_len = 0;
 }
 

@@ -28,6 +28,9 @@
 
 #include "stm32f10x.h"
 
+int WriteDebug (u8* data, unsigned int length);
+void GetDebug (u8* data, unsigned int* length);
+
 u8 WriteAESStorageKeyToUserPage (u8 *data);
 // u8 ReadAESStorageKeyToUserPage (u8 *data);
 // u8 WriteMatrixColumsUserPWToUserPage (u8 *data);
