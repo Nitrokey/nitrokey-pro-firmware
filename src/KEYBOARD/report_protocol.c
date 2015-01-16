@@ -103,7 +103,6 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
                 cmd_get_code(report,output);
 			else
                 not_authorized=1;
-                not_authorized=1;			
 			break;
 			
 		case CMD_WRITE_CONFIG:
