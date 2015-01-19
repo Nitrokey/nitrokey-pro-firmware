@@ -71,5 +71,6 @@ uint8_t isAesSupported(void);
 uint8_t sendAESMasterKey (int nLen, unsigned char *pcMasterKey);
 uint8_t testScAesKey(int nLen, unsigned char *pcKey);
 uint8_t testSendUserPW2 (unsigned char *pcPW);
+unsigned int CcidReset(void);
 #endif /* CCID_LOCAL_ACCESS */
 

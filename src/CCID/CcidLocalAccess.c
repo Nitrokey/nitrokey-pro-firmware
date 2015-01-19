@@ -788,7 +788,7 @@ void CcidLocalAccessTest (void)
 /*
  * Needs Admin Authentication before called
  */
-unsigned int CcidFactoryReset(void)
+unsigned int CcidReset(void)
 {
  	unsigned short cRet;
 
@@ -914,7 +914,7 @@ uint8_t factoryReset(uint8_t* password) {
     if (APDU_ANSWER_COMMAND_CORRECT != cRet)
         return 1;
 
-    cRet = CcidFactoryReset();
+    cRet = CcidReset();
     if(APDU_ANSWER_COMMAND_CORRECT != cRet)
         return 0;
 
