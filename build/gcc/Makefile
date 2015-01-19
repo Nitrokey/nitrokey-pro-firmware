@@ -1,4 +1,4 @@
-# Hey Emacs, this is a -*- makefile -*-
+
 #
 # WinARM template makefile 
 # by Martin Thomas, Kaiserslautern, Germany 
@@ -70,61 +70,61 @@ SRC = 		../../src/main.c                                         \
 			../../src/test_code.c                                         \
 			../../src/tools.c	\
 			../../src/utils/memory_ops.c			\
-			../../src/CCID/Ccid_usb.c                                         \
-			../../src/CCID/Ifd_protocol.c                                         \
-			../../src/CCID/Crd.c                                         \
-			../../src/CCID/Ifd_ccid.c                                         \
-			../../src/CCID/CcidLocalAccess.c                                         \
-			../../src/CCID/SMARTCARD/smartcard.c                                         \
-			../../src/CCID/CCIDHID_USB/CCIDHID_usb_prop.c                                         \
-			../../src/CCID/CCIDHID_USB/CCIDHID_usb_desc.c                                         \
-			../../src/SD_DISK/SD_USB/usb_desc.c                                         \
-			../../src/SD_DISK/SD_USB/usb_prop.c                                         \
-			../../src/STM/stm32f10x_systick.c                                         \
-			../../src/STM/stm32f10x_it.c                                         \
-			../../src/STM/Libraries/CMSIS/Core/CM3/core_cm3.c                                         \
-			../../src/STM/Libraries/CMSIS/Core/CM3/system_stm32f10x.c                                         \
-			../../src/STM/Libraries/CMSIS/Core/CM3/startup/gcc/startup_stm32f10x_hd.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/misc.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_adc.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_can.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_crc.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_dac.c        \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_fsmc.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_gpio.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_i2c.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_iwdg.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_rcc.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_sdio.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c                                         \
-			../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c                                         \
-			../../src/STM/Libraries/STM32_USB-FS-Device_Driver/src/usb_core.c                                         \
-			../../src/STM/Libraries/STM32_USB-FS-Device_Driver/src/usb_init.c                                         \
-			../../src/STM/Libraries/STM32_USB-FS-Device_Driver/src/usb_int.c                                         \
-			../../src/STM/Libraries/STM32_USB-FS-Device_Driver/src/usb_mem.c                                         \
-			../../src/STM/Libraries/STM32_USB-FS-Device_Driver/src/usb_regs.c                                         \
-			../../src/CRYPT/AES/aes.c                                         \
-			../../src/CRYPT/SHA1/sha1.c                                         \
-			../../src/CRYPT/SHA1/hmac-sha1.c                                         \
+			../../src/ccid/Ccid_usb.c                                         \
+			../../src/ccid/Ifd_protocol.c                                         \
+			../../src/ccid/Crd.c                                         \
+			../../src/ccid/Ifd_ccid.c                                         \
+			../../src/ccid/CcidLocalAccess.c                                         \
+			../../src/ccid/SMARTCARD/smartcard.c                                         \
+			../../src/ccid/CCIDHID_USB/CCIDHID_usb_prop.c                                         \
+			../../src/ccid/CCIDHID_USB/CCIDHID_usb_desc.c                                         \
+			../../src/sd-disk/sd-usb/usb_desc.c                                         \
+			../../src/sd-disk/sd-usb/usb_prop.c                                         \
+			../../src/stm/stm32f10x_systick.c                                         \
+			../../src/stm/stm32f10x_it.c                                         \
+			../../src/stm/Libraries/CMSIS/Core/CM3/core_cm3.c                                         \
+			../../src/stm/Libraries/CMSIS/Core/CM3/system_stm32f10x.c                                         \
+			../../src/stm/Libraries/CMSIS/Core/CM3/startup/gcc/startup_stm32f10x_hd.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/misc.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_adc.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_can.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_crc.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_dac.c        \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_fsmc.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_gpio.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_i2c.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_iwdg.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_rcc.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_sdio.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c                                         \
+			../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c                                         \
+			../../src/stm/Libraries/STM32_USB-FS-Device_Driver/src/usb_core.c                                         \
+			../../src/stm/Libraries/STM32_USB-FS-Device_Driver/src/usb_init.c                                         \
+			../../src/stm/Libraries/STM32_USB-FS-Device_Driver/src/usb_int.c                                         \
+			../../src/stm/Libraries/STM32_USB-FS-Device_Driver/src/usb_mem.c                                         \
+			../../src/stm/Libraries/STM32_USB-FS-Device_Driver/src/usb_regs.c                                         \
+			../../src/crypt/aes/aes.c                                         \
+			../../src/crypt/sha1/sha1.c                                         \
+			../../src/crypt/sha1/hmac-sha1.c                                         \
 			../../src/hotp/hotp.c                                         \
-			../../src/KEYBOARD/keyboard.c                                         \
-			../../src/KEYBOARD/report_protocol.c                                         \
-			../../src/USB/usb_endp.c                                         \
-			../../src/USB/usb_bot.c                                         \
-			../../src/USB/usb_pwr.c                                         \
-			../../src/USB/usb_istr.c                                         \
-			../../src/PWD_SAFE/FlashStorage.c	\
-			../../src/PWD_SAFE/HandleAesStorageKey.c	\
-			../../src/PWD_SAFE/password_safe.c	\
+			../../src/keyboard/keyboard.c                                         \
+			../../src/keyboard/report_protocol.c                                         \
+			../../src/usb/usb_endp.c                                         \
+			../../src/usb/usb_bot.c                                         \
+			../../src/usb/usb_pwr.c                                         \
+			../../src/usb/usb_istr.c                                         \
+			../../src/pwd-safe/FlashStorage.c	\
+			../../src/pwd-safe/HandleAesStorageKey.c	\
+			../../src/pwd-safe/password_safe.c	\
 
 			
 # List C source files here which must be compiled in ARM-Mode.
@@ -179,10 +179,10 @@ DEBUG = dwarf-2
 
 # List any extra directories to look for include files here.
 #     Each directory must be seperated by a space.
-EXTRAINCDIRS = ../../src/INC                                             \
-               ../../src/STM/Libraries/CMSIS/Core/CM3                    \
-			   ../../src/STM/Libraries/STM32_USB-FS-Device_Driver/inc    \
-			   ../../src/STM/Libraries/STM32F10x_StdPeriph_Driver/inc
+EXTRAINCDIRS = ../../src/inc                                             \
+               ../../src/stm/Libraries/CMSIS/Core/CM3                    \
+			   ../../src/stm/Libraries/STM32_USB-FS-Device_Driver/inc    \
+			   ../../src/stm/Libraries/STM32F10x_StdPeriph_Driver/inc
 
 
 # List any extra directories to look for library files here.
