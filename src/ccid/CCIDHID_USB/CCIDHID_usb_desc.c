@@ -34,8 +34,8 @@ const uint8_t CCID_DeviceDescriptor[CCID_SIZ_DEVICE_DESC] =
     0x00,   				/* bDeviceProtocol */
     0x40,   				/* bMaxPacketSize0 0x08 - 0x40 = 64 */
 
-  	WBVAL(0x20A0),  /* VID for CCID driver idVendor */
-  	WBVAL(0x4108),  /* PID for CCID driver idProduct */
+  	WBVAL(GLOBAL_VID),  /* VID for CCID driver idVendor */
+  	WBVAL(GLOBAL_PID),  /* PID for CCID driver idProduct */
 //  	WBVAL(0x0800),  /* Test VID for MS CCID driver idVendor */
 //  	WBVAL(0x0006),  /* Test PID for MS CCID driver idProduct */
 //  	WBVAL(0x08e6),  /* 0x08e6 = idVendor  germalto - for testing */

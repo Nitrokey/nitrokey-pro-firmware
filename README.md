@@ -1,11 +1,15 @@
 Building
 ========
-make firmware
+make \[VID=0x20a0\] \[PID=0x4108\] firmware
+
+Parameters:
+* VID: Define Vendor ID
+* PID: Define Product ID
 
 Flashing with Versaloon
 =======================
-1. export OPENOCD_BIN=<path-to-openocd-bin-folder> && ./flash_versaloon.sh
-   or edit the script directly to contain OPENOCD_BIN=<path-to-openocd-bin-folder>
+1. export OPENOCD_BIN=\<path-to-openocd-bin-folder\> && ./flash_versaloon.sh  
+   or edit the script directly to contain OPENOCD_BIN=\<path-to-openocd-bin-folder\>
 2. make flash-vesaloon
 
 (TODO: For now it has a bug. Run it once, then kill it with Ctrl-C, then re-run it and it should flash the image)

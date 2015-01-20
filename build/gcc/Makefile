@@ -32,6 +32,11 @@
 #
 
 
+# Cmd interface paramenters
+VID?=0x20a0
+PID?=0x4108
+
+
 ###########################################
 # THUMB, RAM_RUN and Remapping currently
 # not supported or not tested in this 
@@ -199,7 +204,7 @@ EXTRA_LIBDIRS =
 CSTANDARD = -std=gnu99
 
 # Place -D or -U options for C here
-CDEFS =  -D$(RUN_MODE) -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD -DUSE_STM3210E_EVAL 
+CDEFS =  -D$(RUN_MODE) -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD -DUSE_STM3210E_EVAL -DGLOBAL_VID=$(VID) -DGLOBAL_PID=$(PID)
 #CDEFS =  -D$(RUN_MODE) -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD -DUSE_BOARD_STICK_V12
 # Place -I options here
 CINCS =
