@@ -80,7 +80,7 @@ SRC = 		../../src/main.c                                         \
 			../../src/ccid/Crd.c                                         \
 			../../src/ccid/Ifd_ccid.c                                         \
 			../../src/ccid/CcidLocalAccess.c                                         \
-			../../src/ccid/SMARTCARD/smartcard.c                                         \
+			../../src/ccid/smartcard/smartcard.c                                         \
 			../../src/ccid/CCIDHID_USB/CCIDHID_usb_prop.c                                         \
 			../../src/ccid/CCIDHID_USB/CCIDHID_usb_desc.c                                         \
 			../../src/sd-disk/sd-usb/usb_desc.c                                         \
