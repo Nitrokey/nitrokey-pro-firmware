@@ -73,7 +73,7 @@ TARGET = nitrokey-pro-firmware
 SRC = 		../../src/main.c                                         \
 			../../src/hw_config.c                                         \
 			../../src/test_code.c                                         \
-			../../src/tools.c	\
+			../../src/utils/delays.c	\
 			../../src/utils/memory_ops.c			\
 			../../src/ccid/Ccid_usb.c                                         \
 			../../src/ccid/Ifd_protocol.c                                         \
