@@ -2,7 +2,7 @@ notifications:
 email: false
 language: c
 before_install:
-    - sudo apt-get install libc6:i386 libgcc1:i386 gcc-4.6-base:i386 libstdc++5:i386 libstdc++6:i386
+    - sudo dpkg --add-architecture i386
     - wget https://launchpad.net/gcc-arm-embedded/4.9/4.9-2014-q4-major/+download/gcc-arm-none-eabi-4_9-2014q4-20141203-linux.tar.bz2
     - tar xjf gcc-arm-none-eabi-4_9-2014q4-20141203-linux.tar.bz2 -C /tmp/
     - sudo cp -f -r /tmp/gcc-arm-none-eabi-4_9-2014q4/* /usr/
