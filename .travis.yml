@@ -6,6 +6,7 @@ before_install:
     - tar xjf gcc-arm-none-eabi-4_9-2014q4-20141203-linux.tar.bz2 -C /tmp/
     - sudo cp -f -r /tmp/gcc-arm-none-eabi-4_9-2014q4/* /usr/
     - rm -rf /tmp/gcc-arm-none-eabi-4_9-2014q4 gcc-arm-none-eabi-4_9-2014q4-20141203-linux.tar.bz2
+    - ls -l /usr/bin
     - arm-none-eabi-gcc --version ;
-compiler: gcc
+compiler: arm-none-eabi-gcc
 script: make firmware
