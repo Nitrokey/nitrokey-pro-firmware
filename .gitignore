@@ -8,7 +8,6 @@ build-*-Debug
 *.orig
 *tags
 
-*tags
 build/gcc/crypto.elf
 build/gcc/crypto.sym
 build/gcc/crypto.hex
