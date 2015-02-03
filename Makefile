@@ -3,7 +3,7 @@ BUILD_DIR=$(ROOT_DIR)/build/gcc
 SCRIPT_DIR=$(ROOT_DIR)/scripts
 OPENOCD_BIN?=
 
-.PHONY: firmware flash-versaloon clean
+.PHONY: firmware flash-versaloon clean release
 
 firmware:
 	cd $(BUILD_DIR) && \
@@ -37,3 +37,10 @@ flash-versaloon:
 clean:
 	cd $(BUILD_DIR) && \
 	make clean
+
+release: firmware
+	mkdir -p release && \
+	cd release && \
+	cp $(BUILD_DIR)/nitrokey-pro-firmware.elf $(BUILD_DIR)/nitrokey-pro-firmware.hex . && \
+	find . -name *.elf -type f -printf "%f" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512; md5sum -b {} > {}.md5' && \
+    find . -name *.hex -type f -printf "%f" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512; md5sum -b {} > {}.md5'
