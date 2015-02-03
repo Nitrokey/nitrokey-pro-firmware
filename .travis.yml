@@ -3,5 +3,5 @@ email: false
 language: c
 before_script:
     sudo apt-get install -y gcc-arm-none-eabi
-compiler: arm-none-eabi-gcc
+compiler: gcc
 script: make firmware
