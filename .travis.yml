@@ -2,6 +2,7 @@ notifications:
 email: false
 language: c
 before_install:
+    - sudo apt-get update
     - sudo apt-get install -y libc6:i386
     - wget https://launchpad.net/gcc-arm-embedded/4.9/4.9-2014-q4-major/+download/gcc-arm-none-eabi-4_9-2014q4-20141203-linux.tar.bz2
     - tar xjf gcc-arm-none-eabi-4_9-2014q4-20141203-linux.tar.bz2 -C /tmp/
