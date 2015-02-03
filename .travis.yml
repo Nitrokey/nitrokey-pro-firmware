@@ -1,4 +1,7 @@
+notifications:
+email: false
 language: c
-install: gcc-arm-none-eabi
+before_script:
+    sudo apt-get install -y gcc-arm-none-eabi
 compiler: arm-none-eabi-gcc
 script: make firmware
