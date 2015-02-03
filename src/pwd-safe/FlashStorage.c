@@ -27,7 +27,7 @@
 #include <stddef.h>
 #include "string.h"
 
-#include "tools.h"
+#include "delays.h"
 #include "FlashStorage.h"
 #include "password_safe.h"
 #include "hotp.h"

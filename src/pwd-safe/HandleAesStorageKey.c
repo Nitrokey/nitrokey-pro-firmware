@@ -27,7 +27,6 @@
 //#include <stdio.h>
 #include <stdlib.h>
 #include "string.h"
-#include "tools.h"
 #include "CcidLocalAccess.h"
 #include "report_protocol.h"
 #include "smartcard.h"
@@ -36,7 +35,7 @@
 #include "time.h"
 
 //#include "global.h"
-#include "tools.h"
+#include "delays.h"
 //#include "Interpreter.h"
 //#include "CCID/USART/ISO7816_ADPU.h"
 //#include "CCID/Local_ACCESS/OpenPGP_V20.h"
