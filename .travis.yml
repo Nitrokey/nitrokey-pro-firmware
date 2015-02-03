@@ -1,5 +1,4 @@
 language: c
-compiler: 
-    - gcc
-    - clang
+install: gcc-arm-none-eabi
+compiler: arm-none-eabi-gcc
 script: make firmware
