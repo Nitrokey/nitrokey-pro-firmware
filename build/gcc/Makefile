@@ -66,7 +66,7 @@ RUN_MODE=ROM_RUN
 
 
 # Target file name (without extension).
-TARGET = crypto
+TARGET = nitrokey-pro-firmware
 
 # List C source files here. (C dependencies are automatically generated.)
 # use file-extension c for "c-only"-files
