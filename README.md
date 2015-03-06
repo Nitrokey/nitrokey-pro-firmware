@@ -1,3 +1,6 @@
+Nitrokey Pro firmware [![Build Status](https://travis-ci.org/Nitrokey/nitrokey-pro-firmware.svg?branch=master)](https://travis-ci.org/Nitrokey/nitrokey-pro-firmware)
+=====================
+
 Building
 ========
 make \[VID=0x20a0\] \[PID=0x4108\] firmware
