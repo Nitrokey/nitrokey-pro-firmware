@@ -3,6 +3,8 @@ BUILD_DIR=$(ROOT_DIR)/build/gcc
 SCRIPT_DIR=$(ROOT_DIR)/scripts
 OPENOCD_BIN?=
 
+DEPS=gcc-arm-none-eabi
+
 .PHONY: firmware flash-versaloon clean release
 
 firmware:
@@ -37,6 +39,9 @@ flash-versaloon:
 clean:
 	cd $(BUILD_DIR) && \
 	make clean
+
+deps:
+	sudo apt-get install ${DEPS}
 
 release: firmware
 	mkdir -p release && \
