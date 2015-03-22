@@ -9,10 +9,10 @@ build-*-Debug
 *.orig
 *tags
 
-build/gcc/crypto.elf
-build/gcc/crypto.sym
-build/gcc/crypto.hex
-build/gcc/crypto.lss
-build/gcc/crypto.map
-build/gcc/crypto.hex
-build/gcc/crypto.sym
+build/gcc/nitrokey-pro-firmware.elf
+build/gcc/nitrokey-pro-firmware.sym
+build/gcc/nitrokey-pro-firmware.hex
+build/gcc/nitrokey-pro-firmware.lss
+build/gcc/nitrokey-pro-firmware.map
+build/gcc/nitrokey-pro-firmware.hex
+build/gcc/nitrokey-pro-firmware.sym
