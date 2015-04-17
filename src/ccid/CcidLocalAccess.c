@@ -623,6 +623,8 @@ u32 getRandomNumber (u32 Size_u32, u8 *Data_pu8)
     for (i=0;i<Size_u32;i++)
         Data_pu8[i] = Data_pu8[i] ^ (u8)(rand () % 256);
     #endif
+
+    return (TRUE);
 }
 
 /*******************************************************************************
@@ -1104,6 +1106,8 @@ uint8_t testScAesKey (int nLen, unsigned char *pcKey)
             return TRUE;
         case APDU_ANSWER_REF_DATA_NOT_FOUND:
             memset (pcKey,0,nLen);
+            return FALSE;
+        default:
             return FALSE;
     }
 /*

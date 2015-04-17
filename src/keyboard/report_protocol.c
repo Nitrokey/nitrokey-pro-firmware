@@ -918,6 +918,7 @@ uint8_t cmd_lockDevice(uint8_t* report, uint8_t* output)
 {
     // Disable password safe
     PWS_DisableKey ();
+    return 0;
 }
 
 
