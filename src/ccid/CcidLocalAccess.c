@@ -582,7 +582,7 @@ uint8_t CcidAesDec (int nSendLength,unsigned char *cSendData,int nReceiveLength,
     */
   }
 
-  // return (FALSE);
+  return (FALSE);
 }
 
 
