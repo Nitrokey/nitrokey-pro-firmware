@@ -578,11 +578,13 @@ uint8_t CcidAesDec (int nSendLength,unsigned char *cSendData,int nReceiveLength,
     // Decrypt second 16 Byte
     nRet = CcidAesDecSub (16,&cSendData[16],16,&cReceiveData[16]);
     return nRet;
+    /*
     if ( nRet != APDU_ANSWER_COMMAND_CORRECT )
     {
       return (FALSE);
     }
     return TRUE;
+    */
   }
 
   return (FALSE);
@@ -888,22 +890,21 @@ uint8_t cardAuthenticate(uint8_t *password){
 }
 
 uint8_t userAuthenticate(uint8_t *password){
-        InitSCTStruct (&tSCT);
+    InitSCTStruct (&tSCT);
 
-        unsigned short cRet;
-        unsigned char nReturnSize;
+    unsigned short cRet;
+    unsigned char nReturnSize;
 
-        CcidSelectOpenPGPApp ();
-        cRet = CcidVerifyPin (1,password);
-
-
-        if (APDU_ANSWER_COMMAND_CORRECT != cRet)
-        {
-                return 1;
-        }
+    CcidSelectOpenPGPApp ();
+    cRet = CcidVerifyPin (1,password);
 
 
-return 0;
+    if (APDU_ANSWER_COMMAND_CORRECT != cRet)
+    {
+        return 1;
+    }
+
+    return 0;
 }
 
 uint8_t factoryReset(uint8_t* password) {
