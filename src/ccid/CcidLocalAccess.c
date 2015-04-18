@@ -433,7 +433,7 @@ unsigned short CcidGetChallenge (int nReceiveLength, unsigned char *nReceiveData
     CcidPutAesKey
 
 *******************************************************************************/
-unsigned short CcidPutAesKey(unsigned char cKeyLen, unsigned char *pcAES_Key)
+unsigned short CcidPutAesKey(unsigned int cKeyLen, unsigned char *pcAES_Key)
 {
   int     nRet;
   
@@ -1061,7 +1061,7 @@ uint8_t isAesSupported (void) {
 
 uint8_t sendAESMasterKey (int nLen, unsigned char *pcMasterKey)
 {
-  int nRet;
+  unsigned int nRet;
 
   ////CI_LocalPrintf ("Put AES master key     : ");
   //HexPrint (nLen,pcMasterKey);
