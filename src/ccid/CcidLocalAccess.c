@@ -422,7 +422,7 @@ unsigned short CcidGetChallenge (int nReceiveLength, unsigned char *nReceiveData
     n = nReceiveLength;
   }
 
-  memcpy (nReceiveData, &(tSCT.cAPDU[CCID_DATA]), n);
+  memcpy (nReceiveData, &(tSCT.cAPDU[CCID_DATA]), n-CCID_DATA+1);
 
   return cRet;
 }
