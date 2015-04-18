@@ -422,7 +422,7 @@ unsigned short CcidGetChallenge (int nReceiveLength, unsigned char *nReceiveData
     n = nReceiveLength;
   }
 
-  memcpy (nReceiveData, &(tSCT.cAPDU[CCID_DATA]), n-CCID_DATA+1);
+  memcpy (nReceiveData, &(tSCT.cAPDU[CCID_DATA]), n-CCID_DATA);
 
   return cRet;
 }
@@ -550,12 +550,13 @@ uint8_t CcidAesDec (int nSendLength,unsigned char *cSendData,int nReceiveLength,
   {
     nRet = CcidAesDecSub (nSendLength,cSendData,nReceiveLength,cReceiveData);
     return nRet;
-    if (nRet != APDU_ANSWER_COMMAND_CORRECT)   // Sc send no ok
+    /*if (nRet != APDU_ANSWER_COMMAND_CORRECT)   // Sc send no ok
     {
       return (FALSE);
     }
 
     return TRUE;
+    */
   }
 
 
@@ -564,15 +565,9 @@ uint8_t CcidAesDec (int nSendLength,unsigned char *cSendData,int nReceiveLength,
   {
     // Decrypt first 16 Byte
     nRet = CcidAesDecSub (16,cSendData,16,cReceiveData);
-    return nRet;
     if ( nRet != APDU_ANSWER_COMMAND_CORRECT )
     {
-      return (FALSE);
-    }
-
-    if (FALSE == nRet)
-    {
-      return (FALSE);
+        return nRet;
     }
 
     // Decrypt second 16 Byte
@@ -587,7 +582,7 @@ uint8_t CcidAesDec (int nSendLength,unsigned char *cSendData,int nReceiveLength,
     */
   }
 
-  return (FALSE);
+  // return (FALSE);
 }
 
 
