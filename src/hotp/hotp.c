@@ -103,6 +103,7 @@ uint32_t crc(uint32_t time){
 
 void write_data_to_flash(uint8_t *data,uint16_t len,uint32_t addr){
 	uint16_t i;
+    FLASH_Status err = FLASH_COMPLETE;
 
 	// FLASH_Unlock();
 	//  FLASH_ErasePage(addr);
@@ -113,7 +114,8 @@ void write_data_to_flash(uint8_t *data,uint16_t len,uint32_t addr){
 	
 	for (i = 0; i < len; i+=2){	
 		uint16_t halfword=(data[i])+(data[i+1]<<8);
-		FLASH_ProgramHalfWord(addr+i, halfword);
+		err = FLASH_ProgramHalfWord(addr+i, halfword);
+        if (err!=FLASH_COMPLETE) {};
 	}
 
 	
@@ -316,7 +318,7 @@ if (err!=FLASH_COMPLETE) return err; */
 		if (err!=FLASH_COMPLETE) return err;
 
 
-		err=FLASH_ProgramHalfWord(BACKUP_PAGE_ADDRESS+BACKUP_OK_OFFSET, 0x4F4B);
+		err = FLASH_ProgramHalfWord(BACKUP_PAGE_ADDRESS+BACKUP_OK_OFFSET, 0x4F4B);
 		if (err!=FLASH_COMPLETE) return err;
 
 		FLASH_Lock();
@@ -336,14 +338,14 @@ if (err!=FLASH_COMPLETE) return err; */
 
 		if ((uint32_t)ptr%2){ //odd byte
 
-			err=FLASH_ProgramHalfWord((uint32_t)ptr-1, 0x0000);
-
+			err = FLASH_ProgramHalfWord((uint32_t)ptr-1, 0x0000);
+            if (err!=FLASH_COMPLETE) return err;
 
 		}
 		else{ //even byte
 
-			err=FLASH_ProgramHalfWord((uint32_t)ptr, 0xff00);
-
+			err = FLASH_ProgramHalfWord((uint32_t)ptr, 0xff00);
+            if (err!=FLASH_COMPLETE) return err;
 		}
 		FLASH_Lock();
 
@@ -384,11 +386,13 @@ uint32_t get_code_from_hotp_slot(uint8_t slot){
 //len - length of the data
 //addr - original address of the data
 void backup_data(uint8_t *data,uint16_t len, uint32_t addr){
+    FLASH_Status err = FLASH_COMPLETE;
 
 	FLASH_Unlock();
 	FLASH_ErasePage(BACKUP_PAGE_ADDRESS);
 	write_data_to_flash(data,len,BACKUP_PAGE_ADDRESS);
-	FLASH_ProgramHalfWord(BACKUP_PAGE_ADDRESS+BACKUP_LENGTH_OFFSET, len);
+	err = FLASH_ProgramHalfWord(BACKUP_PAGE_ADDRESS+BACKUP_LENGTH_OFFSET, len);
+    if (err!=FLASH_COMPLETE) {};
 	FLASH_ProgramWord(BACKUP_PAGE_ADDRESS+BACKUP_ADDRESS_OFFSET, addr);
 
 	FLASH_Lock();
@@ -403,6 +407,8 @@ void erase_counter(uint8_t slot)
 
 
 void write_to_slot(uint8_t *data, uint16_t offset, uint16_t len){
+
+    FLASH_Status err = FLASH_COMPLETE;
 
 	//choose the proper slot page
 	uint32_t current_slot_address;
@@ -434,7 +440,8 @@ void write_to_slot(uint8_t *data, uint16_t offset, uint16_t len){
 	FLASH_Unlock();
 	FLASH_ErasePage(current_slot_address);
 	write_data_to_flash(page_buffer,SLOT_PAGE_SIZE,current_slot_address);
-	FLASH_ProgramHalfWord(BACKUP_PAGE_ADDRESS+BACKUP_OK_OFFSET, 0x4F4B);
+	err = FLASH_ProgramHalfWord(BACKUP_PAGE_ADDRESS+BACKUP_OK_OFFSET, 0x4F4B);
+    if (err!=FLASH_COMPLETE) {};
 	FLASH_Lock();
 
 	StartBlinkingOATHLED(2);
