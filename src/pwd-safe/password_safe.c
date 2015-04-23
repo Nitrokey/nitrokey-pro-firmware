@@ -561,7 +561,6 @@ u8 PWS_WriteSlotData_1 (u8 Slot_u8,u8 *Name_pu8, u8 *Password_pu8)
 
   memcpy (PWS_BufferSlot_st.SlotName_au8, Name_pu8, PWS_SLOTNAME_LENGTH);
   memcpy (PWS_BufferSlot_st.SlotPassword_au8, Password_pu8, PWS_PASSWORD_LENGTH);
-  memcpy (PWS_BufferSlot_st.SlotName_au8, Name_pu8, PWS_LOGINNAME_LENGTH);
 
   return (TRUE);
 }
