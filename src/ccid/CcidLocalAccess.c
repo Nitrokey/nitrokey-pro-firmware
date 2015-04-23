@@ -422,7 +422,7 @@ unsigned short CcidGetChallenge (int nReceiveLength, unsigned char *nReceiveData
     n = nReceiveLength;
   }
 
-  memcpy (nReceiveData, &(tSCT.cAPDU[CCID_DATA]), n);
+  memcpy (nReceiveData, &(tSCT.cAPDU[CCID_DATA]), n-CCID_DATA);
 
   return cRet;
 }
@@ -433,7 +433,7 @@ unsigned short CcidGetChallenge (int nReceiveLength, unsigned char *nReceiveData
     CcidPutAesKey
 
 *******************************************************************************/
-unsigned short CcidPutAesKey(unsigned char cKeyLen, unsigned char *pcAES_Key)
+unsigned short CcidPutAesKey(unsigned int cKeyLen, unsigned char *pcAES_Key)
 {
   int     nRet;
   
@@ -550,12 +550,13 @@ uint8_t CcidAesDec (int nSendLength,unsigned char *cSendData,int nReceiveLength,
   {
     nRet = CcidAesDecSub (nSendLength,cSendData,nReceiveLength,cReceiveData);
     return nRet;
-    if (nRet != APDU_ANSWER_COMMAND_CORRECT)   // Sc send no ok
+    /*if (nRet != APDU_ANSWER_COMMAND_CORRECT)   // Sc send no ok
     {
       return (FALSE);
     }
 
     return TRUE;
+    */
   }
 
 
@@ -564,25 +565,21 @@ uint8_t CcidAesDec (int nSendLength,unsigned char *cSendData,int nReceiveLength,
   {
     // Decrypt first 16 Byte
     nRet = CcidAesDecSub (16,cSendData,16,cReceiveData);
-    return nRet;
     if ( nRet != APDU_ANSWER_COMMAND_CORRECT )
     {
-      return (FALSE);
-    }
-
-    if (FALSE == nRet)
-    {
-      return (FALSE);
+        return nRet;
     }
 
     // Decrypt second 16 Byte
     nRet = CcidAesDecSub (16,&cSendData[16],16,&cReceiveData[16]);
     return nRet;
+    /*
     if ( nRet != APDU_ANSWER_COMMAND_CORRECT )
     {
       return (FALSE);
     }
     return TRUE;
+    */
   }
 
   return (FALSE);
@@ -623,6 +620,8 @@ u32 getRandomNumber (u32 Size_u32, u8 *Data_pu8)
     for (i=0;i<Size_u32;i++)
         Data_pu8[i] = Data_pu8[i] ^ (u8)(rand () % 256);
     #endif
+
+    return (TRUE);
 }
 
 /*******************************************************************************
@@ -886,22 +885,21 @@ uint8_t cardAuthenticate(uint8_t *password){
 }
 
 uint8_t userAuthenticate(uint8_t *password){
-        InitSCTStruct (&tSCT);
+    InitSCTStruct (&tSCT);
 
-        unsigned short cRet;
-        unsigned char nReturnSize;
+    unsigned short cRet;
+    unsigned char nReturnSize;
 
-        CcidSelectOpenPGPApp ();
-        cRet = CcidVerifyPin (1,password);
-
-
-        if (APDU_ANSWER_COMMAND_CORRECT != cRet)
-        {
-                return 1;
-        }
+    CcidSelectOpenPGPApp ();
+    cRet = CcidVerifyPin (1,password);
 
 
-return 0;
+    if (APDU_ANSWER_COMMAND_CORRECT != cRet)
+    {
+        return 1;
+    }
+
+    return 0;
 }
 
 uint8_t factoryReset(uint8_t* password) {
@@ -1058,7 +1056,7 @@ uint8_t isAesSupported (void) {
 
 uint8_t sendAESMasterKey (int nLen, unsigned char *pcMasterKey)
 {
-  int nRet;
+  unsigned int nRet;
 
   ////CI_LocalPrintf ("Put AES master key     : ");
   //HexPrint (nLen,pcMasterKey);
@@ -1104,6 +1102,8 @@ uint8_t testScAesKey (int nLen, unsigned char *pcKey)
             return TRUE;
         case APDU_ANSWER_REF_DATA_NOT_FOUND:
             memset (pcKey,0,nLen);
+            return FALSE;
+        default:
             return FALSE;
     }
 /*
