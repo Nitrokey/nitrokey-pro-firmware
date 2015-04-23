@@ -311,10 +311,12 @@ unsigned char PC_to_RDR_SetParameters(void)
 	
 //	ErrorCode = IFD_SetParameters(&UsbMessageBuffer[OFFSET_ABDATA],	UsbMessageBuffer[OFFSET_BPROTOCOLNUM_OUT]);
 
-ErrorCode = SLOT_NO_ERROR;
+    ErrorCode = SLOT_NO_ERROR;
 
+    /*
 	if(ErrorCode != SLOT_NO_ERROR)
 		return ErrorCode;
+    */
 
 // Answer of SetParameters	Test only for OpenPGG cards
 	UsbMessageBuffer[OFFSET_BMESSAGETYPE]   = RDR_TO_PC_PARAMETERS;
