@@ -12,17 +12,3 @@ before_install:
 compiler: arm-none-eabi-gcc
 script: make firmware
 
-env:
-  global:
-   - secure: "AfAFHnCYLW7yelVDfj4hsdf/OL/pts8ourjHICaSFcTK5IuHnOiN74dljQMh7Hvv7Ef5Bax1eN5lBO2xOJOl9UfycWrfpeOD4V0kLFCIoHuakXVwAjhjAfttDNYYC2UgrioHLGzG/Y7oo8xZlu4Y0RLO3/wY/CKl9/AkHrUyXng="
-
-addons:
-  coverity_scan:
-    project:
-      name: "Nitrokey/nitrokey-pro-firmware"
-      description: "Build submitted via Travis CI"
-    notification_email: george@nitrokey.com
-    build_command_prepend: "cov-configure --compiler arm-none-gnueabi-gcc --template"
-    build_command:   "make firmware"
-    branch_pattern: coverity-scan
-
