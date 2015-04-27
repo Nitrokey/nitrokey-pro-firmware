@@ -230,7 +230,7 @@ u8 WriteStickConfigurationToUserPage (void)
 
   uint8_t page_buffer [FLASH_PAGE_SIZE];
   memcpy(page_buffer, FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
-  memcpy(page_buffer +72, (u8*)&StickConfiguration_st, 29);
+  memcpy(page_buffer +72, (u8*)&StickConfiguration_st, 28);
 
   FLASH_Unlock();
   FLASH_ErasePage(FLASHC_USER_PAGE);
