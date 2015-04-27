@@ -393,7 +393,8 @@ void backup_data(uint8_t *data,uint16_t len, uint32_t addr){
 	write_data_to_flash(data,len,BACKUP_PAGE_ADDRESS);
 	err = FLASH_ProgramHalfWord(BACKUP_PAGE_ADDRESS+BACKUP_LENGTH_OFFSET, len);
     if (err!=FLASH_COMPLETE) {};
-	FLASH_ProgramWord(BACKUP_PAGE_ADDRESS+BACKUP_ADDRESS_OFFSET, addr);
+	err = FLASH_ProgramWord(BACKUP_PAGE_ADDRESS+BACKUP_ADDRESS_OFFSET, addr);
+    if (err != FLASH_COMPLETE) {}
 
 	FLASH_Lock();
 }

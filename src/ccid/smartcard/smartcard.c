@@ -376,7 +376,7 @@ void SC_Handler(SC_State *SCState, SC_ADPU_Commands *SC_ADPU, SC_ADPU_Responce *
         }
         else
         {
-          (*SCState) = SC_POWER_OFF; 
+          // (*SCState) = SC_POWER_OFF; 
           (*SCState) = SC_ACTIVE_ON_T0;
         }
       }
