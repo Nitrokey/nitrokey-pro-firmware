@@ -56,12 +56,12 @@
 #define CMD_NEW_AES_KEY                   0x6b
 #define GET_PRO_DEBUG                     0x6c
 
-#define CMD_DATA_OFFSET 0x01
+#define CMD_DATA_OFFSET                   0x01
 
-#define STATUS_READY 0x00
-#define STATUS_BUSY	 0x01
-#define STATUS_ERROR 0x02
-#define STATUS_RECEIVED_REPORT 0x03
+#define STATUS_READY                      0x00
+#define STATUS_BUSY                       0x01
+#define STATUS_ERROR                      0x02
+#define STATUS_RECEIVED_REPORT            0x03
 
 #define CMD_STATUS_OK                               0
 #define CMD_STATUS_WRONG_CRC                        1
@@ -89,15 +89,15 @@ size	offset	description
 4		60		this report's CRC (with device status equal 0)
 */
 
-#define OUTPUT_CMD_TYPE_OFFSET 1
-#define OUTPUT_CMD_CRC_OFFSET 2
-#define OUTPUT_CMD_STATUS_OFFSET 6
-#define OUTPUT_CMD_RESULT_OFFSET 7
-#define OUTPUT_CMD_RESULT_LENGTH 53
-#define OUTPUT_CRC_OFFSET 60
+#define OUTPUT_CMD_TYPE_OFFSET      1
+#define OUTPUT_CMD_CRC_OFFSET       2
+#define OUTPUT_CMD_STATUS_OFFSET    6
+#define OUTPUT_CMD_RESULT_OFFSET    7
+#define OUTPUT_CMD_RESULT_LENGTH    53
+#define OUTPUT_CRC_OFFSET           60
 
 
-#define CMD_TYPE_OFFSET 0
+#define CMD_TYPE_OFFSET             0
 
 
 /*
@@ -113,12 +113,12 @@ CMD_WRITE_TO_SLOT
 8b counter
 */
 
-#define CMD_WTS_SLOT_NUMBER_OFFSET 1
-#define CMD_WTS_SLOT_NAME_OFFSET 2
-#define CMD_WTS_SECRET_OFFSET 17
-#define CMD_WTS_CONFIG_OFFSET 37
-#define CMD_WTS_TOKEN_ID_OFFSET 38
-#define CMD_WTS_COUNTER_OFFSET 51
+#define CMD_WTS_SLOT_NUMBER_OFFSET    1
+#define CMD_WTS_SLOT_NAME_OFFSET      2
+#define CMD_WTS_SECRET_OFFSET         17
+#define CMD_WTS_CONFIG_OFFSET         37
+#define CMD_WTS_TOKEN_ID_OFFSET       38
+#define CMD_WTS_COUNTER_OFFSET        51
 
 
 /*
@@ -129,9 +129,8 @@ CMD_READ_SLOT
 
 */
 
-#define CMD_RS_SLOT_NUMBER_OFFSET 1
-
-#define	CMD_RS_OUTPUT_COUNTER_OFFSET 34
+#define CMD_RS_SLOT_NUMBER_OFFSET     1
+#define	CMD_RS_OUTPUT_COUNTER_OFFSET  34
 
 /*
 CMD_GET_CODE
@@ -148,8 +147,8 @@ output:
 	
 */
 
-#define CMD_GC_SLOT_NUMBER_OFFSET 1
-#define CMD_GC_CHALLENGE_OFFSET 2
+#define CMD_GC_SLOT_NUMBER_OFFSET   1
+#define CMD_GC_CHALLENGE_OFFSET     2
 
 /*
  * CMD_GET_PASSWORD_RETRY_COUNT
