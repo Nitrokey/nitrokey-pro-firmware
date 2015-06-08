@@ -569,7 +569,7 @@ int CcidAesDecSub (int nSendLength,unsigned char *cSendData,int nReceiveLength, 
     CcidAesDec
 
 *******************************************************************************/
-uint8_t CcidAesDec (int nSendLength,unsigned char *cSendData,int nReceiveLength, unsigned char *cReceiveData)
+int CcidAesDec (int nSendLength,unsigned char *cSendData,int nReceiveLength, unsigned char *cReceiveData)
 {
   int     nRet;
 
@@ -1068,10 +1068,9 @@ uint8_t isAesSupported (void) {
 	tSCT.cAPDU[CCID_LC]  = 17;
 
     char test_data[17] = {0x02, // Use AES to DECIPHER
-        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 
-        0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F};
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 	memcpy (( char*) &tSCT.cAPDU[CCID_DATA], test_data, 17);
-    tSCT.cAPDU[CCID_DATA+16] = 0;
     tSCT.cAPDU[CCID_DATA+17] = 0;
     tSCT.cAPDU[CCID_DATA+18] = 0;
 
@@ -1149,7 +1148,7 @@ uint8_t testScAesKey (int nLen, unsigned char *pcKey)
             memset (pcKey,0,nLen);
             return FALSE;
         default:
-            return FALSE;
+           nRet;
     }
 /*
     if (APDU_ANSWER_COMMAND_CORRECT == nRet)
