@@ -623,6 +623,8 @@ uint8_t cmd_unblock_pin (uint8_t *report, uint8_t *output)
 
 
     res = cardAuthenticate(admin_pin);
+    memcpy(admin_pin, 0, sizeof(admin_pin));
+
     if (res != TRUE )
     {
         output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
@@ -630,6 +632,7 @@ uint8_t cmd_unblock_pin (uint8_t *report, uint8_t *output)
     }
 
     res = unblockPin(new_pin);
+    memcpy(new_pin, 0, sizeof(new_pin));
     if (0 == res)
     {
         output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
