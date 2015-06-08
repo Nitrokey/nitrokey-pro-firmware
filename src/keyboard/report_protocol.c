@@ -43,6 +43,7 @@ __IO uint32_t authorized_crc=0xFFFFFFFF;
 __IO uint8_t temp_user_password[25];
 __IO uint8_t tmp_user_password_set=0;
 __IO uint32_t authorized_user_crc=0xFFFFFFFF;
+__IO uint32_t authorized_user_crc_set=0;
 
 
 uint8_t parse_report(uint8_t *report,uint8_t *output){
@@ -99,8 +100,13 @@ uint8_t parse_report(uint8_t *report,uint8_t *output){
 			break;
 			
 		case CMD_GET_CODE:
-			if(calculated_crc32==authorized_user_crc || *((uint8_t *)(SLOTS_PAGE1_ADDRESS+GLOBAL_CONFIG_OFFSET+3)) != 1)
+			if( (authorized_user_crc_set && calculated_crc32==authorized_user_crc) ||
+                *((uint8_t *)(SLOTS_PAGE1_ADDRESS+GLOBAL_CONFIG_OFFSET+3)) != 1)
+            {
+                authorized_user_crc=0xFFFFFFFF;
+                authorized_user_crc_set=0;
                 cmd_get_code(report,output);
+            }
 			else
                 not_authorized=1;
 			break;
@@ -426,9 +432,6 @@ uint8_t cmd_get_code(uint8_t *report,uint8_t *output){
 			result=get_code_from_hotp_slot(slot_no);
 			memcpy(output+OUTPUT_CMD_RESULT_OFFSET,&result,4);
 			memcpy(output+OUTPUT_CMD_RESULT_OFFSET+4,(uint8_t *)hotp_slots[slot_no]+CONFIG_OFFSET,14);
-			
-			
-			
 		}
 		else
 		output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_SLOT_NOT_PROGRAMMED;
@@ -441,16 +444,13 @@ uint8_t cmd_get_code(uint8_t *report,uint8_t *output){
 			result=get_code_from_totp_slot(slot_no,challenge);
 			memcpy(output+OUTPUT_CMD_RESULT_OFFSET,&result,4);
 			memcpy(output+OUTPUT_CMD_RESULT_OFFSET+4,(uint8_t *)totp_slots[slot_no]+CONFIG_OFFSET,14);
-			
 		}
 		else
 		output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_SLOT_NOT_PROGRAMMED;
-
 	}
 	else{
 		output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_SLOT;
 	}
-
 
 	return 0;
 }
@@ -667,6 +667,7 @@ uint8_t cmd_user_authorize(uint8_t *report,uint8_t *output){
 
         if (memcmp(report+5,temp_user_password,25)==0){
             authorized_user_crc=getu32(report+1);
+            authorized_user_crc_set = 1;
             memcpy(temp_user_password, 0, sizeof(temp_user_password));
             tmp_user_password_set=0;
             return 0;
