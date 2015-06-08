@@ -501,7 +501,8 @@ uint8_t cmd_first_authenticate(uint8_t *report,uint8_t *output){
     memcpy(card_password,report+1,25);
     
     res = cardAuthenticate(card_password);
-    
+    memcpy(card_password, 0, sizeof(card_password));
+
     if (res==TRUE){
         memcpy(temp_password,report+26,25);
         tmp_password_set=1;
@@ -523,6 +524,7 @@ uint8_t cmd_user_authenticate(uint8_t *report,uint8_t *output){
     memcpy(user_password,report+1,25);
 
     res = userAuthenticate(user_password);
+    memcpy(user_password, 0, sizeof(user_password));
 
     if (res==0){
         memcpy(temp_user_password,report+26,25);
@@ -557,6 +559,9 @@ uint8_t cmd_change_user_pin (uint8_t *report, uint8_t *output)
     }
 
     res = changeUserPin(old_pin, new_pin);
+    memcpy(old_pin, 0, sizeof(old_pin));
+    memcpy(new_pin, 0, sizeof(new_pin));
+
     if (0 == res) {
         return 0;
     }
@@ -587,6 +592,9 @@ uint8_t cmd_change_admin_pin (uint8_t *report, uint8_t *output)
     }
 
     res = changeAdminPin(old_admin_pin, new_admin_pin);
+    memcpy(old_admin_pin, 0, sizeof(old_admin_pin));
+    memcpy(old_admin_pin, 0, sizeof(new_admin_pin));
+
     if (0 == res) {
         return 0;
     }
@@ -603,6 +611,8 @@ uint8_t cmd_authorize(uint8_t *report,uint8_t *output){
         
         if (memcmp(report+5,temp_password,25)==0){	
             authorized_crc=getu32(report+1);
+            memcpy(temp_password, 0, sizeof(temp_password));
+            tmp_password_set = 0;
             return 0;
         } else {	
             output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_PASSWORD;
@@ -619,6 +629,8 @@ uint8_t cmd_user_authorize(uint8_t *report,uint8_t *output){
 
         if (memcmp(report+5,temp_user_password,25)==0){
             authorized_user_crc=getu32(report+1);
+            memcpy(temp_user_password, 0, sizeof(temp_user_password));
+            tmp_user_password_set=0;
             return 0;
         } else {
             output[OUTPUT_CMD_STATUS_OFFSET]=CMD_STATUS_WRONG_PASSWORD;
