@@ -187,59 +187,33 @@ u32 BuildNewAesStorageKey_u32 (u8 *MasterKey_pu8)
 
 u32 BuildNewAesMasterKey_u32 (u8 *AdminPW_pu8,u8 *MasterKey_pu8)
 {
-    #ifdef LOCAL_DEBUG
-    //CI_TickLocalPrintf ("BuildNewAesMasterKey_u32\r\n");
-    #endif
     RestartSmartcard ();
     // LA_RestartSmartcard_u8 ();
 
     // Wait for next smartcard cmd
     DelayMs (10);
 
-    #ifdef LOCAL_DEBUG
-    //CI_LocalPrintf ("GetRandomNumber\n\r");
-    #endif
-
     // Get a random number for the master key
     if (FALSE == getRandomNumber (AES_KEYSIZE_256_BIT/2, MasterKey_pu8))
     {
-        #ifdef LOCAL_DEBUG
-        //CI_LocalPrintf ("GetRandomNumber fails\n\r");
-        #endif
         return (FALSE);
     }
 
     // Get a random number for the master key
     if (FALSE == getRandomNumber (AES_KEYSIZE_256_BIT/2, &MasterKey_pu8[AES_KEYSIZE_256_BIT/2]))
     {
-        #ifdef LOCAL_DEBUG
-        //CI_LocalPrintf ("GetRandomNumber fails\n\r");
-        #endif
         return (FALSE);
     }
 
     // Wait for next smartcard cmd
     DelayMs (10);
 
-    #ifdef LOCAL_DEBUG
-    //CI_TickLocalPrintf ("Send AdminPW -%s-\r\n",AdminPW_pu8);
-    #endif
     // Unlock smartcard for sending master key
     // if (FALSE == LA_OpenPGP_V20_Test_SendAdminPW (AdminPW_pu8))
     if (FALSE == cardAuthenticate (AdminPW_pu8))
     {
-        #ifdef LOCAL_DEBUG
-        //CI_TickLocalPrintf ("AdminPW wrong\r\n");
-        #endif
         return (FALSE);
     }
-
-
-    #ifdef LOCAL_DEBUG
-    //CI_TickLocalPrintf ("AES Masterkey : ");
-    //HexPrint (AES_KEYSIZE_256_BIT,MasterKey_pu8);
-    //CI_TickLocalPrintf ("\r\n");
-    #endif
 
     // Wait for next smartcard cmd
     DelayMs (10);
@@ -248,10 +222,7 @@ u32 BuildNewAesMasterKey_u32 (u8 *AdminPW_pu8,u8 *MasterKey_pu8)
     int ret = sendAESMasterKey (AES_KEYSIZE_256_BIT, MasterKey_pu8);
     if (TRUE != ret)
     {
-      #ifdef LOCAL_DEBUG
-      //CI_TickLocalPrintf ("SendAESMasterKey fails\r\n");
-      #endif
-    return (FALSE);
+      return (FALSE);
     }
 
     RestartSmartcard();
