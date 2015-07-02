@@ -1,38 +1,45 @@
 /*
-* Author: Copyright (C) Rudolf Boeddeker 					Date: 2010-01-13
-*												STMicroelectronics	 			
-*												MCD Application Team			Date:	06/13/2008
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Author: Copyright (C) Rudolf Boeddeker                   Date: 2010-01-13
+ *                                              STMicroelectronics
+ *                                              MCD Application Team            Date:   06/13/2008
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes
+   ------------------------------------------------------------------ */
 #include "stm32f10x_systick.h"
 
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
+/* Private typedef
+   ----------------------------------------------------------- */
+/* Private define
+   ------------------------------------------------------------ */
 /* ---------------------- SysTick registers bit mask -------------------- */
 /* CTRL TICKINT Mask */
 #define CTRL_TICKINT_Set      ((u32)0x00000002)
 #define CTRL_TICKINT_Reset    ((u32)0xFFFFFFFD)
 
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-/* Private function prototypes -----------------------------------------------*/
-/* Private functions ---------------------------------------------------------*/
+/* Private macro
+   ------------------------------------------------------------- */
+/* Private variables
+   --------------------------------------------------------- */
+/* Private function prototypes
+   ----------------------------------------------- */
+/* Private functions
+   --------------------------------------------------------- */
 
 
 /*******************************************************************************
@@ -43,12 +50,12 @@
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void SysTick_SetReload(u32 Reload)
+void SysTick_SetReload (u32 Reload)
 {
-  /* Check the parameters */
-  assert_param(IS_SYSTICK_RELOAD(Reload));
+    /* Check the parameters */
+    assert_param (IS_SYSTICK_RELOAD (Reload));
 
-  SysTick->LOAD = Reload;
+    SysTick->LOAD = Reload;
 }
 
 /*******************************************************************************
@@ -62,23 +69,23 @@ void SysTick_SetReload(u32 Reload)
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void SysTick_CounterCmd(u32 SysTick_Counter)
+void SysTick_CounterCmd (u32 SysTick_Counter)
 {
-  /* Check the parameters */
-  assert_param(IS_SYSTICK_COUNTER(SysTick_Counter));
+    /* Check the parameters */
+    assert_param (IS_SYSTICK_COUNTER (SysTick_Counter));
 
-  if (SysTick_Counter == SysTick_Counter_Enable)
-  {
-    SysTick->CTRL |= SysTick_Counter_Enable;
-  }
-  else if (SysTick_Counter == SysTick_Counter_Disable) 
-  {
-    SysTick->CTRL &= SysTick_Counter_Disable;
-  }
-  else /* SysTick_Counter == SysTick_Counter_Clear */
-  {
-    SysTick->VAL = SysTick_Counter_Clear;
-  }    
+    if (SysTick_Counter == SysTick_Counter_Enable)
+    {
+        SysTick->CTRL |= SysTick_Counter_Enable;
+    }
+    else if (SysTick_Counter == SysTick_Counter_Disable)
+    {
+        SysTick->CTRL &= SysTick_Counter_Disable;
+    }
+    else    /* SysTick_Counter == SysTick_Counter_Clear */
+    {
+        SysTick->VAL = SysTick_Counter_Clear;
+    }
 }
 
 /*******************************************************************************
@@ -89,19 +96,19 @@ void SysTick_CounterCmd(u32 SysTick_Counter)
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void SysTick_ITConfig(FunctionalState NewState)
+void SysTick_ITConfig (FunctionalState NewState)
 {
-  /* Check the parameters */
-  assert_param(IS_FUNCTIONAL_STATE(NewState));
+    /* Check the parameters */
+    assert_param (IS_FUNCTIONAL_STATE (NewState));
 
-  if (NewState != DISABLE)
-  {
-    SysTick->CTRL |= CTRL_TICKINT_Set;
-  }
-  else
-  {
-    SysTick->CTRL &= CTRL_TICKINT_Reset;
-  }
+    if (NewState != DISABLE)
+    {
+        SysTick->CTRL |= CTRL_TICKINT_Set;
+    }
+    else
+    {
+        SysTick->CTRL &= CTRL_TICKINT_Reset;
+    }
 }
 
 /*******************************************************************************
@@ -111,9 +118,9 @@ void SysTick_ITConfig(FunctionalState NewState)
 * Output         : None
 * Return         : SysTick current value
 *******************************************************************************/
-u32 SysTick_GetCounter(void)
+u32 SysTick_GetCounter (void)
 {
-  return(SysTick->VAL);
+    return (SysTick->VAL);
 }
 
 /*******************************************************************************
@@ -127,34 +134,34 @@ u32 SysTick_GetCounter(void)
 * Output         : None
 * Return         : None
 *******************************************************************************/
-FlagStatus SysTick_GetFlagStatus(u8 SysTick_FLAG)
+FlagStatus SysTick_GetFlagStatus (u8 SysTick_FLAG)
 {
-  u32 statusreg = 0, tmp = 0 ;
-  FlagStatus bitstatus = RESET;
+u32 statusreg = 0, tmp = 0;
 
-  /* Check the parameters */
-  assert_param(IS_SYSTICK_FLAG(SysTick_FLAG));
+FlagStatus bitstatus = RESET;
 
-  /* Get the SysTick register index */
-  tmp = SysTick_FLAG >> 3;
+    /* Check the parameters */
+    assert_param (IS_SYSTICK_FLAG (SysTick_FLAG));
 
-  if (tmp == 2) /* The flag to check is in CTRL register */
-  {
-    statusreg = SysTick->CTRL;
-  }
-  else          /* The flag to check is in CALIB register */
-  {
-    statusreg = SysTick->CALIB;
-  }
+    /* Get the SysTick register index */
+    tmp = SysTick_FLAG >> 3;
 
-  if ((statusreg & ((u32)1 << SysTick_FLAG)) != (u32)RESET)
-  {
-    bitstatus = SET;
-  }
-  else
-  {
-    bitstatus = RESET;
-  }
-  return bitstatus;
+    if (tmp == 2)   /* The flag to check is in CTRL register */
+    {
+        statusreg = SysTick->CTRL;
+    }
+    else    /* The flag to check is in CALIB register */
+    {
+        statusreg = SysTick->CALIB;
+    }
+
+    if ((statusreg & ((u32) 1 << SysTick_FLAG)) != (u32) RESET)
+    {
+        bitstatus = SET;
+    }
+    else
+    {
+        bitstatus = RESET;
+    }
+    return bitstatus;
 }
-

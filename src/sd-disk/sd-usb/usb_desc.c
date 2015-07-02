@@ -1,29 +1,28 @@
 /*
-* Author: Copyright (C) Rudolf Boeddeker 					Date: 2010-01-13
-*												STMicroelectronics	 			
-*												MCD Application Team			Date:	04/27/2009
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Author: Copyright (C) Rudolf Boeddeker                   Date: 2010-01-13
+ *                                              STMicroelectronics
+ *                                              MCD Application Team            Date:   04/27/2009
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "usb_desc.h"
 
-const uint8_t MASS_DeviceDescriptor[MASS_SIZ_DEVICE_DESC] =
-  {
-    0x12,   /* bLength  */
+const uint8_t MASS_DeviceDescriptor[MASS_SIZ_DEVICE_DESC] = {
+    0x12,   /* bLength */
     0x01,   /* bDescriptorType */
     0x00,   /* bcdUSB, version 2.00 */
     0x02,
@@ -31,24 +30,22 @@ const uint8_t MASS_DeviceDescriptor[MASS_SIZ_DEVICE_DESC] =
     0x00,   /* bDeviceSubClass */
     0x00,   /* bDeviceProtocol */
     0x40,   /* bMaxPacketSize0 0x40 = 64 */
-    0x83,   /* idVendor     (0483) */
+    0x83,   /* idVendor (0483) */
     0x04,
     0x22,   /* idProduct */
     0x57,
-    0x00,   /* bcdDevice 2.00*/
+    0x00,   /* bcdDevice 2.00 */
     0x02,
-    1,              /* index of string Manufacturer  */
-    /**/
-    2,              /* index of string descriptor of product*/
+    1,  /* index of string Manufacturer */
+     /**/ 2,    /* index of string descriptor of product */
     /* */
-    3,              /* */
+    3,  /* */
     /* */
     /* */
-    0x01    /*bNumConfigurations */
-  };
+    0x01    /* bNumConfigurations */
+};
 
-const uint8_t MASS_ConfigDescriptor[MASS_SIZ_CONFIG_DESC] =
-  {
+const uint8_t MASS_ConfigDescriptor[MASS_SIZ_CONFIG_DESC] = {
 
     0x09,   /* bLength: Configuation Descriptor size */
     0x02,   /* bDescriptorType: Configuration */
@@ -57,91 +54,88 @@ const uint8_t MASS_ConfigDescriptor[MASS_SIZ_CONFIG_DESC] =
     0x00,
     0x01,   /* bNumInterfaces: 1 interface */
     0x01,   /* bConfigurationValue: */
-    /*      Configuration value */
+    /* Configuration value */
     0x00,   /* iConfiguration: */
-    /*      Index of string descriptor */
-    /*      describing the configuration */
+    /* Index of string descriptor */
+    /* describing the configuration */
     0x80,   /* bmAttributes: */
-    /*      bus powered */
+    /* bus powered */
     0x32,   /* MaxPower 100 mA */
 
     /******************** Descriptor of Mass Storage interface ********************/
     /* 09 */
     0x09,   /* bLength: Interface Descriptor size */
     0x04,   /* bDescriptorType: */
-    /*      Interface descriptor type */
+    /* Interface descriptor type */
     0x00,   /* bInterfaceNumber: Number of Interface */
     0x00,   /* bAlternateSetting: Alternate setting */
-    0x02,   /* bNumEndpoints*/
+    0x02,   /* bNumEndpoints */
     0x08,   /* bInterfaceClass: MASS STORAGE Class */
-    0x06,   /* bInterfaceSubClass : SCSI transparent*/
+    0x06,   /* bInterfaceSubClass : SCSI transparent */
     0x50,   /* nInterfaceProtocol */
-    4,          /* iInterface: */
+    4,  /* iInterface: */
     /* 18 */
-    0x07,   /*Endpoint descriptor length = 7*/
-    0x05,   /*Endpoint descriptor type */
-    0x81,   /*Endpoint address (IN, address 1) */
-    0x02,   /*Bulk endpoint type */
-    0x40,   /*Maximum packet size (64 bytes) */
+    0x07,   /* Endpoint descriptor length = 7 */
+    0x05,   /* Endpoint descriptor type */
+    0x81,   /* Endpoint address (IN, address 1) */
+    0x02,   /* Bulk endpoint type */
+    0x40,   /* Maximum packet size (64 bytes) */
     0x00,
-    0x00,   /*Polling interval in milliseconds */
+    0x00,   /* Polling interval in milliseconds */
     /* 25 */
-    0x07,   /*Endpoint descriptor length = 7 */
-    0x05,   /*Endpoint descriptor type */
-    0x02,   /*Endpoint address (OUT, address 2) */
-    0x02,   /*Bulk endpoint type */
-    0x40,   /*Maximum packet size (64 bytes) */
+    0x07,   /* Endpoint descriptor length = 7 */
+    0x05,   /* Endpoint descriptor type */
+    0x02,   /* Endpoint address (OUT, address 2) */
+    0x02,   /* Bulk endpoint type */
+    0x40,   /* Maximum packet size (64 bytes) */
     0x00,
-    0x00     /*Polling interval in milliseconds*/
-    /*32*/
-  };
+    0x00    /* Polling interval in milliseconds */
+        /* 32 */
+};
 
-const uint8_t MASS_StringLangID[MASS_SIZ_STRING_LANGID] =
-  {
+const uint8_t MASS_StringLangID[MASS_SIZ_STRING_LANGID] = {
     MASS_SIZ_STRING_LANGID,
     0x03,
     0x09,
     0x04
-  };      /* LangID = 0x0409: U.S. English */
+};  /* LangID = 0x0409: U.S. English */
 
 
-const uint8_t MASS_StringVendor[MASS_SIZ_STRING_VENDOR] =
-{
-    MASS_SIZ_STRING_VENDOR, 						/* Size of manufaturer string */
-    0x03,           										/* bDescriptorType = String descriptor */
+const uint8_t MASS_StringVendor[MASS_SIZ_STRING_VENDOR] = {
+    MASS_SIZ_STRING_VENDOR, /* Size of manufaturer string */
+    0x03,   /* bDescriptorType = String descriptor */
 
-/* Manufacturer: "Nitrokey" - 8 * 2 + 2 = 18 byte*/
-		'N', 0, 'i', 0, 't', 0, 'r', 0, 'o', 0, 'k', 0, 'e', 0, 'y'
+    /* Manufacturer: "Nitrokey" - 8 * 2 + 2 = 18 byte */
+    'N', 0, 'i', 0, 't', 0, 'r', 0, 'o', 0, 'k', 0, 'e', 0, 'y'
 };
 
-const uint8_t MASS_StringProduct[MASS_SIZ_STRING_PRODUCT] =
-  {
+const uint8_t MASS_StringProduct[MASS_SIZ_STRING_PRODUCT] = {
     MASS_SIZ_STRING_PRODUCT,
     0x03,
-/* Product name: "Nitrokey Storage SD device" - 26 * 2 + 2 = 54 byte */
-		'N', 0, 'i', 0, 't', 0, 'r', 0, 'o', 0, 'k', 0, 'e', 0, 'y', 0, ' ', 0,
-        'S', 0,	't', 0, 'o', 0, 'r', 0, 'a', 0, 'g', 0, 'e', 
-        ' ', 0, 'S', 0, 'D', 0, ' ', 0, 
-		'd', 0, 'e', 0, 'v', 0, 'i', 0, 'c', 0, 'e', 0
-  };
+    /* Product name: "Nitrokey Storage SD device" - 26 * 2 + 2 = 54 byte */
+    'N', 0, 'i', 0, 't', 0, 'r', 0, 'o', 0, 'k', 0, 'e', 0, 'y', 0, ' ', 0,
+    'S', 0, 't', 0, 'o', 0, 'r', 0, 'a', 0, 'g', 0, 'e',
+    ' ', 0, 'S', 0, 'D', 0, ' ', 0,
+    'd', 0, 'e', 0, 'v', 0, 'i', 0, 'c', 0, 'e', 0
+};
 
-uint8_t MASS_StringSerial[MASS_SIZ_STRING_SERIAL] =
-{
+uint8_t MASS_StringSerial[MASS_SIZ_STRING_SERIAL] = {
     MASS_SIZ_STRING_SERIAL,
     0x03,
-/* Serial number  "            " - (3 * 8 Byte defined in sourcecode)* 2 + 2 = 50 byte  */
-    ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0,
-    ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0,
+    /* Serial number " " - (3 * 8 Byte defined in sourcecode)* 2 + 2 = 50
+       byte */
+    ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0,
+        ' ', 0,
+    ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0,
+        ' ', 0,
     ' ', 0, ' ', 0, ' ', 0, ' ', 0
 };
 
-const uint8_t MASS_StringInterface[MASS_SIZ_STRING_INTERFACE] =
-{
+const uint8_t MASS_StringInterface[MASS_SIZ_STRING_INTERFACE] = {
     MASS_SIZ_STRING_INTERFACE,
     0x03,
-/* Interface 0: "Nitrokey SD" - 11 * 2 + 2 = 24 byte */
-		'C', 0, 'r', 0, 'y', 0, 'p', 0, 't', 0, 'o', 0, 'S', 0, 't', 0, 'i', 0,	'c', 0, 
-		'k', 0, ' ', 0, 'S', 0, 'D'
+    /* Interface 0: "Nitrokey SD" - 11 * 2 + 2 = 24 byte */
+    'C', 0, 'r', 0, 'y', 0, 'p', 0, 't', 0, 'o', 0, 'S', 0, 't', 0, 'i', 0,
+        'c', 0,
+    'k', 0, ' ', 0, 'S', 0, 'D'
 };
-
-

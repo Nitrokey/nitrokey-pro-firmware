@@ -1,41 +1,45 @@
 /*
-* Author: Copyright (C) Rudolf Boeddeker 					Date: 2010-01-13
-*												STMicroelectronics	 			Date:	04/27/2009
-*												 MCD Application Team			Version V3.0.1
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Author: Copyright (C) Rudolf Boeddeker                   Date: 2010-01-13
+ *                                              STMicroelectronics              Date:   04/27/2009
+ *                                               MCD Application Team           Version V3.0.1
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 
-/* Define to prevent recursive inclusion -------------------------------------*/
+/* Define to prevent recursive inclusion
+   ------------------------------------- */
 #ifndef __PLATFORM_CONFIG_H
 #define __PLATFORM_CONFIG_H
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes
+   ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* Uncomment the line corresponding to the STMicroelectronics evaluation board
-   used to run the example */
+/* Exported types
+   ------------------------------------------------------------ */
+/* Exported constants
+   -------------------------------------------------------- */
+/* Uncomment the line corresponding to the STMicroelectronics evaluation
+   board used to run the example */
 
 #undef 	USE_STM3210E_EVAL
-#define USE_STM3210B_EVAL 						// RB used for USE_STM3210_KEIL_EVAL
+#define USE_STM3210B_EVAL   // RB used for USE_STM3210_KEIL_EVAL
 
-#define USE_BOARD_STICK_V12					// Cheange CPU to V12 = R8 else Keil = RC	!!!!
+#define USE_BOARD_STICK_V12 // Cheange CPU to V12 = R8 else Keil = RC !!!!
 
 /******************************************************************************
 
@@ -44,21 +48,27 @@
 	activate the 4 Bit DMA SD card interface
 
 ******************************************************************************/
-#define USB_4BIT_SD_CARD_INTERFACE		// only RC CPU !!!!
+#define USB_4BIT_SD_CARD_INTERFACE  // only RC CPU !!!!
 
 
 /* Define the STM32F10x hardware depending on the used evaluation board */
 #ifdef USE_STM3210B_EVAL
 
 #define USB_DISCONNECT                    GPIOA
-#define USB_DISCONNECT_PIN                GPIO_Pin_15 // Use GPIO_Pin_10 for older PCB
+#define USB_DISCONNECT_PIN                GPIO_Pin_15   // Use GPIO_Pin_10
+                                                        // for older PCB
 #define RCC_APB2Periph_GPIO_DISCONNECT    RCC_APB2Periph_GPIOA
 
 
 // smartcard power supply
-#define SMARTCARD_POWER_PORT              GPIOB  												// change SC_PortSource in smartcard.h too
-#define SMARTCARD_POWER_PIN_1            	GPIO_Pin_4										// change SC_PinSource  in smartcard.h too
-#define SMARTCARD_POWER_PIN_2            	GPIO_Pin_5										// change SC_PinSource  in smartcard.h too
+#define SMARTCARD_POWER_PORT              GPIOB // change SC_PortSource in
+                                                // smartcard.h too
+#define SMARTCARD_POWER_PIN_1            	GPIO_Pin_4  // change
+                                                        // SC_PinSource in
+                                                        // smartcard.h too
+#define SMARTCARD_POWER_PIN_2            	GPIO_Pin_5  // change
+                                                        // SC_PinSource in
+                                                        // smartcard.h too
 
 
 // for disabling download firmware pins, used parallel to usb
@@ -94,12 +104,12 @@
 #define STICK_STATE_COMPOSITE					4
 #define STICK_STATE_COMPOSITE_SC_SD		5
 
-extern int  nGlobalStickState;
+extern int nGlobalStickState;
 
 
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
+/* Exported macro
+   ------------------------------------------------------------ */
+/* Exported functions -------------------------------------------------------
+ */
 
 #endif /* __PLATFORM_CONFIG_H */
-
-

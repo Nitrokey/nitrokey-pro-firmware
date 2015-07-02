@@ -1,28 +1,30 @@
 /*
-* Author: Copyright (C) STMicroelectronics	 			
-*												MCD Application Team			Date:	04/06/2009
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Author: Copyright (C) STMicroelectronics
+ *                                              MCD Application Team            Date:   04/06/2009
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
+/* Define to prevent recursive inclusion
+   ------------------------------------- */
 #ifndef __STM32F10x_PWR_H
 #define __STM32F10x_PWR_H
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes
+   ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -31,23 +33,23 @@
 
 /** @addtogroup PWR
   * @{
-  */ 
+  */
 
 /** @defgroup PWR_Exported_Types
   * @{
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup PWR_Exported_Constants
   * @{
-  */ 
+  */
 
-/** @defgroup PVD_detection_level 
+/** @defgroup PVD_detection_level
   * @{
-  */ 
+  */
 
 #define PWR_PVDLevel_2V2          ((uint32_t)0x00000000)
 #define PWR_PVDLevel_2V3          ((uint32_t)0x00000020)
@@ -65,7 +67,7 @@
   * @}
   */
 
-/** @defgroup Regulator_state_is_STOP_mode 
+/** @defgroup Regulator_state_is_STOP_mode
   * @{
   */
 
@@ -77,19 +79,19 @@
   * @}
   */
 
-/** @defgroup STOP_mode_entry 
+/** @defgroup STOP_mode_entry
   * @{
   */
 
 #define PWR_STOPEntry_WFI         ((uint8_t)0x01)
 #define PWR_STOPEntry_WFE         ((uint8_t)0x02)
 #define IS_PWR_STOP_ENTRY(ENTRY) (((ENTRY) == PWR_STOPEntry_WFI) || ((ENTRY) == PWR_STOPEntry_WFE))
- 
+
 /**
   * @}
   */
 
-/** @defgroup PWR_Flag 
+/** @defgroup PWR_Flag
   * @{
   */
 
@@ -120,15 +122,23 @@
   * @{
   */
 
-void PWR_DeInit(void);
-void PWR_BackupAccessCmd(FunctionalState NewState);
-void PWR_PVDCmd(FunctionalState NewState);
-void PWR_PVDLevelConfig(uint32_t PWR_PVDLevel);
-void PWR_WakeUpPinCmd(FunctionalState NewState);
-void PWR_EnterSTOPMode(uint32_t PWR_Regulator, uint8_t PWR_STOPEntry);
-void PWR_EnterSTANDBYMode(void);
-FlagStatus PWR_GetFlagStatus(uint32_t PWR_FLAG);
-void PWR_ClearFlag(uint32_t PWR_FLAG);
+void PWR_DeInit (void);
+
+void PWR_BackupAccessCmd (FunctionalState NewState);
+
+void PWR_PVDCmd (FunctionalState NewState);
+
+void PWR_PVDLevelConfig (uint32_t PWR_PVDLevel);
+
+void PWR_WakeUpPinCmd (FunctionalState NewState);
+
+void PWR_EnterSTOPMode (uint32_t PWR_Regulator, uint8_t PWR_STOPEntry);
+
+void PWR_EnterSTANDBYMode (void);
+
+FlagStatus PWR_GetFlagStatus (uint32_t PWR_FLAG);
+
+void PWR_ClearFlag (uint32_t PWR_FLAG);
 
 #endif /* __STM32F10x_PWR_H */
 /**
@@ -142,6 +152,3 @@ void PWR_ClearFlag(uint32_t PWR_FLAG);
 /**
   * @}
   */
-
-
-

@@ -1,28 +1,30 @@
 /*
-* Author: Copyright (C) STMicroelectronics	 			
-*												MCD Application Team			Date:	04/06/2009
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Author: Copyright (C) STMicroelectronics
+ *                                              MCD Application Team            Date:   04/06/2009
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
+/* Define to prevent recursive inclusion
+   ------------------------------------- */
 #ifndef __STM32F10x_RCC_H
 #define __STM32F10x_RCC_H
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes
+   ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -39,12 +41,12 @@
 
 typedef struct
 {
-  uint32_t SYSCLK_Frequency;
-  uint32_t HCLK_Frequency;
-  uint32_t PCLK1_Frequency;
-  uint32_t PCLK2_Frequency;
-  uint32_t ADCCLK_Frequency;
-}RCC_ClocksTypeDef;
+    uint32_t SYSCLK_Frequency;
+    uint32_t HCLK_Frequency;
+    uint32_t PCLK1_Frequency;
+    uint32_t PCLK2_Frequency;
+    uint32_t ADCCLK_Frequency;
+} RCC_ClocksTypeDef;
 
 /**
   * @}
@@ -54,7 +56,7 @@ typedef struct
   * @{
   */
 
-/** @defgroup HSE_configuration 
+/** @defgroup HSE_configuration
   * @{
   */
 
@@ -66,9 +68,9 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup PLL_entry_clock_source 
+/** @defgroup PLL_entry_clock_source
   * @{
   */
 
@@ -80,9 +82,9 @@ typedef struct
                                    ((SOURCE) == RCC_PLLSource_HSE_Div2))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup PLL_multiplication_factor 
+/** @defgroup PLL_multiplication_factor
   * @{
   */
 
@@ -113,7 +115,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup System_clock_source 
+/** @defgroup System_clock_source
   * @{
   */
 
@@ -127,7 +129,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup AHB_clock_source 
+/** @defgroup AHB_clock_source
   * @{
   */
 
@@ -147,9 +149,9 @@ typedef struct
                            ((HCLK) == RCC_SYSCLK_Div512))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup APB1_APB2_clock_source 
+/** @defgroup APB1_APB2_clock_source
   * @{
   */
 
@@ -165,7 +167,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup RCC_Interrupt_source 
+/** @defgroup RCC_Interrupt_source
   * @{
   */
 
@@ -185,7 +187,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup USB_clock_source 
+/** @defgroup USB_clock_source
   * @{
   */
 
@@ -197,7 +199,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup ADC_clock_source 
+/** @defgroup ADC_clock_source
   * @{
   */
 
@@ -211,7 +213,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup LSE_configuration 
+/** @defgroup LSE_configuration
   * @{
   */
 
@@ -224,7 +226,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup RTC_clock_source 
+/** @defgroup RTC_clock_source
   * @{
   */
 
@@ -238,7 +240,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup AHB_peripheral 
+/** @defgroup AHB_peripheral
   * @{
   */
 
@@ -254,7 +256,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup APB2_peripheral 
+/** @defgroup APB2_peripheral
   * @{
   */
 
@@ -278,9 +280,9 @@ typedef struct
 #define IS_RCC_APB2_PERIPH(PERIPH) ((((PERIPH) & 0xFFFF0002) == 0x00) && ((PERIPH) != 0x00))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup APB1_peripheral 
+/** @defgroup APB1_peripheral
   * @{
   */
 
@@ -311,7 +313,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup Clock_source_to_output_on_MCO_pin 
+/** @defgroup Clock_source_to_output_on_MCO_pin
   * @{
   */
 
@@ -327,7 +329,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup RCC_Flag 
+/** @defgroup RCC_Flag
   * @{
   */
 
@@ -370,38 +372,69 @@ typedef struct
   * @{
   */
 
-void RCC_DeInit(void);
-void RCC_HSEConfig(uint32_t RCC_HSE);
-ErrorStatus RCC_WaitForHSEStartUp(void);
-void RCC_AdjustHSICalibrationValue(uint8_t HSICalibrationValue);
-void RCC_HSICmd(FunctionalState NewState);
-void RCC_PLLConfig(uint32_t RCC_PLLSource, uint32_t RCC_PLLMul);
-void RCC_PLLCmd(FunctionalState NewState);
-void RCC_SYSCLKConfig(uint32_t RCC_SYSCLKSource);
-uint8_t RCC_GetSYSCLKSource(void);
-void RCC_HCLKConfig(uint32_t RCC_SYSCLK);
-void RCC_PCLK1Config(uint32_t RCC_HCLK);
-void RCC_PCLK2Config(uint32_t RCC_HCLK);
-void RCC_ITConfig(uint8_t RCC_IT, FunctionalState NewState);
-void RCC_USBCLKConfig(uint32_t RCC_USBCLKSource);
-void RCC_ADCCLKConfig(uint32_t RCC_PCLK2);
-void RCC_LSEConfig(uint8_t RCC_LSE);
-void RCC_LSICmd(FunctionalState NewState);
-void RCC_RTCCLKConfig(uint32_t RCC_RTCCLKSource);
-void RCC_RTCCLKCmd(FunctionalState NewState);
-void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks);
-void RCC_AHBPeriphClockCmd(uint32_t RCC_AHBPeriph, FunctionalState NewState);
-void RCC_APB2PeriphClockCmd(uint32_t RCC_APB2Periph, FunctionalState NewState);
-void RCC_APB1PeriphClockCmd(uint32_t RCC_APB1Periph, FunctionalState NewState);
-void RCC_APB2PeriphResetCmd(uint32_t RCC_APB2Periph, FunctionalState NewState);
-void RCC_APB1PeriphResetCmd(uint32_t RCC_APB1Periph, FunctionalState NewState);
-void RCC_BackupResetCmd(FunctionalState NewState);
-void RCC_ClockSecuritySystemCmd(FunctionalState NewState);
-void RCC_MCOConfig(uint8_t RCC_MCO);
-FlagStatus RCC_GetFlagStatus(uint8_t RCC_FLAG);
-void RCC_ClearFlag(void);
-ITStatus RCC_GetITStatus(uint8_t RCC_IT);
-void RCC_ClearITPendingBit(uint8_t RCC_IT);
+void RCC_DeInit (void);
+
+void RCC_HSEConfig (uint32_t RCC_HSE);
+
+ErrorStatus RCC_WaitForHSEStartUp (void);
+
+void RCC_AdjustHSICalibrationValue (uint8_t HSICalibrationValue);
+
+void RCC_HSICmd (FunctionalState NewState);
+
+void RCC_PLLConfig (uint32_t RCC_PLLSource, uint32_t RCC_PLLMul);
+
+void RCC_PLLCmd (FunctionalState NewState);
+
+void RCC_SYSCLKConfig (uint32_t RCC_SYSCLKSource);
+
+uint8_t RCC_GetSYSCLKSource (void);
+
+void RCC_HCLKConfig (uint32_t RCC_SYSCLK);
+
+void RCC_PCLK1Config (uint32_t RCC_HCLK);
+
+void RCC_PCLK2Config (uint32_t RCC_HCLK);
+
+void RCC_ITConfig (uint8_t RCC_IT, FunctionalState NewState);
+
+void RCC_USBCLKConfig (uint32_t RCC_USBCLKSource);
+
+void RCC_ADCCLKConfig (uint32_t RCC_PCLK2);
+
+void RCC_LSEConfig (uint8_t RCC_LSE);
+
+void RCC_LSICmd (FunctionalState NewState);
+
+void RCC_RTCCLKConfig (uint32_t RCC_RTCCLKSource);
+
+void RCC_RTCCLKCmd (FunctionalState NewState);
+
+void RCC_GetClocksFreq (RCC_ClocksTypeDef * RCC_Clocks);
+
+void RCC_AHBPeriphClockCmd (uint32_t RCC_AHBPeriph, FunctionalState NewState);
+
+void RCC_APB2PeriphClockCmd (uint32_t RCC_APB2Periph,
+                             FunctionalState NewState);
+void RCC_APB1PeriphClockCmd (uint32_t RCC_APB1Periph,
+                             FunctionalState NewState);
+void RCC_APB2PeriphResetCmd (uint32_t RCC_APB2Periph,
+                             FunctionalState NewState);
+void RCC_APB1PeriphResetCmd (uint32_t RCC_APB1Periph,
+                             FunctionalState NewState);
+void RCC_BackupResetCmd (FunctionalState NewState);
+
+void RCC_ClockSecuritySystemCmd (FunctionalState NewState);
+
+void RCC_MCOConfig (uint8_t RCC_MCO);
+
+FlagStatus RCC_GetFlagStatus (uint8_t RCC_FLAG);
+
+void RCC_ClearFlag (void);
+
+ITStatus RCC_GetITStatus (uint8_t RCC_IT);
+
+void RCC_ClearITPendingBit (uint8_t RCC_IT);
 
 #endif /* __STM32F10x_RCC_H */
 /**
@@ -414,5 +447,4 @@ void RCC_ClearITPendingBit(uint8_t RCC_IT);
 
 /**
   * @}
-  */ 
-
+  */

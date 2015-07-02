@@ -1,28 +1,30 @@
 /*
-* Author: Copyright (C) STMicroelectronics	 			
-*												MCD Application Team			Date:	04/06/2009
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Author: Copyright (C) STMicroelectronics
+ *                                              MCD Application Team            Date:   04/06/2009
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
+/* Define to prevent recursive inclusion
+   ------------------------------------- */
 #ifndef __MISC_H
 #define __MISC_H
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes
+   ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -37,16 +39,16 @@
   * @{
   */
 
-/** 
-  * @brief  NVIC Init Structure definition  
+/**
+  * @brief  NVIC Init Structure definition
   */
 
 typedef struct
 {
-  uint8_t NVIC_IRQChannel;
-  uint8_t NVIC_IRQChannelPreemptionPriority;
-  uint8_t NVIC_IRQChannelSubPriority;
-  FunctionalState NVIC_IRQChannelCmd;
+    uint8_t NVIC_IRQChannel;
+    uint8_t NVIC_IRQChannelPreemptionPriority;
+    uint8_t NVIC_IRQChannelSubPriority;
+    FunctionalState NVIC_IRQChannelCmd;
 } NVIC_InitTypeDef;
 
 /**
@@ -57,7 +59,7 @@ typedef struct
   * @{
   */
 
-/** @defgroup Vector_Table_Base 
+/** @defgroup Vector_Table_Base
   * @{
   */
 
@@ -69,7 +71,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup System_Low_Power 
+/** @defgroup System_Low_Power
   * @{
   */
 
@@ -83,20 +85,30 @@ typedef struct
   * @}
   */
 
-/** @defgroup Preemption_Priority_Group 
+/** @defgroup Preemption_Priority_Group
   * @{
   */
 
-#define NVIC_PriorityGroup_0         ((uint32_t)0x700) /* 0 bits for pre-emption priority
-                                                          4 bits for subpriority */
-#define NVIC_PriorityGroup_1         ((uint32_t)0x600) /* 1 bits for pre-emption priority
-                                                          3 bits for subpriority */
-#define NVIC_PriorityGroup_2         ((uint32_t)0x500) /* 2 bits for pre-emption priority
-                                                          2 bits for subpriority */
-#define NVIC_PriorityGroup_3         ((uint32_t)0x400) /* 3 bits for pre-emption priority
-                                                          1 bits for subpriority */
-#define NVIC_PriorityGroup_4         ((uint32_t)0x300) /* 4 bits for pre-emption priority
-                                                          0 bits for subpriority */
+#define NVIC_PriorityGroup_0         ((uint32_t)0x700)  /* 0 bits for
+                                                           pre-emption
+                                                           priority 4 bits
+                                                           for subpriority */
+#define NVIC_PriorityGroup_1         ((uint32_t)0x600)  /* 1 bits for
+                                                           pre-emption
+                                                           priority 3 bits
+                                                           for subpriority */
+#define NVIC_PriorityGroup_2         ((uint32_t)0x500)  /* 2 bits for
+                                                           pre-emption
+                                                           priority 2 bits
+                                                           for subpriority */
+#define NVIC_PriorityGroup_3         ((uint32_t)0x400)  /* 3 bits for
+                                                           pre-emption
+                                                           priority 1 bits
+                                                           for subpriority */
+#define NVIC_PriorityGroup_4         ((uint32_t)0x300)  /* 4 bits for
+                                                           pre-emption
+                                                           priority 0 bits
+                                                           for subpriority */
 
 #define IS_NVIC_PRIORITY_GROUP(GROUP) (((GROUP) == NVIC_PriorityGroup_0) || \
                                        ((GROUP) == NVIC_PriorityGroup_1) || \
@@ -114,7 +126,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup SysTick_clock_source 
+/** @defgroup SysTick_clock_source
   * @{
   */
 
@@ -142,11 +154,15 @@ typedef struct
   * @{
   */
 
-void NVIC_PriorityGroupConfig(uint32_t NVIC_PriorityGroup);
-void NVIC_Init(NVIC_InitTypeDef* NVIC_InitStruct);
-void NVIC_SetVectorTable(uint32_t NVIC_VectTab, uint32_t Offset);
-void NVIC_SystemLPConfig(uint8_t LowPowerMode, FunctionalState NewState);
-void SysTick_CLKSourceConfig(uint32_t SysTick_CLKSource);
+void NVIC_PriorityGroupConfig (uint32_t NVIC_PriorityGroup);
+
+void NVIC_Init (NVIC_InitTypeDef * NVIC_InitStruct);
+
+void NVIC_SetVectorTable (uint32_t NVIC_VectTab, uint32_t Offset);
+
+void NVIC_SystemLPConfig (uint8_t LowPowerMode, FunctionalState NewState);
+
+void SysTick_CLKSourceConfig (uint32_t SysTick_CLKSource);
 
 #endif /* __MISC_H */
 
@@ -161,5 +177,3 @@ void SysTick_CLKSourceConfig(uint32_t SysTick_CLKSource);
 /**
   * @}
   */
-
-

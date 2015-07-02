@@ -1,28 +1,30 @@
 /*
-* Author: Copyright (C) STMicroelectronics	 			
-*												MCD Application Team			Date:	04/06/2009
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Author: Copyright (C) STMicroelectronics
+ *                                              MCD Application Team            Date:   04/06/2009
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
+/* Define to prevent recursive inclusion
+   ------------------------------------- */
 #ifndef __STM32F10x_IWDG_H
 #define __STM32F10x_IWDG_H
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes
+   ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -45,7 +47,7 @@
   * @{
   */
 
-/** @defgroup Write_access_to_IWDG_PR_and_IWDG_RLR_registers 
+/** @defgroup Write_access_to_IWDG_PR_and_IWDG_RLR_registers
   * @{
   */
 
@@ -57,7 +59,7 @@
   * @}
   */
 
-/** @defgroup IWDG_prescaler 
+/** @defgroup IWDG_prescaler
   * @{
   */
 
@@ -79,7 +81,7 @@
   * @}
   */
 
-/** @defgroup IWDG_Flag 
+/** @defgroup IWDG_Flag
   * @{
   */
 
@@ -107,12 +109,17 @@
   * @{
   */
 
-void IWDG_WriteAccessCmd(uint16_t IWDG_WriteAccess);
-void IWDG_SetPrescaler(uint8_t IWDG_Prescaler);
-void IWDG_SetReload(uint16_t Reload);
-void IWDG_ReloadCounter(void);
-void IWDG_Enable(void);
-FlagStatus IWDG_GetFlagStatus(uint16_t IWDG_FLAG);
+void IWDG_WriteAccessCmd (uint16_t IWDG_WriteAccess);
+
+void IWDG_SetPrescaler (uint8_t IWDG_Prescaler);
+
+void IWDG_SetReload (uint16_t Reload);
+
+void IWDG_ReloadCounter (void);
+
+void IWDG_Enable (void);
+
+FlagStatus IWDG_GetFlagStatus (uint16_t IWDG_FLAG);
 
 #endif /* __STM32F10x_IWDG_H */
 /**
@@ -126,5 +133,3 @@ FlagStatus IWDG_GetFlagStatus(uint16_t IWDG_FLAG);
 /**
   * @}
   */
-
-

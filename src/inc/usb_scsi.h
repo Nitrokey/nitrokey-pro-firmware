@@ -1,31 +1,35 @@
 /*
-* Author: Copyright (C) STMicroelectronics	 			Date:	04/27/2009
-*												 MCD Application Team			Version V3.0.1
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Author: Copyright (C) STMicroelectronics             Date:   04/27/2009
+ *                                               MCD Application Team           Version V3.0.1
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
+/* Define to prevent recursive inclusion
+   ------------------------------------- */
 #ifndef __USB_SCSI_H
 #define __USB_SCSI_H
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes
+   ------------------------------------------------------------------ */
 #include "stm32f10x.h"
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
+/* Exported types
+   ------------------------------------------------------------ */
+/* Exported constants
+   -------------------------------------------------------- */
 
 /* SCSI Commands */
 #define SCSI_FORMAT_UNIT                            0x04
@@ -90,43 +94,67 @@
 #define STANDARD_INQUIRY_DATA_LEN                   0x24
 #define BLKVFY                                      0x04
 
-extern  uint8_t Page00_Inquiry_Data[];
-extern  uint8_t Standard_Inquiry_Data[];
-extern  uint8_t Standard_Inquiry_Data2[];
-extern  uint8_t Standard_Inquiry_Data_Ramdisk[];
-extern  uint8_t Mode_Sense6_data[];
-extern  uint8_t Mode_Sense10_data[];
-extern  uint8_t Scsi_Sense_Data[];
-extern  uint8_t ReadCapacity10_Data[];
-extern  uint8_t ReadFormatCapacity_Data [];
+extern uint8_t Page00_Inquiry_Data[];
 
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
-void SCSI_Inquiry_Cmd(uint8_t lun);
-void SCSI_ReadFormatCapacity_Cmd(uint8_t lun);
-void SCSI_ReadCapacity10_Cmd(uint8_t lun);
+extern uint8_t Standard_Inquiry_Data[];
+
+extern uint8_t Standard_Inquiry_Data2[];
+
+extern uint8_t Standard_Inquiry_Data_Ramdisk[];
+
+extern uint8_t Mode_Sense6_data[];
+
+extern uint8_t Mode_Sense10_data[];
+
+extern uint8_t Scsi_Sense_Data[];
+
+extern uint8_t ReadCapacity10_Data[];
+
+extern uint8_t ReadFormatCapacity_Data[];
+
+/* Exported macro
+   ------------------------------------------------------------ */
+/* Exported functions -------------------------------------------------------
+ */
+void SCSI_Inquiry_Cmd (uint8_t lun);
+
+void SCSI_ReadFormatCapacity_Cmd (uint8_t lun);
+
+void SCSI_ReadCapacity10_Cmd (uint8_t lun);
+
 void SCSI_RequestSense_Cmd (uint8_t lun);
-void SCSI_Start_Stop_Unit_Cmd(uint8_t lun);
+
+void SCSI_Start_Stop_Unit_Cmd (uint8_t lun);
+
 void SCSI_ModeSense6_Cmd (uint8_t lun);
+
 void SCSI_ModeSense10_Cmd (uint8_t lun);
-void SCSI_Write10_Cmd(uint8_t lun , uint32_t LBA , uint32_t BlockNbr);
-void SCSI_Read10_Cmd(uint8_t lun , uint32_t LBA , uint32_t BlockNbr);
-void SCSI_Verify10_Cmd(uint8_t lun);
 
-void SCSI_Invalid_Cmd(uint8_t lun);
-void SCSI_Valid_Cmd(uint8_t lun);
-bool SCSI_Address_Management(uint8_t lun , uint8_t Cmd , uint32_t LBA , uint32_t BlockNbr);
+void SCSI_Write10_Cmd (uint8_t lun, uint32_t LBA, uint32_t BlockNbr);
 
-void Set_Scsi_Sense_Data(uint8_t lun , uint8_t Sens_Key, uint8_t Asc);
+void SCSI_Read10_Cmd (uint8_t lun, uint32_t LBA, uint32_t BlockNbr);
+
+void SCSI_Verify10_Cmd (uint8_t lun);
+
+void SCSI_Invalid_Cmd (uint8_t lun);
+
+void SCSI_Valid_Cmd (uint8_t lun);
+
+bool SCSI_Address_Management (uint8_t lun, uint8_t Cmd, uint32_t LBA,
+                              uint32_t BlockNbr);
+
+void Set_Scsi_Sense_Data (uint8_t lun, uint8_t Sens_Key, uint8_t Asc);
+
 void SCSI_TestUnitReady_Cmd (uint8_t lun);
+
 void SCSI_Format_Cmd (uint8_t lun);
 
-//#define SCSI_TestUnitReady_Cmd           SCSI_Valid_Cmd
+// #define SCSI_TestUnitReady_Cmd SCSI_Valid_Cmd
 #define SCSI_Prevent_Removal_Cmd         SCSI_Valid_Cmd
 
 /* Invalid (Unsupported) commands */
 #define SCSI_READ_CAPACITY16_Cmd         SCSI_Invalid_Cmd
-//#define SCSI_FormatUnit_Cmd              SCSI_Invalid_Cmd
+// #define SCSI_FormatUnit_Cmd SCSI_Invalid_Cmd
 #define SCSI_Write6_Cmd                  SCSI_Invalid_Cmd
 #define SCSI_Write16_Cmd                 SCSI_Invalid_Cmd
 #define SCSI_Write12_Cmd                 SCSI_Invalid_Cmd
@@ -140,5 +168,3 @@ void SCSI_Format_Cmd (uint8_t lun);
 #define SCSI_Verify16_Cmd                SCSI_Invalid_Cmd
 
 #endif /* __USB_SCSI_H */
-
-

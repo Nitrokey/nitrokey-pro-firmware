@@ -1,23 +1,23 @@
 /*
-* Author: Copyright (C) Rudolf Boeddeker 													Date: 2010-01-13
-*												STMicroelectronics	 											Date:	04/05/2000
-*												 MICROCONTROLLER DIVISION / ST Rousset		Version V 0.96
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Author: Copyright (C) Rudolf Boeddeker                                                   Date: 2010-01-13
+ *                                              STMicroelectronics                                              Date:   04/05/2000
+ *                                               MICROCONTROLLER DIVISION / ST Rousset      Version V 0.96
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 
 
@@ -52,28 +52,37 @@
 
 
 /************************************************************************/
-/* 			Routines																												*/
+/* Routines */
 /************************************************************************/
- 
-void CCID_Init(void);
-void CCID_Init_IT(void);
-void CCID_Suspend_IT(void);
-void CCID_Bot_Abort(unsigned char Direction);
+
+void CCID_Init (void);
+
+void CCID_Init_IT (void);
+
+void CCID_Suspend_IT (void);
+
+void CCID_Bot_Abort (unsigned char Direction);
+
 void CCID_Storage_Out (void);
 
-void CCID_BulkOutMessage(void);
-unsigned char CCID_BulkInMessage(void);
-void CCID_DispatchMessage(void);
+void CCID_BulkOutMessage (void);
 
-void CCID_IntMessage(void);
+unsigned char CCID_BulkInMessage (void);
 
-void CcidClassRequestAbort(void);
-void CcidClassRequestGetClockFrequencies(void);
-void CcidClassRequestGetDataRates(void);
+void CCID_DispatchMessage (void);
 
-void CCID_SendCardDetect(void);
-void CCID_CheckUsbCommunication(void);
+void CCID_IntMessage (void);
+
+void CcidClassRequestAbort (void);
+
+void CcidClassRequestGetClockFrequencies (void);
+
+void CcidClassRequestGetDataRates (void);
+
+void CCID_SendCardDetect (void);
+
+void CCID_CheckUsbCommunication (void);
+
 void CCID_SetCardState (unsigned char nState);
+
 unsigned char CCID_GetCardState (void);
-
-

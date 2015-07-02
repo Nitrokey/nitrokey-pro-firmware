@@ -1,28 +1,30 @@
 /*
-* Author: Copyright (C) STMicroelectronics	 			
-*												MCD Application Team			Date:	04/06/2009
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Author: Copyright (C) STMicroelectronics
+ *                                              MCD Application Team            Date:   04/06/2009
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
+/* Define to prevent recursive inclusion
+   ------------------------------------- */
 #ifndef __STM32F10x_DMA_H
 #define __STM32F10x_DMA_H
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes
+   ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -37,24 +39,24 @@
   * @{
   */
 
-/** 
+/**
   * @brief  DMA Init structure definition
   */
 
 typedef struct
 {
-  uint32_t DMA_PeripheralBaseAddr;
-  uint32_t DMA_MemoryBaseAddr;
-  uint32_t DMA_DIR;
-  uint32_t DMA_BufferSize;
-  uint32_t DMA_PeripheralInc;
-  uint32_t DMA_MemoryInc;
-  uint32_t DMA_PeripheralDataSize;
-  uint32_t DMA_MemoryDataSize;
-  uint32_t DMA_Mode;
-  uint32_t DMA_Priority;
-  uint32_t DMA_M2M;
-}DMA_InitTypeDef;
+    uint32_t DMA_PeripheralBaseAddr;
+    uint32_t DMA_MemoryBaseAddr;
+    uint32_t DMA_DIR;
+    uint32_t DMA_BufferSize;
+    uint32_t DMA_PeripheralInc;
+    uint32_t DMA_MemoryInc;
+    uint32_t DMA_PeripheralDataSize;
+    uint32_t DMA_MemoryDataSize;
+    uint32_t DMA_Mode;
+    uint32_t DMA_Priority;
+    uint32_t DMA_M2M;
+} DMA_InitTypeDef;
 
 /**
   * @}
@@ -77,7 +79,7 @@ typedef struct
                                    ((*(uint32_t*)&(PERIPH)) == DMA2_Channel4_BASE)  || \
                                    ((*(uint32_t*)&(PERIPH)) == DMA2_Channel5_BASE))
 
-/** @defgroup DMA_data_transfer_direction 
+/** @defgroup DMA_data_transfer_direction
   * @{
   */
 
@@ -89,7 +91,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DMA_peripheral_incremented_mode 
+/** @defgroup DMA_peripheral_incremented_mode
   * @{
   */
 
@@ -101,7 +103,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DMA_memory_incremented_mode 
+/** @defgroup DMA_memory_incremented_mode
   * @{
   */
 
@@ -113,7 +115,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DMA_peripheral_data_size 
+/** @defgroup DMA_peripheral_data_size
   * @{
   */
 
@@ -127,7 +129,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DMA_memory_data_size 
+/** @defgroup DMA_memory_data_size
   * @{
   */
 
@@ -141,7 +143,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DMA_circular_normal_mode 
+/** @defgroup DMA_circular_normal_mode
   * @{
   */
 
@@ -152,7 +154,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DMA_priority_level 
+/** @defgroup DMA_priority_level
   * @{
   */
 
@@ -168,7 +170,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DMA_memory_to_memory 
+/** @defgroup DMA_memory_to_memory
   * @{
   */
 
@@ -180,7 +182,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DMA_interrupts_definition 
+/** @defgroup DMA_interrupts_definition
   * @{
   */
 
@@ -189,7 +191,7 @@ typedef struct
 #define DMA_IT_TE                          ((uint32_t)0x00000008)
 #define IS_DMA_CONFIG_IT(IT) ((((IT) & 0xFFFFFFF1) == 0x00) && ((IT) != 0x00))
 
-/** 
+/**
   * @brief  For DMA1
   */
 
@@ -222,7 +224,7 @@ typedef struct
 #define DMA1_IT_HT7                        ((uint32_t)0x04000000)
 #define DMA1_IT_TE7                        ((uint32_t)0x08000000)
 
-/** 
+/**
   * @brief  For DMA2
   */
 
@@ -278,11 +280,11 @@ typedef struct
   * @}
   */
 
-/** @defgroup DMA_flags_definition 
+/** @defgroup DMA_flags_definition
   * @{
   */
 
-/** 
+/**
   * @brief  For DMA1
   */
 
@@ -315,7 +317,7 @@ typedef struct
 #define DMA1_FLAG_HT7                      ((uint32_t)0x04000000)
 #define DMA1_FLAG_TE7                      ((uint32_t)0x08000000)
 
-/** 
+/**
   * @brief  For DMA2
   */
 
@@ -370,7 +372,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DMA_Buffer_Size 
+/** @defgroup DMA_Buffer_Size
   * @{
   */
 
@@ -396,16 +398,25 @@ typedef struct
   * @{
   */
 
-void DMA_DeInit(DMA_Channel_TypeDef* DMAy_Channelx);
-void DMA_Init(DMA_Channel_TypeDef* DMAy_Channelx, DMA_InitTypeDef* DMA_InitStruct);
-void DMA_StructInit(DMA_InitTypeDef* DMA_InitStruct);
-void DMA_Cmd(DMA_Channel_TypeDef* DMAy_Channelx, FunctionalState NewState);
-void DMA_ITConfig(DMA_Channel_TypeDef* DMAy_Channelx, uint32_t DMA_IT, FunctionalState NewState);
-uint16_t DMA_GetCurrDataCounter(DMA_Channel_TypeDef* DMAy_Channelx);
-FlagStatus DMA_GetFlagStatus(uint32_t DMA_FLAG);
-void DMA_ClearFlag(uint32_t DMA_FLAG);
-ITStatus DMA_GetITStatus(uint32_t DMA_IT);
-void DMA_ClearITPendingBit(uint32_t DMA_IT);
+void DMA_DeInit (DMA_Channel_TypeDef * DMAy_Channelx);
+
+void DMA_Init (DMA_Channel_TypeDef * DMAy_Channelx,
+               DMA_InitTypeDef * DMA_InitStruct);
+void DMA_StructInit (DMA_InitTypeDef * DMA_InitStruct);
+
+void DMA_Cmd (DMA_Channel_TypeDef * DMAy_Channelx, FunctionalState NewState);
+
+void DMA_ITConfig (DMA_Channel_TypeDef * DMAy_Channelx, uint32_t DMA_IT,
+                   FunctionalState NewState);
+uint16_t DMA_GetCurrDataCounter (DMA_Channel_TypeDef * DMAy_Channelx);
+
+FlagStatus DMA_GetFlagStatus (uint32_t DMA_FLAG);
+
+void DMA_ClearFlag (uint32_t DMA_FLAG);
+
+ITStatus DMA_GetITStatus (uint32_t DMA_IT);
+
+void DMA_ClearITPendingBit (uint32_t DMA_IT);
 
 #endif /*__STM32F10x_DMA_H */
 /**
@@ -419,5 +430,3 @@ void DMA_ClearITPendingBit(uint32_t DMA_IT);
 /**
   * @}
   */
-
-

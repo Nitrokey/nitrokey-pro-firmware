@@ -1,22 +1,22 @@
 /*
-* Author: Copyright (C) STMicroelectronics	 											Date:	22-V-2001
-*												 MICROCONTROLLER DIVISION / ST Rousset		Version V 0.00
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Author: Copyright (C) STMicroelectronics                                             Date:   22-V-2001
+ *                                               MICROCONTROLLER DIVISION / ST Rousset      Version V 0.00
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #define		CRD_VOLTAGEAUTO						0x00
 #define		CRD_VOLTAGE5V							0x01
@@ -40,20 +40,21 @@
 
 
 // For ATR reading : answer must arrive before 40000 CLK
-//   = 10 ms ; with ETU = 93 us : 107 ETU + Margin
-// #define		ATR_WAITINGTIME			110
+// = 10 ms ; with ETU = 93 us : 107 ETU + Margin
+// #define ATR_WAITINGTIME 110
 
 // Different waiting time for some cards (60 ms between 1st byte
-//   and 2nd one : example : GemSAFE Logon card)
+// and 2nd one : example : GemSAFE Logon card)
 #define		POWERUP_WAITINGTIME		110
 #define		ATR_WAITINGTIME			1000
 
 
-//#pragma DATA_SEG SHORT CRD_LIB_RAM 
+// #pragma DATA_SEG SHORT CRD_LIB_RAM
 
-extern unsigned char * pCrdBuffer;
+extern unsigned char* pCrdBuffer;
 
 extern volatile unsigned char CrdFlags;
+
 #define		PARITYERRORFLAG						0x01
 #define		VOLTAGEERRORFLAG					0x02
 #define		CURRENTERRORFLAG					0x04
@@ -96,38 +97,62 @@ extern unsigned char InstructionByte, ProcedureByte;
 
 
 
-void 					CRD_Init(void);
-unsigned char CRD_GetHwError(unsigned char *);
-unsigned char CRD_VccOn(unsigned char);
-void 					CRD_VccOff(void);
-void 					CRD_VccOff_IT(void);
-void 					CRD_SetMode(unsigned char);
-void 					CRD_SetConvention(unsigned char);
-unsigned char CRD_GetSlotStatus(void);
-unsigned char CRD_GetConvention(void);
-unsigned char CRD_GetClockStatus(void);
-unsigned char CRD_SetClock(unsigned char);
-unsigned char CRD_SetEtu(unsigned int, unsigned char);
-void 					CRD_SetGuardTime(unsigned int);
-void 					CRD_SetWaitingTime(unsigned long);
-void 					CRD_StartWaitingTime(void);
-void 					CRD_StopWaitingTime(void);
-void 					CRD_WaitingTime(unsigned long);
-void 					CRD_InitReceive(unsigned int, unsigned char *);
-unsigned int 	CRD_NumberOfBytesReceived(void);
-unsigned int 	CRD_EndReceive(void);
-void 					CRD_InitTransmit(unsigned int, unsigned char *);
-unsigned int 	CRD_NumberOfBytesToTransmit(void);
-unsigned int 	CRD_EndTransmit(void);
+void CRD_Init (void);
 
-void CRD_CharRepeatOn(void);
-void CRD_CharRepeatOff(void);
+unsigned char CRD_GetHwError (unsigned char* );
 
-unsigned char ICC_PowerOnAsync(unsigned char);
-void 					ICC_ResetAsync(void);
-unsigned char ICC_GetAtrAsync(	unsigned char,unsigned char *,unsigned int *);
-unsigned char ICC_SendCommandAsync(	unsigned char *,unsigned int,unsigned char);
-unsigned char ICC_ReceiveAnswerAsync(	unsigned char *,unsigned int *);
+unsigned char CRD_VccOn (unsigned char);
 
+void CRD_VccOff (void);
 
+void CRD_VccOff_IT (void);
 
+void CRD_SetMode (unsigned char);
+
+void CRD_SetConvention (unsigned char);
+
+unsigned char CRD_GetSlotStatus (void);
+
+unsigned char CRD_GetConvention (void);
+
+unsigned char CRD_GetClockStatus (void);
+
+unsigned char CRD_SetClock (unsigned char);
+
+unsigned char CRD_SetEtu (unsigned int, unsigned char);
+
+void CRD_SetGuardTime (unsigned int);
+
+void CRD_SetWaitingTime (unsigned long);
+
+void CRD_StartWaitingTime (void);
+
+void CRD_StopWaitingTime (void);
+
+void CRD_WaitingTime (unsigned long);
+
+void CRD_InitReceive (unsigned int, unsigned char* );
+
+unsigned int CRD_NumberOfBytesReceived (void);
+
+unsigned int CRD_EndReceive (void);
+
+void CRD_InitTransmit (unsigned int, unsigned char* );
+
+unsigned int CRD_NumberOfBytesToTransmit (void);
+
+unsigned int CRD_EndTransmit (void);
+
+void CRD_CharRepeatOn (void);
+
+void CRD_CharRepeatOff (void);
+
+unsigned char ICC_PowerOnAsync (unsigned char);
+
+void ICC_ResetAsync (void);
+
+unsigned char ICC_GetAtrAsync (unsigned char, unsigned char* ,
+                               unsigned int* );
+unsigned char ICC_SendCommandAsync (unsigned char* , unsigned int,
+                                    unsigned char);
+unsigned char ICC_ReceiveAnswerAsync (unsigned char* , unsigned int* );
