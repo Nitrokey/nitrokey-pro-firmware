@@ -1,28 +1,30 @@
 /*
-* Author: Copyright (C) STMicroelectronics	 			
-*												MCD Application Team			Date:	04/06/2009
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Author: Copyright (C) STMicroelectronics
+ *                                              MCD Application Team            Date:   04/06/2009
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
+/* Define to prevent recursive inclusion
+   ------------------------------------- */
 #ifndef __STM32F10x_BKP_H
 #define __STM32F10x_BKP_H
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes
+   ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -45,7 +47,7 @@
   * @{
   */
 
-/** @defgroup Tamper_Pin_active_level 
+/** @defgroup Tamper_Pin_active_level
   * @{
   */
 
@@ -57,7 +59,7 @@
   * @}
   */
 
-/** @defgroup RTC_output_source_to_output_on_the_Tamper_pin 
+/** @defgroup RTC_output_source_to_output_on_the_Tamper_pin
   * @{
   */
 
@@ -73,7 +75,7 @@
   * @}
   */
 
-/** @defgroup Data_Backup_Register 
+/** @defgroup Data_Backup_Register
   * @{
   */
 
@@ -156,18 +158,29 @@
   * @{
   */
 
-void BKP_DeInit(void);
-void BKP_TamperPinLevelConfig(uint16_t BKP_TamperPinLevel);
-void BKP_TamperPinCmd(FunctionalState NewState);
-void BKP_ITConfig(FunctionalState NewState);
-void BKP_RTCOutputConfig(uint16_t BKP_RTCOutputSource);
-void BKP_SetRTCCalibrationValue(uint8_t CalibrationValue);
-void BKP_WriteBackupRegister(uint16_t BKP_DR, uint16_t Data);
-uint16_t BKP_ReadBackupRegister(uint16_t BKP_DR);
-FlagStatus BKP_GetFlagStatus(void);
-void BKP_ClearFlag(void);
-ITStatus BKP_GetITStatus(void);
-void BKP_ClearITPendingBit(void);
+void BKP_DeInit (void);
+
+void BKP_TamperPinLevelConfig (uint16_t BKP_TamperPinLevel);
+
+void BKP_TamperPinCmd (FunctionalState NewState);
+
+void BKP_ITConfig (FunctionalState NewState);
+
+void BKP_RTCOutputConfig (uint16_t BKP_RTCOutputSource);
+
+void BKP_SetRTCCalibrationValue (uint8_t CalibrationValue);
+
+void BKP_WriteBackupRegister (uint16_t BKP_DR, uint16_t Data);
+
+uint16_t BKP_ReadBackupRegister (uint16_t BKP_DR);
+
+FlagStatus BKP_GetFlagStatus (void);
+
+void BKP_ClearFlag (void);
+
+ITStatus BKP_GetITStatus (void);
+
+void BKP_ClearITPendingBit (void);
 
 #endif /* __STM32F10x_BKP_H */
 /**
@@ -181,5 +194,3 @@ void BKP_ClearITPendingBit(void);
 /**
   * @}
   */
-
-

@@ -1,25 +1,25 @@
 /*
-* Author: Copyright (C) STMicroelectronics / ST Rousset	 	Date:	04/05/2000
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Author: Copyright (C) STMicroelectronics / ST Rousset        Date:   04/05/2000
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 
 /************************************************************************************/
-/*	ERROR CODES for USB Bulk In Messages : bError																		*/
+/* ERROR CODES for USB Bulk In Messages : bError */
 /************************************************************************************/
 
 #define		SLOT_NO_ERROR													0x81
@@ -61,11 +61,10 @@
 
 
 /************************************************************************************/
-/*	ERROR CODES for RDR_TO_PC_HARDWAREERROR Message : bHardwareErrorCode						*/
+/* ERROR CODES for RDR_TO_PC_HARDWAREERROR Message : bHardwareErrorCode */
 /************************************************************************************/
 
 #define		HARDWAREERRORCODE_OVERCURRENT					0x01
 #define		HARDWAREERRORCODE_VOLTAGEERROR				0x02
 #define		HARDWAREERRORCODE_OVERCURRENT_IT			0x04
 #define		HARDWAREERRORCODE_VOLTAGEERROR_IT			0x08
-

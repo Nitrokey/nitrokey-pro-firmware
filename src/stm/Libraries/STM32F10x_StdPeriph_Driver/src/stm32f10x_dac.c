@@ -1,24 +1,25 @@
 /*
-* Author: Copyright (C) STMicroelectronics	 			
-*												MCD Application Team			Date:	04/06/2009
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Author: Copyright (C) STMicroelectronics
+ *                                              MCD Application Team            Date:   04/06/2009
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes
+   ------------------------------------------------------------------ */
 #include "stm32f10x_dac.h"
 #include "stm32f10x_rcc.h"
 
@@ -26,10 +27,10 @@
   * @{
   */
 
-/** @defgroup DAC 
+/** @defgroup DAC
   * @brief DAC driver modules
   * @{
-  */ 
+  */
 
 /** @defgroup DAC_Private_TypesDefinitions
   * @{
@@ -104,18 +105,18 @@
   * @param  None
   * @retval : None
   */
-void DAC_DeInit(void)
+void DAC_DeInit (void)
 {
-  /* Enable DAC reset state */
-  RCC_APB1PeriphResetCmd(RCC_APB1Periph_DAC, ENABLE);
-  /* Release DAC from reset state */
-  RCC_APB1PeriphResetCmd(RCC_APB1Periph_DAC, DISABLE);
+    /* Enable DAC reset state */
+    RCC_APB1PeriphResetCmd (RCC_APB1Periph_DAC, ENABLE);
+    /* Release DAC from reset state */
+    RCC_APB1PeriphResetCmd (RCC_APB1Periph_DAC, DISABLE);
 }
 
 /**
-  * @brief  Initializes the DAC peripheral according to the specified 
+  * @brief  Initializes the DAC peripheral according to the specified
   *   parameters in the DAC_InitStruct.
-  * @param DAC_Channel: the selected DAC channel. 
+  * @param DAC_Channel: the selected DAC channel.
   *   This parameter can be one of the following values:
   * @arg DAC_Channel_1: DAC Channel1 selected
   * @arg DAC_Channel_2: DAC Channel2 selected
@@ -124,31 +125,36 @@ void DAC_DeInit(void)
   *   DAC channel.
   * @retval : None
   */
-void DAC_Init(uint32_t DAC_Channel, DAC_InitTypeDef* DAC_InitStruct)
+void DAC_Init (uint32_t DAC_Channel, DAC_InitTypeDef * DAC_InitStruct)
 {
-  uint32_t tmpreg1 = 0, tmpreg2 = 0;
-  /* Check the DAC parameters */
-  assert_param(IS_DAC_TRIGGER(DAC_InitStruct->DAC_Trigger));
-  assert_param(IS_DAC_GENERATE_WAVE(DAC_InitStruct->DAC_WaveGeneration));
-  assert_param(IS_DAC_LFSR_UNMASK_TRIANGLE_AMPLITUDE(DAC_InitStruct->DAC_LFSRUnmask_TriangleAmplitude));
-  assert_param(IS_DAC_OUTPUT_BUFFER_STATE(DAC_InitStruct->DAC_OutputBuffer));
+uint32_t tmpreg1 = 0, tmpreg2 = 0;
+
+    /* Check the DAC parameters */
+    assert_param (IS_DAC_TRIGGER (DAC_InitStruct->DAC_Trigger));
+    assert_param (IS_DAC_GENERATE_WAVE (DAC_InitStruct->DAC_WaveGeneration));
+    assert_param (IS_DAC_LFSR_UNMASK_TRIANGLE_AMPLITUDE
+                  (DAC_InitStruct->DAC_LFSRUnmask_TriangleAmplitude));
+    assert_param (IS_DAC_OUTPUT_BUFFER_STATE
+                  (DAC_InitStruct->DAC_OutputBuffer));
 /*---------------------------- DAC CR Configuration --------------------------*/
-  /* Get the DAC CR value */
-  tmpreg1 = DAC->CR;
-  /* Clear BOFFx, TENx, TSELx, WAVEx and MAMPx bits */
-  tmpreg1 &= ~(CR_CLEAR_Mask << DAC_Channel);
-  /* Configure for the selected DAC channel: buffer output, trigger, wave genration,
-     mask/amplitude for wave genration */
-  /* Set TSELx and TENx bits according to DAC_Trigger value */
-  /* Set WAVEx bits according to DAC_WaveGeneration value */
-  /* Set MAMPx bits according to DAC_LFSRUnmask_TriangleAmplitude value */ 
-  /* Set BOFFx bit according to DAC_OutputBuffer value */   
-  tmpreg2 = (DAC_InitStruct->DAC_Trigger | DAC_InitStruct->DAC_WaveGeneration |
-             DAC_InitStruct->DAC_LFSRUnmask_TriangleAmplitude | DAC_InitStruct->DAC_OutputBuffer);
-  /* Calculate CR register value depending on DAC_Channel */
-  tmpreg1 |= tmpreg2 << DAC_Channel;
-  /* Write to DAC CR */
-  DAC->CR = tmpreg1;
+    /* Get the DAC CR value */
+    tmpreg1 = DAC->CR;
+    /* Clear BOFFx, TENx, TSELx, WAVEx and MAMPx bits */
+    tmpreg1 &= ~(CR_CLEAR_Mask << DAC_Channel);
+    /* Configure for the selected DAC channel: buffer output, trigger, wave
+       genration, mask/amplitude for wave genration */
+    /* Set TSELx and TENx bits according to DAC_Trigger value */
+    /* Set WAVEx bits according to DAC_WaveGeneration value */
+    /* Set MAMPx bits according to DAC_LFSRUnmask_TriangleAmplitude value */
+    /* Set BOFFx bit according to DAC_OutputBuffer value */
+    tmpreg2 =
+        (DAC_InitStruct->DAC_Trigger | DAC_InitStruct->
+         DAC_WaveGeneration | DAC_InitStruct->
+         DAC_LFSRUnmask_TriangleAmplitude | DAC_InitStruct->DAC_OutputBuffer);
+    /* Calculate CR register value depending on DAC_Channel */
+    tmpreg1 |= tmpreg2 << DAC_Channel;
+    /* Write to DAC CR */
+    DAC->CR = tmpreg1;
 }
 
 /**
@@ -157,49 +163,49 @@ void DAC_Init(uint32_t DAC_Channel, DAC_InitTypeDef* DAC_InitStruct)
   *   which will be initialized.
   * @retval : None
   */
-void DAC_StructInit(DAC_InitTypeDef* DAC_InitStruct)
+void DAC_StructInit (DAC_InitTypeDef * DAC_InitStruct)
 {
 /*--------------- Reset DAC init structure parameters values -----------------*/
-  /* Initialize the DAC_Trigger member */
-  DAC_InitStruct->DAC_Trigger = DAC_Trigger_None;
-  /* Initialize the DAC_WaveGeneration member */
-  DAC_InitStruct->DAC_WaveGeneration = DAC_WaveGeneration_None;
-  /* Initialize the DAC_LFSRUnmask_TriangleAmplitude member */
-  DAC_InitStruct->DAC_LFSRUnmask_TriangleAmplitude = DAC_LFSRUnmask_Bit0;
-  /* Initialize the DAC_OutputBuffer member */
-  DAC_InitStruct->DAC_OutputBuffer = DAC_OutputBuffer_Enable;
+    /* Initialize the DAC_Trigger member */
+    DAC_InitStruct->DAC_Trigger = DAC_Trigger_None;
+    /* Initialize the DAC_WaveGeneration member */
+    DAC_InitStruct->DAC_WaveGeneration = DAC_WaveGeneration_None;
+    /* Initialize the DAC_LFSRUnmask_TriangleAmplitude member */
+    DAC_InitStruct->DAC_LFSRUnmask_TriangleAmplitude = DAC_LFSRUnmask_Bit0;
+    /* Initialize the DAC_OutputBuffer member */
+    DAC_InitStruct->DAC_OutputBuffer = DAC_OutputBuffer_Enable;
 }
 
 /**
   * @brief  Enables or disables the specified DAC channel.
-  * @param DAC_Channel: the selected DAC channel. 
+  * @param DAC_Channel: the selected DAC channel.
   *   This parameter can be one of the following values:
   * @arg DAC_Channel_1: DAC Channel1 selected
   * @arg DAC_Channel_2: DAC Channel2 selected
-  * @param NewState: new state of the DAC channel. 
+  * @param NewState: new state of the DAC channel.
   *   This parameter can be: ENABLE or DISABLE.
   * @retval : None
   */
-void DAC_Cmd(uint32_t DAC_Channel, FunctionalState NewState)
+void DAC_Cmd (uint32_t DAC_Channel, FunctionalState NewState)
 {
-  /* Check the parameters */
-  assert_param(IS_DAC_CHANNEL(DAC_Channel));
-  assert_param(IS_FUNCTIONAL_STATE(NewState));
-  if (NewState != DISABLE)
-  {
-    /* Enable the selected DAC channel */
-    DAC->CR |= CR_EN_Set << DAC_Channel;
-  }
-  else
-  {
-    /* Disable the selected DAC channel */
-    DAC->CR &= ~(CR_EN_Set << DAC_Channel);
-  }
+    /* Check the parameters */
+    assert_param (IS_DAC_CHANNEL (DAC_Channel));
+    assert_param (IS_FUNCTIONAL_STATE (NewState));
+    if (NewState != DISABLE)
+    {
+        /* Enable the selected DAC channel */
+        DAC->CR |= CR_EN_Set << DAC_Channel;
+    }
+    else
+    {
+        /* Disable the selected DAC channel */
+        DAC->CR &= ~(CR_EN_Set << DAC_Channel);
+    }
 }
 
 /**
   * @brief  Enables or disables the specified DAC channel DMA request.
-  * @param DAC_Channel: the selected DAC channel. 
+  * @param DAC_Channel: the selected DAC channel.
   *   This parameter can be one of the following values:
   * @arg DAC_Channel_1: DAC Channel1 selected
   * @arg DAC_Channel_2: DAC Channel2 selected
@@ -207,26 +213,26 @@ void DAC_Cmd(uint32_t DAC_Channel, FunctionalState NewState)
   *   This parameter can be: ENABLE or DISABLE.
   * @retval : None
   */
-void DAC_DMACmd(uint32_t DAC_Channel, FunctionalState NewState)
+void DAC_DMACmd (uint32_t DAC_Channel, FunctionalState NewState)
 {
-  /* Check the parameters */
-  assert_param(IS_DAC_CHANNEL(DAC_Channel));
-  assert_param(IS_FUNCTIONAL_STATE(NewState));
-  if (NewState != DISABLE)
-  {
-    /* Enable the selected DAC channel DMA request */
-    DAC->CR |= CR_DMAEN_Set << DAC_Channel;
-  }
-  else
-  {
-    /* Disable the selected DAC channel DMA request */
-    DAC->CR &= ~(CR_DMAEN_Set << DAC_Channel);
-  }
+    /* Check the parameters */
+    assert_param (IS_DAC_CHANNEL (DAC_Channel));
+    assert_param (IS_FUNCTIONAL_STATE (NewState));
+    if (NewState != DISABLE)
+    {
+        /* Enable the selected DAC channel DMA request */
+        DAC->CR |= CR_DMAEN_Set << DAC_Channel;
+    }
+    else
+    {
+        /* Disable the selected DAC channel DMA request */
+        DAC->CR &= ~(CR_DMAEN_Set << DAC_Channel);
+    }
 }
 
 /**
   * @brief  Enables or disables the selected DAC channel software trigger.
-  * @param DAC_Channel: the selected DAC channel. 
+  * @param DAC_Channel: the selected DAC channel.
   *   This parameter can be one of the following values:
   * @arg DAC_Channel_1: DAC Channel1 selected
   * @arg DAC_Channel_2: DAC Channel2 selected
@@ -234,21 +240,21 @@ void DAC_DMACmd(uint32_t DAC_Channel, FunctionalState NewState)
   *   This parameter can be: ENABLE or DISABLE.
   * @retval : None
   */
-void DAC_SoftwareTriggerCmd(uint32_t DAC_Channel, FunctionalState NewState)
+void DAC_SoftwareTriggerCmd (uint32_t DAC_Channel, FunctionalState NewState)
 {
-  /* Check the parameters */
-  assert_param(IS_DAC_CHANNEL(DAC_Channel));
-  assert_param(IS_FUNCTIONAL_STATE(NewState));
-  if (NewState != DISABLE)
-  {
-    /* Enable software trigger for the selected DAC channel */
-    DAC->SWTRIGR |= SWTRIGR_SWTRIG_Set << (DAC_Channel >> 4);
-  }
-  else
-  {
-    /* Disable software trigger for the selected DAC channel */
-    DAC->SWTRIGR &= ~(SWTRIGR_SWTRIG_Set << (DAC_Channel >> 4));
-  }
+    /* Check the parameters */
+    assert_param (IS_DAC_CHANNEL (DAC_Channel));
+    assert_param (IS_FUNCTIONAL_STATE (NewState));
+    if (NewState != DISABLE)
+    {
+        /* Enable software trigger for the selected DAC channel */
+        DAC->SWTRIGR |= SWTRIGR_SWTRIG_Set << (DAC_Channel >> 4);
+    }
+    else
+    {
+        /* Disable software trigger for the selected DAC channel */
+        DAC->SWTRIGR &= ~(SWTRIGR_SWTRIG_Set << (DAC_Channel >> 4));
+    }
 }
 
 /**
@@ -258,25 +264,25 @@ void DAC_SoftwareTriggerCmd(uint32_t DAC_Channel, FunctionalState NewState)
   *   This parameter can be: ENABLE or DISABLE.
   * @retval : None
   */
-void DAC_DualSoftwareTriggerCmd(FunctionalState NewState)
+void DAC_DualSoftwareTriggerCmd (FunctionalState NewState)
 {
-  /* Check the parameters */
-  assert_param(IS_FUNCTIONAL_STATE(NewState));
-  if (NewState != DISABLE)
-  {
-    /* Enable software trigger for both DAC channels */
-    DAC->SWTRIGR |= DUAL_SWTRIG_Set ;
-  }
-  else
-  {
-    /* Disable software trigger for both DAC channels */
-    DAC->SWTRIGR &= DUAL_SWTRIG_Reset;
-  }
+    /* Check the parameters */
+    assert_param (IS_FUNCTIONAL_STATE (NewState));
+    if (NewState != DISABLE)
+    {
+        /* Enable software trigger for both DAC channels */
+        DAC->SWTRIGR |= DUAL_SWTRIG_Set;
+    }
+    else
+    {
+        /* Disable software trigger for both DAC channels */
+        DAC->SWTRIGR &= DUAL_SWTRIG_Reset;
+    }
 }
 
 /**
   * @brief  Enables or disables the selected DAC channel wave generation.
-  * @param DAC_Channel: the selected DAC channel. 
+  * @param DAC_Channel: the selected DAC channel.
   *   This parameter can be one of the following values:
   * @arg DAC_Channel_1: DAC Channel1 selected
   * @arg DAC_Channel_2: DAC Channel2 selected
@@ -288,22 +294,23 @@ void DAC_DualSoftwareTriggerCmd(FunctionalState NewState)
   *   This parameter can be: ENABLE or DISABLE.
   * @retval : None
   */
-void DAC_WaveGenerationCmd(uint32_t DAC_Channel, uint32_t DAC_Wave, FunctionalState NewState)
+void DAC_WaveGenerationCmd (uint32_t DAC_Channel, uint32_t DAC_Wave,
+                            FunctionalState NewState)
 {
-  /* Check the parameters */
-  assert_param(IS_DAC_CHANNEL(DAC_Channel));
-  assert_param(IS_DAC_WAVE(DAC_Wave)); 
-  assert_param(IS_FUNCTIONAL_STATE(NewState));
-  if (NewState != DISABLE)
-  {
-    /* Enable the selected wave generation for the selected DAC channel */
-    DAC->CR |= DAC_Wave << DAC_Channel;
-  }
-  else
-  {
-    /* Disable the selected wave generation for the selected DAC channel */
-    DAC->CR &= ~(DAC_Wave << DAC_Channel);
-  }
+    /* Check the parameters */
+    assert_param (IS_DAC_CHANNEL (DAC_Channel));
+    assert_param (IS_DAC_WAVE (DAC_Wave));
+    assert_param (IS_FUNCTIONAL_STATE (NewState));
+    if (NewState != DISABLE)
+    {
+        /* Enable the selected wave generation for the selected DAC channel */
+        DAC->CR |= DAC_Wave << DAC_Channel;
+    }
+    else
+    {
+        /* Disable the selected wave generation for the selected DAC channel */
+        DAC->CR &= ~(DAC_Wave << DAC_Channel);
+    }
 }
 
 /**
@@ -313,17 +320,18 @@ void DAC_WaveGenerationCmd(uint32_t DAC_Channel, uint32_t DAC_Wave, FunctionalSt
   * @arg DAC_Align_8b_R: 8bit right data alignement selected
   * @arg DAC_Align_12b_L: 12bit left data alignement selected
   * @arg DAC_Align_12b_R: 12bit right data alignement selected
-  * @param Data : Data to be loaded in the selected data holding 
+  * @param Data : Data to be loaded in the selected data holding
   *   register.
   * @retval : None
   */
-void DAC_SetChannel1Data(uint32_t DAC_Align, uint16_t Data)
+void DAC_SetChannel1Data (uint32_t DAC_Align, uint16_t Data)
 {
-  /* Check the parameters */
-  assert_param(IS_DAC_ALIGN(DAC_Align));
-  assert_param(IS_DAC_DATA(Data));
-  /* Set the DAC channel1 selected data holding register */
-  *((__IO uint32_t *)(DAC_BASE + DHR12R1_Offset + DAC_Align)) = (uint32_t)Data;
+    /* Check the parameters */
+    assert_param (IS_DAC_ALIGN (DAC_Align));
+    assert_param (IS_DAC_DATA (Data));
+    /* Set the DAC channel1 selected data holding register */
+    *((__IO uint32_t *) (DAC_BASE + DHR12R1_Offset + DAC_Align)) =
+        (uint32_t) Data;
 }
 
 /**
@@ -333,17 +341,18 @@ void DAC_SetChannel1Data(uint32_t DAC_Align, uint16_t Data)
   * @arg DAC_Align_8b_R: 8bit right data alignement selected
   * @arg DAC_Align_12b_L: 12bit left data alignement selected
   * @arg DAC_Align_12b_R: 12bit right data alignement selected
-  * @param Data : Data to be loaded in the selected data holding 
+  * @param Data : Data to be loaded in the selected data holding
   *   register.
   * @retval : None
   */
-void DAC_SetChannel2Data(uint32_t DAC_Align, uint16_t Data)
+void DAC_SetChannel2Data (uint32_t DAC_Align, uint16_t Data)
 {
-  /* Check the parameters */
-  assert_param(IS_DAC_ALIGN(DAC_Align));
-  assert_param(IS_DAC_DATA(Data));
-  /* Set the DAC channel2 selected data holding register */
-  *((__IO uint32_t *)(DAC_BASE + DHR12R2_Offset + DAC_Align)) = (uint32_t)Data;
+    /* Check the parameters */
+    assert_param (IS_DAC_ALIGN (DAC_Align));
+    assert_param (IS_DAC_DATA (Data));
+    /* Set the DAC channel2 selected data holding register */
+    *((__IO uint32_t *) (DAC_BASE + DHR12R2_Offset + DAC_Align)) =
+        (uint32_t) Data;
 }
 
 /**
@@ -354,47 +363,51 @@ void DAC_SetChannel2Data(uint32_t DAC_Align, uint16_t Data)
   * @arg DAC_Align_8b_R: 8bit right data alignement selected
   * @arg DAC_Align_12b_L: 12bit left data alignement selected
   * @arg DAC_Align_12b_R: 12bit right data alignement selected
-  * @param Data2: Data for DAC Channel2 to be loaded in the selected data 
+  * @param Data2: Data for DAC Channel2 to be loaded in the selected data
   *   holding register.
-  * @param Data1: Data for DAC Channel1 to be loaded in the selected data 
+  * @param Data1: Data for DAC Channel1 to be loaded in the selected data
   *   holding register.
   * @retval : None
   */
-void DAC_SetDualChannelData(uint32_t DAC_Align, uint16_t Data2, uint16_t Data1)
+void DAC_SetDualChannelData (uint32_t DAC_Align, uint16_t Data2,
+                             uint16_t Data1)
 {
-  uint32_t data = 0;
-  /* Check the parameters */
-  assert_param(IS_DAC_ALIGN(DAC_Align));
-  assert_param(IS_DAC_DATA(Data1));
-  assert_param(IS_DAC_DATA(Data2));
-  
-  /* Calculate and set dual DAC data holding register value */
-  if (DAC_Align == DAC_Align_8b_R)
-  {
-    data = ((uint32_t)Data2 << 8) | Data1; 
-  }
-  else
-  {
-    data = ((uint32_t)Data2 << 16) | Data1;
-  }
-  /* Set the dual DAC selected data holding register */
-  *((__IO uint32_t *)(DAC_BASE + DHR12RD_Offset + DAC_Align)) = data;
+uint32_t data = 0;
+
+    /* Check the parameters */
+    assert_param (IS_DAC_ALIGN (DAC_Align));
+    assert_param (IS_DAC_DATA (Data1));
+    assert_param (IS_DAC_DATA (Data2));
+
+    /* Calculate and set dual DAC data holding register value */
+    if (DAC_Align == DAC_Align_8b_R)
+    {
+        data = ((uint32_t) Data2 << 8) | Data1;
+    }
+    else
+    {
+        data = ((uint32_t) Data2 << 16) | Data1;
+    }
+    /* Set the dual DAC selected data holding register */
+    *((__IO uint32_t *) (DAC_BASE + DHR12RD_Offset + DAC_Align)) = data;
 }
 
 /**
   * @brief  Returns the last data output value of the selected DAC cahnnel.
-  * @param DAC_Channel: the selected DAC channel. 
+  * @param DAC_Channel: the selected DAC channel.
   *   This parameter can be one of the following values:
   * @arg DAC_Channel_1: DAC Channel1 selected
   * @arg DAC_Channel_2: DAC Channel2 selected
   * @retval : The selected DAC channel data output value.
   */
-uint16_t DAC_GetDataOutputValue(uint32_t DAC_Channel)
+uint16_t DAC_GetDataOutputValue (uint32_t DAC_Channel)
 {
-  /* Check the parameters */
-  assert_param(IS_DAC_CHANNEL(DAC_Channel));
-  /* Returns the DAC channel data output register value */
-  return (uint16_t) (*(__IO uint32_t*)(DAC_BASE + DOR_Offset + ((uint32_t)DAC_Channel >> 2)));
+    /* Check the parameters */
+    assert_param (IS_DAC_CHANNEL (DAC_Channel));
+    /* Returns the DAC channel data output register value */
+    return (uint16_t) (*(__IO uint32_t *)
+                       (DAC_BASE + DOR_Offset +
+                        ((uint32_t) DAC_Channel >> 2)));
 }
 
 /**
@@ -408,5 +421,3 @@ uint16_t DAC_GetDataOutputValue(uint32_t DAC_Channel)
 /**
   * @}
   */
-
-

@@ -1,28 +1,30 @@
 /*
-* Author: Copyright (C) STMicroelectronics	 			
-*												MCD Application Team			Date:	04/06/2009
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/ 
+ * Author: Copyright (C) STMicroelectronics
+ *                                              MCD Application Team            Date:   04/06/2009
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
+/* Define to prevent recursive inclusion
+   ------------------------------------- */
 #ifndef __STM32F10x_SDIO_H
 #define __STM32F10x_SDIO_H
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes
+   ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -39,42 +41,42 @@
 
 typedef struct
 {
-  uint8_t SDIO_ClockDiv;
-  uint32_t SDIO_ClockEdge;
-  uint32_t SDIO_ClockBypass;
-  uint32_t SDIO_ClockPowerSave;
-  uint32_t SDIO_BusWide;
-  uint32_t SDIO_HardwareFlowControl;
+    uint8_t SDIO_ClockDiv;
+    uint32_t SDIO_ClockEdge;
+    uint32_t SDIO_ClockBypass;
+    uint32_t SDIO_ClockPowerSave;
+    uint32_t SDIO_BusWide;
+    uint32_t SDIO_HardwareFlowControl;
 } SDIO_InitTypeDef;
 
 typedef struct
 {
-  uint32_t SDIO_Argument;
-  uint32_t SDIO_CmdIndex;
-  uint32_t SDIO_Response;
-  uint32_t SDIO_Wait;
-  uint32_t SDIO_CPSM;
+    uint32_t SDIO_Argument;
+    uint32_t SDIO_CmdIndex;
+    uint32_t SDIO_Response;
+    uint32_t SDIO_Wait;
+    uint32_t SDIO_CPSM;
 } SDIO_CmdInitTypeDef;
 
 typedef struct
 {
-  uint32_t SDIO_DataTimeOut;
-  uint32_t SDIO_DataLength;
-  uint32_t SDIO_DataBlockSize;
-  uint32_t SDIO_TransferDir;
-  uint32_t SDIO_TransferMode;
-  uint32_t SDIO_DPSM;
+    uint32_t SDIO_DataTimeOut;
+    uint32_t SDIO_DataLength;
+    uint32_t SDIO_DataBlockSize;
+    uint32_t SDIO_TransferDir;
+    uint32_t SDIO_TransferMode;
+    uint32_t SDIO_DPSM;
 } SDIO_DataInitTypeDef;
 
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup SDIO_Exported_Constants
   * @{
   */
 
-/** @defgroup SDIO_Clock_Edge 
+/** @defgroup SDIO_Clock_Edge
   * @{
   */
 
@@ -86,31 +88,31 @@ typedef struct
   * @}
   */
 
-/** @defgroup SDIO_Clock_Bypass 
+/** @defgroup SDIO_Clock_Bypass
   * @{
   */
 
 #define SDIO_ClockBypass_Disable             ((uint32_t)0x00000000)
-#define SDIO_ClockBypass_Enable              ((uint32_t)0x00000400)    
+#define SDIO_ClockBypass_Enable              ((uint32_t)0x00000400)
 #define IS_SDIO_CLOCK_BYPASS(BYPASS) (((BYPASS) == SDIO_ClockBypass_Disable) || \
                                      ((BYPASS) == SDIO_ClockBypass_Enable))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup SDIO_Clock_Power_Save_ 
+/** @defgroup SDIO_Clock_Power_Save_
   * @{
   */
 
 #define SDIO_ClockPowerSave_Disable         ((uint32_t)0x00000000)
-#define SDIO_ClockPowerSave_Enable          ((uint32_t)0x00000200) 
+#define SDIO_ClockPowerSave_Enable          ((uint32_t)0x00000200)
 #define IS_SDIO_CLOCK_POWER_SAVE(SAVE) (((SAVE) == SDIO_ClockPowerSave_Disable) || \
                                         ((SAVE) == SDIO_ClockPowerSave_Enable))
 /**
   * @}
   */
 
-/** @defgroup SDIO_Bus_Wide 
+/** @defgroup SDIO_Bus_Wide
   * @{
   */
 
@@ -124,7 +126,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup SDIO_Hardware_Flow_Control_ 
+/** @defgroup SDIO_Hardware_Flow_Control_
   * @{
   */
 
@@ -136,19 +138,19 @@ typedef struct
   * @}
   */
 
-/** @defgroup SDIO_Power_State 
+/** @defgroup SDIO_Power_State
   * @{
   */
 
 #define SDIO_PowerState_OFF                 ((uint32_t)0x00000000)
 #define SDIO_PowerState_ON                  ((uint32_t)0x00000003)
-#define IS_SDIO_POWER_STATE(STATE) (((STATE) == SDIO_PowerState_OFF) || ((STATE) == SDIO_PowerState_ON)) 
+#define IS_SDIO_POWER_STATE(STATE) (((STATE) == SDIO_PowerState_OFF) || ((STATE) == SDIO_PowerState_ON))
 /**
   * @}
-  */ 
+  */
 
 
-/** @defgroup SDIO_Interrupt_soucres 
+/** @defgroup SDIO_Interrupt_soucres
   * @{
   */
 
@@ -179,9 +181,9 @@ typedef struct
 #define IS_SDIO_IT(IT) ((((IT) & (uint32_t)0xFF000000) == 0x00) && ((IT) != (uint32_t)0x00))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup SDIO_Command_Index_ 
+/** @defgroup SDIO_Command_Index_
   * @{
   */
 
@@ -190,7 +192,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup SDIO_Response_Type 
+/** @defgroup SDIO_Response_Type
   * @{
   */
 
@@ -204,20 +206,34 @@ typedef struct
   * @}
   */
 
-/** @defgroup SDIO_Wait_Interrupt_State 
+/** @defgroup SDIO_Wait_Interrupt_State
   * @{
   */
 
-#define SDIO_Wait_No                        ((uint32_t)0x00000000) /* SDIO No Wait, TimeOut is enabled */
-#define SDIO_Wait_IT                        ((uint32_t)0x00000100) /* SDIO Wait Interrupt Request */
-#define SDIO_Wait_Pend                      ((uint32_t)0x00000200) /* SDIO Wait End of transfer */
+#define SDIO_Wait_No                        ((uint32_t)0x00000000)  /* SDIO
+                                                                       No
+                                                                       tait,
+                                                                       TimeOut
+                                                                       is
+                                                                       bnabled
+                                                                     */
+#define SDIO_Wait_IT                        ((uint32_t)0x00000100)  /* SDIO
+                                                                       Wait
+                                                                       Interrupt
+                                                                       Request
+                                                                     */
+#define SDIO_Wait_Pend                      ((uint32_t)0x00000200)  /* SDIO
+                                                                       Wait
+                                                                       End of
+                                                                       transfer
+                                                                     */
 #define IS_SDIO_WAIT(WAIT) (((WAIT) == SDIO_Wait_No) || ((WAIT) == SDIO_Wait_IT) || \
                             ((WAIT) == SDIO_Wait_Pend))
 /**
   * @}
   */
 
-/** @defgroup SDIO_CPSM_State 
+/** @defgroup SDIO_CPSM_State
   * @{
   */
 
@@ -226,9 +242,9 @@ typedef struct
 #define IS_SDIO_CPSM(CPSM) (((CPSM) == SDIO_CPSM_Enable) || ((CPSM) == SDIO_CPSM_Disable))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup SDIO_Response_Registers 
+/** @defgroup SDIO_Response_Registers
   * @{
   */
 
@@ -242,7 +258,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup SDIO_Data_Length 
+/** @defgroup SDIO_Data_Length
   * @{
   */
 
@@ -251,7 +267,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup SDIO_Data_Block_Size 
+/** @defgroup SDIO_Data_Block_Size
   * @{
   */
 
@@ -284,12 +300,12 @@ typedef struct
                                   ((SIZE) == SDIO_DataBlockSize_2048b) || \
                                   ((SIZE) == SDIO_DataBlockSize_4096b) || \
                                   ((SIZE) == SDIO_DataBlockSize_8192b) || \
-                                  ((SIZE) == SDIO_DataBlockSize_16384b)) 
+                                  ((SIZE) == SDIO_DataBlockSize_16384b))
 /**
   * @}
   */
 
-/** @defgroup SDIO_Transfer_Direction 
+/** @defgroup SDIO_Transfer_Direction
   * @{
   */
 
@@ -301,7 +317,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup SDIO_Transfer_Type 
+/** @defgroup SDIO_Transfer_Type
   * @{
   */
 
@@ -313,7 +329,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup SDIO_DPSM_State 
+/** @defgroup SDIO_DPSM_State
   * @{
   */
 
@@ -324,7 +340,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup SDIO_Flags 
+/** @defgroup SDIO_Flags
   * @{
   */
 
@@ -410,7 +426,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup SDIO_Read_Wait_Mode 
+/** @defgroup SDIO_Read_Wait_Mode
   * @{
   */
 
@@ -438,36 +454,65 @@ typedef struct
   * @{
   */
 
-void SDIO_DeInit(void);
-void SDIO_Init(SDIO_InitTypeDef* SDIO_InitStruct);
-void SDIO_StructInit(SDIO_InitTypeDef* SDIO_InitStruct);
-void SDIO_ClockCmd(FunctionalState NewState);
-void SDIO_SetPowerState(uint32_t SDIO_PowerState);
-uint32_t SDIO_GetPowerState(void);
-void SDIO_ITConfig(uint32_t SDIO_IT, FunctionalState NewState);
-void SDIO_DMACmd(FunctionalState NewState);
-void SDIO_SendCommand(SDIO_CmdInitTypeDef *SDIO_CmdInitStruct);
-void SDIO_CmdStructInit(SDIO_CmdInitTypeDef* SDIO_CmdInitStruct);
-uint8_t SDIO_GetCommandResponse(void);
-uint32_t SDIO_GetResponse(uint32_t SDIO_RESP);
-void SDIO_DataConfig(SDIO_DataInitTypeDef* SDIO_DataInitStruct);
-void SDIO_DataStructInit(SDIO_DataInitTypeDef* SDIO_DataInitStruct);
-uint32_t SDIO_GetDataCounter(void);
-uint32_t SDIO_ReadData(void);
-void SDIO_WriteData(uint32_t Data);
-uint32_t SDIO_GetFIFOCount(void);
-void SDIO_StartSDIOReadWait(FunctionalState NewState);
-void SDIO_StopSDIOReadWait(FunctionalState NewState);
-void SDIO_SetSDIOReadWaitMode(uint32_t SDIO_ReadWaitMode);
-void SDIO_SetSDIOOperation(FunctionalState NewState);
-void SDIO_SendSDIOSuspendCmd(FunctionalState NewState);
-void SDIO_CommandCompletionCmd(FunctionalState NewState);
-void SDIO_CEATAITCmd(FunctionalState NewState);
-void SDIO_SendCEATACmd(FunctionalState NewState);
-FlagStatus SDIO_GetFlagStatus(uint32_t SDIO_FLAG);
-void SDIO_ClearFlag(uint32_t SDIO_FLAG);
-ITStatus SDIO_GetITStatus(uint32_t SDIO_IT);
-void SDIO_ClearITPendingBit(uint32_t SDIO_IT);
+void SDIO_DeInit (void);
+
+void SDIO_Init (SDIO_InitTypeDef * SDIO_InitStruct);
+
+void SDIO_StructInit (SDIO_InitTypeDef * SDIO_InitStruct);
+
+void SDIO_ClockCmd (FunctionalState NewState);
+
+void SDIO_SetPowerState (uint32_t SDIO_PowerState);
+
+uint32_t SDIO_GetPowerState (void);
+
+void SDIO_ITConfig (uint32_t SDIO_IT, FunctionalState NewState);
+
+void SDIO_DMACmd (FunctionalState NewState);
+
+void SDIO_SendCommand (SDIO_CmdInitTypeDef * SDIO_CmdInitStruct);
+
+void SDIO_CmdStructInit (SDIO_CmdInitTypeDef * SDIO_CmdInitStruct);
+
+uint8_t SDIO_GetCommandResponse (void);
+
+uint32_t SDIO_GetResponse (uint32_t SDIO_RESP);
+
+void SDIO_DataConfig (SDIO_DataInitTypeDef * SDIO_DataInitStruct);
+
+void SDIO_DataStructInit (SDIO_DataInitTypeDef * SDIO_DataInitStruct);
+
+uint32_t SDIO_GetDataCounter (void);
+
+uint32_t SDIO_ReadData (void);
+
+void SDIO_WriteData (uint32_t Data);
+
+uint32_t SDIO_GetFIFOCount (void);
+
+void SDIO_StartSDIOReadWait (FunctionalState NewState);
+
+void SDIO_StopSDIOReadWait (FunctionalState NewState);
+
+void SDIO_SetSDIOReadWaitMode (uint32_t SDIO_ReadWaitMode);
+
+void SDIO_SetSDIOOperation (FunctionalState NewState);
+
+void SDIO_SendSDIOSuspendCmd (FunctionalState NewState);
+
+void SDIO_CommandCompletionCmd (FunctionalState NewState);
+
+void SDIO_CEATAITCmd (FunctionalState NewState);
+
+void SDIO_SendCEATACmd (FunctionalState NewState);
+
+FlagStatus SDIO_GetFlagStatus (uint32_t SDIO_FLAG);
+
+void SDIO_ClearFlag (uint32_t SDIO_FLAG);
+
+ITStatus SDIO_GetITStatus (uint32_t SDIO_IT);
+
+void SDIO_ClearITPendingBit (uint32_t SDIO_IT);
 
 #endif /* __STM32F10x_SDIO_H */
 /**
@@ -481,4 +526,3 @@ void SDIO_ClearITPendingBit(uint32_t SDIO_IT);
 /**
   * @}
   */
-

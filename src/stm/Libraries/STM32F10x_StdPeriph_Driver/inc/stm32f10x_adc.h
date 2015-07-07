@@ -1,28 +1,30 @@
 /*
-* Author: Copyright (C) STMicroelectronics	 			
-*												MCD Application Team			Date:	04/06/2009
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Author: Copyright (C) STMicroelectronics
+ *                                              MCD Application Team            Date:   04/06/2009
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
+/* Define to prevent recursive inclusion
+   ------------------------------------- */
 #ifndef __STM32F10x_ADC_H
 #define __STM32F10x_ADC_H
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes
+   ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -37,19 +39,20 @@
   * @{
   */
 
-/** 
-  * @brief  ADC Init structure definition  
+/**
+  * @brief  ADC Init structure definition
   */
 
 typedef struct
 {
-  uint32_t ADC_Mode;
-  FunctionalState ADC_ScanConvMode; 
-  FunctionalState ADC_ContinuousConvMode;
-  uint32_t ADC_ExternalTrigConv;
-  uint32_t ADC_DataAlign;
-  uint8_t ADC_NbrOfChannel;
-}ADC_InitTypeDef;
+    uint32_t ADC_Mode;
+    FunctionalState ADC_ScanConvMode;
+    FunctionalState ADC_ContinuousConvMode;
+    uint32_t ADC_ExternalTrigConv;
+    uint32_t ADC_DataAlign;
+    uint8_t ADC_NbrOfChannel;
+} ADC_InitTypeDef;
+
 /**
   * @}
   */
@@ -65,7 +68,7 @@ typedef struct
 #define IS_ADC_DMA_PERIPH(PERIPH) (((*(uint32_t*)&(PERIPH)) == ADC1_BASE) || \
                                    ((*(uint32_t*)&(PERIPH)) == ADC3_BASE))
 
-/** @defgroup ADC_dual_mode 
+/** @defgroup ADC_dual_mode
   * @{
   */
 
@@ -94,12 +97,12 @@ typedef struct
   * @}
   */
 
-/** @defgroup ADC_extrenal_trigger_sources_for_regular_channels_conversion 
+/** @defgroup ADC_extrenal_trigger_sources_for_regular_channels_conversion
   * @{
   */
 
-/** 
-  * @brief  for ADC1 and ADC2  
+/**
+  * @brief  for ADC1 and ADC2
   */
 
 #define ADC_ExternalTrigConv_T1_CC1                ((uint32_t)0x00000000)
@@ -109,15 +112,15 @@ typedef struct
 #define ADC_ExternalTrigConv_T4_CC4                ((uint32_t)0x000A0000)
 #define ADC_ExternalTrigConv_Ext_IT11_TIM8_TRGO    ((uint32_t)0x000C0000)
 
-/** 
-  * @brief  for ADC1, ADC2 and ADC3  
+/**
+  * @brief  for ADC1, ADC2 and ADC3
   */
 
 #define ADC_ExternalTrigConv_T1_CC3                ((uint32_t)0x00040000)
 #define ADC_ExternalTrigConv_None                  ((uint32_t)0x000E0000)
 
-/** 
-  * @brief  for ADC3  
+/**
+  * @brief  for ADC3
   */
 
 #define ADC_ExternalTrigConv_T3_CC1                ((uint32_t)0x00000000)
@@ -145,7 +148,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup ADC_data_align 
+/** @defgroup ADC_data_align
   * @{
   */
 
@@ -157,7 +160,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup ADC_channels 
+/** @defgroup ADC_channels
   * @{
   */
 
@@ -193,7 +196,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup ADC_sampling_times 
+/** @defgroup ADC_sampling_times
   * @{
   */
 
@@ -217,12 +220,12 @@ typedef struct
   * @}
   */
 
-/** @defgroup ADC_extrenal_trigger_sources_for_injected_channels_conversion 
+/** @defgroup ADC_extrenal_trigger_sources_for_injected_channels_conversion
   * @{
   */
 
-/** 
-  * @brief  For ADC1 and ADC2  
+/**
+  * @brief  For ADC1 and ADC2
   */
 
 #define ADC_ExternalTrigInjecConv_T2_TRGO           ((uint32_t)0x00002000)
@@ -231,16 +234,16 @@ typedef struct
 #define ADC_ExternalTrigInjecConv_T4_TRGO           ((uint32_t)0x00005000)
 #define ADC_ExternalTrigInjecConv_Ext_IT15_TIM8_CC4 ((uint32_t)0x00006000)
 
-/** 
-  * @brief  For ADC1, ADC2 and ADC3  
+/**
+  * @brief  For ADC1, ADC2 and ADC3
   */
 
 #define ADC_ExternalTrigInjecConv_T1_TRGO           ((uint32_t)0x00000000)
 #define ADC_ExternalTrigInjecConv_T1_CC4            ((uint32_t)0x00001000)
 #define ADC_ExternalTrigInjecConv_None              ((uint32_t)0x00007000)
 
-/** 
-  * @brief  For ADC3  
+/**
+  * @brief  For ADC3
   */
 
 #define ADC_ExternalTrigInjecConv_T4_CC3            ((uint32_t)0x00002000)
@@ -266,7 +269,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup ADC_injected_channel_selection 
+/** @defgroup ADC_injected_channel_selection
   * @{
   */
 
@@ -282,7 +285,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup ADC_analog_watchdog_selection 
+/** @defgroup ADC_analog_watchdog_selection
   * @{
   */
 
@@ -305,7 +308,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup ADC_interrupts_definition 
+/** @defgroup ADC_interrupts_definition
   * @{
   */
 
@@ -321,7 +324,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup ADC_flags_definition 
+/** @defgroup ADC_flags_definition
   * @{
   */
 
@@ -338,7 +341,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup ADC_thresholds 
+/** @defgroup ADC_thresholds
   * @{
   */
 
@@ -348,7 +351,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup ADC_injected_offset 
+/** @defgroup ADC_injected_offset
   * @{
   */
 
@@ -358,7 +361,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup ADC_injected_length 
+/** @defgroup ADC_injected_length
   * @{
   */
 
@@ -368,7 +371,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup ADC_injected_rank 
+/** @defgroup ADC_injected_rank
   * @{
   */
 
@@ -376,10 +379,10 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
 
-/** @defgroup ADC_regular_length 
+/** @defgroup ADC_regular_length
   * @{
   */
 
@@ -388,7 +391,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup ADC_regular_rank 
+/** @defgroup ADC_regular_rank
   * @{
   */
 
@@ -398,7 +401,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup ADC_regular_discontinuous_mode_number 
+/** @defgroup ADC_regular_discontinuous_mode_number
   * @{
   */
 
@@ -424,42 +427,78 @@ typedef struct
   * @{
   */
 
-void ADC_DeInit(ADC_TypeDef* ADCx);
-void ADC_Init(ADC_TypeDef* ADCx, ADC_InitTypeDef* ADC_InitStruct);
-void ADC_StructInit(ADC_InitTypeDef* ADC_InitStruct);
-void ADC_Cmd(ADC_TypeDef* ADCx, FunctionalState NewState);
-void ADC_DMACmd(ADC_TypeDef* ADCx, FunctionalState NewState);
-void ADC_ITConfig(ADC_TypeDef* ADCx, uint16_t ADC_IT, FunctionalState NewState);
-void ADC_ResetCalibration(ADC_TypeDef* ADCx);
-FlagStatus ADC_GetResetCalibrationStatus(ADC_TypeDef* ADCx);
-void ADC_StartCalibration(ADC_TypeDef* ADCx);
-FlagStatus ADC_GetCalibrationStatus(ADC_TypeDef* ADCx);
-void ADC_SoftwareStartConvCmd(ADC_TypeDef* ADCx, FunctionalState NewState);
-FlagStatus ADC_GetSoftwareStartConvStatus(ADC_TypeDef* ADCx);
-void ADC_DiscModeChannelCountConfig(ADC_TypeDef* ADCx, uint8_t Number);
-void ADC_DiscModeCmd(ADC_TypeDef* ADCx, FunctionalState NewState);
-void ADC_RegularChannelConfig(ADC_TypeDef* ADCx, uint8_t ADC_Channel, uint8_t Rank, uint8_t ADC_SampleTime);
-void ADC_ExternalTrigConvCmd(ADC_TypeDef* ADCx, FunctionalState NewState);
-uint16_t ADC_GetConversionValue(ADC_TypeDef* ADCx);
-uint32_t ADC_GetDualModeConversionValue(void);
-void ADC_AutoInjectedConvCmd(ADC_TypeDef* ADCx, FunctionalState NewState);
-void ADC_InjectedDiscModeCmd(ADC_TypeDef* ADCx, FunctionalState NewState);
-void ADC_ExternalTrigInjectedConvConfig(ADC_TypeDef* ADCx, uint32_t ADC_ExternalTrigInjecConv);
-void ADC_ExternalTrigInjectedConvCmd(ADC_TypeDef* ADCx, FunctionalState NewState);
-void ADC_SoftwareStartInjectedConvCmd(ADC_TypeDef* ADCx, FunctionalState NewState);
-FlagStatus ADC_GetSoftwareStartInjectedConvCmdStatus(ADC_TypeDef* ADCx);
-void ADC_InjectedChannelConfig(ADC_TypeDef* ADCx, uint8_t ADC_Channel, uint8_t Rank, uint8_t ADC_SampleTime);
-void ADC_InjectedSequencerLengthConfig(ADC_TypeDef* ADCx, uint8_t Length);
-void ADC_SetInjectedOffset(ADC_TypeDef* ADCx, uint8_t ADC_InjectedChannel, uint16_t Offset);
-uint16_t ADC_GetInjectedConversionValue(ADC_TypeDef* ADCx, uint8_t ADC_InjectedChannel);
-void ADC_AnalogWatchdogCmd(ADC_TypeDef* ADCx, uint32_t ADC_AnalogWatchdog);
-void ADC_AnalogWatchdogThresholdsConfig(ADC_TypeDef* ADCx, uint16_t HighThreshold, uint16_t LowThreshold);
-void ADC_AnalogWatchdogSingleChannelConfig(ADC_TypeDef* ADCx, uint8_t ADC_Channel);
-void ADC_TempSensorVrefintCmd(FunctionalState NewState);
-FlagStatus ADC_GetFlagStatus(ADC_TypeDef* ADCx, uint8_t ADC_FLAG);
-void ADC_ClearFlag(ADC_TypeDef* ADCx, uint8_t ADC_FLAG);
-ITStatus ADC_GetITStatus(ADC_TypeDef* ADCx, uint16_t ADC_IT);
-void ADC_ClearITPendingBit(ADC_TypeDef* ADCx, uint16_t ADC_IT);
+void ADC_DeInit (ADC_TypeDef * ADCx);
+
+void ADC_Init (ADC_TypeDef * ADCx, ADC_InitTypeDef * ADC_InitStruct);
+
+void ADC_StructInit (ADC_InitTypeDef * ADC_InitStruct);
+
+void ADC_Cmd (ADC_TypeDef * ADCx, FunctionalState NewState);
+
+void ADC_DMACmd (ADC_TypeDef * ADCx, FunctionalState NewState);
+
+void ADC_ITConfig (ADC_TypeDef * ADCx, uint16_t ADC_IT,
+                   FunctionalState NewState);
+void ADC_ResetCalibration (ADC_TypeDef * ADCx);
+
+FlagStatus ADC_GetResetCalibrationStatus (ADC_TypeDef * ADCx);
+
+void ADC_StartCalibration (ADC_TypeDef * ADCx);
+
+FlagStatus ADC_GetCalibrationStatus (ADC_TypeDef * ADCx);
+
+void ADC_SoftwareStartConvCmd (ADC_TypeDef * ADCx, FunctionalState NewState);
+
+FlagStatus ADC_GetSoftwareStartConvStatus (ADC_TypeDef * ADCx);
+
+void ADC_DiscModeChannelCountConfig (ADC_TypeDef * ADCx, uint8_t Number);
+
+void ADC_DiscModeCmd (ADC_TypeDef * ADCx, FunctionalState NewState);
+
+void ADC_RegularChannelConfig (ADC_TypeDef * ADCx, uint8_t ADC_Channel,
+                               uint8_t Rank, uint8_t ADC_SampleTime);
+void ADC_ExternalTrigConvCmd (ADC_TypeDef * ADCx, FunctionalState NewState);
+
+uint16_t ADC_GetConversionValue (ADC_TypeDef * ADCx);
+
+uint32_t ADC_GetDualModeConversionValue (void);
+
+void ADC_AutoInjectedConvCmd (ADC_TypeDef * ADCx, FunctionalState NewState);
+
+void ADC_InjectedDiscModeCmd (ADC_TypeDef * ADCx, FunctionalState NewState);
+
+void ADC_ExternalTrigInjectedConvConfig (ADC_TypeDef * ADCx,
+                                         uint32_t ADC_ExternalTrigInjecConv);
+void ADC_ExternalTrigInjectedConvCmd (ADC_TypeDef * ADCx,
+                                      FunctionalState NewState);
+void ADC_SoftwareStartInjectedConvCmd (ADC_TypeDef * ADCx,
+                                       FunctionalState NewState);
+FlagStatus ADC_GetSoftwareStartInjectedConvCmdStatus (ADC_TypeDef * ADCx);
+
+void ADC_InjectedChannelConfig (ADC_TypeDef * ADCx, uint8_t ADC_Channel,
+                                uint8_t Rank, uint8_t ADC_SampleTime);
+void ADC_InjectedSequencerLengthConfig (ADC_TypeDef * ADCx, uint8_t Length);
+
+void ADC_SetInjectedOffset (ADC_TypeDef * ADCx, uint8_t ADC_InjectedChannel,
+                            uint16_t Offset);
+uint16_t ADC_GetInjectedConversionValue (ADC_TypeDef * ADCx,
+                                         uint8_t ADC_InjectedChannel);
+void ADC_AnalogWatchdogCmd (ADC_TypeDef * ADCx, uint32_t ADC_AnalogWatchdog);
+
+void ADC_AnalogWatchdogThresholdsConfig (ADC_TypeDef * ADCx,
+                                         uint16_t HighThreshold,
+                                         uint16_t LowThreshold);
+void ADC_AnalogWatchdogSingleChannelConfig (ADC_TypeDef * ADCx,
+                                            uint8_t ADC_Channel);
+void ADC_TempSensorVrefintCmd (FunctionalState NewState);
+
+FlagStatus ADC_GetFlagStatus (ADC_TypeDef * ADCx, uint8_t ADC_FLAG);
+
+void ADC_ClearFlag (ADC_TypeDef * ADCx, uint8_t ADC_FLAG);
+
+ITStatus ADC_GetITStatus (ADC_TypeDef * ADCx, uint16_t ADC_IT);
+
+void ADC_ClearITPendingBit (ADC_TypeDef * ADCx, uint16_t ADC_IT);
 
 #endif /*__STM32F10x_ADC_H */
 
@@ -474,5 +513,3 @@ void ADC_ClearITPendingBit(ADC_TypeDef* ADCx, uint16_t ADC_IT);
 /**
   * @}
   */
-
-

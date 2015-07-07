@@ -1,25 +1,26 @@
 /*
-* Author: Copyright (C) Rudolf Boeddeker 					Date: 2010-01-13
-*												STMicroelectronics	 			Date:	04/27/2009
-*												 MCD Application Team			Version V3.0.1
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Author: Copyright (C) Rudolf Boeddeker                   Date: 2010-01-13
+ *                                              STMicroelectronics              Date:   04/27/2009
+ *                                               MCD Application Team           Version V3.0.1
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
+/* Define to prevent recursive inclusion
+   ------------------------------------- */
 #ifndef __CCID_USB_CONF_H
 #define __CCID_USB_CONF_H
 
@@ -30,22 +31,22 @@
 #define CCID_EP_NUM                          (4)
 
 /*-------------------------------------------------------------*/
-/* --------------   Buffer Description Table  -----------------*/
+/* -------------- Buffer Description Table ----------------- */
 /*-------------------------------------------------------------*/
 /* buffer table base address */
 
 #define BTABLE_ADDRESS      (0x00)
 
-/* EP0  */
+/* EP0 */
 /* rx/tx buffer base address */
 #define CCID_ENDP0_RXADDR        (0x18)
 #define CCID_ENDP0_TXADDR        (0x58)
 
-/* EP1  */
+/* EP1 */
 /* tx buffer base address */
 #define CCID_ENDP1_TXADDR        (0x98)
 
-/* EP2  */
+/* EP2 */
 /* Rx buffer base address */
 #define CCID_ENDP2_RXADDR        (0xD8)
 /* Tx buffer base address */
@@ -70,7 +71,7 @@
 
 
 #define  CCID_EP1_OUT_Callback   NOP_Process
-//#define  CCID_EP2_OUT_Callback   NOP_Process
+// #define CCID_EP2_OUT_Callback NOP_Process
 #define  CCID_EP3_OUT_Callback   NOP_Process
 #define  CCID_EP4_OUT_Callback   NOP_Process
 #define  CCID_EP5_OUT_Callback   NOP_Process
@@ -78,4 +79,3 @@
 #define  CCID_EP7_OUT_Callback   NOP_Process
 
 #endif /* __CCID_USB_CONF_H */
-

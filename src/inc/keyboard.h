@@ -1,27 +1,26 @@
 /*
-* Author: Copyright (C) Andrzej Surowiec 2012
-*												
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-
-/* Keyboard usage values, see usb.org's HID-usage-tables document, chapter
- * 10 Keyboard/Keypad Page for more codes.
+ * Author: Copyright (C) Andrzej Surowiec 2012
+ *
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
+
+
+/* Keyboard usage values, see usb.org's HID-usage-tables document, chapter 10
+   Keyboard/Keypad Page for more codes. */
 #define MOD_CONTROL_LEFT    (1<<0)
 #define MOD_SHIFT_LEFT      (1<<1)
 #define MOD_ALT_LEFT        (1<<2)
@@ -96,13 +95,19 @@
 #define KEY_TAB      43
 
 extern volatile uint8_t numLockClicked;
+
 extern volatile uint8_t capsLockClicked;
+
 extern volatile uint8_t scrollLockClicked;
 
-void sendChar(uint8_t chr);
-void sendKeys(uint8_t* buffer);
-void sendString(char* string, uint8_t len);
-void sendNumber(uint32_t number);
-void sendNumberN(uint32_t number,uint8_t len);
-void sendEnter(void);
+void sendChar (uint8_t chr);
 
+void sendKeys (uint8_t * buffer);
+
+void sendString (char* string, uint8_t len);
+
+void sendNumber (uint32_t number);
+
+void sendNumberN (uint32_t number, uint8_t len);
+
+void sendEnter (void);

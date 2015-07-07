@@ -1,28 +1,30 @@
 /*
-* Author: Copyright (C) STMicroelectronics	 			
-*												MCD Application Team			Date:	04/06/2009
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Author: Copyright (C) STMicroelectronics
+ *                                              MCD Application Team            Date:   04/06/2009
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
+/* Define to prevent recursive inclusion
+   ------------------------------------- */
 #ifndef __STM32F10x_GPIO_H
 #define __STM32F10x_GPIO_H
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes
+   ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -44,59 +46,60 @@
                                     ((*(uint32_t*)&(PERIPH)) == GPIOE_BASE) || \
                                     ((*(uint32_t*)&(PERIPH)) == GPIOF_BASE) || \
                                     ((*(uint32_t*)&(PERIPH)) == GPIOG_BASE))
-                                     
-/** 
-  * @brief  Output Maximum frequency selection  
+
+/**
+  * @brief  Output Maximum frequency selection
   */
 
 typedef enum
-{ 
-  GPIO_Speed_10MHz = 1,
-  GPIO_Speed_2MHz, 
-  GPIO_Speed_50MHz
-}GPIOSpeed_TypeDef;
+{
+    GPIO_Speed_10MHz = 1,
+    GPIO_Speed_2MHz,
+    GPIO_Speed_50MHz
+} GPIOSpeed_TypeDef;
+
 #define IS_GPIO_SPEED(SPEED) (((SPEED) == GPIO_Speed_10MHz) || ((SPEED) == GPIO_Speed_2MHz) || \
                               ((SPEED) == GPIO_Speed_50MHz))
 
-/** 
-  * @brief  Configuration Mode enumeration  
+/**
+  * @brief  Configuration Mode enumeration
   */
 
 typedef enum
 { GPIO_Mode_AIN = 0x0,
-  GPIO_Mode_IN_FLOATING = 0x04,
-  GPIO_Mode_IPD = 0x28,
-  GPIO_Mode_IPU = 0x48,
-  GPIO_Mode_Out_OD = 0x14,
-  GPIO_Mode_Out_PP = 0x10,
-  GPIO_Mode_AF_OD = 0x1C,
-  GPIO_Mode_AF_PP = 0x18
-}GPIOMode_TypeDef;
+    GPIO_Mode_IN_FLOATING = 0x04,
+    GPIO_Mode_IPD = 0x28,
+    GPIO_Mode_IPU = 0x48,
+    GPIO_Mode_Out_OD = 0x14,
+    GPIO_Mode_Out_PP = 0x10,
+    GPIO_Mode_AF_OD = 0x1C,
+    GPIO_Mode_AF_PP = 0x18
+} GPIOMode_TypeDef;
 
 #define IS_GPIO_MODE(MODE) (((MODE) == GPIO_Mode_AIN) || ((MODE) == GPIO_Mode_IN_FLOATING) || \
                             ((MODE) == GPIO_Mode_IPD) || ((MODE) == GPIO_Mode_IPU) || \
                             ((MODE) == GPIO_Mode_Out_OD) || ((MODE) == GPIO_Mode_Out_PP) || \
                             ((MODE) == GPIO_Mode_AF_OD) || ((MODE) == GPIO_Mode_AF_PP))
 
-/** 
-  * @brief  GPIO Init structure definition  
+/**
+  * @brief  GPIO Init structure definition
   */
 
 typedef struct
 {
-  uint16_t GPIO_Pin;
-  GPIOSpeed_TypeDef GPIO_Speed;
-  GPIOMode_TypeDef GPIO_Mode;
+    uint16_t GPIO_Pin;
+    GPIOSpeed_TypeDef GPIO_Speed;
+    GPIOMode_TypeDef GPIO_Mode;
 } GPIO_InitTypeDef;
 
-/** 
-  * @brief  Bit_SET and Bit_RESET enumeration  
+/**
+  * @brief  Bit_SET and Bit_RESET enumeration
   */
 
 typedef enum
 { Bit_RESET = 0,
-  Bit_SET
-}BitAction;
+    Bit_SET
+} BitAction;
 
 #define IS_GPIO_BIT_ACTION(ACTION) (((ACTION) == Bit_RESET) || ((ACTION) == Bit_SET))
 
@@ -108,27 +111,27 @@ typedef enum
   * @{
   */
 
-/** @defgroup GPIO_pins_define 
+/** @defgroup GPIO_pins_define
   * @{
   */
 
-#define GPIO_Pin_0                 ((uint16_t)0x0001)  /* Pin 0 selected */
-#define GPIO_Pin_1                 ((uint16_t)0x0002)  /* Pin 1 selected */
-#define GPIO_Pin_2                 ((uint16_t)0x0004)  /* Pin 2 selected */
-#define GPIO_Pin_3                 ((uint16_t)0x0008)  /* Pin 3 selected */
-#define GPIO_Pin_4                 ((uint16_t)0x0010)  /* Pin 4 selected */
-#define GPIO_Pin_5                 ((uint16_t)0x0020)  /* Pin 5 selected */
-#define GPIO_Pin_6                 ((uint16_t)0x0040)  /* Pin 6 selected */
-#define GPIO_Pin_7                 ((uint16_t)0x0080)  /* Pin 7 selected */
-#define GPIO_Pin_8                 ((uint16_t)0x0100)  /* Pin 8 selected */
-#define GPIO_Pin_9                 ((uint16_t)0x0200)  /* Pin 9 selected */
-#define GPIO_Pin_10                ((uint16_t)0x0400)  /* Pin 10 selected */
-#define GPIO_Pin_11                ((uint16_t)0x0800)  /* Pin 11 selected */
-#define GPIO_Pin_12                ((uint16_t)0x1000)  /* Pin 12 selected */
-#define GPIO_Pin_13                ((uint16_t)0x2000)  /* Pin 13 selected */
-#define GPIO_Pin_14                ((uint16_t)0x4000)  /* Pin 14 selected */
-#define GPIO_Pin_15                ((uint16_t)0x8000)  /* Pin 15 selected */
-#define GPIO_Pin_All               ((uint16_t)0xFFFF)  /* All pins selected */
+#define GPIO_Pin_0                 ((uint16_t)0x0001)   /* Pin 0 selected */
+#define GPIO_Pin_1                 ((uint16_t)0x0002)   /* Pin 1 selected */
+#define GPIO_Pin_2                 ((uint16_t)0x0004)   /* Pin 2 selected */
+#define GPIO_Pin_3                 ((uint16_t)0x0008)   /* Pin 3 selected */
+#define GPIO_Pin_4                 ((uint16_t)0x0010)   /* Pin 4 selected */
+#define GPIO_Pin_5                 ((uint16_t)0x0020)   /* Pin 5 selected */
+#define GPIO_Pin_6                 ((uint16_t)0x0040)   /* Pin 6 selected */
+#define GPIO_Pin_7                 ((uint16_t)0x0080)   /* Pin 7 selected */
+#define GPIO_Pin_8                 ((uint16_t)0x0100)   /* Pin 8 selected */
+#define GPIO_Pin_9                 ((uint16_t)0x0200)   /* Pin 9 selected */
+#define GPIO_Pin_10                ((uint16_t)0x0400)   /* Pin 10 selected */
+#define GPIO_Pin_11                ((uint16_t)0x0800)   /* Pin 11 selected */
+#define GPIO_Pin_12                ((uint16_t)0x1000)   /* Pin 12 selected */
+#define GPIO_Pin_13                ((uint16_t)0x2000)   /* Pin 13 selected */
+#define GPIO_Pin_14                ((uint16_t)0x4000)   /* Pin 14 selected */
+#define GPIO_Pin_15                ((uint16_t)0x8000)   /* Pin 15 selected */
+#define GPIO_Pin_All               ((uint16_t)0xFFFF)   /* All pins selected */
 
 #define IS_GPIO_PIN(PIN) ((((PIN) & (uint16_t)0x00) == 0x00) && ((PIN) != (uint16_t)0x00))
 
@@ -153,35 +156,109 @@ typedef enum
   * @}
   */
 
-/** @defgroup GPIO_Remap_define 
+/** @defgroup GPIO_Remap_define
   * @{
   */
 
-#define GPIO_Remap_SPI1            ((uint32_t)0x00000001)  /* SPI1 Alternate Function mapping */
-#define GPIO_Remap_I2C1            ((uint32_t)0x00000002)  /* I2C1 Alternate Function mapping */
-#define GPIO_Remap_USART1          ((uint32_t)0x00000004)  /* USART1 Alternate Function mapping */
-#define GPIO_Remap_USART2          ((uint32_t)0x00000008)  /* USART2 Alternate Function mapping */
-#define GPIO_PartialRemap_USART3   ((uint32_t)0x00140010)  /* USART3 Partial Alternate Function mapping */
-#define GPIO_FullRemap_USART3      ((uint32_t)0x00140030)  /* USART3 Full Alternate Function mapping */
-#define GPIO_PartialRemap_TIM1     ((uint32_t)0x00160040)  /* TIM1 Partial Alternate Function mapping */
-#define GPIO_FullRemap_TIM1        ((uint32_t)0x001600C0)  /* TIM1 Full Alternate Function mapping */
-#define GPIO_PartialRemap1_TIM2    ((uint32_t)0x00180100)  /* TIM2 Partial1 Alternate Function mapping */
-#define GPIO_PartialRemap2_TIM2    ((uint32_t)0x00180200)  /* TIM2 Partial2 Alternate Function mapping */
-#define GPIO_FullRemap_TIM2        ((uint32_t)0x00180300)  /* TIM2 Full Alternate Function mapping */
-#define GPIO_PartialRemap_TIM3     ((uint32_t)0x001A0800)  /* TIM3 Partial Alternate Function mapping */
-#define GPIO_FullRemap_TIM3        ((uint32_t)0x001A0C00)  /* TIM3 Full Alternate Function mapping */
-#define GPIO_Remap_TIM4            ((uint32_t)0x00001000)  /* TIM4 Alternate Function mapping */
-#define GPIO_Remap1_CAN1           ((uint32_t)0x001D4000)  /* CAN Alternate Function mapping */
-#define GPIO_Remap2_CAN1           ((uint32_t)0x001D6000)  /* CAN Alternate Function mapping */
-#define GPIO_Remap_PD01            ((uint32_t)0x00008000)  /* PD01 Alternate Function mapping */
-#define GPIO_Remap_TIM5CH4_LSI     ((uint32_t)0x00200001)  /* LSI connected to TIM5 Channel4 input capture for calibration */
-#define GPIO_Remap_ADC1_ETRGINJ    ((uint32_t)0x00200002)  /* ADC1 External Trigger Injected Conversion remapping */
-#define GPIO_Remap_ADC1_ETRGREG    ((uint32_t)0x00200004)  /* ADC1 External Trigger Regular Conversion remapping */
-#define GPIO_Remap_ADC2_ETRGINJ    ((uint32_t)0x00200008)  /* ADC2 External Trigger Injected Conversion remapping */
-#define GPIO_Remap_ADC2_ETRGREG    ((uint32_t)0x00200010)  /* ADC2 External Trigger Regular Conversion remapping */
-#define GPIO_Remap_SWJ_NoJTRST     ((uint32_t)0x00300100)  /* Full SWJ Enabled (JTAG-DP + SW-DP) but without JTRST */
-#define GPIO_Remap_SWJ_JTAGDisable ((uint32_t)0x00300200)  /* JTAG-DP Disabled and SW-DP Enabled */
-#define GPIO_Remap_SWJ_Disable     ((uint32_t)0x00300400)  /* Full SWJ Disabled (JTAG-DP + SW-DP) */
+#define GPIO_Remap_SPI1            ((uint32_t)0x00000001)   /* SPI1 Alternate
+                                                               Function
+                                                               mapping */
+#define GPIO_Remap_I2C1            ((uint32_t)0x00000002)   /* I2C1 Alternate
+                                                               Function
+                                                               mapping */
+#define GPIO_Remap_USART1          ((uint32_t)0x00000004)   /* USART1
+                                                               tlternate
+                                                               Function
+                                                               mapping */
+#define GPIO_Remap_USART2          ((uint32_t)0x00000008)   /* USART2
+                                                               tlternate
+                                                               Function
+                                                               mapping */
+#define GPIO_PartialRemap_USART3   ((uint32_t)0x00140010)   /* USART3 Partial
+                                                               Alternate
+                                                               Function
+                                                               mapping */
+#define GPIO_FullRemap_USART3      ((uint32_t)0x00140030)   /* USART3 Full
+                                                               Alternate
+                                                               Function
+                                                               mapping */
+#define GPIO_PartialRemap_TIM1     ((uint32_t)0x00160040)   /* TIM1 Partial
+                                                               Alternate
+                                                               Function
+                                                               mapping */
+#define GPIO_FullRemap_TIM1        ((uint32_t)0x001600C0)   /* TIM1 Full
+                                                               Alternate
+                                                               Function
+                                                               mapping */
+#define GPIO_PartialRemap1_TIM2    ((uint32_t)0x00180100)   /* TIM2 Partial1
+                                                               Alternate
+                                                               Function
+                                                               mapping */
+#define GPIO_PartialRemap2_TIM2    ((uint32_t)0x00180200)   /* TIM2 Partial2
+                                                               Alternate
+                                                               Function
+                                                               mapping */
+#define GPIO_FullRemap_TIM2        ((uint32_t)0x00180300)   /* TIM2 Full
+                                                               Alternate
+                                                               Function
+                                                               mapping */
+#define GPIO_PartialRemap_TIM3     ((uint32_t)0x001A0800)   /* TIM3 Partial
+                                                               Alternate
+                                                               Function
+                                                               mapping */
+#define GPIO_FullRemap_TIM3        ((uint32_t)0x001A0C00)   /* TIM3 Full
+                                                               Alternate
+                                                               Function
+                                                               mapping */
+#define GPIO_Remap_TIM4            ((uint32_t)0x00001000)   /* TIM4 Alternate
+                                                               Function
+                                                               mapping */
+#define GPIO_Remap1_CAN1           ((uint32_t)0x001D4000)   /* CAN Alternate
+                                                               Function
+                                                               mapping */
+#define GPIO_Remap2_CAN1           ((uint32_t)0x001D6000)   /* CAN Alternate
+                                                               Function
+                                                               mapping */
+#define GPIO_Remap_PD01            ((uint32_t)0x00008000)   /* PD01 Alternate
+                                                               Function
+                                                               mapping */
+#define GPIO_Remap_TIM5CH4_LSI     ((uint32_t)0x00200001)   /* LSI connected
+                                                               to TIM5
+                                                               Channel4 input
+                                                               capture for
+                                                               calibration */
+#define GPIO_Remap_ADC1_ETRGINJ    ((uint32_t)0x00200002)   /* ADC1 External
+                                                               Trigger
+                                                               Injected
+                                                               Conversion
+                                                               remapping */
+#define GPIO_Remap_ADC1_ETRGREG    ((uint32_t)0x00200004)   /* ADC1 External
+                                                               Trigger
+                                                               Regular
+                                                               Conversion
+                                                               remapping */
+#define GPIO_Remap_ADC2_ETRGINJ    ((uint32_t)0x00200008)   /* ADC2 External
+                                                               Trigger
+                                                               Injected
+                                                               Conversion
+                                                               remapping */
+#define GPIO_Remap_ADC2_ETRGREG    ((uint32_t)0x00200010)   /* ADC2 External
+                                                               Trigger
+                                                               Regular
+                                                               Conversion
+                                                               remapping */
+#define GPIO_Remap_SWJ_NoJTRST     ((uint32_t)0x00300100)   /* Full SWJ
+                                                               Enabled
+                                                               (JTAG-DP +
+                                                               SW-DP) but
+                                                               without JTRST */
+#define GPIO_Remap_SWJ_JTAGDisable ((uint32_t)0x00300200)   /* JTAG-DP
+                                                               Disabled and
+                                                               SW-DP Enabled */
+#define GPIO_Remap_SWJ_Disable     ((uint32_t)0x00300400)   /* Full SWJ
+                                                               Disabled
+                                                               (JTAG-DP +
+                                                               SW-DP) */
 
 #define IS_GPIO_REMAP(REMAP) (((REMAP) == GPIO_Remap_SPI1) || ((REMAP) == GPIO_Remap_I2C1) || \
                               ((REMAP) == GPIO_Remap_USART1) || ((REMAP) == GPIO_Remap_USART2) || \
@@ -196,12 +273,12 @@ typedef enum
                               ((REMAP) == GPIO_Remap_ADC2_ETRGINJ) ||((REMAP) == GPIO_Remap_ADC2_ETRGREG) || \
                               ((REMAP) == GPIO_Remap_SWJ_NoJTRST) || ((REMAP) == GPIO_Remap_SWJ_JTAGDisable)|| \
                               ((REMAP) == GPIO_Remap_SWJ_Disable))
-                              
+
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup GPIO_Port_Sources 
+/** @defgroup GPIO_Port_Sources
   * @{
   */
 
@@ -230,7 +307,7 @@ typedef enum
   * @}
   */
 
-/** @defgroup GPIO_Pin_sources 
+/** @defgroup GPIO_Pin_sources
   * @{
   */
 
@@ -288,23 +365,39 @@ typedef enum
   * @{
   */
 
-void GPIO_DeInit(GPIO_TypeDef* GPIOx);
-void GPIO_AFIODeInit(void);
-void GPIO_Init(GPIO_TypeDef* GPIOx, GPIO_InitTypeDef* GPIO_InitStruct);
-void GPIO_StructInit(GPIO_InitTypeDef* GPIO_InitStruct);
-uint8_t GPIO_ReadInputDataBit(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
-uint16_t GPIO_ReadInputData(GPIO_TypeDef* GPIOx);
-uint8_t GPIO_ReadOutputDataBit(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
-uint16_t GPIO_ReadOutputData(GPIO_TypeDef* GPIOx);
-void GPIO_SetBits(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
-void GPIO_ResetBits(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
-void GPIO_WriteBit(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, BitAction BitVal);
-void GPIO_Write(GPIO_TypeDef* GPIOx, uint16_t PortVal);
-void GPIO_PinLockConfig(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
-void GPIO_EventOutputConfig(uint8_t GPIO_PortSource, uint8_t GPIO_PinSource);
-void GPIO_EventOutputCmd(FunctionalState NewState);
-void GPIO_PinRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState);
-void GPIO_EXTILineConfig(uint8_t GPIO_PortSource, uint8_t GPIO_PinSource);
+void GPIO_DeInit (GPIO_TypeDef * GPIOx);
+
+void GPIO_AFIODeInit (void);
+
+void GPIO_Init (GPIO_TypeDef * GPIOx, GPIO_InitTypeDef * GPIO_InitStruct);
+
+void GPIO_StructInit (GPIO_InitTypeDef * GPIO_InitStruct);
+
+uint8_t GPIO_ReadInputDataBit (GPIO_TypeDef * GPIOx, uint16_t GPIO_Pin);
+
+uint16_t GPIO_ReadInputData (GPIO_TypeDef * GPIOx);
+
+uint8_t GPIO_ReadOutputDataBit (GPIO_TypeDef * GPIOx, uint16_t GPIO_Pin);
+
+uint16_t GPIO_ReadOutputData (GPIO_TypeDef * GPIOx);
+
+void GPIO_SetBits (GPIO_TypeDef * GPIOx, uint16_t GPIO_Pin);
+
+void GPIO_ResetBits (GPIO_TypeDef * GPIOx, uint16_t GPIO_Pin);
+
+void GPIO_WriteBit (GPIO_TypeDef * GPIOx, uint16_t GPIO_Pin,
+                    BitAction BitVal);
+void GPIO_Write (GPIO_TypeDef * GPIOx, uint16_t PortVal);
+
+void GPIO_PinLockConfig (GPIO_TypeDef * GPIOx, uint16_t GPIO_Pin);
+
+void GPIO_EventOutputConfig (uint8_t GPIO_PortSource, uint8_t GPIO_PinSource);
+
+void GPIO_EventOutputCmd (FunctionalState NewState);
+
+void GPIO_PinRemapConfig (uint32_t GPIO_Remap, FunctionalState NewState);
+
+void GPIO_EXTILineConfig (uint8_t GPIO_PortSource, uint8_t GPIO_PinSource);
 
 #endif /* __STM32F10x_GPIO_H */
 /**
@@ -318,5 +411,3 @@ void GPIO_EXTILineConfig(uint8_t GPIO_PortSource, uint8_t GPIO_PinSource);
 /**
   * @}
   */
-
-

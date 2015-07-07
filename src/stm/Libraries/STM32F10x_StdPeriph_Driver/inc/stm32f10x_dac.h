@@ -1,28 +1,30 @@
 /*
-* Author: Copyright (C) STMicroelectronics	 			
-*												MCD Application Team			Date:	04/06/2009
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Author: Copyright (C) STMicroelectronics
+ *                                              MCD Application Team            Date:   04/06/2009
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
+/* Define to prevent recursive inclusion
+   ------------------------------------- */
 #ifndef __STM32F10x_DAC_H
 #define __STM32F10x_DAC_H
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes
+   ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -37,17 +39,17 @@
   * @{
   */
 
-/** 
+/**
   * @brief  DAC Init structure definition
   */
 
 typedef struct
 {
-  uint32_t DAC_Trigger;
-  uint32_t DAC_WaveGeneration;
-  uint32_t DAC_LFSRUnmask_TriangleAmplitude;
-  uint32_t DAC_OutputBuffer; 
-}DAC_InitTypeDef;
+    uint32_t DAC_Trigger;
+    uint32_t DAC_WaveGeneration;
+    uint32_t DAC_LFSRUnmask_TriangleAmplitude;
+    uint32_t DAC_OutputBuffer;
+} DAC_InitTypeDef;
 
 /**
   * @}
@@ -57,7 +59,7 @@ typedef struct
   * @{
   */
 
-/** @defgroup DAC_trigger_selection 
+/** @defgroup DAC_trigger_selection
   * @{
   */
 
@@ -85,7 +87,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DAC_wave_generation 
+/** @defgroup DAC_wave_generation
   * @{
   */
 
@@ -99,7 +101,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DAC_noise_wave_generation_mask_triangle_wave_generation_max_amplitude 
+/** @defgroup DAC_noise_wave_generation_mask_triangle_wave_generation_max_amplitude
   * @{
   */
 
@@ -156,7 +158,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DAC_output_buffer 
+/** @defgroup DAC_output_buffer
   * @{
   */
 
@@ -168,7 +170,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DAC_Channel_selection 
+/** @defgroup DAC_Channel_selection
   * @{
   */
 
@@ -180,7 +182,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DAC_data_alignement 
+/** @defgroup DAC_data_alignement
   * @{
   */
 
@@ -194,7 +196,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DAC_wave_generation 
+/** @defgroup DAC_wave_generation
   * @{
   */
 
@@ -206,11 +208,11 @@ typedef struct
   * @}
   */
 
-/** @defgroup DAC_data 
+/** @defgroup DAC_data
   * @{
   */
 
-#define IS_DAC_DATA(DATA) ((DATA) <= 0xFFF0) 
+#define IS_DAC_DATA(DATA) ((DATA) <= 0xFFF0)
 /**
   * @}
   */
@@ -231,18 +233,29 @@ typedef struct
   * @{
   */
 
-void DAC_DeInit(void);
-void DAC_Init(uint32_t DAC_Channel, DAC_InitTypeDef* DAC_InitStruct);
-void DAC_StructInit(DAC_InitTypeDef* DAC_InitStruct);
-void DAC_Cmd(uint32_t DAC_Channel, FunctionalState NewState);
-void DAC_DMACmd(uint32_t DAC_Channel, FunctionalState NewState);
-void DAC_SoftwareTriggerCmd(uint32_t DAC_Channel, FunctionalState NewState);
-void DAC_DualSoftwareTriggerCmd(FunctionalState NewState);
-void DAC_WaveGenerationCmd(uint32_t DAC_Channel, uint32_t DAC_Wave, FunctionalState NewState);
-void DAC_SetChannel1Data(uint32_t DAC_Align, uint16_t Data);
-void DAC_SetChannel2Data(uint32_t DAC_Align, uint16_t Data);
-void DAC_SetDualChannelData(uint32_t DAC_Align, uint16_t Data2, uint16_t Data1);
-uint16_t DAC_GetDataOutputValue(uint32_t DAC_Channel);
+void DAC_DeInit (void);
+
+void DAC_Init (uint32_t DAC_Channel, DAC_InitTypeDef * DAC_InitStruct);
+
+void DAC_StructInit (DAC_InitTypeDef * DAC_InitStruct);
+
+void DAC_Cmd (uint32_t DAC_Channel, FunctionalState NewState);
+
+void DAC_DMACmd (uint32_t DAC_Channel, FunctionalState NewState);
+
+void DAC_SoftwareTriggerCmd (uint32_t DAC_Channel, FunctionalState NewState);
+
+void DAC_DualSoftwareTriggerCmd (FunctionalState NewState);
+
+void DAC_WaveGenerationCmd (uint32_t DAC_Channel, uint32_t DAC_Wave,
+                            FunctionalState NewState);
+void DAC_SetChannel1Data (uint32_t DAC_Align, uint16_t Data);
+
+void DAC_SetChannel2Data (uint32_t DAC_Align, uint16_t Data);
+
+void DAC_SetDualChannelData (uint32_t DAC_Align, uint16_t Data2,
+                             uint16_t Data1);
+uint16_t DAC_GetDataOutputValue (uint32_t DAC_Channel);
 
 #endif /*__STM32F10x_DAC_H */
 /**
@@ -256,5 +269,3 @@ uint16_t DAC_GetDataOutputValue(uint32_t DAC_Channel);
 /**
   * @}
   */
-
-

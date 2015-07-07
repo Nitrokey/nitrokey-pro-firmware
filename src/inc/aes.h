@@ -1,21 +1,21 @@
  /*
-* Author: Copyright (C) 
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+  * Author: Copyright (C)
+  *
+  * This file is part of Nitrokey.
+  *
+  * Nitrokey is free software: you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation, either version 3 of the License, or
+  * any later version.
+  *
+  * Nitrokey is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  * GNU General Public License for more details.
+  *
+  * You should have received a copy of the GNU General Public License
+  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+  */
 
 /**
  * \file aes.h
@@ -52,14 +52,15 @@
  */
 typedef struct
 {
-    int nr;                     /*!<  number of rounds  */
-    unsigned long *rk;          /*!<  AES round keys    */
-    unsigned long buf[68];      /*!<  unaligned data    */
+    int nr; /* !< number of rounds */
+    unsigned long* rk;  /* !< AES round keys */
+    unsigned long buf[68];  /* !< unaligned data */
 }
 aes_context;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /**
@@ -71,7 +72,7 @@ extern "C" {
  *
  * \return         0 if successful, or POLARSSL_ERR_AES_INVALID_KEY_LENGTH
  */
-int aes_setkey_enc( aes_context *ctx, unsigned char *key, int keysize );
+    int aes_setkey_enc (aes_context * ctx, unsigned char* key, int keysize);
 
 /**
  * \brief          AES key schedule (decryption)
@@ -82,7 +83,7 @@ int aes_setkey_enc( aes_context *ctx, unsigned char *key, int keysize );
  *
  * \return         0 if successful, or POLARSSL_ERR_AES_INVALID_KEY_LENGTH
  */
-int aes_setkey_dec( aes_context *ctx, unsigned char *key, int keysize );
+    int aes_setkey_dec (aes_context * ctx, unsigned char* key, int keysize);
 
 /**
  * \brief          AES-ECB block encryption/decryption
@@ -92,10 +93,9 @@ int aes_setkey_dec( aes_context *ctx, unsigned char *key, int keysize );
  * \param input    16-byte input block
  * \param output   16-byte output block
  */
-void aes_crypt_ecb( aes_context *ctx,
-                    int mode,
-                    unsigned char input[16],
-                    unsigned char output[16] );
+    void aes_crypt_ecb (aes_context * ctx,
+                        int mode,
+                        unsigned char input[16], unsigned char output[16]);
 
 /**
  * \brief          AES-CBC buffer encryption/decryption
@@ -109,12 +109,11 @@ void aes_crypt_ecb( aes_context *ctx,
  * \param input    buffer holding the input data
  * \param output   buffer holding the output data
  */
-void aes_crypt_cbc( aes_context *ctx,
-                    int mode,
-                    int length,
-                    unsigned char iv[16],
-                    unsigned char *input,
-                    unsigned char *output );
+    void aes_crypt_cbc (aes_context * ctx,
+                        int mode,
+                        int length,
+                        unsigned char iv[16],
+                        unsigned char* input, unsigned char* output);
 
 /**
  * \brief          AES-CFB128 buffer encryption/decryption.
@@ -127,20 +126,19 @@ void aes_crypt_cbc( aes_context *ctx,
  * \param input    buffer holding the input data
  * \param output   buffer holding the output data
  */
-void aes_crypt_cfb128( aes_context *ctx,
-                       int mode,
-                       int length,
-                       int *iv_off,
-                       unsigned char iv[16],
-                       unsigned char *input,
-                       unsigned char *output );
+    void aes_crypt_cfb128 (aes_context * ctx,
+                           int mode,
+                           int length,
+                           int* iv_off,
+                           unsigned char iv[16],
+                           unsigned char* input, unsigned char* output);
 
 /**
  * \brief          Checkup routine
  *
  * \return         0 if successful, or 1 if the test failed
  */
-int aes_self_test( int verbose );
+    int aes_self_test (int verbose);
 
 #ifdef __cplusplus
 }

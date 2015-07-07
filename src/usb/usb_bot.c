@@ -1,25 +1,26 @@
 /*
-* Author: Copyright (C) Rudolf Boeddeker 					Date: 2010-01-13
-*												STMicroelectronics	 			
-*												MCD Application Team			Date:	04/27/2009
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Author: Copyright (C) Rudolf Boeddeker                   Date: 2010-01-13
+ *                                              STMicroelectronics
+ *                                              MCD Application Team            Date:   04/27/2009
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes
+   ------------------------------------------------------------------ */
 #include "usb_scsi.h"
 #include "hw_config.h"
 #include "usb_regs.h"
@@ -27,21 +28,36 @@
 #include "usb_conf.h"
 #include "usb_bot.h"
 #include "memory.h"
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
+/* Private typedef
+   ----------------------------------------------------------- */
+/* Private define
+   ------------------------------------------------------------ */
+/* Private macro
+   ------------------------------------------------------------- */
+/* Private variables
+   --------------------------------------------------------- */
 uint8_t Bot_State;
-uint8_t Bulk_Data_Buff[BULK_MAX_PACKET_SIZE];  /* data buffer*/
+
+uint8_t Bulk_Data_Buff[BULK_MAX_PACKET_SIZE];   /* data buffer */
+
 uint16_t Data_Len;
+
 Bulk_Only_CBW CBW;
+
 Bulk_Only_CSW CSW;
-uint32_t SCSI_LBA , SCSI_BlkLen;
+
+uint32_t SCSI_LBA, SCSI_BlkLen;
+
 extern uint32_t Max_Lun;
-/* Extern variables ----------------------------------------------------------*/
-/* Private function prototypes -----------------------------------------------*/
-/* Extern function prototypes ------------------------------------------------*/
-/* Private functions ---------------------------------------------------------*/
+
+/* Extern variables
+   ---------------------------------------------------------- */
+/* Private function prototypes
+   ----------------------------------------------- */
+/* Extern function prototypes
+   ------------------------------------------------ */
+/* Private functions
+   --------------------------------------------------------- */
 
 /*******************************************************************************
 * Function Name  : Mass_Storage_In
@@ -52,7 +68,7 @@ extern uint32_t Max_Lun;
 *******************************************************************************/
 void Mass_Storage_In (void)
 {
- 
+
 }
 
 /*******************************************************************************
@@ -64,7 +80,7 @@ void Mass_Storage_In (void)
 *******************************************************************************/
 void Mass_Storage_Out (void)
 {
- 
+
 }
 
 /*******************************************************************************
@@ -75,9 +91,9 @@ void Mass_Storage_Out (void)
 * Output         : None.
 * Return         : None.
 *******************************************************************************/
-void CBW_Decode(void)
+void CBW_Decode (void)
 {
- 
+
 }
 
 /*******************************************************************************
@@ -88,15 +104,15 @@ void CBW_Decode(void)
 * Output         : None.
 * Return         : None.
 *******************************************************************************/
-void Transfer_Data_Request(uint8_t* Data_Pointer, uint16_t Data_Len_1)
+void Transfer_Data_Request (uint8_t * Data_Pointer, uint16_t Data_Len_1)
 {
-  UserToPMABufferCopy(Data_Pointer, ENDP1_TXADDR, Data_Len_1);
+    UserToPMABufferCopy (Data_Pointer, ENDP1_TXADDR, Data_Len_1);
 
-  SetEPTxCount (ENDP1, Data_Len_1);
-  SetEPTxStatus(ENDP1, EP_TX_VALID);
-  Bot_State = BOT_DATA_IN_LAST;
-  CSW.dDataResidue -= Data_Len_1;
-  CSW.bStatus = CSW_CMD_PASSED;
+    SetEPTxCount (ENDP1, Data_Len_1);
+    SetEPTxStatus (ENDP1, EP_TX_VALID);
+    Bot_State = BOT_DATA_IN_LAST;
+    CSW.dDataResidue -= Data_Len_1;
+    CSW.bStatus = CSW_CMD_PASSED;
 }
 
 /*******************************************************************************
@@ -109,18 +125,18 @@ void Transfer_Data_Request(uint8_t* Data_Pointer, uint16_t Data_Len_1)
 *******************************************************************************/
 void Set_CSW (uint8_t CSW_Status, uint8_t Send_Permission)
 {
-  CSW.dSignature = BOT_CSW_SIGNATURE;
-  CSW.bStatus = CSW_Status;
+    CSW.dSignature = BOT_CSW_SIGNATURE;
+    CSW.bStatus = CSW_Status;
 
-  UserToPMABufferCopy(((uint8_t *)& CSW), ENDP1_TXADDR, CSW_DATA_LENGTH);
+    UserToPMABufferCopy (((uint8_t *) & CSW), ENDP1_TXADDR, CSW_DATA_LENGTH);
 
-  SetEPTxCount(ENDP1, CSW_DATA_LENGTH);
-  Bot_State = BOT_ERROR;
-  if (Send_Permission)
-  {
-    Bot_State = BOT_CSW_Send;
-    SetEPTxStatus(ENDP1, EP_TX_VALID);
-  }
+    SetEPTxCount (ENDP1, CSW_DATA_LENGTH);
+    Bot_State = BOT_ERROR;
+    if (Send_Permission)
+    {
+        Bot_State = BOT_CSW_Send;
+        SetEPTxStatus (ENDP1, EP_TX_VALID);
+    }
 
 }
 
@@ -131,22 +147,21 @@ void Set_CSW (uint8_t CSW_Status, uint8_t Send_Permission)
 * Output         : None.
 * Return         : None.
 *******************************************************************************/
-void Bot_Abort(uint8_t Direction)
+void Bot_Abort (uint8_t Direction)
 {
-  switch (Direction)
-  {
-    case DIR_IN :
-      SetEPTxStatus(ENDP1, EP_TX_STALL);
-      break;
-    case DIR_OUT :
-      SetEPRxStatus(ENDP2, EP_RX_STALL);
-      break;
-    case BOTH_DIR :
-      SetEPTxStatus(ENDP1, EP_TX_STALL);
-      SetEPRxStatus(ENDP2, EP_RX_STALL);
-      break;
-    default:
-      break;
-  }
+    switch (Direction)
+    {
+        case DIR_IN:
+            SetEPTxStatus (ENDP1, EP_TX_STALL);
+            break;
+        case DIR_OUT:
+            SetEPRxStatus (ENDP2, EP_RX_STALL);
+            break;
+        case BOTH_DIR:
+            SetEPTxStatus (ENDP1, EP_TX_STALL);
+            SetEPRxStatus (ENDP2, EP_RX_STALL);
+            break;
+        default:
+            break;
+    }
 }
-

@@ -1,24 +1,25 @@
 /*
-* Author: Copyright (C) STMicroelectronics	 			
-*												MCD Application Team			Date:	04/06/2009
-*
-* This file is part of Nitrokey.
-*
-* Nitrokey is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* Nitrokey is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Author: Copyright (C) STMicroelectronics
+ *                                              MCD Application Team            Date:   04/06/2009
+ *
+ * This file is part of Nitrokey.
+ *
+ * Nitrokey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Nitrokey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes
+   ------------------------------------------------------------------ */
 #include "stm32f10x_bkp.h"
 #include "stm32f10x_rcc.h"
 
@@ -26,7 +27,7 @@
   * @{
   */
 
-/** @defgroup BKP 
+/** @defgroup BKP
   * @brief BKP driver modules
   * @{
   */
@@ -43,10 +44,11 @@
   * @{
   */
 
-/* ------------ BKP registers bit address in the alias region --------------- */
+/* ------------ BKP registers bit address in the alias region ---------------
+ */
 #define BKP_OFFSET        (BKP_BASE - PERIPH_BASE)
 
-/* --- CR Register ----*/
+/* --- CR Register ---- */
 
 /* Alias word address of TPAL bit */
 #define CR_OFFSET         (BKP_OFFSET + 0x30)
@@ -57,7 +59,7 @@
 #define TPE_BitNumber     0x00
 #define CR_TPE_BB         (PERIPH_BB_BASE + (CR_OFFSET * 32) + (TPE_BitNumber * 4))
 
-/* --- CSR Register ---*/
+/* --- CSR Register --- */
 
 /* Alias word address of TPIE bit */
 #define CSR_OFFSET        (BKP_OFFSET + 0x34)
@@ -84,7 +86,7 @@
 
 /**
   * @}
-  */ 
+  */
 
 
 /** @defgroup BKP_Private_Macros
@@ -121,10 +123,10 @@
   * @param  None
   * @retval : None
   */
-void BKP_DeInit(void)
+void BKP_DeInit (void)
 {
-  RCC_BackupResetCmd(ENABLE);
-  RCC_BackupResetCmd(DISABLE);
+    RCC_BackupResetCmd (ENABLE);
+    RCC_BackupResetCmd (DISABLE);
 }
 
 /**
@@ -135,11 +137,11 @@ void BKP_DeInit(void)
   * @arg BKP_TamperPinLevel_Low: Tamper pin active on low level
   * @retval : None
   */
-void BKP_TamperPinLevelConfig(uint16_t BKP_TamperPinLevel)
+void BKP_TamperPinLevelConfig (uint16_t BKP_TamperPinLevel)
 {
-  /* Check the parameters */
-  assert_param(IS_BKP_TAMPER_PIN_LEVEL(BKP_TamperPinLevel));
-  *(__IO uint32_t *) CR_TPAL_BB = BKP_TamperPinLevel;
+    /* Check the parameters */
+    assert_param (IS_BKP_TAMPER_PIN_LEVEL (BKP_TamperPinLevel));
+    *(__IO uint32_t *) CR_TPAL_BB = BKP_TamperPinLevel;
 }
 
 /**
@@ -148,11 +150,11 @@ void BKP_TamperPinLevelConfig(uint16_t BKP_TamperPinLevel)
   *   This parameter can be: ENABLE or DISABLE.
   * @retval : None
   */
-void BKP_TamperPinCmd(FunctionalState NewState)
+void BKP_TamperPinCmd (FunctionalState NewState)
 {
-  /* Check the parameters */
-  assert_param(IS_FUNCTIONAL_STATE(NewState));
-  *(__IO uint32_t *) CR_TPE_BB = (uint32_t)NewState;
+    /* Check the parameters */
+    assert_param (IS_FUNCTIONAL_STATE (NewState));
+    *(__IO uint32_t *) CR_TPE_BB = (uint32_t) NewState;
 }
 
 /**
@@ -161,11 +163,11 @@ void BKP_TamperPinCmd(FunctionalState NewState)
   *   This parameter can be: ENABLE or DISABLE.
   * @retval : None
   */
-void BKP_ITConfig(FunctionalState NewState)
+void BKP_ITConfig (FunctionalState NewState)
 {
-  /* Check the parameters */
-  assert_param(IS_FUNCTIONAL_STATE(NewState));
-  *(__IO uint32_t *) CSR_TPIE_BB = (uint32_t)NewState;
+    /* Check the parameters */
+    assert_param (IS_FUNCTIONAL_STATE (NewState));
+    *(__IO uint32_t *) CSR_TPIE_BB = (uint32_t) NewState;
 }
 
 /**
@@ -175,25 +177,26 @@ void BKP_ITConfig(FunctionalState NewState)
   * @arg BKP_RTCOutputSource_None: no RTC output on the Tamper pin.
   * @arg BKP_RTCOutputSource_CalibClock: output the RTC clock
   *   with frequency divided by 64 on the Tamper pin.
-  * @arg BKP_RTCOutputSource_Alarm: output the RTC Alarm pulse 
+  * @arg BKP_RTCOutputSource_Alarm: output the RTC Alarm pulse
   *   signal on the Tamper pin.
-  * @arg BKP_RTCOutputSource_Second: output the RTC Second pulse 
-  *   signal on the Tamper pin.  
+  * @arg BKP_RTCOutputSource_Second: output the RTC Second pulse
+  *   signal on the Tamper pin.
   * @retval : None
   */
-void BKP_RTCOutputConfig(uint16_t BKP_RTCOutputSource)
+void BKP_RTCOutputConfig (uint16_t BKP_RTCOutputSource)
 {
-  uint16_t tmpreg = 0;
-  /* Check the parameters */
-  assert_param(IS_BKP_RTC_OUTPUT_SOURCE(BKP_RTCOutputSource));
-  tmpreg = BKP->RTCCR;
-  /* Clear CCO, ASOE and ASOS bits */
-  tmpreg &= RTCCR_Mask;
-  
-  /* Set CCO, ASOE and ASOS bits according to BKP_RTCOutputSource value */
-  tmpreg |= BKP_RTCOutputSource;
-  /* Store the new value */
-  BKP->RTCCR = tmpreg;
+uint16_t tmpreg = 0;
+
+    /* Check the parameters */
+    assert_param (IS_BKP_RTC_OUTPUT_SOURCE (BKP_RTCOutputSource));
+    tmpreg = BKP->RTCCR;
+    /* Clear CCO, ASOE and ASOS bits */
+    tmpreg &= RTCCR_Mask;
+
+    /* Set CCO, ASOE and ASOS bits according to BKP_RTCOutputSource value */
+    tmpreg |= BKP_RTCOutputSource;
+    /* Store the new value */
+    BKP->RTCCR = tmpreg;
 }
 
 /**
@@ -202,18 +205,19 @@ void BKP_RTCOutputConfig(uint16_t BKP_RTCOutputSource)
   *   This parameter must be a number between 0 and 0x7F.
   * @retval : None
   */
-void BKP_SetRTCCalibrationValue(uint8_t CalibrationValue)
+void BKP_SetRTCCalibrationValue (uint8_t CalibrationValue)
 {
-  uint16_t tmpreg = 0;
-  /* Check the parameters */
-  assert_param(IS_BKP_CALIBRATION_VALUE(CalibrationValue));
-  tmpreg = BKP->RTCCR;
-  /* Clear CAL[6:0] bits */
-  tmpreg &= RTCCR_CAL_Mask;
-  /* Set CAL[6:0] bits according to CalibrationValue value */
-  tmpreg |= CalibrationValue;
-  /* Store the new value */
-  BKP->RTCCR = tmpreg;
+uint16_t tmpreg = 0;
+
+    /* Check the parameters */
+    assert_param (IS_BKP_CALIBRATION_VALUE (CalibrationValue));
+    tmpreg = BKP->RTCCR;
+    /* Clear CAL[6:0] bits */
+    tmpreg &= RTCCR_CAL_Mask;
+    /* Set CAL[6:0] bits according to CalibrationValue value */
+    tmpreg |= CalibrationValue;
+    /* Store the new value */
+    BKP->RTCCR = tmpreg;
 }
 
 /**
@@ -223,11 +227,11 @@ void BKP_SetRTCCalibrationValue(uint8_t CalibrationValue)
   * @param Data: data to write
   * @retval : None
   */
-void BKP_WriteBackupRegister(uint16_t BKP_DR, uint16_t Data)
+void BKP_WriteBackupRegister (uint16_t BKP_DR, uint16_t Data)
 {
-  /* Check the parameters */
-  assert_param(IS_BKP_DR(BKP_DR));
-  *(__IO uint16_t *) (BKP_BASE + BKP_DR) = Data;
+    /* Check the parameters */
+    assert_param (IS_BKP_DR (BKP_DR));
+    *(__IO uint16_t *) (BKP_BASE + BKP_DR) = Data;
 }
 
 /**
@@ -236,11 +240,11 @@ void BKP_WriteBackupRegister(uint16_t BKP_DR, uint16_t Data)
   *   This parameter can be BKP_DRx where x:[1, 42]
   * @retval : The content of the specified Data Backup Register
   */
-uint16_t BKP_ReadBackupRegister(uint16_t BKP_DR)
+uint16_t BKP_ReadBackupRegister (uint16_t BKP_DR)
 {
-  /* Check the parameters */
-  assert_param(IS_BKP_DR(BKP_DR));
-  return (*(__IO uint16_t *) (BKP_BASE + BKP_DR));
+    /* Check the parameters */
+    assert_param (IS_BKP_DR (BKP_DR));
+    return (*(__IO uint16_t *) (BKP_BASE + BKP_DR));
 }
 
 /**
@@ -248,9 +252,9 @@ uint16_t BKP_ReadBackupRegister(uint16_t BKP_DR)
   * @param  None
   * @retval : The new state of the Tamper Pin Event flag (SET or RESET).
   */
-FlagStatus BKP_GetFlagStatus(void)
+FlagStatus BKP_GetFlagStatus (void)
 {
-  return (FlagStatus)(*(__IO uint32_t *) CSR_TEF_BB);
+    return (FlagStatus) (*(__IO uint32_t *) CSR_TEF_BB);
 }
 
 /**
@@ -258,10 +262,10 @@ FlagStatus BKP_GetFlagStatus(void)
   * @param  None
   * @retval : None
   */
-void BKP_ClearFlag(void)
+void BKP_ClearFlag (void)
 {
-  /* Set CTE bit to clear Tamper Pin Event flag */
-  BKP->CSR |= CSR_CTE_Set;
+    /* Set CTE bit to clear Tamper Pin Event flag */
+    BKP->CSR |= CSR_CTE_Set;
 }
 
 /**
@@ -269,9 +273,9 @@ void BKP_ClearFlag(void)
   * @param  None
   * @retval : The new state of the Tamper Pin Interrupt (SET or RESET).
   */
-ITStatus BKP_GetITStatus(void)
+ITStatus BKP_GetITStatus (void)
 {
-  return (ITStatus)(*(__IO uint32_t *) CSR_TIF_BB);
+    return (ITStatus) (*(__IO uint32_t *) CSR_TIF_BB);
 }
 
 /**
@@ -279,10 +283,10 @@ ITStatus BKP_GetITStatus(void)
   * @param  None
   * @retval : None
   */
-void BKP_ClearITPendingBit(void)
+void BKP_ClearITPendingBit (void)
 {
-  /* Set CTI bit to clear Tamper Pin Interrupt pending bit */
-  BKP->CSR |= CSR_CTI_Set;
+    /* Set CTI bit to clear Tamper Pin Interrupt pending bit */
+    BKP->CSR |= CSR_CTI_Set;
 }
 
 /**
@@ -296,5 +300,3 @@ void BKP_ClearITPendingBit(void)
 /**
   * @}
   */
-
-
