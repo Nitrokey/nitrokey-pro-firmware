@@ -477,12 +477,6 @@ unsigned short CcidPutAesKey(unsigned int cKeyLen, unsigned char *pcAES_Key)
     return (FALSE);
   }
 
-  if (FALSE == RestartSmartcard() )
-  {
-    return (FALSE);
-  }
-
-
   // Command
   tSCT.cAPDU[CCID_CLA]     = 0x00;
   tSCT.cAPDU[CCID_INS]     = 0xDA;
@@ -1102,22 +1096,16 @@ uint8_t sendAESMasterKey (int nLen, unsigned char *pcMasterKey)
 {
   unsigned int nRet;
 
-  ////CI_LocalPrintf ("Put AES master key     : ");
-  //HexPrint (nLen,pcMasterKey);
-  ////CI_LocalPrintf ("\r\n");
-
   nRet = CcidPutAesKey (nLen, pcMasterKey);
   if (FALSE == nRet)
   {
-    ////CI_LocalPrintf ("fail\n\r");
     return (FALSE);
   }
 
-  ////CI_LocalPrintf ("OK \n\r");
   if (APDU_ANSWER_COMMAND_CORRECT == nRet)
       return (TRUE);
   else
-      return nRet; //(FALSE);
+      return (FALSE);
 }
 
 uint8_t testScAesKey (int nLen, unsigned char *pcKey)
@@ -1125,13 +1113,8 @@ uint8_t testScAesKey (int nLen, unsigned char *pcKey)
     int nRet;
     unsigned char acBufferOut[32];
 
-    //CI_LocalPrintf ("Encrypted AES key  : ");
-    // HexPrint (nLen,pcKey);
-    //CI_LocalPrintf ("\r\n");
-
     if (32 < nLen)
     {
-        //CI_LocalPrintf ("len fail\n\r");
         return (FALSE);
     }
 

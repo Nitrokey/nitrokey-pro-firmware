@@ -930,23 +930,28 @@ uint8_t cmd_detectSmartCardAES(uint8_t *report, uint8_t *output)
 uint8_t cmd_newAesKey(uint8_t* report, uint8_t* output)
 {
     u32 ret;
-/*
+
     unsigned char admin_password[26];
     memset(admin_password, 0, 26);
     memcpy(admin_password, report+1, 25);
-*/
+
     ret = BuildPasswordSafeKey_u32();
     if (TRUE == ret)
         output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
     else
+    {
         output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_AES_CREATE_KEY_FAILED;
+        return 0;
+    }
 
-    return 0;
-/*
-    ret = BuildStorageKeys_u32 (admin_password);
+    // ret = sendAESMasterKey (AES_KEYSIZE_256_BIT, MasterKey_pu8);
+    #define AES_KEYSIZE_256_BIT     32        // 32 * 8 = 256
+    u8  MasterKey_au8[AES_KEYSIZE_256_BIT];
+    ret = BuildNewAesMasterKey_u32(admin_password, MasterKey_au8);
+    //ret = BuildStorageKeys_u32 (admin_password);
     output[OUTPUT_CMD_STATUS_OFFSET] = ret;
     return (0);
-*/
+
 }
 
 

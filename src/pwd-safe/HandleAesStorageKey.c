@@ -188,7 +188,6 @@ u32 BuildNewAesStorageKey_u32 (u8 *MasterKey_pu8)
 u32 BuildNewAesMasterKey_u32 (u8 *AdminPW_pu8,u8 *MasterKey_pu8)
 {
     RestartSmartcard ();
-    // LA_RestartSmartcard_u8 ();
 
     // Wait for next smartcard cmd
     DelayMs (10);
@@ -209,10 +208,9 @@ u32 BuildNewAesMasterKey_u32 (u8 *AdminPW_pu8,u8 *MasterKey_pu8)
     DelayMs (10);
 
     // Unlock smartcard for sending master key
-    // if (FALSE == LA_OpenPGP_V20_Test_SendAdminPW (AdminPW_pu8))
     if (FALSE == cardAuthenticate (AdminPW_pu8))
     {
-        return (FALSE);
+        return CMD_STATUS_WRONG_PASSWORD;
     }
 
     // Wait for next smartcard cmd
@@ -222,14 +220,12 @@ u32 BuildNewAesMasterKey_u32 (u8 *AdminPW_pu8,u8 *MasterKey_pu8)
     int ret = sendAESMasterKey (AES_KEYSIZE_256_BIT, MasterKey_pu8);
     if (TRUE != ret)
     {
-      return (FALSE);
+      return CMD_STATUS_AES_CREATE_KEY_FAILED;
     }
 
-    RestartSmartcard();
+    // ClearStickKeysNotInitatedToFlash ();
 
-    ClearStickKeysNotInitatedToFlash ();
-
-    return (TRUE);
+    return (CMD_STATUS_OK);
 }
 
 
@@ -343,22 +339,17 @@ u32 BuildStorageKeys_u32 (u8 *AdminPW_pu8)
   u32 Ret_u32;
   u8  MasterKey_au8[AES_KEYSIZE_256_BIT];
 
-// Check admin password
-  // Unlock smartcard for sending master key
-  // if (FALSE == LA_OpenPGP_V20_Test_SendAdminPW (AdminPW_pu8))
   if (FALSE == cardAuthenticate (AdminPW_pu8))
   {
-#ifdef LOCAL_DEBUG
-  //CI_TickLocalPrintf ("AdminPW wrong\r\n");
-#endif
     return CMD_STATUS_WRONG_PASSWORD;
   }
 
-  Ret_u32 = EraseLocalFlashKeyValues_u32 ();
+/*  Ret_u32 = EraseLocalFlashKeyValues_u32 ();
   if (FALSE == Ret_u32)
   {
     return CMD_STATUS_AES_CREATE_KEY_FAILED;
   }
+*/
 
   Ret_u32 = BuildNewXorPattern_u32 ();
   if (FALSE == Ret_u32)
