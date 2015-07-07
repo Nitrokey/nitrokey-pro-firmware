@@ -81,9 +81,8 @@
 #define CMD_STATUS_ERROR_UNBLOCKING_PIN             14
 
 /*
-   Output report size offset description 1 0 device status 1 1 last command's
-   type 4 2 last command's CRC 1 6 last command's status 53 7 last command's
-   output 4 60 this report's CRC (with device status equal 0) */
+   Output report size offset description 1 0 device status 1 1 last command's type 4 2 last command's CRC 1 6 last command's status 53 7 last
+   command's output 4 60 this report's CRC (with device status equal 0) */
 
 #define OUTPUT_CMD_TYPE_OFFSET      1
 #define OUTPUT_CMD_CRC_OFFSET       2
@@ -99,8 +98,7 @@
 /*
    CMD_WRITE_TO_SLOT
 
-   1b command type 1b slot number 15b slot name 20b secret 1b configuration
-   flags 12b token id 1b keyboard layout 8b counter */
+   1b command type 1b slot number 15b slot name 20b secret 1b configuration flags 12b token id 1b keyboard layout 8b counter */
 
 #define CMD_WTS_SLOT_NUMBER_OFFSET    1
 #define CMD_WTS_SLOT_NAME_OFFSET      2
@@ -143,8 +141,7 @@
 /*
    CMD_WRITE_CONFIG
 
-   report: 1b command type 1b Numlock slot 1b Capslock slot 1b Scrolllock
-   slot
+   report: 1b command type 1b Numlock slot 1b Capslock slot 1b Scrolllock slot
 
    output:
 
@@ -206,8 +203,7 @@ uint8_t cmd_user_authorize (uint8_t * report, uint8_t * output);
 
 uint8_t cmd_factory_reset (uint8_t * report, uint8_t * output);
 
-uint8_t cmd_get_user_password_retry_count (uint8_t * report,
-                                           uint8_t * output);
+uint8_t cmd_get_user_password_retry_count (uint8_t * report, uint8_t * output);
 uint8_t cmd_set_time (uint8_t * report, uint8_t * output);
 
 uint8_t cmd_getPasswordSafeStatus (uint8_t * report, uint8_t * output);
@@ -247,6 +243,5 @@ uint8_t cmd_getProDebug (uint8_t * report, uint8_t * output);
 
 // START - OTP Test Routine --------------------------------
 /*
-   uint8_t cmd_test_counter(uint8_t *report,uint8_t *output); uint8_t
-   cmd_test_time(uint8_t *report,uint8_t *output); */
+   uint8_t cmd_test_counter(uint8_t *report,uint8_t *output); uint8_t cmd_test_time(uint8_t *report,uint8_t *output); */
 // END - OTP Test Routine ----------------------------------

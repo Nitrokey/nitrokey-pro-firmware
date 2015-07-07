@@ -433,9 +433,7 @@ static void aes_gen_tables (void)
         y = XTIME (x) & 0xFF;
         z = (y ^ x) & 0xFF;
 
-        FT0[i] = ((unsigned long) y) ^
-            ((unsigned long) x << 8) ^
-            ((unsigned long) x << 16) ^ ((unsigned long) z << 24);
+        FT0[i] = ((unsigned long) y) ^ ((unsigned long) x << 8) ^ ((unsigned long) x << 16) ^ ((unsigned long) z << 24);
 
         FT1[i] = ROTL8 (FT0[i]);
         FT2[i] = ROTL8 (FT1[i]);
@@ -444,9 +442,7 @@ static void aes_gen_tables (void)
         x = RSb[i];
 
         RT0[i] = ((unsigned long) MUL (0x0E, x)) ^
-            ((unsigned long) MUL (0x09, x) << 8) ^
-            ((unsigned long) MUL (0x0D, x) << 16) ^
-            ((unsigned long) MUL (0x0B, x) << 24);
+            ((unsigned long) MUL (0x09, x) << 8) ^ ((unsigned long) MUL (0x0D, x) << 16) ^ ((unsigned long) MUL (0x0B, x) << 24);
 
         RT1[i] = ROTL8 (RT0[i]);
         RT2[i] = ROTL8 (RT1[i]);
@@ -508,8 +504,7 @@ int aes_setkey_enc (aes_context * ctx, unsigned char* key, int keysize)
                 RK[4] = RK[0] ^ RCON[i] ^
                     ((unsigned long) FSb[(RK[3] >> 8) & 0xFF]) ^
                     ((unsigned long) FSb[(RK[3] >> 16) & 0xFF] << 8) ^
-                    ((unsigned long) FSb[(RK[3] >> 24) & 0xFF] << 16) ^
-                    ((unsigned long) FSb[(RK[3]) & 0xFF] << 24);
+                    ((unsigned long) FSb[(RK[3] >> 24) & 0xFF] << 16) ^ ((unsigned long) FSb[(RK[3]) & 0xFF] << 24);
 
                 RK[5] = RK[1] ^ RK[4];
                 RK[6] = RK[2] ^ RK[5];
@@ -524,8 +519,7 @@ int aes_setkey_enc (aes_context * ctx, unsigned char* key, int keysize)
                 RK[6] = RK[0] ^ RCON[i] ^
                     ((unsigned long) FSb[(RK[5] >> 8) & 0xFF]) ^
                     ((unsigned long) FSb[(RK[5] >> 16) & 0xFF] << 8) ^
-                    ((unsigned long) FSb[(RK[5] >> 24) & 0xFF] << 16) ^
-                    ((unsigned long) FSb[(RK[5]) & 0xFF] << 24);
+                    ((unsigned long) FSb[(RK[5] >> 24) & 0xFF] << 16) ^ ((unsigned long) FSb[(RK[5]) & 0xFF] << 24);
 
                 RK[7] = RK[1] ^ RK[6];
                 RK[8] = RK[2] ^ RK[7];
@@ -542,8 +536,7 @@ int aes_setkey_enc (aes_context * ctx, unsigned char* key, int keysize)
                 RK[8] = RK[0] ^ RCON[i] ^
                     ((unsigned long) FSb[(RK[7] >> 8) & 0xFF]) ^
                     ((unsigned long) FSb[(RK[7] >> 16) & 0xFF] << 8) ^
-                    ((unsigned long) FSb[(RK[7] >> 24) & 0xFF] << 16) ^
-                    ((unsigned long) FSb[(RK[7]) & 0xFF] << 24);
+                    ((unsigned long) FSb[(RK[7] >> 24) & 0xFF] << 16) ^ ((unsigned long) FSb[(RK[7]) & 0xFF] << 24);
 
                 RK[9] = RK[1] ^ RK[8];
                 RK[10] = RK[2] ^ RK[9];
@@ -552,8 +545,7 @@ int aes_setkey_enc (aes_context * ctx, unsigned char* key, int keysize)
                 RK[12] = RK[4] ^
                     ((unsigned long) FSb[(RK[11]) & 0xFF]) ^
                     ((unsigned long) FSb[(RK[11] >> 8) & 0xFF] << 8) ^
-                    ((unsigned long) FSb[(RK[11] >> 16) & 0xFF] << 16) ^
-                    ((unsigned long) FSb[(RK[11] >> 24) & 0xFF] << 24);
+                    ((unsigned long) FSb[(RK[11] >> 16) & 0xFF] << 16) ^ ((unsigned long) FSb[(RK[11] >> 24) & 0xFF] << 24);
 
                 RK[13] = RK[5] ^ RK[12];
                 RK[14] = RK[6] ^ RK[13];
@@ -620,9 +612,7 @@ int aes_setkey_dec (aes_context * ctx, unsigned char* key, int keysize)
     {
         for (j = 0; j < 4; j++, SK++)
         {
-            *RK++ = RT0[FSb[(*SK) & 0xFF]] ^
-                RT1[FSb[(*SK >> 8) & 0xFF]] ^
-                RT2[FSb[(*SK >> 16) & 0xFF]] ^ RT3[FSb[(*SK >> 24) & 0xFF]];
+            *RK++ = RT0[FSb[(*SK) & 0xFF]] ^ RT1[FSb[(*SK >> 8) & 0xFF]] ^ RT2[FSb[(*SK >> 16) & 0xFF]] ^ RT3[FSb[(*SK >> 24) & 0xFF]];
         }
     }
 
@@ -685,9 +675,7 @@ int aes_setkey_dec (aes_context * ctx, unsigned char* key, int keysize)
 /*
  * AES-ECB block encryption/decryption
  */
-void aes_crypt_ecb (aes_context * ctx,
-                    int mode,
-                    unsigned char input[16], unsigned char output[16])
+void aes_crypt_ecb (aes_context * ctx, int mode, unsigned char input[16], unsigned char output[16])
 {
     int i;
 
@@ -725,26 +713,22 @@ void aes_crypt_ecb (aes_context * ctx,
         X0 = *RK++ ^
             ((unsigned long) RSb[(Y0) & 0xFF]) ^
             ((unsigned long) RSb[(Y3 >> 8) & 0xFF] << 8) ^
-            ((unsigned long) RSb[(Y2 >> 16) & 0xFF] << 16) ^
-            ((unsigned long) RSb[(Y1 >> 24) & 0xFF] << 24);
+            ((unsigned long) RSb[(Y2 >> 16) & 0xFF] << 16) ^ ((unsigned long) RSb[(Y1 >> 24) & 0xFF] << 24);
 
         X1 = *RK++ ^
             ((unsigned long) RSb[(Y1) & 0xFF]) ^
             ((unsigned long) RSb[(Y0 >> 8) & 0xFF] << 8) ^
-            ((unsigned long) RSb[(Y3 >> 16) & 0xFF] << 16) ^
-            ((unsigned long) RSb[(Y2 >> 24) & 0xFF] << 24);
+            ((unsigned long) RSb[(Y3 >> 16) & 0xFF] << 16) ^ ((unsigned long) RSb[(Y2 >> 24) & 0xFF] << 24);
 
         X2 = *RK++ ^
             ((unsigned long) RSb[(Y2) & 0xFF]) ^
             ((unsigned long) RSb[(Y1 >> 8) & 0xFF] << 8) ^
-            ((unsigned long) RSb[(Y0 >> 16) & 0xFF] << 16) ^
-            ((unsigned long) RSb[(Y3 >> 24) & 0xFF] << 24);
+            ((unsigned long) RSb[(Y0 >> 16) & 0xFF] << 16) ^ ((unsigned long) RSb[(Y3 >> 24) & 0xFF] << 24);
 
         X3 = *RK++ ^
             ((unsigned long) RSb[(Y3) & 0xFF]) ^
             ((unsigned long) RSb[(Y2 >> 8) & 0xFF] << 8) ^
-            ((unsigned long) RSb[(Y1 >> 16) & 0xFF] << 16) ^
-            ((unsigned long) RSb[(Y0 >> 24) & 0xFF] << 24);
+            ((unsigned long) RSb[(Y1 >> 16) & 0xFF] << 16) ^ ((unsigned long) RSb[(Y0 >> 24) & 0xFF] << 24);
     }
     else    /* AES_ENCRYPT */
     {
@@ -759,26 +743,22 @@ void aes_crypt_ecb (aes_context * ctx,
         X0 = *RK++ ^
             ((unsigned long) FSb[(Y0) & 0xFF]) ^
             ((unsigned long) FSb[(Y1 >> 8) & 0xFF] << 8) ^
-            ((unsigned long) FSb[(Y2 >> 16) & 0xFF] << 16) ^
-            ((unsigned long) FSb[(Y3 >> 24) & 0xFF] << 24);
+            ((unsigned long) FSb[(Y2 >> 16) & 0xFF] << 16) ^ ((unsigned long) FSb[(Y3 >> 24) & 0xFF] << 24);
 
         X1 = *RK++ ^
             ((unsigned long) FSb[(Y1) & 0xFF]) ^
             ((unsigned long) FSb[(Y2 >> 8) & 0xFF] << 8) ^
-            ((unsigned long) FSb[(Y3 >> 16) & 0xFF] << 16) ^
-            ((unsigned long) FSb[(Y0 >> 24) & 0xFF] << 24);
+            ((unsigned long) FSb[(Y3 >> 16) & 0xFF] << 16) ^ ((unsigned long) FSb[(Y0 >> 24) & 0xFF] << 24);
 
         X2 = *RK++ ^
             ((unsigned long) FSb[(Y2) & 0xFF]) ^
             ((unsigned long) FSb[(Y3 >> 8) & 0xFF] << 8) ^
-            ((unsigned long) FSb[(Y0 >> 16) & 0xFF] << 16) ^
-            ((unsigned long) FSb[(Y1 >> 24) & 0xFF] << 24);
+            ((unsigned long) FSb[(Y0 >> 16) & 0xFF] << 16) ^ ((unsigned long) FSb[(Y1 >> 24) & 0xFF] << 24);
 
         X3 = *RK++ ^
             ((unsigned long) FSb[(Y3) & 0xFF]) ^
             ((unsigned long) FSb[(Y0 >> 8) & 0xFF] << 8) ^
-            ((unsigned long) FSb[(Y1 >> 16) & 0xFF] << 16) ^
-            ((unsigned long) FSb[(Y2 >> 24) & 0xFF] << 24);
+            ((unsigned long) FSb[(Y1 >> 16) & 0xFF] << 16) ^ ((unsigned long) FSb[(Y2 >> 24) & 0xFF] << 24);
     }
 
     PUT_ULONG_LE (X0, output, 0);
@@ -790,11 +770,7 @@ void aes_crypt_ecb (aes_context * ctx,
 /*
  * AES-CBC buffer encryption/decryption
  */
-void aes_crypt_cbc (aes_context * ctx,
-                    int mode,
-                    int length,
-                    unsigned char iv[16],
-                    unsigned char* input, unsigned char* output)
+void aes_crypt_cbc (aes_context * ctx, int mode, int length, unsigned char iv[16], unsigned char* input, unsigned char* output)
 {
     int i;
 
@@ -845,12 +821,7 @@ void aes_crypt_cbc (aes_context * ctx,
 /*
  * AES-CFB128 buffer encryption/decryption
  */
-void aes_crypt_cfb128 (aes_context * ctx,
-                       int mode,
-                       int length,
-                       int* iv_off,
-                       unsigned char iv[16],
-                       unsigned char* input, unsigned char* output)
+void aes_crypt_cfb128 (aes_context * ctx, int mode, int length, int* iv_off, unsigned char iv[16], unsigned char* input, unsigned char* output)
 {
     int c, n = *iv_off;
 
@@ -1017,8 +988,7 @@ int aes_self_test (int verbose)
         v = i & 1;
 
         if (verbose != 0)
-            printf ("  AES-ECB-%3d (%s): ", 128 + u * 64,
-                    (v == AES_DECRYPT) ? "dec" : "enc");
+            printf ("  AES-ECB-%3d (%s): ", 128 + u * 64, (v == AES_DECRYPT) ? "dec" : "enc");
 
         memset (buf, 0, 16);
 
@@ -1069,8 +1039,7 @@ int aes_self_test (int verbose)
         v = i & 1;
 
         if (verbose != 0)
-            printf ("  AES-CBC-%3d (%s): ", 128 + u * 64,
-                    (v == AES_DECRYPT) ? "dec" : "enc");
+            printf ("  AES-CBC-%3d (%s): ", 128 + u * 64, (v == AES_DECRYPT) ? "dec" : "enc");
 
         memset (iv, 0, 16);
         memset (prv, 0, 16);
@@ -1131,8 +1100,7 @@ int aes_self_test (int verbose)
         v = i & 1;
 
         if (verbose != 0)
-            printf ("  AES-CFB128-%3d (%s): ", 128 + u * 64,
-                    (v == AES_DECRYPT) ? "dec" : "enc");
+            printf ("  AES-CFB128-%3d (%s): ", 128 + u * 64, (v == AES_DECRYPT) ? "dec" : "enc");
 
         memcpy (iv, aes_test_cfb128_iv, 16);
         memcpy (key, aes_test_cfb128_key[u], 16 + u * 8);

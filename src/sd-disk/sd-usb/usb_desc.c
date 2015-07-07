@@ -122,12 +122,11 @@ const uint8_t MASS_StringProduct[MASS_SIZ_STRING_PRODUCT] = {
 uint8_t MASS_StringSerial[MASS_SIZ_STRING_SERIAL] = {
     MASS_SIZ_STRING_SERIAL,
     0x03,
-    /* Serial number " " - (3 * 8 Byte defined in sourcecode)* 2 + 2 = 50
-       byte */
+    /* Serial number " " - (3 * 8 Byte defined in sourcecode)* 2 + 2 = 50 byte */
     ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0,
-        ' ', 0,
+    ' ', 0,
     ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0,
-        ' ', 0,
+    ' ', 0,
     ' ', 0, ' ', 0, ' ', 0, ' ', 0
 };
 
@@ -136,6 +135,6 @@ const uint8_t MASS_StringInterface[MASS_SIZ_STRING_INTERFACE] = {
     0x03,
     /* Interface 0: "Nitrokey SD" - 11 * 2 + 2 = 24 byte */
     'C', 0, 'r', 0, 'y', 0, 'p', 0, 't', 0, 'o', 0, 'S', 0, 't', 0, 'i', 0,
-        'c', 0,
+    'c', 0,
     'k', 0, ' ', 0, 'S', 0, 'D'
 };

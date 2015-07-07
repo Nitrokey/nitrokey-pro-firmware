@@ -19,22 +19,17 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 #include "usb_lib.h"
 #include "usb_conf.h"
 #include "usb_pwr.h"
 #include "hw_config.h"
 
-/* Private typedef
-   ----------------------------------------------------------- */
-/* Private define
-   ------------------------------------------------------------ */
-/* Private macro
-   ------------------------------------------------------------- */
-/* Private variables
-   --------------------------------------------------------- */
+/* Private typedef ----------------------------------------------------------- */
+/* Private define ------------------------------------------------------------ */
+/* Private macro ------------------------------------------------------------- */
+/* Private variables --------------------------------------------------------- */
 __IO uint32_t bDeviceState = UNCONNECTED;   /* USB device status */
 
 __IO bool fSuspendEnabled = TRUE;   /* true when suspend is possible */
@@ -46,14 +41,10 @@ struct
 }
 ResumeS;
 
-/* Extern variables
-   ---------------------------------------------------------- */
-/* Private function prototypes
-   ----------------------------------------------- */
-/* Extern function prototypes
-   ------------------------------------------------ */
-/* Private functions
-   --------------------------------------------------------- */
+/* Extern variables ---------------------------------------------------------- */
+/* Private function prototypes ----------------------------------------------- */
+/* Extern function prototypes ------------------------------------------------ */
+/* Private functions --------------------------------------------------------- */
 
 /*******************************************************************************
 * Function Name  : PowerOn
@@ -128,8 +119,7 @@ void Suspend (void)
     wCNTR |= CNTR_FSUSP;
     _SetCNTR (wCNTR);
 
-    /* ------------------ ONLY WITH BUS-POWERED DEVICES
-       ---------------------- */
+    /* ------------------ ONLY WITH BUS-POWERED DEVICES ---------------------- */
     /* power reduction */
     /* ... on connected devices */
 
@@ -156,8 +146,7 @@ void Resume_Init (void)
 {
     uint16_t wCNTR;
 
-    /* ------------------ ONLY WITH BUS-POWERED DEVICES
-       ---------------------- */
+    /* ------------------ ONLY WITH BUS-POWERED DEVICES ---------------------- */
     /* restart the clocks */
     /* ...  */
 

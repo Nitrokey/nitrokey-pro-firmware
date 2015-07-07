@@ -18,8 +18,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x_dbgmcu.h"
 
 /** @addtogroup StdPeriph_Driver

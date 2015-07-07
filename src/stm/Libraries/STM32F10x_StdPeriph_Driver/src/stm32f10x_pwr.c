@@ -18,8 +18,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x_pwr.h"
 #include "stm32f10x_rcc.h"
 
@@ -215,8 +214,7 @@ uint32_t tmpreg = 0;
     assert_param (IS_PWR_REGULATOR (PWR_Regulator));
     assert_param (IS_PWR_STOP_ENTRY (PWR_STOPEntry));
 
-    /* Select the regulator state in STOP mode
-       --------------------------------- */
+    /* Select the regulator state in STOP mode --------------------------------- */
     tmpreg = PWR->CR;
     /* Clear PDDS and LPDS bits */
     tmpreg &= CR_DS_Mask;
@@ -227,8 +225,7 @@ uint32_t tmpreg = 0;
     /* Set SLEEPDEEP bit of Cortex System Control Register */
     *(__IO uint32_t *) SCB_SysCtrl |= SysCtrl_SLEEPDEEP_Set;
 
-    /* Select STOP mode entry
-       -------------------------------------------------- */
+    /* Select STOP mode entry -------------------------------------------------- */
     if (PWR_STOPEntry == PWR_STOPEntry_WFI)
     {
         /* Request Wait For Interrupt */

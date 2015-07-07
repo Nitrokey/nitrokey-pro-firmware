@@ -18,18 +18,14 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __USB_SCSI_H
 #define __USB_SCSI_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
-/* Exported types
-   ------------------------------------------------------------ */
-/* Exported constants
-   -------------------------------------------------------- */
+/* Exported types ------------------------------------------------------------ */
+/* Exported constants -------------------------------------------------------- */
 
 /* SCSI Commands */
 #define SCSI_FORMAT_UNIT                            0x04
@@ -112,10 +108,8 @@ extern uint8_t ReadCapacity10_Data[];
 
 extern uint8_t ReadFormatCapacity_Data[];
 
-/* Exported macro
-   ------------------------------------------------------------ */
-/* Exported functions -------------------------------------------------------
- */
+/* Exported macro ------------------------------------------------------------ */
+/* Exported functions ------------------------------------------------------- */
 void SCSI_Inquiry_Cmd (uint8_t lun);
 
 void SCSI_ReadFormatCapacity_Cmd (uint8_t lun);
@@ -140,8 +134,7 @@ void SCSI_Invalid_Cmd (uint8_t lun);
 
 void SCSI_Valid_Cmd (uint8_t lun);
 
-bool SCSI_Address_Management (uint8_t lun, uint8_t Cmd, uint32_t LBA,
-                              uint32_t BlockNbr);
+bool SCSI_Address_Management (uint8_t lun, uint8_t Cmd, uint32_t LBA, uint32_t BlockNbr);
 
 void Set_Scsi_Sense_Data (uint8_t lun, uint8_t Sens_Key, uint8_t Asc);
 

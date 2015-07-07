@@ -32,10 +32,8 @@
 
 
 /*
-   slot structure: 1b 0x01 if slot is used (programmed) 15b slot name 20b
-   secret 1b configuration flags: MSB [x|x|x|x|x|send token id|send enter
-   after code?|no. of digits 6/8] LSB 12b token id 1b keyboard layout 2b TOTP
-   interval value
+   slot structure: 1b 0x01 if slot is used (programmed) 15b slot name 20b secret 1b configuration flags: MSB [x|x|x|x|x|send token id|send enter
+   after code?|no. of digits 6/8] LSB 12b token id 1b keyboard layout 2b TOTP interval value
 
  */
 
@@ -46,8 +44,7 @@
 /*
    global config slot:
 
-   1b slot sent after numlock 1b slot sent after caps lock 1b slot sent
-   after scroll lock
+   1b slot sent after numlock 1b slot sent after caps lock 1b slot sent after scroll lock
 
  */
 
@@ -119,8 +116,7 @@ void erase_counter (uint8_t slot);
 
 void write_data_to_flash (uint8_t * data, uint16_t len, uint32_t addr);
 
-uint32_t get_hotp_value (uint64_t counter, uint8_t * secret,
-                         uint8_t secret_length, uint8_t len);
+uint32_t get_hotp_value (uint64_t counter, uint8_t * secret, uint8_t secret_length, uint8_t len);
 uint64_t get_counter_value (uint32_t addr);
 
 uint32_t get_time_value (void);

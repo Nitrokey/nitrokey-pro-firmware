@@ -18,13 +18,11 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __STM32F10x_EXTI_H
 #define __STM32F10x_EXTI_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -99,28 +97,15 @@ typedef struct
 #define EXTI_Line7       ((uint32_t)0x00080)    /* External interrupt line 7 */
 #define EXTI_Line8       ((uint32_t)0x00100)    /* External interrupt line 8 */
 #define EXTI_Line9       ((uint32_t)0x00200)    /* External interrupt line 9 */
-#define EXTI_Line10      ((uint32_t)0x00400)    /* External interrupt line 10
-                                                 */
-#define EXTI_Line11      ((uint32_t)0x00800)    /* External interrupt line 11
-                                                 */
-#define EXTI_Line12      ((uint32_t)0x01000)    /* External interrupt line 12
-                                                 */
-#define EXTI_Line13      ((uint32_t)0x02000)    /* External interrupt line 13
-                                                 */
-#define EXTI_Line14      ((uint32_t)0x04000)    /* External interrupt line 14
-                                                 */
-#define EXTI_Line15      ((uint32_t)0x08000)    /* External interrupt line 15
-                                                 */
-#define EXTI_Line16      ((uint32_t)0x10000)    /* External interrupt line 16
-                                                   Connected to the PVD Output
-                                                 */
-#define EXTI_Line17      ((uint32_t)0x20000)    /* External interrupt line 17
-                                                   Connected to the RTC Alarm
-                                                   event */
-#define EXTI_Line18      ((uint32_t)0x40000)    /* External interrupt line 18
-                                                   Connected to the USB
-                                                   Wakeup from suspend event
-                                                 */
+#define EXTI_Line10      ((uint32_t)0x00400)    /* External interrupt line 10 */
+#define EXTI_Line11      ((uint32_t)0x00800)    /* External interrupt line 11 */
+#define EXTI_Line12      ((uint32_t)0x01000)    /* External interrupt line 12 */
+#define EXTI_Line13      ((uint32_t)0x02000)    /* External interrupt line 13 */
+#define EXTI_Line14      ((uint32_t)0x04000)    /* External interrupt line 14 */
+#define EXTI_Line15      ((uint32_t)0x08000)    /* External interrupt line 15 */
+#define EXTI_Line16      ((uint32_t)0x10000)    /* External interrupt line 16 Connected to the PVD Output */
+#define EXTI_Line17      ((uint32_t)0x20000)    /* External interrupt line 17 Connected to the RTC Alarm event */
+#define EXTI_Line18      ((uint32_t)0x40000)    /* External interrupt line 18 Connected to the USB Wakeup from suspend event */
 
 #define IS_EXTI_LINE(LINE) ((((LINE) & (uint32_t)0xFFF80000) == 0x00) && ((LINE) != (uint16_t)0x00))
 

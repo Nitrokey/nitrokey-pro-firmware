@@ -18,8 +18,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x_i2c.h"
 #include "stm32f10x_rcc.h"
 
@@ -208,8 +207,7 @@ RCC_ClocksTypeDef rcc_clocks;
     assert_param (IS_I2C_DUTY_CYCLE (I2C_InitStruct->I2C_DutyCycle));
     assert_param (IS_I2C_OWN_ADDRESS1 (I2C_InitStruct->I2C_OwnAddress1));
     assert_param (IS_I2C_ACK_STATE (I2C_InitStruct->I2C_Ack));
-    assert_param (IS_I2C_ACKNOWLEDGE_ADDRESS
-                  (I2C_InitStruct->I2C_AcknowledgedAddress));
+    assert_param (IS_I2C_ACKNOWLEDGE_ADDRESS (I2C_InitStruct->I2C_AcknowledgedAddress));
     assert_param (IS_I2C_CLOCK_SPEED (I2C_InitStruct->I2C_ClockSpeed));
 /*---------------------------- I2Cx CR2 Configuration ------------------------*/
     /* Get the I2Cx CR2 value */
@@ -252,14 +250,12 @@ RCC_ClocksTypeDef rcc_clocks;
         if (I2C_InitStruct->I2C_DutyCycle == I2C_DutyCycle_2)
         {
             /* Fast mode speed calculate: Tlow/Thigh = 2 */
-            result =
-                (uint16_t) (pclk1 / (I2C_InitStruct->I2C_ClockSpeed * 3));
+            result = (uint16_t) (pclk1 / (I2C_InitStruct->I2C_ClockSpeed * 3));
         }
         else    /* I2C_InitStruct->I2C_DutyCycle == I2C_DutyCycle_16_9 */
         {
             /* Fast mode speed calculate: Tlow/Thigh = 16/9 */
-            result =
-                (uint16_t) (pclk1 / (I2C_InitStruct->I2C_ClockSpeed * 25));
+            result = (uint16_t) (pclk1 / (I2C_InitStruct->I2C_ClockSpeed * 25));
             /* Set DUTY bit */
             result |= I2C_DutyCycle_16_9;
         }
@@ -286,16 +282,12 @@ RCC_ClocksTypeDef rcc_clocks;
     /* Configure I2Cx: mode and acknowledgement */
     /* Set SMBTYPE and SMBUS bits according to I2C_Mode value */
     /* Set ACK bit according to I2C_Ack value */
-    tmpreg |=
-        (uint16_t) ((uint32_t) I2C_InitStruct->I2C_Mode | I2C_InitStruct->
-                    I2C_Ack);
+    tmpreg |= (uint16_t) ((uint32_t) I2C_InitStruct->I2C_Mode | I2C_InitStruct->I2C_Ack);
     /* Write to I2Cx CR1 */
     I2Cx->CR1 = tmpreg;
 /*---------------------------- I2Cx OAR1 Configuration -----------------------*/
     /* Set I2Cx Own Address1 and acknowledged address */
-    I2Cx->OAR1 =
-        (I2C_InitStruct->I2C_AcknowledgedAddress | I2C_InitStruct->
-         I2C_OwnAddress1);
+    I2Cx->OAR1 = (I2C_InitStruct->I2C_AcknowledgedAddress | I2C_InitStruct->I2C_OwnAddress1);
 }
 
 /**
@@ -548,8 +540,7 @@ void I2C_GeneralCallCmd (I2C_TypeDef * I2Cx, FunctionalState NewState)
   *   This parameter can be: ENABLE or DISABLE.
   * @retval : None
   */
-void I2C_ITConfig (I2C_TypeDef * I2Cx, uint16_t I2C_IT,
-                   FunctionalState NewState)
+void I2C_ITConfig (I2C_TypeDef * I2Cx, uint16_t I2C_IT, FunctionalState NewState)
 {
     /* Check the parameters */
     assert_param (IS_I2C_ALL_PERIPH (I2Cx));
@@ -606,8 +597,7 @@ uint8_t I2C_ReceiveData (I2C_TypeDef * I2Cx)
   * @arg I2C_Direction_Receiver: Receiver mode
   * @retval : None.
   */
-void I2C_Send7bitAddress (I2C_TypeDef * I2Cx, uint8_t Address,
-                          uint8_t I2C_Direction)
+void I2C_Send7bitAddress (I2C_TypeDef * I2Cx, uint8_t Address, uint8_t I2C_Direction)
 {
     /* Check the parameters */
     assert_param (IS_I2C_ALL_PERIPH (I2Cx));

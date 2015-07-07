@@ -96,9 +96,7 @@ u8 Buffer_au8[AES_KEYSIZE_256_BIT];
     }
 
     // Get a random number for the storage key
-    if (FALSE ==
-        getRandomNumber (AES_KEYSIZE_256_BIT / 2,
-                         &StorageKey_au8[AES_KEYSIZE_256_BIT / 2]))
+    if (FALSE == getRandomNumber (AES_KEYSIZE_256_BIT / 2, &StorageKey_au8[AES_KEYSIZE_256_BIT / 2]))
     {
 #ifdef LOCAL_DEBUG
         // CI_LocalPrintf ("GetRandomNumber fails\n\r");
@@ -124,8 +122,7 @@ int i;
 
     for (i = 0; i < AES_KEYSIZE_256_BIT; i += 16)
     {
-        aes_crypt_ecb (&aes_ctx, AES_ENCRYPT,
-                       &(Buffer_au8[i]), &(Buffer_au8_encrypted[i]));
+        aes_crypt_ecb (&aes_ctx, AES_ENCRYPT, &(Buffer_au8[i]), &(Buffer_au8_encrypted[i]));
     }
     // AES_StorageKeyEncryption (AES_KEYSIZE_256_BIT, Buffer_au8,
     // MasterKey_pu8, AES_PMODE_CIPHER);
@@ -206,9 +203,7 @@ u32 BuildNewAesMasterKey_u32 (u8 * AdminPW_pu8, u8 * MasterKey_pu8)
     }
 
     // Get a random number for the master key
-    if (FALSE ==
-        getRandomNumber (AES_KEYSIZE_256_BIT / 2,
-                         &MasterKey_pu8[AES_KEYSIZE_256_BIT / 2]))
+    if (FALSE == getRandomNumber (AES_KEYSIZE_256_BIT / 2, &MasterKey_pu8[AES_KEYSIZE_256_BIT / 2]))
     {
         return (FALSE);
     }
@@ -230,7 +225,7 @@ int ret = sendAESMasterKey (AES_KEYSIZE_256_BIT, MasterKey_pu8);
 
     if (TRUE != ret)
     {
-      return CMD_STATUS_AES_CREATE_KEY_FAILED;
+        return CMD_STATUS_AES_CREATE_KEY_FAILED;
     }
 
     // ClearStickKeysNotInitatedToFlash ();
@@ -283,9 +278,7 @@ u32 i;
     }
 
     // Get a random number for the master key
-    if (FALSE ==
-        getRandomNumber (AES_KEYSIZE_256_BIT / 2,
-                         &XorPattern_au8[AES_KEYSIZE_256_BIT / 2]))
+    if (FALSE == getRandomNumber (AES_KEYSIZE_256_BIT / 2, &XorPattern_au8[AES_KEYSIZE_256_BIT / 2]))
     {
 #ifdef LOCAL_DEBUG
         // CI_LocalPrintf ("GetRandomNumber fails\n\r");
@@ -350,43 +343,38 @@ u32 i;
 
 u32 BuildStorageKeys_u32 (u8 * AdminPW_pu8)
 {
-  u32 Ret_u32;
-  u8  MasterKey_au8[AES_KEYSIZE_256_BIT];
+u32 Ret_u32;
+u8 MasterKey_au8[AES_KEYSIZE_256_BIT];
 
-  if (FALSE == cardAuthenticate (AdminPW_pu8))
-  {
-    return CMD_STATUS_WRONG_PASSWORD;
-  }
+    if (FALSE == cardAuthenticate (AdminPW_pu8))
+    {
+        return CMD_STATUS_WRONG_PASSWORD;
+    }
 
-/*  Ret_u32 = EraseLocalFlashKeyValues_u32 ();
-  if (FALSE == Ret_u32)
-  {
-    return CMD_STATUS_AES_CREATE_KEY_FAILED;
-  }
-*/
+    /* Ret_u32 = EraseLocalFlashKeyValues_u32 (); if (FALSE == Ret_u32) { return CMD_STATUS_AES_CREATE_KEY_FAILED; } */
 
-  Ret_u32 = BuildNewXorPattern_u32 ();
-  if (FALSE == Ret_u32)
-  {
-    return CMD_STATUS_AES_CREATE_KEY_FAILED;
-  }
+    Ret_u32 = BuildNewXorPattern_u32 ();
+    if (FALSE == Ret_u32)
+    {
+        return CMD_STATUS_AES_CREATE_KEY_FAILED;
+    }
 
-  Ret_u32 = BuildNewAesMasterKey_u32 (AdminPW_pu8, MasterKey_au8);
-  if (TRUE != Ret_u32)
-  {
-    return CMD_STATUS_AES_CREATE_KEY_FAILED;
-  }
+    Ret_u32 = BuildNewAesMasterKey_u32 (AdminPW_pu8, MasterKey_au8);
+    if (TRUE != Ret_u32)
+    {
+        return CMD_STATUS_AES_CREATE_KEY_FAILED;
+    }
 
-  Ret_u32 = BuildNewAesStorageKey_u32 (MasterKey_au8);
-  if (FALSE == Ret_u32)
-  {
-    return CMD_STATUS_AES_CREATE_KEY_FAILED;
-  }
+    Ret_u32 = BuildNewAesStorageKey_u32 (MasterKey_au8);
+    if (FALSE == Ret_u32)
+    {
+        return CMD_STATUS_AES_CREATE_KEY_FAILED;
+    }
 
-// Clear the critical memory
-  memset (MasterKey_au8,0,AES_KEYSIZE_256_BIT);
+    // Clear the critical memory
+    memset (MasterKey_au8, 0, AES_KEYSIZE_256_BIT);
 
-  return CMD_STATUS_OK;
+    return CMD_STATUS_OK;
 }
 
 
@@ -556,8 +544,7 @@ u8 CheckStatus_u8 = TRUE;
 
 *******************************************************************************/
 
-void HighLevelTests (unsigned char nParamsGet_u8, unsigned char CMD_u8,
-                     unsigned int Param_u32, unsigned char* String_pu8)
+void HighLevelTests (unsigned char nParamsGet_u8, unsigned char CMD_u8, unsigned int Param_u32, unsigned char* String_pu8)
 {
     u8 Buffer_au8[32];
 

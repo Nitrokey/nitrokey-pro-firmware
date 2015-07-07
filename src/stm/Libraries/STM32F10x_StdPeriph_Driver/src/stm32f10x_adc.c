@@ -18,8 +18,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x_adc.h"
 #include "stm32f10x_rcc.h"
 
@@ -227,8 +226,7 @@ uint8_t tmpreg2 = 0;
     assert_param (IS_ADC_ALL_PERIPH (ADCx));
     assert_param (IS_ADC_MODE (ADC_InitStruct->ADC_Mode));
     assert_param (IS_FUNCTIONAL_STATE (ADC_InitStruct->ADC_ScanConvMode));
-    assert_param (IS_FUNCTIONAL_STATE
-                  (ADC_InitStruct->ADC_ContinuousConvMode));
+    assert_param (IS_FUNCTIONAL_STATE (ADC_InitStruct->ADC_ContinuousConvMode));
     assert_param (IS_ADC_EXT_TRIG (ADC_InitStruct->ADC_ExternalTrigConv));
     assert_param (IS_ADC_DATA_ALIGN (ADC_InitStruct->ADC_DataAlign));
     assert_param (IS_ADC_REGULAR_LENGTH (ADC_InitStruct->ADC_NbrOfChannel));
@@ -240,10 +238,7 @@ uint8_t tmpreg2 = 0;
     /* Configure ADCx: Dual mode and scan conversion mode */
     /* Set DUALMOD bits according to ADC_Mode value */
     /* Set SCAN bit according to ADC_ScanConvMode value */
-    tmpreg1 |=
-        (uint32_t) (ADC_InitStruct->
-                    ADC_Mode | ((uint32_t) ADC_InitStruct->
-                                ADC_ScanConvMode << 8));
+    tmpreg1 |= (uint32_t) (ADC_InitStruct->ADC_Mode | ((uint32_t) ADC_InitStruct->ADC_ScanConvMode << 8));
     /* Write to ADCx CR1 */
     ADCx->CR1 = tmpreg1;
   /*---------------------------- ADCx CR2 Configuration -----------------*/
@@ -256,9 +251,7 @@ uint8_t tmpreg2 = 0;
     /* Set EXTSEL bits according to ADC_ExternalTrigConv value */
     /* Set CONT bit according to ADC_ContinuousConvMode value */
     tmpreg1 |=
-        (uint32_t) (ADC_InitStruct->ADC_DataAlign | ADC_InitStruct->
-                    ADC_ExternalTrigConv | ((uint32_t) ADC_InitStruct->
-                                            ADC_ContinuousConvMode << 1));
+        (uint32_t) (ADC_InitStruct->ADC_DataAlign | ADC_InitStruct->ADC_ExternalTrigConv | ((uint32_t) ADC_InitStruct->ADC_ContinuousConvMode << 1));
     /* Write to ADCx CR2 */
     ADCx->CR2 = tmpreg1;
   /*---------------------------- ADCx SQR1 Configuration -----------------*/
@@ -359,8 +352,7 @@ void ADC_DMACmd (ADC_TypeDef * ADCx, FunctionalState NewState)
   *   This parameter can be: ENABLE or DISABLE.
   * @retval : None
   */
-void ADC_ITConfig (ADC_TypeDef * ADCx, uint16_t ADC_IT,
-                   FunctionalState NewState)
+void ADC_ITConfig (ADC_TypeDef * ADCx, uint16_t ADC_IT, FunctionalState NewState)
 {
 uint8_t itmask = 0;
 
@@ -474,14 +466,12 @@ void ADC_SoftwareStartConvCmd (ADC_TypeDef * ADCx, FunctionalState NewState)
     assert_param (IS_FUNCTIONAL_STATE (NewState));
     if (NewState != DISABLE)
     {
-        /* Enable the selected ADC conversion on external event and start the
-           selected ADC conversion */
+        /* Enable the selected ADC conversion on external event and start the selected ADC conversion */
         ADCx->CR2 |= CR2_EXTTRIG_SWSTART_Set;
     }
     else
     {
-        /* Disable the selected ADC conversion on external event and stop the
-           selected ADC conversion */
+        /* Disable the selected ADC conversion on external event and stop the selected ADC conversion */
         ADCx->CR2 &= CR2_EXTTRIG_SWSTART_Reset;
     }
 }
@@ -605,8 +595,7 @@ void ADC_DiscModeCmd (ADC_TypeDef * ADCx, FunctionalState NewState)
   * @arg ADC_SampleTime_239Cycles5: Sample time equal to 239.5 cycles
   * @retval : None
   */
-void ADC_RegularChannelConfig (ADC_TypeDef * ADCx, uint8_t ADC_Channel,
-                               uint8_t Rank, uint8_t ADC_SampleTime)
+void ADC_RegularChannelConfig (ADC_TypeDef * ADCx, uint8_t ADC_Channel, uint8_t Rank, uint8_t ADC_SampleTime)
 {
 uint32_t tmpreg1 = 0, tmpreg2 = 0;
 
@@ -832,8 +821,7 @@ void ADC_InjectedDiscModeCmd (ADC_TypeDef * ADCx, FunctionalState NewState)
   *   ADC1, ADC2 and ADC3)
   * @retval : None
   */
-void ADC_ExternalTrigInjectedConvConfig (ADC_TypeDef * ADCx,
-                                         uint32_t ADC_ExternalTrigInjecConv)
+void ADC_ExternalTrigInjectedConvConfig (ADC_TypeDef * ADCx, uint32_t ADC_ExternalTrigInjecConv)
 {
 uint32_t tmpreg = 0;
 
@@ -859,22 +847,19 @@ uint32_t tmpreg = 0;
   *   This parameter can be: ENABLE or DISABLE.
   * @retval : None
   */
-void ADC_ExternalTrigInjectedConvCmd (ADC_TypeDef * ADCx,
-                                      FunctionalState NewState)
+void ADC_ExternalTrigInjectedConvCmd (ADC_TypeDef * ADCx, FunctionalState NewState)
 {
     /* Check the parameters */
     assert_param (IS_ADC_ALL_PERIPH (ADCx));
     assert_param (IS_FUNCTIONAL_STATE (NewState));
     if (NewState != DISABLE)
     {
-        /* Enable the selected ADC external event selection for injected
-           group */
+        /* Enable the selected ADC external event selection for injected group */
         ADCx->CR2 |= CR2_JEXTTRIG_Set;
     }
     else
     {
-        /* Disable the selected ADC external event selection for injected
-           group */
+        /* Disable the selected ADC external event selection for injected group */
         ADCx->CR2 &= CR2_JEXTTRIG_Reset;
     }
 }
@@ -888,22 +873,19 @@ void ADC_ExternalTrigInjectedConvCmd (ADC_TypeDef * ADCx,
   *   This parameter can be: ENABLE or DISABLE.
   * @retval : None
   */
-void ADC_SoftwareStartInjectedConvCmd (ADC_TypeDef * ADCx,
-                                       FunctionalState NewState)
+void ADC_SoftwareStartInjectedConvCmd (ADC_TypeDef * ADCx, FunctionalState NewState)
 {
     /* Check the parameters */
     assert_param (IS_ADC_ALL_PERIPH (ADCx));
     assert_param (IS_FUNCTIONAL_STATE (NewState));
     if (NewState != DISABLE)
     {
-        /* Enable the selected ADC conversion for injected group on external
-           event and start the selected ADC injected conversion */
+        /* Enable the selected ADC conversion for injected group on external event and start the selected ADC injected conversion */
         ADCx->CR2 |= CR2_JEXTTRIG_JSWSTART_Set;
     }
     else
     {
-        /* Disable the selected ADC conversion on external event for injected
-           group and stop the selected ADC injected conversion */
+        /* Disable the selected ADC conversion on external event for injected group and stop the selected ADC injected conversion */
         ADCx->CR2 &= CR2_JEXTTRIG_JSWSTART_Reset;
     }
 }
@@ -973,8 +955,7 @@ FlagStatus bitstatus = RESET;
   * @arg ADC_SampleTime_239Cycles5: Sample time equal to 239.5 cycles
   * @retval : None
   */
-void ADC_InjectedChannelConfig (ADC_TypeDef * ADCx, uint8_t ADC_Channel,
-                                uint8_t Rank, uint8_t ADC_SampleTime)
+void ADC_InjectedChannelConfig (ADC_TypeDef * ADCx, uint8_t ADC_Channel, uint8_t Rank, uint8_t ADC_SampleTime)
 {
 uint32_t tmpreg1 = 0, tmpreg2 = 0, tmpreg3 = 0;
 
@@ -1024,9 +1005,7 @@ uint32_t tmpreg1 = 0, tmpreg2 = 0, tmpreg3 = 0;
     /* Clear the old JSQx bits for the selected rank */
     tmpreg1 &= ~tmpreg2;
     /* Calculate the mask to set: ((Rank-1)+(4-JL-1)) */
-    tmpreg2 =
-        (uint32_t) ADC_Channel << (5 *
-                                   (uint8_t) ((Rank + 3) - (tmpreg3 + 1)));
+    tmpreg2 = (uint32_t) ADC_Channel << (5 * (uint8_t) ((Rank + 3) - (tmpreg3 + 1)));
     /* Set the JSQx bits for the selected rank */
     tmpreg1 |= tmpreg2;
     /* Store the new register value */
@@ -1075,16 +1054,14 @@ uint32_t tmpreg2 = 0;
   *   This parameter must be a 12bit value.
   * @retval : None
   */
-void ADC_SetInjectedOffset (ADC_TypeDef * ADCx, uint8_t ADC_InjectedChannel,
-                            uint16_t Offset)
+void ADC_SetInjectedOffset (ADC_TypeDef * ADCx, uint8_t ADC_InjectedChannel, uint16_t Offset)
 {
     /* Check the parameters */
     assert_param (IS_ADC_ALL_PERIPH (ADCx));
     assert_param (IS_ADC_INJECTED_CHANNEL (ADC_InjectedChannel));
     assert_param (IS_ADC_OFFSET (Offset));
     /* Set the selected injected channel data offset */
-    *((__IO uint32_t *) ((*(uint32_t *) & ADCx) + ADC_InjectedChannel)) =
-        (uint32_t) Offset;
+    *((__IO uint32_t *) ((*(uint32_t *) & ADCx) + ADC_InjectedChannel)) = (uint32_t) Offset;
 }
 
 /**
@@ -1098,16 +1075,13 @@ void ADC_SetInjectedOffset (ADC_TypeDef * ADCx, uint8_t ADC_InjectedChannel,
   * @arg ADC_InjectedChannel_4: Injected Channel4 selected
   * @retval : The Data conversion value.
   */
-uint16_t ADC_GetInjectedConversionValue (ADC_TypeDef * ADCx,
-                                         uint8_t ADC_InjectedChannel)
+uint16_t ADC_GetInjectedConversionValue (ADC_TypeDef * ADCx, uint8_t ADC_InjectedChannel)
 {
     /* Check the parameters */
     assert_param (IS_ADC_ALL_PERIPH (ADCx));
     assert_param (IS_ADC_INJECTED_CHANNEL (ADC_InjectedChannel));
     /* Returns the selected injected channel conversion data value */
-    return (uint16_t) (*(__IO uint32_t *)
-                       (((*(uint32_t *) & ADCx) + ADC_InjectedChannel +
-                         JDR_Offset)));
+    return (uint16_t) (*(__IO uint32_t *) (((*(uint32_t *) & ADCx) + ADC_InjectedChannel + JDR_Offset)));
 }
 
 /**
@@ -1158,9 +1132,7 @@ uint32_t tmpreg = 0;
   *   This parameter must be a 12bit value.
   * @retval : None
   */
-void ADC_AnalogWatchdogThresholdsConfig (ADC_TypeDef * ADCx,
-                                         uint16_t HighThreshold,
-                                         uint16_t LowThreshold)
+void ADC_AnalogWatchdogThresholdsConfig (ADC_TypeDef * ADCx, uint16_t HighThreshold, uint16_t LowThreshold)
 {
     /* Check the parameters */
     assert_param (IS_ADC_ALL_PERIPH (ADCx));
@@ -1198,8 +1170,7 @@ void ADC_AnalogWatchdogThresholdsConfig (ADC_TypeDef * ADCx,
   * @arg ADC_Channel_17: ADC Channel17 selected
   * @retval : None
   */
-void ADC_AnalogWatchdogSingleChannelConfig (ADC_TypeDef * ADCx,
-                                            uint8_t ADC_Channel)
+void ADC_AnalogWatchdogSingleChannelConfig (ADC_TypeDef * ADCx, uint8_t ADC_Channel)
 {
 uint32_t tmpreg = 0;
 

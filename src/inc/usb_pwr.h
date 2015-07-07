@@ -19,15 +19,12 @@
  */
 
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __USB_PWR_H
 #define __USB_PWR_H
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "usb_core.h"
-/* Exported types
-   ------------------------------------------------------------ */
+/* Exported types ------------------------------------------------------------ */
 typedef enum _RESUME_STATE
 {
     RESUME_EXTERNAL,
@@ -50,12 +47,9 @@ typedef enum _DEVICE_STATE
     CONFIGURED
 } DEVICE_STATE;
 
-/* Exported constants
-   -------------------------------------------------------- */
-/* Exported macro
-   ------------------------------------------------------------ */
-/* Exported functions -------------------------------------------------------
- */
+/* Exported constants -------------------------------------------------------- */
+/* Exported macro ------------------------------------------------------------ */
+/* Exported functions ------------------------------------------------------- */
 void Suspend (void);
 
 void Resume_Init (void);
@@ -68,8 +62,7 @@ RESULT PowerOff (void);
 
 void USB_Start (void);
 
-/* External variables
-   -------------------------------------------------------- */
+/* External variables -------------------------------------------------------- */
 extern __IO uint32_t bDeviceState;  /* USB device status */
 
 extern __IO bool fSuspendEnabled;   /* true when suspend is possible */

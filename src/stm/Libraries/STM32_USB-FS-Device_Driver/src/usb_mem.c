@@ -18,24 +18,16 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "usb_lib.h"
 
-/* Private typedef
-   ----------------------------------------------------------- */
-/* Private define
-   ------------------------------------------------------------ */
-/* Private macro
-   ------------------------------------------------------------- */
-/* Private variables
-   --------------------------------------------------------- */
-/* Extern variables
-   ---------------------------------------------------------- */
-/* Private function prototypes
-   ----------------------------------------------- */
-/* Private functions
-   --------------------------------------------------------- */
+/* Private typedef ----------------------------------------------------------- */
+/* Private define ------------------------------------------------------------ */
+/* Private macro ------------------------------------------------------------- */
+/* Private variables --------------------------------------------------------- */
+/* Extern variables ---------------------------------------------------------- */
+/* Private function prototypes ----------------------------------------------- */
+/* Private functions --------------------------------------------------------- */
 /*******************************************************************************
 * Function Name  : UserToPMABufferCopy
 * Description    : Copy a buffer from user memory area to packet memory area (PMA)
@@ -45,8 +37,7 @@
 * Output         : None.
 * Return         : None	.
 *******************************************************************************/
-void UserToPMABufferCopy (uint8_t * pbUsrBuf, uint16_t wPMABufAddr,
-                          uint16_t wNBytes)
+void UserToPMABufferCopy (uint8_t * pbUsrBuf, uint16_t wPMABufAddr, uint16_t wNBytes)
 {
 uint32_t n = (wNBytes + 1) >> 1;    /* n = (wNBytes + 1) / 2 */
 
@@ -75,8 +66,7 @@ uint16_t* pdwVal;
 * Output         : None.
 * Return         : None.
 *******************************************************************************/
-void PMAToUserBufferCopy (uint8_t * pbUsrBuf, uint16_t wPMABufAddr,
-                          uint16_t wNBytes)
+void PMAToUserBufferCopy (uint8_t * pbUsrBuf, uint16_t wPMABufAddr, uint16_t wNBytes)
 {
 uint32_t n = (wNBytes + 1) >> 1;    /* /2 */
 

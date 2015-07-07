@@ -18,8 +18,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x_flash.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -252,8 +251,7 @@ FLASH_Status status = FLASH_COMPLETE;
 
     if (status == FLASH_COMPLETE)
     {
-        /* if the previous operation is completed, proceed to erase all pages
-         */
+        /* if the previous operation is completed, proceed to erase all pages */
         FLASH->CR |= CR_MER_Set;
         FLASH->CR |= CR_STRT_Set;
 
@@ -288,8 +286,7 @@ FLASH_Status status = FLASH_COMPLETE;
         FLASH->OPTKEYR = FLASH_KEY1;
         FLASH->OPTKEYR = FLASH_KEY2;
 
-        /* if the previous operation is completed, proceed to erase the
-           option bytes */
+        /* if the previous operation is completed, proceed to erase the option bytes */
         FLASH->CR |= CR_OPTER_Set;
         FLASH->CR |= CR_STRT_Set;
         /* Wait for last operation to be completed */
@@ -309,8 +306,7 @@ FLASH_Status status = FLASH_COMPLETE;
 
             if (status != FLASH_BUSY)
             {
-                /* if the program operation is completed, disable the OPTPG
-                   Bit */
+                /* if the program operation is completed, disable the OPTPG Bit */
                 FLASH->CR &= CR_OPTPG_Reset;
             }
         }
@@ -346,8 +342,7 @@ FLASH_Status status = FLASH_COMPLETE;
 
     if (status == FLASH_COMPLETE)
     {
-        /* if the previous operation is completed, proceed to program the new
-           first half word */
+        /* if the previous operation is completed, proceed to program the new first half word */
         FLASH->CR |= CR_PG_Set;
 
         *(__IO uint16_t *) Address = (uint16_t) Data;
@@ -356,8 +351,7 @@ FLASH_Status status = FLASH_COMPLETE;
 
         if (status == FLASH_COMPLETE)
         {
-            /* if the previous operation is completed, proceed to program the
-               new second half word */
+            /* if the previous operation is completed, proceed to program the new second half word */
             *(__IO uint16_t *) (Address + 2) = Data >> 16;
 
             /* Wait for last operation to be completed */
@@ -401,8 +395,7 @@ FLASH_Status status = FLASH_COMPLETE;
 
     if (status == FLASH_COMPLETE)
     {
-        /* if the previous operation is completed, proceed to program the new
-           data */
+        /* if the previous operation is completed, proceed to program the new data */
         FLASH->CR |= CR_PG_Set;
 
         *(__IO uint16_t *) Address = Data;
@@ -471,8 +464,7 @@ FLASH_Status status = FLASH_COMPLETE;
   */
 FLASH_Status FLASH_EnableWriteProtection (uint32_t FLASH_Pages)
 {
-uint16_t WRP0_Data = 0xFFFF, WRP1_Data = 0xFFFF, WRP2_Data =
-    0xFFFF, WRP3_Data = 0xFFFF;
+uint16_t WRP0_Data = 0xFFFF, WRP1_Data = 0xFFFF, WRP2_Data = 0xFFFF, WRP3_Data = 0xFFFF;
 
 FLASH_Status status = FLASH_COMPLETE;
 
@@ -580,8 +572,7 @@ FLASH_Status status = FLASH_COMPLETE;
 
             if (status != FLASH_BUSY)
             {
-                /* if the program operation is completed, disable the OPTPG
-                   Bit */
+                /* if the program operation is completed, disable the OPTPG Bit */
                 FLASH->CR &= CR_OPTPG_Reset;
             }
         }
@@ -617,8 +608,7 @@ FLASH_Status status = FLASH_COMPLETE;
   *   FLASH_ERROR_PG, FLASH_ERROR_WRP, FLASH_COMPLETE or
   *   FLASH_TIMEOUT.
   */
-FLASH_Status FLASH_UserOptionByteConfig (uint16_t OB_IWDG, uint16_t OB_STOP,
-                                         uint16_t OB_STDBY)
+FLASH_Status FLASH_UserOptionByteConfig (uint16_t OB_IWDG, uint16_t OB_STOP, uint16_t OB_STDBY)
 {
 FLASH_Status status = FLASH_COMPLETE;
 

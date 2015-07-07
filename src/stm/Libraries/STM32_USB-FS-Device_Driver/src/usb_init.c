@@ -19,19 +19,14 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "usb_lib.h"
 #include "platform_config.h"
 
-/* Private typedef
-   ----------------------------------------------------------- */
-/* Private define
-   ------------------------------------------------------------ */
-/* Private macro
-   ------------------------------------------------------------- */
-/* Private variables
-   --------------------------------------------------------- */
+/* Private typedef ----------------------------------------------------------- */
+/* Private define ------------------------------------------------------------ */
+/* Private macro ------------------------------------------------------------- */
+/* Private variables --------------------------------------------------------- */
 /* The number of current endpoint, it will be used to specify an endpoint */
 uint8_t EPindex;
 
@@ -57,8 +52,7 @@ DEVICE_INFO* Device_Info;
 
 USER_STANDARD_REQUESTS* pUser_Standard_Requests;
 
-/* Extern variables
-   ---------------------------------------------------------- */
+/* Extern variables ---------------------------------------------------------- */
 extern DEVICE_INFO RAMDISK_Device_Info;
 
 extern DEVICE_PROP RAMDISK_Device_Property;
@@ -101,10 +95,8 @@ extern ONE_DESCRIPTOR CCID_String_Descriptor[5];
 
 
 
-/* Private function prototypes
-   ----------------------------------------------- */
-/* Private functions
-   --------------------------------------------------------- */
+/* Private function prototypes ----------------------------------------------- */
+/* Private functions --------------------------------------------------------- */
 
 /*******************************************************************************
 * Function Name  : USB_SetDeviceConfiguration

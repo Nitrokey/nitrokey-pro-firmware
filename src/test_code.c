@@ -202,8 +202,7 @@ void SDIO_DataLineTest (void)
     RCC_APB2PeriphClockCmd (RCC_APB2Periph_GPIOC, ENABLE);
 
     /* Configure SDIO dtat pin8, pin9, pin10 and pin11 as output push-pull */
-    GPIO_InitStructure.GPIO_Pin =
-        GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init (GPIOC, &GPIO_InitStructure);

@@ -18,32 +18,24 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __MASS_MAL_H
 #define __MASS_MAL_H
 
-/* Includes
-   ------------------------------------------------------------------ */
-/* Exported types
-   ------------------------------------------------------------ */
-/* Exported constants
-   -------------------------------------------------------- */
+/* Includes ------------------------------------------------------------------ */
+/* Exported types ------------------------------------------------------------ */
+/* Exported constants -------------------------------------------------------- */
 #define MAL_OK   0
 #define MAL_FAIL 1
 #define MAX_LUN  1
 
-/* Exported macro
-   ------------------------------------------------------------ */
-/* Exported functions -------------------------------------------------------
- */
+/* Exported macro ------------------------------------------------------------ */
+/* Exported functions ------------------------------------------------------- */
 
 uint16_t MAL_Init (void);
 
 uint16_t MAL_GetStatus (void);
 
-uint16_t MAL_Read (uint32_t Memory_Offset, uint32_t * Readbuff,
-                   uint16_t Transfer_Length);
-uint16_t MAL_Write (uint32_t Memory_Offset, uint32_t * Writebuff,
-                    uint16_t Transfer_Length);
+uint16_t MAL_Read (uint32_t Memory_Offset, uint32_t * Readbuff, uint16_t Transfer_Length);
+uint16_t MAL_Write (uint32_t Memory_Offset, uint32_t * Writebuff, uint16_t Transfer_Length);
 #endif /* __MASS_MAL_H */

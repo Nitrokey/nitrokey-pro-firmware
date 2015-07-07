@@ -18,8 +18,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x_bkp.h"
 #include "stm32f10x_rcc.h"
 
@@ -44,8 +43,7 @@
   * @{
   */
 
-/* ------------ BKP registers bit address in the alias region ---------------
- */
+/* ------------ BKP registers bit address in the alias region --------------- */
 #define BKP_OFFSET        (BKP_BASE - PERIPH_BASE)
 
 /* --- CR Register ---- */

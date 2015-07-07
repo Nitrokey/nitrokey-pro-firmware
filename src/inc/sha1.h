@@ -1,20 +1,14 @@
 /* sha1.h */
 /*
-   This file is part of the ARM-Crypto-Lib. Copyright (C) 2008 Daniel Otte
-   (daniel.otte@rub.de)
+   This file is part of the ARM-Crypto-Lib. Copyright (C) 2008 Daniel Otte (daniel.otte@rub.de)
 
-   This program is free software: you can redistribute it and/or modify it
-   under the terms of the GNU General Public License as published by the Free
-   Software Foundation, either version 3 of the License, or (at your option)
-   any later version.
+   This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+   Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-   or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-   for more details.
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-   You should have received a copy of the GNU General Public License along
-   with this program.  If not, see <http://www.gnu.org/licenses/>. */
+   You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 /**
  * \file	sha1.h
  * \author	Daniel Otte
@@ -93,8 +87,7 @@ void sha1_nextBlock (sha1_ctx_t * state, const void* block);
  * \param block pointer to themessage block to process
  * \param length_b length of the message block in bits
  */
-void sha1_lastBlock (sha1_ctx_t * state, const void* block,
-                     uint16_t length_b);
+void sha1_lastBlock (sha1_ctx_t * state, const void* block, uint16_t length_b);
 
 /** \fn sha1_ctx2hash(sha1_hash_t *dest, sha1_ctx_t *state)
  * \brief convert a state variable into an actual hash value

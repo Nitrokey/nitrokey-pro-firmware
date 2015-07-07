@@ -19,17 +19,13 @@
  */
 
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __CCID_usb_prop_H
 #define __CCID_usb_prop_H
-/* Includes
-   ------------------------------------------------------------------ */
-/* Exported types
-   ------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
+/* Exported types ------------------------------------------------------------ */
 
-/* Exported constants
-   -------------------------------------------------------- */
+/* Exported constants -------------------------------------------------------- */
 #define USB_CCID_Storage_GetConfiguration          NOP_Process
 // #define USB_CCID_Storage_SetConfiguration NOP_Process //
 #define USB_CCID_Storage_GetInterface              NOP_Process
@@ -42,15 +38,12 @@
 
 /* CCID Storage Requests */
 /*
-   #define GET_MAX_LUN 0xFE #define CCID_STORAGE_RESET 0xFF #define
-   LUN_DATA_LENGTH 1 */
+   #define GET_MAX_LUN 0xFE #define CCID_STORAGE_RESET 0xFF #define LUN_DATA_LENGTH 1 */
 
 #define USB_MAX_PACKET_SIZE   0x40
 
-/* Exported macro
-   ------------------------------------------------------------ */
-/* Exported functions -------------------------------------------------------
- */
+/* Exported macro ------------------------------------------------------------ */
+/* Exported functions ------------------------------------------------------- */
 void USB_CCID_init (void);
 
 void USB_CCID_Reset (void);
@@ -69,8 +62,7 @@ RESULT USB_CCID_Data_Setup (uint8_t);
 
 RESULT USB_CCID_NoData_Setup (uint8_t);
 
-RESULT USB_CCID_Get_Interface_Setting (uint8_t Interface,
-                                       uint8_t AlternateSetting);
+RESULT USB_CCID_Get_Interface_Setting (uint8_t Interface, uint8_t AlternateSetting);
 uint8_t* USB_CCID_GetDeviceDescriptor (uint16_t);
 
 uint8_t* USB_CCID_GetConfigDescriptor (uint16_t);

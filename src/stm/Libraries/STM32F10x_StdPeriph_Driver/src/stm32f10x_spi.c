@@ -161,18 +161,15 @@ uint16_t tmpreg = 0;
     assert_param (IS_SPI_CPOL (SPI_InitStruct->SPI_CPOL));
     assert_param (IS_SPI_CPHA (SPI_InitStruct->SPI_CPHA));
     assert_param (IS_SPI_NSS (SPI_InitStruct->SPI_NSS));
-    assert_param (IS_SPI_BAUDRATE_PRESCALER
-                  (SPI_InitStruct->SPI_BaudRatePrescaler));
+    assert_param (IS_SPI_BAUDRATE_PRESCALER (SPI_InitStruct->SPI_BaudRatePrescaler));
     assert_param (IS_SPI_FIRST_BIT (SPI_InitStruct->SPI_FirstBit));
     assert_param (IS_SPI_CRC_POLYNOMIAL (SPI_InitStruct->SPI_CRCPolynomial));
 /*---------------------------- SPIx CR1 Configuration ------------------------*/
     /* Get the SPIx CR1 value */
     tmpreg = SPIx->CR1;
-    /* Clear BIDIMode, BIDIOE, RxONLY, SSM, SSI, LSBFirst, BR, MSTR, CPOL and
-       CPHA bits */
+    /* Clear BIDIMode, BIDIOE, RxONLY, SSM, SSI, LSBFirst, BR, MSTR, CPOL and CPHA bits */
     tmpreg &= CR1_CLEAR_Mask;
-    /* Configure SPIx: direction, NSS management, first transmitted bit,
-       BaudRate prescaler master/salve mode, CPOL and CPHA */
+    /* Configure SPIx: direction, NSS management, first transmitted bit, BaudRate prescaler master/salve mode, CPOL and CPHA */
     /* Set BIDImode, BIDIOE and RxONLY bits according to SPI_Direction value */
     /* Set SSM, SSI and MSTR bits according to SPI_Mode and SPI_NSS values */
     /* Set LSBFirst bit according to SPI_FirstBit value */
@@ -180,12 +177,9 @@ uint16_t tmpreg = 0;
     /* Set CPOL bit according to SPI_CPOL value */
     /* Set CPHA bit according to SPI_CPHA value */
     tmpreg |=
-        (uint16_t) ((uint32_t) SPI_InitStruct->
-                    SPI_Direction | SPI_InitStruct->
-                    SPI_Mode | SPI_InitStruct->SPI_DataSize | SPI_InitStruct->
-                    SPI_CPOL | SPI_InitStruct->SPI_CPHA | SPI_InitStruct->
-                    SPI_NSS | SPI_InitStruct->
-                    SPI_BaudRatePrescaler | SPI_InitStruct->SPI_FirstBit);
+        (uint16_t) ((uint32_t) SPI_InitStruct->SPI_Direction |
+                    SPI_InitStruct->SPI_Mode | SPI_InitStruct->SPI_DataSize | SPI_InitStruct->SPI_CPOL | SPI_InitStruct->SPI_CPHA | SPI_InitStruct->
+                    SPI_NSS | SPI_InitStruct->SPI_BaudRatePrescaler | SPI_InitStruct->SPI_FirstBit);
     /* Write to SPIx CR1 */
     SPIx->CR1 = tmpreg;
 
@@ -223,8 +217,7 @@ RCC_ClocksTypeDef RCC_Clocks;
     assert_param (IS_I2S_AUDIO_FREQ (I2S_InitStruct->I2S_AudioFreq));
     assert_param (IS_I2S_CPOL (I2S_InitStruct->I2S_CPOL));
 /*----------------------- SPIx I2SCFGR & I2SPR Configuration -----------------*/
-    /* Clear I2SMOD, I2SE, I2SCFG, PCMSYNC, I2SSTD, CKPOL, DATLEN and CHLEN
-       bits */
+    /* Clear I2SMOD, I2SE, I2SCFG, PCMSYNC, I2SSTD, CKPOL, DATLEN and CHLEN bits */
     SPIx->I2SCFGR &= I2SCFGR_CLEAR_Mask;
     SPIx->I2SPR = 0x0002;
 
@@ -237,8 +230,7 @@ RCC_ClocksTypeDef RCC_Clocks;
         i2sodd = (uint16_t) 0;
         i2sdiv = (uint16_t) 2;
     }
-    /* If the requested audio frequency is not the default, compute the
-       prescaler */
+    /* If the requested audio frequency is not the default, compute the prescaler */
     else
     {
         /* Check the frame length (For the Prescaler computing) */
@@ -255,22 +247,16 @@ RCC_ClocksTypeDef RCC_Clocks;
         /* Get System Clock frequency */
         RCC_GetClocksFreq (&RCC_Clocks);
 
-        /* Compute the Real divider depending on the MCLK output state with a
-           flaoting point */
+        /* Compute the Real divider depending on the MCLK output state with a flaoting point */
         if (I2S_InitStruct->I2S_MCLKOutput == I2S_MCLKOutput_Enable)
         {
             /* MCLK output is enabled */
-            tmp =
-                (uint16_t) (((10 * RCC_Clocks.SYSCLK_Frequency) /
-                             (256 * I2S_InitStruct->I2S_AudioFreq)) + 5);
+            tmp = (uint16_t) (((10 * RCC_Clocks.SYSCLK_Frequency) / (256 * I2S_InitStruct->I2S_AudioFreq)) + 5);
         }
         else
         {
             /* MCLK output is disabled */
-            tmp =
-                (uint16_t) (((10 * RCC_Clocks.SYSCLK_Frequency) /
-                             (32 * packetlength *
-                              I2S_InitStruct->I2S_AudioFreq)) + 5);
+            tmp = (uint16_t) (((10 * RCC_Clocks.SYSCLK_Frequency) / (32 * packetlength * I2S_InitStruct->I2S_AudioFreq)) + 5);
         }
 
         /* Remove the flaoting point */
@@ -294,13 +280,11 @@ RCC_ClocksTypeDef RCC_Clocks;
         i2sodd = 0;
     }
     /* Write to SPIx I2SPR register the computed value */
-    SPIx->I2SPR =
-        (uint16_t) (i2sdiv | i2sodd | I2S_InitStruct->I2S_MCLKOutput);
+    SPIx->I2SPR = (uint16_t) (i2sdiv | i2sodd | I2S_InitStruct->I2S_MCLKOutput);
 
     /* Configure the I2S with the SPI_InitStruct values */
     tmpreg |= (uint16_t) (I2S_Mode_Select | I2S_InitStruct->I2S_Mode |
-                          I2S_InitStruct->I2S_Standard | I2S_InitStruct->
-                          I2S_DataFormat | I2S_InitStruct->I2S_CPOL);
+                          I2S_InitStruct->I2S_Standard | I2S_InitStruct->I2S_DataFormat | I2S_InitStruct->I2S_CPOL);
 
     /* Write to SPIx I2SCFGR */
     SPIx->I2SCFGR = tmpreg;
@@ -426,8 +410,7 @@ void I2S_Cmd (SPI_TypeDef * SPIx, FunctionalState NewState)
   *   This parameter can be: ENABLE or DISABLE.
   * @retval : None
   */
-void SPI_I2S_ITConfig (SPI_TypeDef * SPIx, uint8_t SPI_I2S_IT,
-                       FunctionalState NewState)
+void SPI_I2S_ITConfig (SPI_TypeDef * SPIx, uint8_t SPI_I2S_IT, FunctionalState NewState)
 {
 uint16_t itpos = 0, itmask = 0;
 
@@ -466,8 +449,7 @@ uint16_t itpos = 0, itmask = 0;
   *   This parameter can be: ENABLE or DISABLE.
   * @retval : None
   */
-void SPI_I2S_DMACmd (SPI_TypeDef * SPIx, uint16_t SPI_I2S_DMAReq,
-                     FunctionalState NewState)
+void SPI_I2S_DMACmd (SPI_TypeDef * SPIx, uint16_t SPI_I2S_DMAReq, FunctionalState NewState)
 {
     /* Check the parameters */
     assert_param (IS_SPI_ALL_PERIPH (SPIx));
@@ -528,8 +510,7 @@ uint16_t SPI_I2S_ReceiveData (SPI_TypeDef * SPIx)
   * @arg SPI_NSSInternalSoft_Reset: Reset NSS pin internally
   * @retval : None
   */
-void SPI_NSSInternalSoftwareConfig (SPI_TypeDef * SPIx,
-                                    uint16_t SPI_NSSInternalSoft)
+void SPI_NSSInternalSoftwareConfig (SPI_TypeDef * SPIx, uint16_t SPI_NSSInternalSoft)
 {
     /* Check the parameters */
     assert_param (IS_SPI_ALL_PERIPH (SPIx));

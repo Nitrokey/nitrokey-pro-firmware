@@ -18,13 +18,11 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __STM32F10x_RTC_H
 #define __STM32F10x_RTC_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -66,8 +64,7 @@
   */
 
 #define RTC_FLAG_RTOFF       ((uint16_t)0x0020) /* RTC Operation OFF flag */
-#define RTC_FLAG_RSF         ((uint16_t)0x0008) /* Registers Synchronized
-                                                   flag */
+#define RTC_FLAG_RSF         ((uint16_t)0x0008) /* Registers Synchronized flag */
 #define RTC_FLAG_OW          ((uint16_t)0x0004) /* Overflow flag */
 #define RTC_FLAG_ALR         ((uint16_t)0x0002) /* Alarm flag */
 #define RTC_FLAG_SEC         ((uint16_t)0x0001) /* Second flag */

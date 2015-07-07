@@ -95,5 +95,4 @@ unsigned char IFD_SetATRData (void);
 
 int GetExpectedAnswerSizeFromAPDU (unsigned char* pAPDU, int nSize);
 
-void IFD_EscapeSendHwName (unsigned char* pBlockBuffer,
-                           unsigned int* pBlockSize);
+void IFD_EscapeSendHwName (unsigned char* pBlockBuffer, unsigned int* pBlockSize);

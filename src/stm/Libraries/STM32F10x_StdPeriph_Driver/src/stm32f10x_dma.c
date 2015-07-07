@@ -18,8 +18,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x_dma.h"
 #include "stm32f10x_rcc.h"
 
@@ -193,8 +192,7 @@ void DMA_DeInit (DMA_Channel_TypeDef * DMAy_Channelx)
   *   DMA Channel.
   * @retval : None
   */
-void DMA_Init (DMA_Channel_TypeDef * DMAy_Channelx,
-               DMA_InitTypeDef * DMA_InitStruct)
+void DMA_Init (DMA_Channel_TypeDef * DMAy_Channelx, DMA_InitTypeDef * DMA_InitStruct)
 {
 uint32_t tmpreg = 0;
 
@@ -202,13 +200,10 @@ uint32_t tmpreg = 0;
     assert_param (IS_DMA_ALL_PERIPH (DMAy_Channelx));
     assert_param (IS_DMA_DIR (DMA_InitStruct->DMA_DIR));
     assert_param (IS_DMA_BUFFER_SIZE (DMA_InitStruct->DMA_BufferSize));
-    assert_param (IS_DMA_PERIPHERAL_INC_STATE
-                  (DMA_InitStruct->DMA_PeripheralInc));
+    assert_param (IS_DMA_PERIPHERAL_INC_STATE (DMA_InitStruct->DMA_PeripheralInc));
     assert_param (IS_DMA_MEMORY_INC_STATE (DMA_InitStruct->DMA_MemoryInc));
-    assert_param (IS_DMA_PERIPHERAL_DATA_SIZE
-                  (DMA_InitStruct->DMA_PeripheralDataSize));
-    assert_param (IS_DMA_MEMORY_DATA_SIZE
-                  (DMA_InitStruct->DMA_MemoryDataSize));
+    assert_param (IS_DMA_PERIPHERAL_DATA_SIZE (DMA_InitStruct->DMA_PeripheralDataSize));
+    assert_param (IS_DMA_MEMORY_DATA_SIZE (DMA_InitStruct->DMA_MemoryDataSize));
     assert_param (IS_DMA_MODE (DMA_InitStruct->DMA_Mode));
     assert_param (IS_DMA_PRIORITY (DMA_InitStruct->DMA_Priority));
     assert_param (IS_DMA_M2M_STATE (DMA_InitStruct->DMA_M2M));
@@ -217,8 +212,7 @@ uint32_t tmpreg = 0;
     tmpreg = DMAy_Channelx->CCR;
     /* Clear MEM2MEM, PL, MSIZE, PSIZE, MINC, PINC, CIRC and DIR bits */
     tmpreg &= CCR_CLEAR_Mask;
-    /* Configure DMAy Channelx: data transfer, data size, priority level and
-       mode */
+    /* Configure DMAy Channelx: data transfer, data size, priority level and mode */
     /* Set DIR bit according to DMA_DIR value */
     /* Set CIRC bit according to DMA_Mode value */
     /* Set PINC bit according to DMA_PeripheralInc value */
@@ -229,9 +223,7 @@ uint32_t tmpreg = 0;
     /* Set the MEM2MEM bit according to DMA_M2M value */
     tmpreg |= DMA_InitStruct->DMA_DIR | DMA_InitStruct->DMA_Mode |
         DMA_InitStruct->DMA_PeripheralInc | DMA_InitStruct->DMA_MemoryInc |
-        DMA_InitStruct->DMA_PeripheralDataSize | DMA_InitStruct->
-        DMA_MemoryDataSize | DMA_InitStruct->DMA_Priority | DMA_InitStruct->
-        DMA_M2M;
+        DMA_InitStruct->DMA_PeripheralDataSize | DMA_InitStruct->DMA_MemoryDataSize | DMA_InitStruct->DMA_Priority | DMA_InitStruct->DMA_M2M;
     /* Write to DMAy Channelx CCR */
     DMAy_Channelx->CCR = tmpreg;
 /*--------------------------- DMAy Channelx CNDTR Configuration ---------------*/
@@ -319,8 +311,7 @@ void DMA_Cmd (DMA_Channel_TypeDef * DMAy_Channelx, FunctionalState NewState)
   *   This parameter can be: ENABLE or DISABLE.
   * @retval : None
   */
-void DMA_ITConfig (DMA_Channel_TypeDef * DMAy_Channelx, uint32_t DMA_IT,
-                   FunctionalState NewState)
+void DMA_ITConfig (DMA_Channel_TypeDef * DMAy_Channelx, uint32_t DMA_IT, FunctionalState NewState)
 {
     /* Check the parameters */
     assert_param (IS_DMA_ALL_PERIPH (DMAy_Channelx));

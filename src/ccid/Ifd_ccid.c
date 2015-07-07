@@ -41,9 +41,7 @@ unsigned char PC_to_RDR_IccPowerOn (void)
         return SLOTERROR_BAD_SLOT;
 
     if (UsbMessageBuffer[OFFSET_DWLENGTH] != 0
-        || UsbMessageBuffer[OFFSET_DWLENGTH + 1] != 0
-        || UsbMessageBuffer[OFFSET_DWLENGTH + 2] != 0
-        || UsbMessageBuffer[OFFSET_DWLENGTH + 3] != 0)
+        || UsbMessageBuffer[OFFSET_DWLENGTH + 1] != 0 || UsbMessageBuffer[OFFSET_DWLENGTH + 2] != 0 || UsbMessageBuffer[OFFSET_DWLENGTH + 3] != 0)
         return SLOTERROR_BAD_LENTGH;
 
     if (bAbortRequestFlag)
@@ -70,23 +68,18 @@ unsigned char PC_to_RDR_IccPowerOff (void)
     /*
        if(UsbMessageBuffer[OFFSET_BSLOT] != 0) return SLOTERROR_BAD_SLOT;
 
-       if(UsbMessageBuffer[OFFSET_DWLENGTH] != 0 ||
-       UsbMessageBuffer[OFFSET_DWLENGTH+1] != 0 ||
-       UsbMessageBuffer[OFFSET_DWLENGTH+2] != 0 ||
+       if(UsbMessageBuffer[OFFSET_DWLENGTH] != 0 || UsbMessageBuffer[OFFSET_DWLENGTH+1] != 0 || UsbMessageBuffer[OFFSET_DWLENGTH+2] != 0 ||
        UsbMessageBuffer[OFFSET_DWLENGTH+3] != 0) return SLOTERROR_BAD_LENTGH;
 
-       if(UsbMessageBuffer[OFFSET_ABRFU_3B] != 0 ||
-       UsbMessageBuffer[OFFSET_ABRFU_3B+1] != 0
-       ||UsbMessageBuffer[OFFSET_ABRFU_3B+2] != 0) return
+       if(UsbMessageBuffer[OFFSET_ABRFU_3B] != 0 || UsbMessageBuffer[OFFSET_ABRFU_3B+1] != 0 ||UsbMessageBuffer[OFFSET_ABRFU_3B+2] != 0) return
        SLOTERROR_BAD_ABRFU_3B; */
     // {unsigned long i;for (i=0;i<50000;i++);}
     // SC_Reset(Bit_RESET);
     // SmartcardOff ();
     // SC_Init ();
     /*
-       {unsigned int i;for (i=0;i<50000;i++);} {unsigned int i;for
-       (i=0;i<50000;i++);} {unsigned int i;for (i=0;i<50000;i++);} // Delay
-       (1); // Wait for 10 ms */
+       {unsigned int i;for (i=0;i<50000;i++);} {unsigned int i;for (i=0;i<50000;i++);} {unsigned int i;for (i=0;i<50000;i++);} // Delay (1); // Wait
+       for 10 ms */
     return SLOT_NO_ERROR;
 }
 
@@ -109,14 +102,10 @@ unsigned char PC_to_RDR_GetSlotStatus (void)
         return SLOTERROR_BAD_SLOT;
 
     if (UsbMessageBuffer[OFFSET_DWLENGTH] != 0
-        || UsbMessageBuffer[OFFSET_DWLENGTH + 1] != 0
-        || UsbMessageBuffer[OFFSET_DWLENGTH + 2] != 0
-        || UsbMessageBuffer[OFFSET_DWLENGTH + 3] != 0)
+        || UsbMessageBuffer[OFFSET_DWLENGTH + 1] != 0 || UsbMessageBuffer[OFFSET_DWLENGTH + 2] != 0 || UsbMessageBuffer[OFFSET_DWLENGTH + 3] != 0)
         return SLOTERROR_BAD_LENTGH;
 
-    if (UsbMessageBuffer[OFFSET_ABRFU_3B] != 0
-        || UsbMessageBuffer[OFFSET_ABRFU_3B + 1] != 0
-        || UsbMessageBuffer[OFFSET_ABRFU_3B + 2] != 0)
+    if (UsbMessageBuffer[OFFSET_ABRFU_3B] != 0 || UsbMessageBuffer[OFFSET_ABRFU_3B + 1] != 0 || UsbMessageBuffer[OFFSET_ABRFU_3B + 2] != 0)
         return SLOTERROR_BAD_ABRFU_3B;
 
     ErrorCode = CRD_GetHwError (&HwErrorCode);
@@ -145,14 +134,11 @@ unsigned char PC_to_RDR_XfrBlock (void)
     if (UsbMessageBuffer[OFFSET_BSLOT] != 0)
         return SLOTERROR_BAD_SLOT;
 
-    BlockSize = MAKEWORD (UsbMessageBuffer[OFFSET_DWLENGTH + 1],
-                          UsbMessageBuffer[OFFSET_DWLENGTH]);
+    BlockSize = MAKEWORD (UsbMessageBuffer[OFFSET_DWLENGTH + 1], UsbMessageBuffer[OFFSET_DWLENGTH]);
 
     UsbMessageLength = USB_MESSAGE_HEADER_SIZE + BlockSize;
 
-    if (UsbMessageBuffer[OFFSET_DWLENGTH + 2] != 0
-        || UsbMessageBuffer[OFFSET_DWLENGTH + 3] != 0
-        || UsbMessageLength > USB_MESSAGE_BUFFER_MAX_LENGTH)
+    if (UsbMessageBuffer[OFFSET_DWLENGTH + 2] != 0 || UsbMessageBuffer[OFFSET_DWLENGTH + 3] != 0 || UsbMessageLength > USB_MESSAGE_BUFFER_MAX_LENGTH)
         return SLOTERROR_BAD_LENTGH;
 
     if (bAbortRequestFlag)
@@ -164,13 +150,9 @@ unsigned char PC_to_RDR_XfrBlock (void)
         return ErrorCode;
 
     // This parameter did not define the answer size RB ???
-    ExpectedAnswerSize =
-        MAKEWORD (UsbMessageBuffer[OFFSET_WLEVELPARAMETER + 1],
-                  UsbMessageBuffer[OFFSET_WLEVELPARAMETER]);
+    ExpectedAnswerSize = MAKEWORD (UsbMessageBuffer[OFFSET_WLEVELPARAMETER + 1], UsbMessageBuffer[OFFSET_WLEVELPARAMETER]);
 
-    ErrorCode =
-        IFD_XfrBlock (&UsbMessageBuffer[OFFSET_ABDATA], &BlockSize,
-                      ExpectedAnswerSize);
+    ErrorCode = IFD_XfrBlock (&UsbMessageBuffer[OFFSET_ABDATA], &BlockSize, ExpectedAnswerSize);
 
 #ifdef	USB_POLLING_MODEL
     USB_Polling (); // replace old lib function USB_Action ...
@@ -183,8 +165,7 @@ unsigned char PC_to_RDR_XfrBlock (void)
     if (ErrorCode == SLOT_NO_ERROR)
     {
         UsbMessageBuffer[OFFSET_DWLENGTH] = (unsigned char) BlockSize;
-        UsbMessageBuffer[OFFSET_DWLENGTH + 1] =
-            (unsigned char) (BlockSize >> 8);
+        UsbMessageBuffer[OFFSET_DWLENGTH + 1] = (unsigned char) (BlockSize >> 8);
         UsbMessageBuffer[OFFSET_DWLENGTH + 2] = 0x00;
         UsbMessageBuffer[OFFSET_DWLENGTH + 3] = 0x00;
     }
@@ -211,16 +192,12 @@ unsigned char PC_to_RDR_GetParameters (void)
         return SLOTERROR_BAD_SLOT;
 
     if ((UsbMessageBuffer[OFFSET_DWLENGTH] != 0) ||
-        (UsbMessageBuffer[OFFSET_DWLENGTH + 1] != 0) ||
-        (UsbMessageBuffer[OFFSET_DWLENGTH + 2] != 0) ||
-        (UsbMessageBuffer[OFFSET_DWLENGTH + 3] != 0))
+        (UsbMessageBuffer[OFFSET_DWLENGTH + 1] != 0) || (UsbMessageBuffer[OFFSET_DWLENGTH + 2] != 0) || (UsbMessageBuffer[OFFSET_DWLENGTH + 3] != 0))
     {
         return SLOTERROR_BAD_LENTGH;
     }
 
-    if ((UsbMessageBuffer[OFFSET_ABRFU_3B] != 0) ||
-        (UsbMessageBuffer[OFFSET_ABRFU_3B + 1] != 0) ||
-        (UsbMessageBuffer[OFFSET_ABRFU_3B + 2] != 0))
+    if ((UsbMessageBuffer[OFFSET_ABRFU_3B] != 0) || (UsbMessageBuffer[OFFSET_ABRFU_3B + 1] != 0) || (UsbMessageBuffer[OFFSET_ABRFU_3B + 2] != 0))
     {
         return SLOTERROR_BAD_ABRFU_3B;
     }
@@ -256,14 +233,10 @@ unsigned char PC_to_RDR_ResetParameters (void)
         return SLOTERROR_BAD_SLOT;
 
     if (UsbMessageBuffer[OFFSET_DWLENGTH] != 0
-        || UsbMessageBuffer[OFFSET_DWLENGTH + 1] != 0
-        || UsbMessageBuffer[OFFSET_DWLENGTH + 2] != 0
-        || UsbMessageBuffer[OFFSET_DWLENGTH + 3] != 0)
+        || UsbMessageBuffer[OFFSET_DWLENGTH + 1] != 0 || UsbMessageBuffer[OFFSET_DWLENGTH + 2] != 0 || UsbMessageBuffer[OFFSET_DWLENGTH + 3] != 0)
         return SLOTERROR_BAD_LENTGH;
 
-    if (UsbMessageBuffer[OFFSET_ABRFU_3B] != 0
-        || UsbMessageBuffer[OFFSET_ABRFU_3B + 1] != 0
-        || UsbMessageBuffer[OFFSET_ABRFU_3B + 2] != 0)
+    if (UsbMessageBuffer[OFFSET_ABRFU_3B] != 0 || UsbMessageBuffer[OFFSET_ABRFU_3B + 1] != 0 || UsbMessageBuffer[OFFSET_ABRFU_3B + 2] != 0)
         return SLOTERROR_BAD_ABRFU_3B;
 
     UsbMessageBuffer[OFFSET_ABDATA] = DEFAULT_FIDI;
@@ -304,15 +277,12 @@ unsigned char PC_to_RDR_SetParameters (void)
 
     if (UsbMessageBuffer[OFFSET_DWLENGTH + 1] != 0
         || UsbMessageBuffer[OFFSET_DWLENGTH + 2] != 0
-        || UsbMessageBuffer[OFFSET_DWLENGTH + 3] != 0
-        || ((UsbMessageBuffer[OFFSET_DWLENGTH] != 0x05)
-            && (UsbMessageBuffer[OFFSET_DWLENGTH] != 0x07)))
+        || UsbMessageBuffer[OFFSET_DWLENGTH + 3] != 0 || ((UsbMessageBuffer[OFFSET_DWLENGTH] != 0x05) && (UsbMessageBuffer[OFFSET_DWLENGTH] != 0x07)))
         return SLOTERROR_BAD_LENTGH;
 
     // RB Germalto driver set wrong parameter ??? protocol = T0 > Length = 7
     // ? (=T1)
-    if ((UsbMessageBuffer[OFFSET_DWLENGTH] == 0x07) &&
-        (UsbMessageBuffer[OFFSET_BPROTOCOLNUM_OUT] != 0x01))
+    if ((UsbMessageBuffer[OFFSET_DWLENGTH] == 0x07) && (UsbMessageBuffer[OFFSET_BPROTOCOLNUM_OUT] != 0x01))
     {
         // UsbMessageBuffer[OFFSET_BPROTOCOLNUM_OUT] = 0x01; // Set to T1
         UsbMessageBuffer[OFFSET_DWLENGTH] = 0x05;   // Set to T0
@@ -320,14 +290,12 @@ unsigned char PC_to_RDR_SetParameters (void)
 
     if (((UsbMessageBuffer[OFFSET_DWLENGTH] == 0x05)
          && (UsbMessageBuffer[OFFSET_BPROTOCOLNUM_OUT] != 0x00))
-        || ((UsbMessageBuffer[OFFSET_DWLENGTH] == 0x07)
-            && (UsbMessageBuffer[OFFSET_BPROTOCOLNUM_OUT] != 0x01)))
+        || ((UsbMessageBuffer[OFFSET_DWLENGTH] == 0x07) && (UsbMessageBuffer[OFFSET_BPROTOCOLNUM_OUT] != 0x01)))
         return SLOTERROR_BAD_PROTOCOLNUM;
 
 
 
-    if (UsbMessageBuffer[OFFSET_ABRFU_2B] != 0
-        || UsbMessageBuffer[OFFSET_ABRFU_2B + 1] != 0)
+    if (UsbMessageBuffer[OFFSET_ABRFU_2B] != 0 || UsbMessageBuffer[OFFSET_ABRFU_2B + 1] != 0)
         return SLOTERROR_BAD_ABRFU_2B;
 
     // ErrorCode = IFD_SetParameters(&UsbMessageBuffer[OFFSET_ABDATA],
@@ -376,19 +344,14 @@ unsigned char PC_to_RDR_Escape (void)
     if (UsbMessageBuffer[OFFSET_BSLOT] != 0)
         return SLOTERROR_BAD_SLOT;
 
-    BlockSize = MAKEWORD (UsbMessageBuffer[OFFSET_DWLENGTH + 1],
-                          UsbMessageBuffer[OFFSET_DWLENGTH]);
+    BlockSize = MAKEWORD (UsbMessageBuffer[OFFSET_DWLENGTH + 1], UsbMessageBuffer[OFFSET_DWLENGTH]);
 
     UsbMessageLength = USB_MESSAGE_HEADER_SIZE + BlockSize;
 
-    if (UsbMessageBuffer[OFFSET_DWLENGTH + 2] != 0
-        || UsbMessageBuffer[OFFSET_DWLENGTH + 3] != 0
-        || UsbMessageLength > USB_MESSAGE_BUFFER_MAX_LENGTH)
+    if (UsbMessageBuffer[OFFSET_DWLENGTH + 2] != 0 || UsbMessageBuffer[OFFSET_DWLENGTH + 3] != 0 || UsbMessageLength > USB_MESSAGE_BUFFER_MAX_LENGTH)
         return SLOTERROR_BAD_LENTGH;
 
-    if (UsbMessageBuffer[OFFSET_ABRFU_3B] != 0
-        || UsbMessageBuffer[OFFSET_ABRFU_3B + 1] != 0
-        || UsbMessageBuffer[OFFSET_ABRFU_3B + 2] != 0)
+    if (UsbMessageBuffer[OFFSET_ABRFU_3B] != 0 || UsbMessageBuffer[OFFSET_ABRFU_3B + 1] != 0 || UsbMessageBuffer[OFFSET_ABRFU_3B + 2] != 0)
         return SLOTERROR_BAD_ABRFU_3B;
 
     if (bAbortRequestFlag)
@@ -435,16 +398,13 @@ unsigned char PC_to_RDR_IccClock (void)
         return SLOTERROR_BAD_SLOT;
 
     if (UsbMessageBuffer[OFFSET_DWLENGTH] != 0
-        || UsbMessageBuffer[OFFSET_DWLENGTH + 1] != 0
-        || UsbMessageBuffer[OFFSET_DWLENGTH + 2] != 0
-        || UsbMessageBuffer[OFFSET_DWLENGTH + 3] != 0)
+        || UsbMessageBuffer[OFFSET_DWLENGTH + 1] != 0 || UsbMessageBuffer[OFFSET_DWLENGTH + 2] != 0 || UsbMessageBuffer[OFFSET_DWLENGTH + 3] != 0)
         return SLOTERROR_BAD_LENTGH;
 
     if (UsbMessageBuffer[OFFSET_BCLOCKCOMMAND] > 0x01)
         return SLOTERROR_BAD_CLOCKCOMMAND;
 
-    if (UsbMessageBuffer[OFFSET_ABRFU_2B] != 0
-        || UsbMessageBuffer[OFFSET_ABRFU_2B + 1] != 0)
+    if (UsbMessageBuffer[OFFSET_ABRFU_2B] != 0 || UsbMessageBuffer[OFFSET_ABRFU_2B + 1] != 0)
         return SLOTERROR_BAD_ABRFU_2B;
 
     ErrorCode = IFD_SetClock (UsbMessageBuffer[OFFSET_BCLOCKCOMMAND]);
@@ -475,18 +435,13 @@ unsigned char PC_to_RDR_Abort (void)
         return SLOTERROR_BAD_SLOT;
 
     if (UsbMessageBuffer[OFFSET_DWLENGTH] != 0
-        || UsbMessageBuffer[OFFSET_DWLENGTH + 1] != 0
-        || UsbMessageBuffer[OFFSET_DWLENGTH + 2] != 0
-        || UsbMessageBuffer[OFFSET_DWLENGTH + 3] != 0)
+        || UsbMessageBuffer[OFFSET_DWLENGTH + 1] != 0 || UsbMessageBuffer[OFFSET_DWLENGTH + 2] != 0 || UsbMessageBuffer[OFFSET_DWLENGTH + 3] != 0)
         return SLOTERROR_BAD_LENTGH;
 
-    if (UsbMessageBuffer[OFFSET_ABRFU_3B] != 0
-        || UsbMessageBuffer[OFFSET_ABRFU_3B + 1] != 0
-        || UsbMessageBuffer[OFFSET_ABRFU_3B + 2] != 0)
+    if (UsbMessageBuffer[OFFSET_ABRFU_3B] != 0 || UsbMessageBuffer[OFFSET_ABRFU_3B + 1] != 0 || UsbMessageBuffer[OFFSET_ABRFU_3B + 2] != 0)
         return SLOTERROR_BAD_ABRFU_3B;
 
-    if ((!bAbortRequestFlag)
-        || (AbortSequenceNumber != UsbMessageBuffer[OFFSET_BSEQ]))
+    if ((!bAbortRequestFlag) || (AbortSequenceNumber != UsbMessageBuffer[OFFSET_BSEQ]))
         return SLOTERROR_CMD_ABORTED;
 
     Reset_bAbortRequestFlag;
@@ -589,8 +544,7 @@ void RDR_to_PC_Parameters (unsigned char ErrorCode)
         return;
     }
 
-    UsbMessageBuffer[OFFSET_BPROTOCOLNUM_IN]
-        = IFD_GetParameters (&UsbMessageBuffer[OFFSET_ABDATA]);
+    UsbMessageBuffer[OFFSET_BPROTOCOLNUM_IN] = IFD_GetParameters (&UsbMessageBuffer[OFFSET_ABDATA]);
 
     if (UsbMessageBuffer[OFFSET_BPROTOCOLNUM_IN])
     {

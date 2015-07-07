@@ -52,9 +52,9 @@
  */
 typedef struct
 {
-    int nr; /* !< number of rounds */
-    unsigned long* rk;  /* !< AES round keys */
-    unsigned long buf[68];  /* !< unaligned data */
+    int nr;                     /* !< number of rounds */
+    unsigned long* rk;          /* !< AES round keys */
+    unsigned long buf[68];      /* !< unaligned data */
 }
 aes_context;
 
@@ -93,9 +93,7 @@ extern "C"
  * \param input    16-byte input block
  * \param output   16-byte output block
  */
-    void aes_crypt_ecb (aes_context * ctx,
-                        int mode,
-                        unsigned char input[16], unsigned char output[16]);
+    void aes_crypt_ecb (aes_context * ctx, int mode, unsigned char input[16], unsigned char output[16]);
 
 /**
  * \brief          AES-CBC buffer encryption/decryption
@@ -109,11 +107,7 @@ extern "C"
  * \param input    buffer holding the input data
  * \param output   buffer holding the output data
  */
-    void aes_crypt_cbc (aes_context * ctx,
-                        int mode,
-                        int length,
-                        unsigned char iv[16],
-                        unsigned char* input, unsigned char* output);
+    void aes_crypt_cbc (aes_context * ctx, int mode, int length, unsigned char iv[16], unsigned char* input, unsigned char* output);
 
 /**
  * \brief          AES-CFB128 buffer encryption/decryption.
@@ -126,12 +120,7 @@ extern "C"
  * \param input    buffer holding the input data
  * \param output   buffer holding the output data
  */
-    void aes_crypt_cfb128 (aes_context * ctx,
-                           int mode,
-                           int length,
-                           int* iv_off,
-                           unsigned char iv[16],
-                           unsigned char* input, unsigned char* output);
+    void aes_crypt_cfb128 (aes_context * ctx, int mode, int length, int* iv_off, unsigned char iv[16], unsigned char* input, unsigned char* output);
 
 /**
  * \brief          Checkup routine
@@ -144,4 +133,4 @@ extern "C"
 }
 #endif
 
-#endif /* aes.h */
+#endif                          /* aes.h */

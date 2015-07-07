@@ -18,17 +18,14 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __FSMC_NAND_H
 #define __FSMC_NAND_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
-/* Exported types
-   ------------------------------------------------------------ */
+/* Exported types ------------------------------------------------------------ */
 typedef struct
 {
     uint8_t Maker_ID;
@@ -44,8 +41,7 @@ typedef struct
     uint16_t Page;
 } NAND_ADDRESS;
 
-/* Exported constants
-   -------------------------------------------------------- */
+/* Exported constants -------------------------------------------------------- */
 /* NAND Area definition for STM3210E-EVAL Board RevD */
 #define CMD_AREA                   (uint32_t)(1<<16)    /* A16 = CLE high */
 #define ADDR_AREA                  (uint32_t)(1<<17)    /* A17 = ALE high */
@@ -78,48 +74,28 @@ typedef struct
 #define NAND_READY                 ((uint32_t)0x00000040)
 
 /* FSMC NAND memory parameters */
-#define NAND_PAGE_SIZE             ((uint16_t)0x0200)   /* 512 bytes per page
-                                                           w/o Spare Area */
-#define NAND_BLOCK_SIZE            ((uint16_t)0x0020)   /* 32x512 bytes pages
-                                                           per block */
-#define NAND_ZONE_SIZE             ((uint16_t)0x0400)   /* 1024 Block per
-                                                           zone */
-#define NAND_SPARE_AREA_SIZE       ((uint16_t)0x0010)   /* last 16 bytes as
-                                                           spare area */
-#define NAND_MAX_ZONE              ((uint16_t)0x0004)   /* 4 zones of 1024
-                                                           block */
+#define NAND_PAGE_SIZE             ((uint16_t)0x0200)   /* 512 bytes per page w/o Spare Area */
+#define NAND_BLOCK_SIZE            ((uint16_t)0x0020)   /* 32x512 bytes pages per block */
+#define NAND_ZONE_SIZE             ((uint16_t)0x0400)   /* 1024 Block per zone */
+#define NAND_SPARE_AREA_SIZE       ((uint16_t)0x0010)   /* last 16 bytes as spare area */
+#define NAND_MAX_ZONE              ((uint16_t)0x0004)   /* 4 zones of 1024 block */
 
 /* FSMC NAND memory address computation */
-#define ADDR_1st_CYCLE(ADDR)       (uint8_t)((ADDR)& 0xFF)  /* 1st addressing
-                                                               cycle */
-#define ADDR_2nd_CYCLE(ADDR)       (uint8_t)(((ADDR)& 0xFF00) >> 8) /* 2nd
-                                                                       addressing
-                                                                       cycle */
-#define ADDR_3rd_CYCLE(ADDR)       (uint8_t)(((ADDR)& 0xFF0000) >> 16)  /* 3rd
-                                                                           addressing
-                                                                           cycle
-                                                                         */
-#define ADDR_4th_CYCLE(ADDR)       (uint8_t)(((ADDR)& 0xFF000000) >> 24)    /* 4th
-                                                                               addressing
-                                                                               cycle
-                                                                             */
+#define ADDR_1st_CYCLE(ADDR)       (uint8_t)((ADDR)& 0xFF)  /* 1st addressing cycle */
+#define ADDR_2nd_CYCLE(ADDR)       (uint8_t)(((ADDR)& 0xFF00) >> 8) /* 2nd addressing cycle */
+#define ADDR_3rd_CYCLE(ADDR)       (uint8_t)(((ADDR)& 0xFF0000) >> 16)  /* 3rd addressing cycle */
+#define ADDR_4th_CYCLE(ADDR)       (uint8_t)(((ADDR)& 0xFF000000) >> 24)    /* 4th addressing cycle */
 
-/* Exported macro
-   ------------------------------------------------------------ */
-/* Exported functions -------------------------------------------------------
- */
+/* Exported macro ------------------------------------------------------------ */
+/* Exported functions ------------------------------------------------------- */
 void FSMC_NAND_Init (void);
 
 void FSMC_NAND_ReadID (NAND_IDTypeDef * NAND_ID);
 
-uint32_t FSMC_NAND_WriteSmallPage (uint8_t * pBuffer, NAND_ADDRESS Address,
-                                   uint32_t NumPageToWrite);
-uint32_t FSMC_NAND_ReadSmallPage (uint8_t * pBuffer, NAND_ADDRESS Address,
-                                  uint32_t NumPageToRead);
-uint32_t FSMC_NAND_WriteSpareArea (uint8_t * pBuffer, NAND_ADDRESS Address,
-                                   uint32_t NumSpareAreaTowrite);
-uint32_t FSMC_NAND_ReadSpareArea (uint8_t * pBuffer, NAND_ADDRESS Address,
-                                  uint32_t NumSpareAreaToRead);
+uint32_t FSMC_NAND_WriteSmallPage (uint8_t * pBuffer, NAND_ADDRESS Address, uint32_t NumPageToWrite);
+uint32_t FSMC_NAND_ReadSmallPage (uint8_t * pBuffer, NAND_ADDRESS Address, uint32_t NumPageToRead);
+uint32_t FSMC_NAND_WriteSpareArea (uint8_t * pBuffer, NAND_ADDRESS Address, uint32_t NumSpareAreaTowrite);
+uint32_t FSMC_NAND_ReadSpareArea (uint8_t * pBuffer, NAND_ADDRESS Address, uint32_t NumSpareAreaToRead);
 uint32_t FSMC_NAND_EraseBlock (NAND_ADDRESS Address);
 
 uint32_t FSMC_NAND_Reset (void);

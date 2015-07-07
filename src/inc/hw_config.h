@@ -18,28 +18,21 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __HW_CONFIG_H
 #define __HW_CONFIG_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
-/* Exported types
-   ------------------------------------------------------------ */
-/* Exported constants
-   -------------------------------------------------------- */
-/* Exported macro
-   ------------------------------------------------------------ */
-/* Exported define
-   ----------------------------------------------------------- */
+/* Exported types ------------------------------------------------------------ */
+/* Exported constants -------------------------------------------------------- */
+/* Exported macro ------------------------------------------------------------ */
+/* Exported define ----------------------------------------------------------- */
 #define BULK_MAX_PACKET_SIZE  0x00000040
 #define LED_ON_INTERVAL 2000
 #define LED_OFF_INTERVAL 500
 
-/* Exported functions -------------------------------------------------------
- */
+/* Exported functions ------------------------------------------------------- */
 void Set_System (void);
 
 void Set_USBClock (void);
@@ -78,8 +71,7 @@ void EnableButton (void);
 
 uint8_t ReadButton (void);
 
-/* External variables
-   -------------------------------------------------------- */
+/* External variables -------------------------------------------------------- */
 
 extern uint64_t currentTime;
 

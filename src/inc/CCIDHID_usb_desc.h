@@ -19,22 +19,16 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __CCID_USB_DESC_H
 #define __CCID_USB_DESC_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
-/* Exported types
-   ------------------------------------------------------------ */
-/* Exported constants
-   -------------------------------------------------------- */
-/* Exported macro
-   ------------------------------------------------------------ */
-/* Exported define
-   ----------------------------------------------------------- */
+/* Exported types ------------------------------------------------------------ */
+/* Exported constants -------------------------------------------------------- */
+/* Exported macro ------------------------------------------------------------ */
+/* Exported define ----------------------------------------------------------- */
 #define CCID_SIZ_DEVICE_DESC              18
 #define CCID_SIZ_CONFIG_DESC              (1*0x09 + 2*0x09+ 1*0x07+ 0x09 + 0x36+3*0x07)
 // #define CCID_SIZ_CONFIG_DESC (1*0x09 + 3*0x09 +0x36 + 4*0x07)
@@ -73,8 +67,7 @@
 
 #define KEYBOARD_FEATURE_COUNT                64
 
-/* Exported functions -------------------------------------------------------
- */
+/* Exported functions ------------------------------------------------------- */
 extern const uint8_t CCID_DeviceDescriptor[CCID_SIZ_DEVICE_DESC];
 
 extern const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC];

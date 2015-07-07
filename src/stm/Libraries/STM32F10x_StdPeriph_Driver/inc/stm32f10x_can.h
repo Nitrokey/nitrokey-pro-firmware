@@ -18,13 +18,11 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __STM32F10x_CAN_H
 #define __STM32F10x_CAN_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -118,10 +116,8 @@ typedef struct
   * @{
   */
 
-#define CANINITFAILED              ((uint8_t)0x00)  /* CAN initialization
-                                                       failed */
-#define CANINITOK                  ((uint8_t)0x01)  /* CAN initialization
-                                                       failed */
+#define CANINITFAILED              ((uint8_t)0x00)  /* CAN initialization failed */
+#define CANINITOK                  ((uint8_t)0x01)  /* CAN initialization failed */
 
 /**
   * @}
@@ -134,8 +130,7 @@ typedef struct
 #define CAN_Mode_Normal             ((uint8_t)0x00) /* normal mode */
 #define CAN_Mode_LoopBack           ((uint8_t)0x01) /* loopback mode */
 #define CAN_Mode_Silent             ((uint8_t)0x02) /* silent mode */
-#define CAN_Mode_Silent_LoopBack    ((uint8_t)0x03) /* loopback combined with
-                                                       silent mode */
+#define CAN_Mode_Silent_LoopBack    ((uint8_t)0x03) /* loopback combined with silent mode */
 
 #define IS_CAN_MODE(MODE) (((MODE) == CAN_Mode_Normal) || ((MODE) == CAN_Mode_LoopBack)|| \
                            ((MODE) == CAN_Mode_Silent) || ((MODE) == CAN_Mode_Silent_LoopBack))
@@ -254,12 +249,8 @@ typedef struct
   * @{
   */
 
-#define CAN_FilterFIFO0             ((uint8_t)0x00) /* Filter FIFO 0
-                                                       assignment for filter
-                                                       x */
-#define CAN_FilterFIFO1             ((uint8_t)0x01) /* Filter FIFO 1
-                                                       assignment for filter
-                                                       x */
+#define CAN_FilterFIFO0             ((uint8_t)0x00) /* Filter FIFO 0 assignment for filter x */
+#define CAN_FilterFIFO1             ((uint8_t)0x01) /* Filter FIFO 1 assignment for filter x */
 #define IS_CAN_FILTER_FIFO(FIFO) (((FIFO) == CAN_FilterFIFO0) || \
                                   ((FIFO) == CAN_FilterFIFO1))
 
@@ -308,15 +299,10 @@ typedef struct
   * @{
   */
 
-#define CANTXFAILED                 ((uint8_t)0x00) /* CAN transmission
-                                                       failed */
-#define CANTXOK                     ((uint8_t)0x01) /* CAN transmission
-                                                       succeeded */
-#define CANTXPENDING                ((uint8_t)0x02) /* CAN transmission
-                                                       pending */
-#define CAN_NO_MB                   ((uint8_t)0x04) /* CAN cell did not
-                                                       provide an empty
-                                                       mailbox */
+#define CANTXFAILED                 ((uint8_t)0x00) /* CAN transmission failed */
+#define CANTXOK                     ((uint8_t)0x01) /* CAN transmission succeeded */
+#define CANTXPENDING                ((uint8_t)0x02) /* CAN transmission pending */
+#define CAN_NO_MB                   ((uint8_t)0x04) /* CAN cell did not provide an empty mailbox */
 
 /**
   * @}
@@ -326,10 +312,8 @@ typedef struct
   * @{
   */
 
-#define CAN_FIFO0                 ((uint8_t)0x00)   /* CAN FIFO0 used to
-                                                       receive */
-#define CAN_FIFO1                 ((uint8_t)0x01)   /* CAN FIFO1 used to
-                                                       receive */
+#define CAN_FIFO0                 ((uint8_t)0x00)   /* CAN FIFO0 used to receive */
+#define CAN_FIFO1                 ((uint8_t)0x01)   /* CAN FIFO1 used to receive */
 
 #define IS_CAN_FIFO(FIFO) (((FIFO) == CAN_FIFO0) || ((FIFO) == CAN_FIFO1))
 
@@ -341,10 +325,8 @@ typedef struct
   * @{
   */
 
-#define CANSLEEPFAILED              ((uint8_t)0x00) /* CAN did not enter the
-                                                       sleep mode */
-#define CANSLEEPOK                  ((uint8_t)0x01) /* CAN entered the sleep
-                                                       mode */
+#define CANSLEEPFAILED              ((uint8_t)0x00) /* CAN did not enter the sleep mode */
+#define CANSLEEPOK                  ((uint8_t)0x01) /* CAN entered the sleep mode */
 
 /**
   * @}
@@ -354,10 +336,8 @@ typedef struct
   * @{
   */
 
-#define CANWAKEUPFAILED             ((uint8_t)0x00) /* CAN did not leave the
-                                                       sleep mode */
-#define CANWAKEUPOK                 ((uint8_t)0x01) /* CAN leaved the sleep
-                                                       mode */
+#define CANWAKEUPFAILED             ((uint8_t)0x00) /* CAN did not leave the sleep mode */
+#define CANWAKEUPOK                 ((uint8_t)0x01) /* CAN leaved the sleep mode */
 
 /**
   * @}
@@ -367,10 +347,8 @@ typedef struct
   * @{
   */
 
-#define CAN_FLAG_EWG                ((uint32_t)0x00000001)  /* Error Warning
-                                                               Flag */
-#define CAN_FLAG_EPV                ((uint32_t)0x00000002)  /* Error Passive
-                                                               Flag */
+#define CAN_FLAG_EWG                ((uint32_t)0x00000001)  /* Error Warning Flag */
+#define CAN_FLAG_EPV                ((uint32_t)0x00000002)  /* Error Passive Flag */
 #define CAN_FLAG_BOF                ((uint32_t)0x00000004)  /* Bus-Off Flag */
 
 #define IS_CAN_FLAG(FLAG) (((FLAG) == CAN_FLAG_EWG) || ((FLAG) == CAN_FLAG_EPV) ||\
@@ -384,32 +362,20 @@ typedef struct
   * @{
   */
 
-#define CAN_IT_RQCP0                ((uint32_t)0x00000005)  /* Request
-                                                               completed
-                                                               mailbox 0 */
-#define CAN_IT_RQCP1                ((uint32_t)0x00000006)  /* Request
-                                                               completed
-                                                               mailbox 1 */
-#define CAN_IT_RQCP2                ((uint32_t)0x00000007)  /* Request
-                                                               completed
-                                                               mailbox 2 */
-#define CAN_IT_TME                  ((uint32_t)0x00000001)  /* Transmit
-                                                               mailbox empty */
-#define CAN_IT_FMP0                 ((uint32_t)0x00000002)  /* FIFO 0 message
-                                                               pending */
+#define CAN_IT_RQCP0                ((uint32_t)0x00000005)  /* Request completed mailbox 0 */
+#define CAN_IT_RQCP1                ((uint32_t)0x00000006)  /* Request completed mailbox 1 */
+#define CAN_IT_RQCP2                ((uint32_t)0x00000007)  /* Request completed mailbox 2 */
+#define CAN_IT_TME                  ((uint32_t)0x00000001)  /* Transmit mailbox empty */
+#define CAN_IT_FMP0                 ((uint32_t)0x00000002)  /* FIFO 0 message pending */
 #define CAN_IT_FF0                  ((uint32_t)0x00000004)  /* FIFO 0 full */
-#define CAN_IT_FOV0                 ((uint32_t)0x00000008)  /* FIFO 0 overrun
-                                                             */
-#define CAN_IT_FMP1                 ((uint32_t)0x00000010)  /* FIFO 1 message
-                                                               pending */
+#define CAN_IT_FOV0                 ((uint32_t)0x00000008)  /* FIFO 0 overrun */
+#define CAN_IT_FMP1                 ((uint32_t)0x00000010)  /* FIFO 1 message pending */
 #define CAN_IT_FF1                  ((uint32_t)0x00000020)  /* FIFO 1 full */
-#define CAN_IT_FOV1                 ((uint32_t)0x00000040)  /* FIFO 1 overrun
-                                                             */
+#define CAN_IT_FOV1                 ((uint32_t)0x00000040)  /* FIFO 1 overrun */
 #define CAN_IT_EWG                  ((uint32_t)0x00000100)  /* Error warning */
 #define CAN_IT_EPV                  ((uint32_t)0x00000200)  /* Error passive */
 #define CAN_IT_BOF                  ((uint32_t)0x00000400)  /* Bus-off */
-#define CAN_IT_LEC                  ((uint32_t)0x00000800)  /* Last error
-                                                               code */
+#define CAN_IT_LEC                  ((uint32_t)0x00000800)  /* Last error code */
 #define CAN_IT_ERR                  ((uint32_t)0x00008000)  /* Error */
 #define CAN_IT_WKU                  ((uint32_t)0x00010000)  /* Wake-up */
 #define CAN_IT_SLK                  ((uint32_t)0x00020000)  /* Sleep */
@@ -456,8 +422,7 @@ void CAN_FilterInit (CAN_FilterInitTypeDef * CAN_FilterInitStruct);
 
 void CAN_StructInit (CAN_InitTypeDef * CAN_InitStruct);
 
-void CAN_ITConfig (CAN_TypeDef * CANx, uint32_t CAN_IT,
-                   FunctionalState NewState);
+void CAN_ITConfig (CAN_TypeDef * CANx, uint32_t CAN_IT, FunctionalState NewState);
 uint8_t CAN_Transmit (CAN_TypeDef * CANx, CanTxMsg * TxMessage);
 
 uint8_t CAN_TransmitStatus (CAN_TypeDef * CANx, uint8_t TransmitMailbox);
@@ -468,8 +433,7 @@ void CAN_FIFORelease (CAN_TypeDef * CANx, uint8_t FIFONumber);
 
 uint8_t CAN_MessagePending (CAN_TypeDef * CANx, uint8_t FIFONumber);
 
-void CAN_Receive (CAN_TypeDef * CANx, uint8_t FIFONumber,
-                  CanRxMsg * RxMessage);
+void CAN_Receive (CAN_TypeDef * CANx, uint8_t FIFONumber, CanRxMsg * RxMessage);
 void CAN_DBGFreeze (CAN_TypeDef * CANx, FunctionalState NewState);
 
 uint8_t CAN_Sleep (CAN_TypeDef * CANx);

@@ -18,25 +18,19 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __memory_H
 #define __memory_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
-/* Exported types
-   ------------------------------------------------------------ */
-/* Exported constants
-   -------------------------------------------------------- */
+/* Exported types ------------------------------------------------------------ */
+/* Exported constants -------------------------------------------------------- */
 #define TXFR_IDLE     0
 #define TXFR_ONGOING  1
 
-/* Exported macro
-   ------------------------------------------------------------ */
-/* Exported functions -------------------------------------------------------
- */
+/* Exported macro ------------------------------------------------------------ */
+/* Exported functions ------------------------------------------------------- */
 void Write_Memory (uint32_t Memory_Offset, uint32_t Transfer_Length);
 
 void Read_Memory (uint32_t Memory_Offset, uint32_t Transfer_Length);

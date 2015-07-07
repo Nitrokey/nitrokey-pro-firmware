@@ -31,10 +31,8 @@
 
 #elif defined ( __ICCARM__ )
 #define __ASM           __asm   /* !< asm keyword for iarcc */
-#define __INLINE        inline  /* !< inline keyword for iarcc. Only avaiable
-                                   in High optimization mode! */
-#define __nop           __no_operation  /* !< no operation intrinsic in iarcc
-                                         */
+#define __INLINE        inline  /* !< inline keyword for iarcc. Only avaiable in High optimization mode! */
+#define __nop           __no_operation  /* !< no operation intrinsic in iarcc */
 
 #elif defined (  __GNUC__  )
 #define __ASM             asm   /* !< asm keyword for gcc */
@@ -232,7 +230,7 @@ __ASM void __set_CONTROL (uint32_t control)
 {
 msr control, r0 bx lr}
 
-#endif /* __ARMCC_VERSION */
+#endif                          /* __ARMCC_VERSION */
 
 
 #elif (defined (__ICCARM__)) /*------------------ ICC Compiler -------------------*/

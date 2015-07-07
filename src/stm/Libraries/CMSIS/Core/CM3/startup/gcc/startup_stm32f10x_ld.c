@@ -27,20 +27,15 @@
  * <h2><center>&copy; COPYRIGHT 2009 STMicroelectronics</center></h2>
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
-/* Private typedef
-   ----------------------------------------------------------- */
-/* Private define
-   ------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
+/* Private typedef ----------------------------------------------------------- */
+/* Private define ------------------------------------------------------------ */
 #define WEAK __attribute__ ((weak))
 
-/* Private macro
-   ------------------------------------------------------------- */
+/* Private macro ------------------------------------------------------------- */
 extern unsigned long _etext;
 
-/* start address for the initialization values of the .data section. defined
-   in linker script */
+/* start address for the initialization values of the .data section. defined in linker script */
 extern unsigned long _sidata;
 
 /* start address for the .data section. defined in linker script */
@@ -58,10 +53,8 @@ extern unsigned long _ebss;
 /* init value for the stack pointer. defined in linker script */
 extern void _estack;
 
-/* Private variables
-   --------------------------------------------------------- */
-/* Private function prototypes
-   ----------------------------------------------- */
+/* Private variables --------------------------------------------------------- */
+/* Private function prototypes ----------------------------------------------- */
 void Reset_Handler (void) __attribute__ ((__interrupt__));
 
 extern int main (void);
@@ -174,8 +167,7 @@ void WEAK RTCAlarm_IRQHandler (void);
 
 void WEAK USBWakeUp_IRQHandler (void);
 
-/* Private functions
-   --------------------------------------------------------- */
+/* Private functions --------------------------------------------------------- */
 /******************************************************************************
 *
 * The minimal vector table for a Cortex M3.  Note that the proper constructs
@@ -247,10 +239,7 @@ void (*const g_pfnVectors[]) (void) =
         EXTI15_10_IRQHandler,   /* EXTI Line 15..10 */
         RTCAlarm_IRQHandler,    /* RTC Alarm through EXTI Line */
         USBWakeUp_IRQHandler,   /* USB Wakeup from suspend */
-        0, 0, 0, 0, 0, 0, 0, (void *) 0xF108F85F    /* @0x108. This is for
-                                                       boot in RAM mode for
-                                                       STM32F10x Low Density
-                                                       devices. */
+        0, 0, 0, 0, 0, 0, 0, (void *) 0xF108F85F    /* @0x108. This is for boot in RAM mode for STM32F10x Low Density devices. */
 };
 
 /**

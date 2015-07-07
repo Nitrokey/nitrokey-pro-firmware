@@ -30,11 +30,10 @@
 #include "CCID_Ifd_protocol.h"
 #include "CCID_Crd.h"
 
-const unsigned int FvsFI[] =
-    { 0, 372, 558, 744, 1116, 1488, 1860, 0, 0, 512, 768, 1024, 1536, 2048, 0,
-0 };
-const unsigned int Dmul64vsDI[] =
-    { 0, 64, 128, 256, 512, 1024, 2048, 0, 768, 1280, 32, 16, 8, 4, 2, 1 };
+const unsigned int FvsFI[] = { 0, 372, 558, 744, 1116, 1488, 1860, 0, 0, 512, 768, 1024, 1536, 2048, 0,
+    0
+};
+const unsigned int Dmul64vsDI[] = { 0, 64, 128, 256, 512, 1024, 2048, 0, 768, 1280, 32, 16, 8, 4, 2, 1 };
 
 
 static volatile unsigned char IccTransactionLevelType;
@@ -155,8 +154,7 @@ unsigned char IFD_ApplyParametersStructure (void)
 
     CRD_SetGuardTime (GuardTime);
 
-    XfrWaitingTime =
-        (960 / 64) * D * ((unsigned long) IccParameters.WaitingInteger);
+    XfrWaitingTime = (960 / 64) * D * ((unsigned long) IccParameters.WaitingInteger);
 
     CRD_SetWaitingTime (XfrWaitingTime);
 
@@ -194,9 +192,7 @@ void IFD_UpdateConvParameterStructure (void)
 /* 0x00 if OK */
 /************************************************************************/
 
-unsigned char IFD_XfrBlock (unsigned char* pBlockBuffer,
-                            unsigned int* pBlockSize,
-                            unsigned int ExpectedAnswerSize)
+unsigned char IFD_XfrBlock (unsigned char* pBlockBuffer, unsigned int* pBlockSize, unsigned int ExpectedAnswerSize)
 {
     unsigned char ErrorCode = SLOT_NO_ERROR;
 
@@ -205,18 +201,14 @@ unsigned char IFD_XfrBlock (unsigned char* pBlockBuffer,
         return XFR_BADLEVELPARAMETER;
     }
 
-    if ((bmTransactionLevel == CHARACTER_LEVEL)
-        && (bTransactionType == T0_TYPE))
+    if ((bmTransactionLevel == CHARACTER_LEVEL) && (bTransactionType == T0_TYPE))
     {
-        ErrorCode =
-            IFD_XfrCharT0 (pBlockBuffer, pBlockSize, ExpectedAnswerSize);
+        ErrorCode = IFD_XfrCharT0 (pBlockBuffer, pBlockSize, ExpectedAnswerSize);
     }
 
-    if ((bmTransactionLevel == CHARACTER_LEVEL)
-        && (bTransactionType == T1_TYPE))
+    if ((bmTransactionLevel == CHARACTER_LEVEL) && (bTransactionType == T1_TYPE))
     {
-        ErrorCode =
-            IFD_XfrCharT0 (pBlockBuffer, pBlockSize, ExpectedAnswerSize);
+        ErrorCode = IFD_XfrCharT0 (pBlockBuffer, pBlockSize, ExpectedAnswerSize);
     }
     // why not this ??? T0 protocol ? >> ErrorCode =
     // IFD_XfrCharT1(pBlockBuffer, pBlockSize);
@@ -253,13 +245,13 @@ int GetExpectedAnswerSizeFromAPDU (unsigned char* pAPDU, int nSize)
     }
 
     if (nSize == 5 + pAPDU[4])  // A command with LC parameter and command
-                                // data
+        // data
     {
         return (TRAILER_SIZE);
     }
 
     if (nSize == 5 + pAPDU[4] + 1)  // A command with LC parameter, command
-                                    // data and LE parameter
+        // data and LE parameter
     {
         return (pAPDU[5 + pAPDU[4]] + TRAILER_SIZE);
     }
@@ -274,9 +266,7 @@ int GetExpectedAnswerSizeFromAPDU (unsigned char* pAPDU, int nSize)
 /* 0x00 if OK */
 /************************************************************************/
 
-unsigned char IFD_XfrCharT0 (unsigned char* pBlockBuffer,
-                             unsigned int* pBlockSize,
-                             unsigned int AnswerSize)
+unsigned char IFD_XfrCharT0 (unsigned char* pBlockBuffer, unsigned int* pBlockSize, unsigned int AnswerSize)
 {
     unsigned int nReceivedAnserSize;
 
@@ -290,10 +280,8 @@ unsigned char IFD_XfrCharT0 (unsigned char* pBlockBuffer,
                 return SLOTERROR_BAD_LENTGH;
             }
 
-            AnswerSize =
-                GetExpectedAnswerSizeFromAPDU (pBlockBuffer, *pBlockSize);
-            CRD_SendCommand (pBlockBuffer, *pBlockSize, AnswerSize,
-                             &nReceivedAnserSize);
+            AnswerSize = GetExpectedAnswerSizeFromAPDU (pBlockBuffer, *pBlockSize);
+            CRD_SendCommand (pBlockBuffer, *pBlockSize, AnswerSize, &nReceivedAnserSize);
             *pBlockSize = nReceivedAnserSize;
             break;
 
@@ -330,8 +318,7 @@ unsigned char IFD_XfrCharT0 (unsigned char* pBlockBuffer,
 /* 0x00 if OK */
 /************************************************************************/
 
-unsigned char IFD_XfrCharT1 (unsigned char* pBlockBuffer,
-                             unsigned int* pBlockSize)
+unsigned char IFD_XfrCharT1 (unsigned char* pBlockBuffer, unsigned int* pBlockSize)
 {
     return 0xF6;
 }
@@ -343,8 +330,7 @@ unsigned char IFD_XfrCharT1 (unsigned char* pBlockBuffer,
 /* 0x00 if OK */
 /************************************************************************/
 
-unsigned char IFD_XfrTpduT0 (unsigned char* pBlockBuffer,
-                             unsigned int* pBlockSize)
+unsigned char IFD_XfrTpduT0 (unsigned char* pBlockBuffer, unsigned int* pBlockSize)
 {
     return 0xF6;
 }
@@ -356,8 +342,7 @@ unsigned char IFD_XfrTpduT0 (unsigned char* pBlockBuffer,
 /* 0x00 if OK */
 /************************************************************************/
 
-unsigned char IFD_XfrTpduT1 (unsigned char* pBlockBuffer,
-                             unsigned int* pBlockSize)
+unsigned char IFD_XfrTpduT1 (unsigned char* pBlockBuffer, unsigned int* pBlockSize)
 {
     return 0xF6;
 }
@@ -398,8 +383,7 @@ unsigned char IFD_GetParameters (unsigned char* pParamBuffer)
 /* 0x00 if OK */
 /************************************************************************/
 
-unsigned char IFD_SetParameters (unsigned char* pParamBuffer,
-                                 unsigned char T01)
+unsigned char IFD_SetParameters (unsigned char* pParamBuffer, unsigned char T01)
 {
     unsigned char ErrorCode;
 
@@ -422,32 +406,25 @@ unsigned char IFD_SetParameters (unsigned char* pParamBuffer,
         NewIccParameters.Nad = 0x00;
     }
 
-    if ((Dmul64vsDI[(NewIccParameters.FiDi & 0x0F)] == 0) ||
-        (Dmul64vsDI[(NewIccParameters.FiDi >> 0x04)] == 0))
+    if ((Dmul64vsDI[(NewIccParameters.FiDi & 0x0F)] == 0) || (Dmul64vsDI[(NewIccParameters.FiDi >> 0x04)] == 0))
     {
         return SLOTERROR_BAD_FIDI;
     }
 
-    if ((T01 == 0x00) &&
-        (NewIccParameters.T01ConvChecksum != 0x00) &&
-        (NewIccParameters.T01ConvChecksum != 0x02))
+    if ((T01 == 0x00) && (NewIccParameters.T01ConvChecksum != 0x00) && (NewIccParameters.T01ConvChecksum != 0x02))
     {
         return SLOTERROR_BAD_T01CONVCHECKSUM;
     }
 
     if ((T01 == 0x01)
         && (NewIccParameters.T01ConvChecksum != 0x10)
-        && (NewIccParameters.T01ConvChecksum != 0x11)
-        && (NewIccParameters.T01ConvChecksum != 0x12)
-        && (NewIccParameters.T01ConvChecksum != 0x13))
+        && (NewIccParameters.T01ConvChecksum != 0x11) && (NewIccParameters.T01ConvChecksum != 0x12) && (NewIccParameters.T01ConvChecksum != 0x13))
         return SLOTERROR_BAD_T01CONVCHECKSUM;
 
-    if ((NewIccParameters.WaitingInteger >= 0xA0)
-        && ((NewIccParameters.T01ConvChecksum & 0x10) == 0x10))
+    if ((NewIccParameters.WaitingInteger >= 0xA0) && ((NewIccParameters.T01ConvChecksum & 0x10) == 0x10))
         return SLOTERROR_BAD_WAITINGINTEGER;
 
-    if ((NewIccParameters.ClockStop != 0x00) &&
-        (NewIccParameters.ClockStop != 0x03))
+    if ((NewIccParameters.ClockStop != 0x00) && (NewIccParameters.ClockStop != 0x03))
     {
         return SLOTERROR_BAD_CLOCKSTOP;
     }
@@ -490,8 +467,7 @@ unsigned char IFD_SetParameters (unsigned char* pParamBuffer,
 
 #define CCID_HW_NAME  "GemTwin-V2.00-GT00"
 
-void IFD_EscapeSendHwName (unsigned char* pBlockBuffer,
-                           unsigned int* pBlockSize)
+void IFD_EscapeSendHwName (unsigned char* pBlockBuffer, unsigned int* pBlockSize)
 {
     strcpy ((char *) pBlockBuffer, CCID_HW_NAME);
     *pBlockSize = strlen (CCID_HW_NAME);
@@ -499,8 +475,7 @@ void IFD_EscapeSendHwName (unsigned char* pBlockBuffer,
 
 #define IFD_ESCAPE_SEND_HW_NAME 2
 
-unsigned char IFD_Escape (unsigned char* pBlockBuffer,
-                          unsigned int* pBlockSize)
+unsigned char IFD_Escape (unsigned char* pBlockBuffer, unsigned int* pBlockSize)
 {
     unsigned int nSize;
 
@@ -580,8 +555,7 @@ unsigned char IFD_SetATRData (void)
 
     for (i = 0; i < SC_A2R.Hlength; i++)
     {
-        UsbMessageBuffer[OFFSET_ABDATA + 2 + SC_A2R.Tlength + i] =
-            SC_A2R.H[i];
+        UsbMessageBuffer[OFFSET_ABDATA + 2 + SC_A2R.Tlength + i] = SC_A2R.H[i];
     }
 
     return (SLOT_NO_ERROR);

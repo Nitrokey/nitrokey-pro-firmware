@@ -49,12 +49,9 @@ unsigned int debug_len = 0;
 
    Userpage layout PAGE: 0x801DC00
 
-   Byte 0 - 31 AES Storage key 32 - 51 Matrix columns for user password 52 -
-   71 Matrix columns for admin password 72 - 101 Stick Configuration 102 -
-   133 Base for AES key hidden volume (32 byte) 134 - 137 ID of sd card (4
-   byte) 138 - 141 Last stored real timestamp (4 byte) 142 - 145 ID of sc
-   card (4 byte) 146 - 177 XOR mask for sc tranfered keys (32 byte) 178 - 209
-   Password safe key (32 byte) 210 - Debug */
+   Byte 0 - 31 AES Storage key 32 - 51 Matrix columns for user password 52 - 71 Matrix columns for admin password 72 - 101 Stick Configuration 102 -
+   133 Base for AES key hidden volume (32 byte) 134 - 137 ID of sd card (4 byte) 138 - 141 Last stored real timestamp (4 byte) 142 - 145 ID of sc
+   card (4 byte) 146 - 177 XOR mask for sc tranfered keys (32 byte) 178 - 209 Password safe key (32 byte) 210 - Debug */
 
 
 
@@ -138,8 +135,7 @@ u8 ReadAESStorageKeyToUserPage (u8 * data)
 *******************************************************************************/
 /*
 
-   u8 WriteMatrixColumsUserPWToUserPage (u8 *data) {
-   flashc_memcpy(FLASHC_USER_PAGE + 32,data,20,TRUE); return (TRUE); }
+   u8 WriteMatrixColumsUserPWToUserPage (u8 *data) { flashc_memcpy(FLASHC_USER_PAGE + 32,data,20,TRUE); return (TRUE); }
 
  */
 /*******************************************************************************
@@ -153,8 +149,7 @@ u8 ReadAESStorageKeyToUserPage (u8 * data)
 *******************************************************************************/
 /*
 
-   u8 ReadMatrixColumsUserPWFromUserPage (u8 *data) { memcpy
-   (data,(void*)(FLASHC_USER_PAGE + 32),20); return (TRUE); }
+   u8 ReadMatrixColumsUserPWFromUserPage (u8 *data) { memcpy (data,(void*)(FLASHC_USER_PAGE + 32),20); return (TRUE); }
 
  */
 /*******************************************************************************
@@ -168,8 +163,7 @@ u8 ReadAESStorageKeyToUserPage (u8 * data)
 *******************************************************************************/
 /*
 
-   u8 WriteMatrixColumsAdminPWFromUserPage (u8 *data) {
-   flashc_memcpy(FLASHC_USER_PAGE + 52,data,20,TRUE); return (TRUE); }
+   u8 WriteMatrixColumsAdminPWFromUserPage (u8 *data) { flashc_memcpy(FLASHC_USER_PAGE + 52,data,20,TRUE); return (TRUE); }
 
  */
 /*******************************************************************************
@@ -183,8 +177,7 @@ u8 ReadAESStorageKeyToUserPage (u8 * data)
 *******************************************************************************/
 /*
 
-   u8 ReadMatrixColumsAdminPWFromUserPage (u8 *data) { memcpy
-   (data,(void*)(FLASHC_USER_PAGE + 52),20); return (TRUE); }
+   u8 ReadMatrixColumsAdminPWFromUserPage (u8 *data) { memcpy (data,(void*)(FLASHC_USER_PAGE + 52),20); return (TRUE); }
 
  */
 /*******************************************************************************
@@ -265,8 +258,7 @@ u32 ActiveSmartCardID_u32;
     StickConfiguration_st.AdminPwRetryCount = AdminPwRetryCount;
     StickConfiguration_st.ActiveSmartCardID_u32 = ActiveSmartCardID_u32;
 
-    if (MAGIC_NUMBER_STICK20_CONFIG !=
-        StickConfiguration_st.MagicNumber_StickConfig_u16)
+    if (MAGIC_NUMBER_STICK20_CONFIG != StickConfiguration_st.MagicNumber_StickConfig_u16)
     {
         return (FALSE);
     }
@@ -288,8 +280,7 @@ u32 ActiveSmartCardID_u32;
 
 u8 InitStickConfigurationToUserPage_u8 (void)
 {
-    StickConfiguration_st.MagicNumber_StickConfig_u16 =
-        MAGIC_NUMBER_STICK20_CONFIG;
+    StickConfiguration_st.MagicNumber_StickConfig_u16 = MAGIC_NUMBER_STICK20_CONFIG;
     StickConfiguration_st.ReadWriteFlagUncryptedVolume_u8 = READ_WRITE_ACTIVE;
     StickConfiguration_st.ReadWriteFlagCryptedVolume_u8 = READ_WRITE_ACTIVE;
     StickConfiguration_st.ReadWriteFlagHiddenVolume_u8 = READ_WRITE_ACTIVE;
@@ -330,9 +321,7 @@ u8 InitStickConfigurationToUserPage_u8 (void)
 *******************************************************************************/
 /*
 
-   u8 WriteHiddenVolumeSlotKey (u8 *data) {
-   flashc_memcpy((void*)(FLASHC_USER_PAGE + 102),data,32,TRUE); return
-   (TRUE); }
+   u8 WriteHiddenVolumeSlotKey (u8 *data) { flashc_memcpy((void*)(FLASHC_USER_PAGE + 102),data,32,TRUE); return (TRUE); }
 
  */
 /*******************************************************************************
@@ -353,8 +342,7 @@ u8 InitStickConfigurationToUserPage_u8 (void)
 *******************************************************************************/
 /*
 
-   u8 ReadHiddenVolumeSlotsKey (u8 *data) { memcpy
-   (data,(void*)(FLASHC_USER_PAGE + 102),32); return (TRUE); }
+   u8 ReadHiddenVolumeSlotsKey (u8 *data) { memcpy (data,(void*)(FLASHC_USER_PAGE + 102),32); return (TRUE); }
 
 
 
@@ -375,29 +363,22 @@ u8 InitStickConfigurationToUserPage_u8 (void)
 *******************************************************************************/
 /*
 
-   void SendStickStatusToHID (typeStick20Configuration_st *Status_st) { // If
-   configuration not found then init it if (FALSE ==
-   ReadStickConfigurationFromUserPage ()) {
-   InitStickConfigurationToUserPage_u8 (); }
+   void SendStickStatusToHID (typeStick20Configuration_st *Status_st) { // If configuration not found then init it if (FALSE ==
+   ReadStickConfigurationFromUserPage ()) { InitStickConfigurationToUserPage_u8 (); }
 
-   memcpy (Status_st,&StickConfiguration_st,sizeof
-   (typeStick20Configuration_st)); // Not the retry counter and sc serial no
+   memcpy (Status_st,&StickConfiguration_st,sizeof (typeStick20Configuration_st)); // Not the retry counter and sc serial no
 
    // Set the actual volume status Status_st->VolumeActiceFlag_u8 = 0;
 
-   if (TRUE == GetSdUncryptedCardEnableState ()) {
-   Status_st->VolumeActiceFlag_u8 |= (1 << SD_UNCRYPTED_VOLUME_BIT_PLACE); }
+   if (TRUE == GetSdUncryptedCardEnableState ()) { Status_st->VolumeActiceFlag_u8 |= (1 << SD_UNCRYPTED_VOLUME_BIT_PLACE); }
 
-   // Only 1 cypted volume could be active if (TRUE ==
-   GetSdEncryptedCardEnableState ()) { if (TRUE == GetSdEncryptedHiddenState
-   ()) { Status_st->VolumeActiceFlag_u8 |= (1 << SD_HIDDEN_VOLUME_BIT_PLACE);
-   } else { Status_st->VolumeActiceFlag_u8 |= (1 <<
+   // Only 1 cypted volume could be active if (TRUE == GetSdEncryptedCardEnableState ()) { if (TRUE == GetSdEncryptedHiddenState ()) {
+   Status_st->VolumeActiceFlag_u8 |= (1 << SD_HIDDEN_VOLUME_BIT_PLACE); } else { Status_st->VolumeActiceFlag_u8 |= (1 <<
    SD_CRYPTED_VOLUME_BIT_PLACE); } }
 
    ReadSdId (&Status_st->ActiveSD_CardID_u32);
 
-   Status_st->FirmwareLocked_u8 = FALSE; if (TRUE ==
-   flashc_is_security_bit_active()) { Status_st->FirmwareLocked_u8 = TRUE; } }
+   Status_st->FirmwareLocked_u8 = FALSE; if (TRUE == flashc_is_security_bit_active()) { Status_st->FirmwareLocked_u8 = TRUE; } }
 
  */
 /*******************************************************************************
@@ -411,16 +392,19 @@ u8 InitStickConfigurationToUserPage_u8 (void)
 *******************************************************************************/
 /*
 
-     void GetStickStatusFromHID (typeStick20Configuration_st *Status_st) { *//*
-     HID_Stick20AccessStatus_st->MatrixPasswordUserActiv_u8 = FALSE;
-     HID_Stick20AccessStatus_st->MatrixPasswordAdminActiv_u8 = FALSE;
-     HID_Stick20AccessStatus_st->ActivPasswordStatus_u8 = FALSE;
-     HID_Stick20AccessStatus_st->VolumeStatus_u8 = FALSE;
+                                                                                                                                                                                                                                                                                                                 void GetStickStatusFromHID (typeStick20Configuration_st *Status_st) { *//*
+                                                                                                                                                                                                                                                                                                                 HID_Stick20AccessStatus_st->MatrixPasswordUserActiv_u8
+                                                                                                                                                                                                                                                                                                                 = FALSE;
+                                                                                                                                                                                                                                                                                                                 HID_Stick20AccexPassworixPassworixPasswordAdminActiv_u8
+                                                                                                                                                                                                                                                                                                                 = FALSE;
+                                                                                                                                                                                                                                                                                                                 HID_Stick20AccesasswordvPasswordvPasswordStatus_u8 =
+                                                                                                                                                                                                                                                                                                                 FALSE; HID_Stick20AccessStatus_st->VolumeStatus_u8 =
+                                                                                                                                                                                                                                                                                                                 FALSE;
 
-     sd_mmc_mci_read_capacity_0(&HID_Stick20AccessStatus_st->SD_BlockSize_u32); *//*
-     }
+                                                                                                                                                                           sd_mmc_mci_read_capacity_0(&HID_Stick20AccessStatus_st->SD_BlockSize_u32); *//*
+                                                                                                                                                                           }
 
-   */
+                                                                                                                                                                         */
 /*******************************************************************************
 
   Read_ReadWriteStatusUncryptedVolume_u8
@@ -435,10 +419,8 @@ u8 InitStickConfigurationToUserPage_u8 (void)
 *******************************************************************************/
 /*
 
-   u8 Read_ReadWriteStatusUncryptedVolume_u8 (void) { // If configuration not
-   found then init it if (FALSE == ReadStickConfigurationFromUserPage ()) {
-   InitStickConfigurationToUserPage_u8 (); } return
-   (StickConfiguration_st.ReadWriteFlagUncryptedVolume_u8); }
+   u8 Read_ReadWriteStatusUncryptedVolume_u8 (void) { // If configuration not found then init it if (FALSE == ReadStickConfigurationFromUserPage ())
+   { InitStickConfigurationToUserPage_u8 (); } return (StickConfiguration_st.ReadWriteFlagUncryptedVolume_u8); }
 
  */
 /*******************************************************************************
@@ -455,10 +437,8 @@ u8 InitStickConfigurationToUserPage_u8 (void)
 *******************************************************************************/
 /*
 
-   u8 Write_ReadWriteStatusUncryptedVolume_u8 (u8 NewStatus_u8) { // If
-   configuration not found then init it if (FALSE ==
-   ReadStickConfigurationFromUserPage ()) {
-   InitStickConfigurationToUserPage_u8 (); }
+   u8 Write_ReadWriteStatusUncryptedVolume_u8 (u8 NewStatus_u8) { // If configuration not found then init it if (FALSE ==
+   ReadStickConfigurationFromUserPage ()) { InitStickConfigurationToUserPage_u8 (); }
 
    StickConfiguration_st.ReadWriteFlagUncryptedVolume_u8 = NewStatus_u8;
 
@@ -481,8 +461,7 @@ u8 InitStickConfigurationToUserPage_u8 (void)
 *******************************************************************************/
 /*
 
-   u8 WriteSdId (u32 *SdId_u32) { flashc_memcpy(FLASHC_USER_PAGE +
-   134,SdId_u32,4,TRUE);
+   u8 WriteSdId (u32 *SdId_u32) { flashc_memcpy(FLASHC_USER_PAGE + 134,SdId_u32,4,TRUE);
 
    StickConfiguration_st.ActiveSD_CardID_u32 = *SdId_u32; return (TRUE); }
 
@@ -501,8 +480,7 @@ u8 InitStickConfigurationToUserPage_u8 (void)
 *******************************************************************************/
 /*
 
-   u8 ReadSdId (u32 *SdId_u32) { memcpy (SdId_u32,(void*)(FLASHC_USER_PAGE +
-   134),4);
+   u8 ReadSdId (u32 *SdId_u32) { memcpy (SdId_u32,(void*)(FLASHC_USER_PAGE + 134),4);
 
    StickConfiguration_st.ActiveSD_CardID_u32 = *SdId_u32; return (TRUE); }
 
@@ -532,20 +510,17 @@ u8 InitStickConfigurationToUserPage_u8 (void)
 *******************************************************************************/
 /*
 
-   u8 WriteNewSdCardFoundToFlash (u32 *SdId_u32) { // If configuration not
-   found then init it if (FALSE == ReadStickConfigurationFromUserPage ()) {
+   u8 WriteNewSdCardFoundToFlash (u32 *SdId_u32) { // If configuration not found then init it if (FALSE == ReadStickConfigurationFromUserPage ()) {
    InitStickConfigurationToUserPage_u8 (); }
 
-   // CI_LocalPrintf ("*** New SD card found *** Serial number
-   0x%08x\r\n",*SdId_u32);
+   // CI_LocalPrintf ("*** New SD card found *** Serial number 0x%08x\r\n",*SdId_u32);
 
    WriteSdId (SdId_u32);
 
-   StickConfiguration_st.NewSDCardFound_u8 |= 0x01; // Bit 0 = new card found
-   // StickConfiguration_st.NewSDCardFound_u8 += 2; // add change counter +1
+   StickConfiguration_st.NewSDCardFound_u8 |= 0x01; // Bit 0 = new card found // StickConfiguration_st.NewSDCardFound_u8 += 2; // add change counter
+   +1
 
-   StickConfiguration_st.SDFillWithRandomChars_u8 &= 0xFE; // Clear the "card
-   with random chars filled" bit
+   StickConfiguration_st.SDFillWithRandomChars_u8 &= 0xFE; // Clear the "card with random chars filled" bit
 
    WriteStickConfigurationToUserPage ();
 
@@ -566,14 +541,12 @@ u8 InitStickConfigurationToUserPage_u8 (void)
 *******************************************************************************/
 /*
 
-   u8 SetSdCardFilledWithRandomsToFlash (void) { // If configuration not
-   found then init it if (FALSE == ReadStickConfigurationFromUserPage ()) {
+   u8 SetSdCardFilledWithRandomsToFlash (void) { // If configuration not found then init it if (FALSE == ReadStickConfigurationFromUserPage ()) {
    InitStickConfigurationToUserPage_u8 (); }
 
    // CI_LocalPrintf ("SD is filled with random chars\r\n");
 
-   StickConfiguration_st.SDFillWithRandomChars_u8 |= 0x01; // Set the "SD
-   card filled with randoms" bit //
+   StickConfiguration_st.SDFillWithRandomChars_u8 |= 0x01; // Set the "SD card filled with randoms" bit //
    StickConfiguration_st.SDFillWithRandomChars_u8 += 2; // add counter +1
 
    WriteStickConfigurationToUserPage ();
@@ -595,14 +568,12 @@ u8 InitStickConfigurationToUserPage_u8 (void)
 *******************************************************************************/
 /*
 
-   u8 ClearNewSdCardFoundToFlash (void) { // If configuration not found then
-   init it if (FALSE == ReadStickConfigurationFromUserPage ()) {
+   u8 ClearNewSdCardFoundToFlash (void) { // If configuration not found then init it if (FALSE == ReadStickConfigurationFromUserPage ()) {
    InitStickConfigurationToUserPage_u8 (); }
 
    // CI_LocalPrintf ("Clear new SD card found\r\n");
 
-   StickConfiguration_st.NewSDCardFound_u8 &= 0xFE; // Clear the "new SD card
-   found" bit
+   StickConfiguration_st.NewSDCardFound_u8 &= 0xFE; // Clear the "new SD card found" bit
 
    WriteStickConfigurationToUserPage ();
 
@@ -623,14 +594,12 @@ u8 InitStickConfigurationToUserPage_u8 (void)
 *******************************************************************************/
 /*
 
-   u8 SetSdCardFilledWithRandomCharsToFlash (void) { // If configuration not
-   found then init it if (FALSE == ReadStickConfigurationFromUserPage ()) {
+   u8 SetSdCardFilledWithRandomCharsToFlash (void) { // If configuration not found then init it if (FALSE == ReadStickConfigurationFromUserPage ()) {
    InitStickConfigurationToUserPage_u8 (); }
 
    // CI_LocalPrintf ("Set new SD card filled with random chars\r\n");
 
-   StickConfiguration_st.SDFillWithRandomChars_u8 |= 0x01; // Set the "SD
-   card filled with randoms" bit
+   StickConfiguration_st.SDFillWithRandomChars_u8 |= 0x01; // Set the "SD card filled with randoms" bit
 
    WriteStickConfigurationToUserPage ();
 
@@ -665,9 +634,9 @@ u8 SetSdCardNotFilledWithRandomCharsToFlash (void)
     // chars\r\n");
 
     StickConfiguration_st.SDFillWithRandomChars_u8 &= 0xFE; // Clear the
-                                                            // "card with
-                                                            // random chars
-                                                            // filled" bit
+    // "card with
+    // random chars
+    // filled" bit
 
     WriteStickConfigurationToUserPage ();
 
@@ -749,25 +718,19 @@ u8 ClearStickKeysNotInitatedToFlash (void)
 *******************************************************************************/
 /*
 
-   u8 CheckForNewFirmwareVersion (void) { static u8 UpdateFlag_u8 = FALSE; u8
-   update_u8;
+   u8 CheckForNewFirmwareVersion (void) { static u8 UpdateFlag_u8 = FALSE; u8 update_u8;
 
    if (TRUE == UpdateFlag_u8) { return (TRUE); }
 
    UpdateFlag_u8 = TRUE; // Run only once
 
-   // If configuration not found then init it if (FALSE ==
-   ReadStickConfigurationFromUserPage ()) {
-   InitStickConfigurationToUserPage_u8 (); }
+   // If configuration not found then init it if (FALSE == ReadStickConfigurationFromUserPage ()) { InitStickConfigurationToUserPage_u8 (); }
 
-   update_u8 = FALSE; if (VERSION_MAJOR !=
-   StickConfiguration_st.VersionInfo_au8[0]) { update_u8 = TRUE; }
+   update_u8 = FALSE; if (VERSION_MAJOR != StickConfiguration_st.VersionInfo_au8[0]) { update_u8 = TRUE; }
 
-   if (VERSION_MINOR != StickConfiguration_st.VersionInfo_au8[1]) { update_u8
-   = TRUE; } */
+   if (VERSION_MINOR != StickConfiguration_st.VersionInfo_au8[1]) { update_u8 = TRUE; } */
 /*
-   StickConfiguration_st.VersionInfo_au8[2] = 0; // Build number not used
-   StickConfiguration_st.VersionInfo_au8[3] = 0; // Build number not used */
+   StickConfiguration_st.VersionInfo_au8[2] = 0; // Build number not used StickConfiguration_st.VersionInfo_au8[3] = 0; // Build number not used */
 /*
    if (TRUE == update_u8) { WriteStickConfigurationToUserPage (); }
 
@@ -788,8 +751,7 @@ u8 ClearStickKeysNotInitatedToFlash (void)
 *******************************************************************************/
 /*
 
-   u8 WriteDatetime (u32 Datetime_u32) { flashc_memcpy(FLASHC_USER_PAGE +
-   138,&Datetime_u32,4,TRUE); return (TRUE); }
+   u8 WriteDatetime (u32 Datetime_u32) { flashc_memcpy(FLASHC_USER_PAGE + 138,&Datetime_u32,4,TRUE); return (TRUE); }
 
  */
 /*******************************************************************************
@@ -806,8 +768,7 @@ u8 ClearStickKeysNotInitatedToFlash (void)
 *******************************************************************************/
 /*
 
-   u8 ReadDatetime (u32 *Datetime_u32) { memcpy
-   (Datetime_u32,(void*)(FLASHC_USER_PAGE + 138),4); return (TRUE); }
+   u8 ReadDatetime (u32 *Datetime_u32) { memcpy (Datetime_u32,(void*)(FLASHC_USER_PAGE + 138),4); return (TRUE); }
 
 
  */
@@ -825,8 +786,7 @@ u8 ClearStickKeysNotInitatedToFlash (void)
 *******************************************************************************/
 /*
 
-   u8 WriteScId (u32 *ScId_u32) { flashc_memcpy(FLASHC_USER_PAGE +
-   142,ScId_u32,4,TRUE);
+   u8 WriteScId (u32 *ScId_u32) { flashc_memcpy(FLASHC_USER_PAGE + 142,ScId_u32,4,TRUE);
 
    StickConfiguration_st.ActiveSmartCardID_u32 = *ScId_u32; return (TRUE); }
 
@@ -845,8 +805,7 @@ u8 ClearStickKeysNotInitatedToFlash (void)
 *******************************************************************************/
 /*
 
-   u8 ReadScId (u32 *ScId_u32) { memcpy (ScId_u32,(void*)(FLASHC_USER_PAGE +
-   142),4);
+   u8 ReadScId (u32 *ScId_u32) { memcpy (ScId_u32,(void*)(FLASHC_USER_PAGE + 142),4);
 
    StickConfiguration_st.ActiveSmartCardID_u32 = *ScId_u32; return (TRUE); }
 
@@ -1033,8 +992,7 @@ uint8_t* page;
         memcpy (page_buffer + 256, EraseStoreData_au8, 256);
         FLASH_Unlock ();
         FLASH_ErasePage (PWS_FLASH_START_ADDRESS);
-        write_data_to_flash (page_buffer, FLASH_PAGE_SIZE,
-                             PWS_FLASH_START_ADDRESS);
+        write_data_to_flash (page_buffer, FLASH_PAGE_SIZE, PWS_FLASH_START_ADDRESS);
         FLASH_Lock ();
 
     }

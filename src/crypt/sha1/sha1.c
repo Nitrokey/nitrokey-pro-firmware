@@ -1,20 +1,14 @@
 /* sha1.c */
 /*
-   This file is part of the ARM-Crypto-Lib. Copyright (C) 2006-2010 Daniel
-   Otte (daniel.otte@rub.de)
+   This file is part of the ARM-Crypto-Lib. Copyright (C) 2006-2010 Daniel Otte (daniel.otte@rub.de)
 
-   This program is free software: you can redistribute it and/or modify it
-   under the terms of the GNU General Public License as published by the Free
-   Software Foundation, either version 3 of the License, or (at your option)
-   any later version.
+   This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+   Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-   or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-   for more details.
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-   You should have received a copy of the GNU General Public License along
-   with this program.  If not, see <http://www.gnu.org/licenses/>. */
+   You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 /**
  * \file	sha1.c
  * \author	Daniel Otte
@@ -59,8 +53,7 @@ static const uint32_t rotl32 (uint32_t n, uint8_t bits)
 
 static const uint32_t change_endian32 (uint32_t x)
 {
-    return (((x) << 24) | ((x) >> 24) | (((x) & 0x0000ff00) << 8) |
-            (((x) & 0x00ff0000) >> 8));
+    return (((x) << 24) | ((x) >> 24) | (((x) & 0x0000ff00) << 8) | (((x) & 0x00ff0000) >> 8));
 }
 
 
@@ -135,17 +128,13 @@ void sha1_nextBlock (sha1_ctx_t * state, const void* block)
         s = t & MASK;
         if (t >= 16)
         {
-            w[s] = rotl32 (w[(s + 13) & MASK] ^ w[(s + 8) & MASK] ^
-                           w[(s + 2) & MASK] ^ w[s], 1);
+            w[s] = rotl32 (w[(s + 13) & MASK] ^ w[(s + 8) & MASK] ^ w[(s + 2) & MASK] ^ w[s], 1);
         }
 
     uint32_t dtemp;
 
-        temp = rotl32 (a[0], 5) + (dtemp =
-                                   f[fi] (a[1], a[2],
-                                          a[3])) + a[4] + k[fi] + w[s];
-        memmove (&(a[1]), &(a[0]), 4 * sizeof (uint32_t));  /* e=d; d=c; c=b;
-                                                               b=a; */
+        temp = rotl32 (a[0], 5) + (dtemp = f[fi] (a[1], a[2], a[3])) + a[4] + k[fi] + w[s];
+        memmove (&(a[1]), &(a[0]), 4 * sizeof (uint32_t));  /* e=d; d=c; c=b; b=a; */
         a[0] = temp;
         a[2] = rotl32 (a[2], 30);   /* we might also do rotr32(c,2) */
         fib++;
@@ -236,8 +225,7 @@ void sha1 (void* dest, const void* msg, uint32_t length)
     while (length & (~0x0001ff))
     {   /* length>=512 */
         sha1_nextBlock (&s, msg);
-        msg = (uint8_t *) msg + SHA1_BLOCK_BITS / 8;    /* increment pointer
-                                                           to next block */
+        msg = (uint8_t *) msg + SHA1_BLOCK_BITS / 8;    /* increment pointer to next block */
         length -= SHA1_BLOCK_BITS;
     }
     sha1_lastBlock (&s, msg, length);

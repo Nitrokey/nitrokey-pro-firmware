@@ -18,27 +18,20 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __USB_INIT_H
 #define __USB_INIT_H
 
-/* Includes
-   ------------------------------------------------------------------ */
-/* Exported types
-   ------------------------------------------------------------ */
-/* Exported constants
-   -------------------------------------------------------- */
-/* Exported macro
-   ------------------------------------------------------------ */
-/* Exported functions -------------------------------------------------------
- */
+/* Includes ------------------------------------------------------------------ */
+/* Exported types ------------------------------------------------------------ */
+/* Exported constants -------------------------------------------------------- */
+/* Exported macro ------------------------------------------------------------ */
+/* Exported functions ------------------------------------------------------- */
 void USB_SetDeviceConfiguration (int nGDC);
 
 void USB_Init (void);
 
-/* External variables
-   -------------------------------------------------------- */
+/* External variables -------------------------------------------------------- */
 /* The number of current endpoint, it will be used to specify an endpoint */
 extern uint8_t EPindex;
 

@@ -18,8 +18,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x_exti.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -114,9 +113,7 @@ void EXTI_Init (EXTI_InitTypeDef * EXTI_InitStruct)
         EXTI->IMR &= ~EXTI_InitStruct->EXTI_Line;
         EXTI->EMR &= ~EXTI_InitStruct->EXTI_Line;
 
-        *(__IO uint32_t *) (EXTI_BASE +
-                            (uint32_t) EXTI_InitStruct->EXTI_Mode) |=
-            EXTI_InitStruct->EXTI_Line;
+        *(__IO uint32_t *) (EXTI_BASE + (uint32_t) EXTI_InitStruct->EXTI_Mode) |= EXTI_InitStruct->EXTI_Line;
         /* Clear Rising Falling edge configuration */
         EXTI->RTSR &= ~EXTI_InitStruct->EXTI_Line;
         EXTI->FTSR &= ~EXTI_InitStruct->EXTI_Line;
@@ -130,17 +127,13 @@ void EXTI_Init (EXTI_InitTypeDef * EXTI_InitStruct)
         }
         else
         {
-            *(__IO uint32_t *) (EXTI_BASE +
-                                (uint32_t) EXTI_InitStruct->EXTI_Trigger) |=
-                EXTI_InitStruct->EXTI_Line;
+            *(__IO uint32_t *) (EXTI_BASE + (uint32_t) EXTI_InitStruct->EXTI_Trigger) |= EXTI_InitStruct->EXTI_Line;
         }
     }
     else
     {
         /* Disable the selected external lines */
-        *(__IO uint32_t *) (EXTI_BASE +
-                            (uint32_t) EXTI_InitStruct->EXTI_Mode) &=
-            ~EXTI_InitStruct->EXTI_Line;
+        *(__IO uint32_t *) (EXTI_BASE + (uint32_t) EXTI_InitStruct->EXTI_Mode) &= ~EXTI_InitStruct->EXTI_Line;
     }
 }
 
@@ -231,8 +224,7 @@ uint32_t enablestatus = 0;
     assert_param (IS_GET_EXTI_LINE (EXTI_Line));
 
     enablestatus = EXTI->IMR & EXTI_Line;
-    if (((EXTI->PR & EXTI_Line) != (uint32_t) RESET)
-        && (enablestatus != (uint32_t) RESET))
+    if (((EXTI->PR & EXTI_Line) != (uint32_t) RESET) && (enablestatus != (uint32_t) RESET))
     {
         bitstatus = SET;
     }

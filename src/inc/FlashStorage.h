@@ -72,44 +72,41 @@ u32 EraseLocalFlashKeyValues_u32 (void);
 #define SD_HIDDEN_VOLUME_BIT_PLACE      2
 
 /*
-   #if (defined __GNUC__) && (defined __AVR32__)
-   __attribute__((__aligned__(4))) #elif (defined __ICCAVR32__) #pragma
-   data_alignment = 4 #endif */
+   #if (defined __GNUC__) && (defined __AVR32__) __attribute__((__aligned__(4))) #elif (defined __ICCAVR32__) #pragma data_alignment = 4 #endif */
 /* Look for 4 byte alignment of 32 bit values */
 typedef struct
 {
     u16 MagicNumber_StickConfig_u16;    // Shows that the structure is valid
-                                        // 2 byte // 2
+    // 2 byte // 2
     u8 ReadWriteFlagUncryptedVolume_u8; // Flag stores the read/write flag in
-                                        // the CPU flash 1 byte // 3
+    // the CPU flash 1 byte // 3
     u8 ReadWriteFlagCryptedVolume_u8;   // Flag stores the read/write flag in
-                                        // the CPU flash 1 byte // 4
-    u8 VersionInfo_au8[4];  // 4 byte // 8
+    // the CPU flash 1 byte // 4
+    u8 VersionInfo_au8[4];      // 4 byte // 8
     u8 ReadWriteFlagHiddenVolume_u8;    // Flag stores the read/write flag in
-                                        // the CPU flash 1 byte // 9
-    u8 FirmwareLocked_u8;   // 1 byte // 10
-    u8 NewSDCardFound_u8;   // Bit 0 new card found, bit 1-7 change counter 1
-                            // byte // 11
+    // the CPU flash 1 byte // 9
+    u8 FirmwareLocked_u8;       // 1 byte // 10
+    u8 NewSDCardFound_u8;       // Bit 0 new card found, bit 1-7 change counter 1
+    // byte // 11
     u8 SDFillWithRandomChars_u8;    // Bit 0 = 1 = filled, bit 1-7 change
-                                    // counter 1 byte // 12
+    // counter 1 byte // 12
     u32 ActiveSD_CardID_u32;    // 4 byte // 16
-    u8 VolumeActiceFlag_u8; // 1 byte // 17
+    u8 VolumeActiceFlag_u8;     // 1 byte // 17
     u8 NewSmartCardFound_u8;    // Bit 0 new card found, bit 1-7 change
-                                // counter 1 byte
-    u8 UserPwRetryCount;    // User password retry count 1 byte // 19
-    u8 AdminPwRetryCount;   // Admin password retry count 1 byte // 20 Byte
-                            // not packed
+    // counter 1 byte
+    u8 UserPwRetryCount;        // User password retry count 1 byte // 19
+    u8 AdminPwRetryCount;       // Admin password retry count 1 byte // 20 Byte
+    // not packed
     u32 ActiveSmartCardID_u32;  // 4 byte
     u8 StickKeysNotInitiated_u8;    // No AES keys computed (1 = AES are
-                                    // builded) 1 byte // 25 Byte not packed
+    // builded) 1 byte // 25 Byte not packed
 } typeStick20Configuration_st;  // Sum 25 byte (Max 25 Byte) // not packed
 
 
 extern typeStick20Configuration_st StickConfiguration_st;
 
 /*
-   u8 ReadStickConfigurationFromUserPage (void); void SendStickStatusToHID
-   (typeStick20Configuration_st *Status_st);
+   u8 ReadStickConfigurationFromUserPage (void); void SendStickStatusToHID (typeStick20Configuration_st *Status_st);
 
    u8 WriteSdId (u32 *SdId_u32); u8 ReadSdId (u32 *SdId_u32);
 
@@ -123,11 +120,8 @@ u8 WritePasswordSafeKey (u8 * data);
 u8 ReadPasswordSafeKey (u8 * data);
 
 /*
-   u8 WriteNewSdCardFoundToFlash (u32 *SdId_u32); u8
-   SetSdCardFilledWithRandomsToFlash (void); u8 ClearNewSdCardFoundToFlash
-   (void); u8 SetSdCardNotFilledWithRandomCharsToFlash (void); u8
-   SetSdCardFilledWithRandomCharsToFlash (void); u8
-   CheckForNewFirmwareVersion (void);
+   u8 WriteNewSdCardFoundToFlash (u32 *SdId_u32); u8 SetSdCardFilledWithRandomsToFlash (void); u8 ClearNewSdCardFoundToFlash (void); u8
+   SetSdCardNotFilledWithRandomCharsToFlash (void); u8 SetSdCardFilledWithRandomCharsToFlash (void); u8 CheckForNewFirmwareVersion (void);
 
    u8 SetStickKeysNotInitatedToFlash (void); */
 

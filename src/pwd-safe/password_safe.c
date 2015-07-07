@@ -109,9 +109,8 @@ __attribute__ ((__aligned__ (4)))
 static u8 DecryptedPasswordSafeKey_au8[AES_KEYSIZE_256_BIT];
 
 /*
-   #if (defined __GNUC__) && (defined __AVR32__)
-   __attribute__((__aligned__(4))) #elif (defined __ICCAVR32__) #pragma
-   data_alignment = 4 #endif typePasswordSafe_st PasswordSafe_st; */
+   #if (defined __GNUC__) && (defined __AVR32__) __attribute__((__aligned__(4))) #elif (defined __ICCAVR32__) #pragma data_alignment = 4 #endif
+   typePasswordSafe_st PasswordSafe_st; */
 #if (defined __GNUC__) && (defined __AVR32__)
 __attribute__ ((__aligned__ (4)))
 #elif (defined __ICCAVR32__)
@@ -142,8 +141,7 @@ void* p;
 
     CI_LocalPrintf
         ("PWS_WriteSlot: Slot %d. Name -%s- Loginname -%s- PW -%s-\r\n",
-         Slot_u8, Slot_st->SlotName_au8, Slot_st->SlotLoginName_au8,
-         Slot_st->SlotPassword_au8);
+         Slot_u8, Slot_st->SlotName_au8, Slot_st->SlotLoginName_au8, Slot_st->SlotPassword_au8);
 
     if (PWS_SLOT_COUNT <= Slot_u8)
     {
@@ -178,9 +176,7 @@ int i;
 
     for (i = 0; i < PWS_SLOT_LENGTH; i += 16)
     {
-        aes_crypt_ecb (&aes_ctx, AES_ENCRYPT,
-                       &(((unsigned char *) (Slot_st))[i]),
-                       &(Slot_st_encrypted[i]));
+        aes_crypt_ecb (&aes_ctx, AES_ENCRYPT, &(((unsigned char *) (Slot_st))[i]), &(Slot_st_encrypted[i]));
     }
 
     memcpy (Slot_st, Slot_st_encrypted, PWS_SLOT_LENGTH);
@@ -192,8 +188,7 @@ int i;
 #endif
 
     // Get write address
-    WritePointer_pu8 =
-        (u8 *) (PWS_FLASH_START_ADDRESS + (PWS_SLOT_LENGTH * Slot_u8));
+    WritePointer_pu8 = (u8 *) (PWS_FLASH_START_ADDRESS + (PWS_SLOT_LENGTH * Slot_u8));
 
     // Write to flash
 uint8_t page_buffer[FLASH_PAGE_SIZE];
@@ -201,14 +196,12 @@ uint8_t page_buffer[FLASH_PAGE_SIZE];
 uint8_t* page = (uint8_t *) PWS_FLASH_START_ADDRESS;
 
     memcpy (page_buffer, page, FLASH_PAGE_SIZE);
-    memcpy (page_buffer + (PWS_SLOT_LENGTH * Slot_u8), Slot_st_encrypted,
-            PWS_SLOT_LENGTH);
+    memcpy (page_buffer + (PWS_SLOT_LENGTH * Slot_u8), Slot_st_encrypted, PWS_SLOT_LENGTH);
 
     p = (void *) Slot_st_encrypted;
     FLASH_Unlock ();
     FLASH_ErasePage (PWS_FLASH_START_ADDRESS);
-    write_data_to_flash (page_buffer, FLASH_PAGE_SIZE,
-                         PWS_FLASH_START_ADDRESS);
+    write_data_to_flash (page_buffer, FLASH_PAGE_SIZE, PWS_FLASH_START_ADDRESS);
     FLASH_Lock ();
 
     // LED_GreenOff ();
@@ -281,9 +274,7 @@ int i;
 
     for (i = 0; i < PWS_SLOT_LENGTH; i += 16)
     {
-        aes_crypt_ecb (&aes_ctx, AES_ENCRYPT,
-                       &(((unsigned char *) (&Slot_st))[i]),
-                       &(Slot_st_encrypted[i]));
+        aes_crypt_ecb (&aes_ctx, AES_ENCRYPT, &(((unsigned char *) (&Slot_st))[i]), &(Slot_st_encrypted[i]));
     }
 
     memcpy ((char *) &Slot_st, Slot_st_encrypted, PWS_SLOT_LENGTH);
@@ -295,8 +286,7 @@ int i;
 #endif
 
     // Get write address
-    WritePointer_pu8 =
-        (u8 *) (PWS_FLASH_START_ADDRESS + (PWS_SLOT_LENGTH * Slot_u8));
+    WritePointer_pu8 = (u8 *) (PWS_FLASH_START_ADDRESS + (PWS_SLOT_LENGTH * Slot_u8));
 
     // Write to flash
 uint8_t page_buffer[FLASH_PAGE_SIZE];
@@ -304,14 +294,12 @@ uint8_t page_buffer[FLASH_PAGE_SIZE];
 uint8_t* page = (uint8_t *) PWS_FLASH_START_ADDRESS;
 
     memcpy (page_buffer, page, FLASH_PAGE_SIZE);
-    memcpy (page_buffer + (PWS_SLOT_LENGTH * Slot_u8), Slot_st_encrypted,
-            PWS_SLOT_LENGTH);
+    memcpy (page_buffer + (PWS_SLOT_LENGTH * Slot_u8), Slot_st_encrypted, PWS_SLOT_LENGTH);
 
     p = (void *) Slot_st_encrypted;
     FLASH_Unlock ();
     FLASH_ErasePage (PWS_FLASH_START_ADDRESS);
-    write_data_to_flash (page_buffer, FLASH_PAGE_SIZE,
-                         PWS_FLASH_START_ADDRESS);
+    write_data_to_flash (page_buffer, FLASH_PAGE_SIZE, PWS_FLASH_START_ADDRESS);
     FLASH_Lock ();
 
     // LED_GreenOff ();
@@ -353,13 +341,11 @@ u8* AesKeyPointer_pu8;
     // LED_GreenOn ();
 
     // Get read address
-    ReadPointer_pu8 =
-        (u8 *) (PWS_FLASH_START_ADDRESS + (PWS_SLOT_LENGTH * Slot_u8));
+    ReadPointer_pu8 = (u8 *) (PWS_FLASH_START_ADDRESS + (PWS_SLOT_LENGTH * Slot_u8));
     memcpy (Slot_st, ReadPointer_pu8, PWS_SLOT_LENGTH);
 
     /*
-       #ifdef ENABLE_IBN_PWS_TESTS_ENCRYPTION CI_LocalPrintf ("PWS_ReadSlot
-       encrypted : "); HexPrint (PWS_SLOT_LENGTH, Slot_st); CI_LocalPrintf
+       #ifdef ENABLE_IBN_PWS_TESTS_ENCRYPTION CI_LocalPrintf ("PWS_ReadSlot encrypted : "); HexPrint (PWS_SLOT_LENGTH, Slot_st); CI_LocalPrintf
        ("\n\r"); #endif */
 
     // Decrypt data (max 256 byte per encryption)
@@ -374,16 +360,13 @@ int i;
 
     for (i = 0; i < PWS_SLOT_LENGTH; i += 16)
     {
-        aes_crypt_ecb (&aes_ctx, AES_DECRYPT,
-                       &(((unsigned char *) (Slot_st))[i]),
-                       &(Slot_st_decrypted[i]));
+        aes_crypt_ecb (&aes_ctx, AES_DECRYPT, &(((unsigned char *) (Slot_st))[i]), &(Slot_st_decrypted[i]));
     }
 
     memcpy ((unsigned char *) (Slot_st), Slot_st_decrypted, PWS_SLOT_LENGTH);
 
     /*
-       #ifdef ENABLE_IBN_PWS_TESTS_ENCRYPTION CI_LocalPrintf ("PWS_ReadSlot
-       decrypted : "); HexPrint (PWS_SLOT_LENGTH, Slot_st_decrypted);
+       #ifdef ENABLE_IBN_PWS_TESTS_ENCRYPTION CI_LocalPrintf ("PWS_ReadSlot decrypted : "); HexPrint (PWS_SLOT_LENGTH, Slot_st_decrypted);
        CI_LocalPrintf ("\n\r"); #endif */
     // LED_GreenOff ();
 
@@ -584,8 +567,7 @@ u8 PWS_WriteSlotData_1 (u8 Slot_u8, u8 * Name_pu8, u8 * Password_pu8)
     memset (&PWS_BufferSlot_st, 0, sizeof (PWS_BufferSlot_st));
 
     memcpy (PWS_BufferSlot_st.SlotName_au8, Name_pu8, PWS_SLOTNAME_LENGTH);
-    memcpy (PWS_BufferSlot_st.SlotPassword_au8, Password_pu8,
-            PWS_PASSWORD_LENGTH);
+    memcpy (PWS_BufferSlot_st.SlotPassword_au8, Password_pu8, PWS_PASSWORD_LENGTH);
 
     return (TRUE);
 }
@@ -606,8 +588,7 @@ u8 PWS_WriteSlotData_1 (u8 Slot_u8, u8 * Name_pu8, u8 * Password_pu8)
 u8 PWS_WriteSlotData_2 (u8 Slot_u8, u8 * Loginname_pu8)
 {
 
-    memcpy (PWS_BufferSlot_st.SlotLoginName_au8, Loginname_pu8,
-            PWS_LOGINNAME_LENGTH);
+    memcpy (PWS_BufferSlot_st.SlotLoginName_au8, Loginname_pu8, PWS_LOGINNAME_LENGTH);
 
     if (FALSE == PWS_WriteSlot (Slot_u8, &PWS_BufferSlot_st))
     {
@@ -648,9 +629,7 @@ u8 Key_au8[AES_KEYSIZE_256_BIT];
     }
 
     // Get a random number for the master key
-    if (FALSE ==
-        getRandomNumber (AES_KEYSIZE_256_BIT / 2,
-                         &Key_au8[AES_KEYSIZE_256_BIT / 2]))
+    if (FALSE == getRandomNumber (AES_KEYSIZE_256_BIT / 2, &Key_au8[AES_KEYSIZE_256_BIT / 2]))
     {
         CI_LocalPrintf ("GetRandomNumber fails 2\n\r");
         return (FALSE);
@@ -883,8 +862,7 @@ u32 Ret_u32;
             {
                 return (FALSE);
             }
-            sendString ((char *) SendString_au8,
-                        strlen ((char *) SendString_au8));
+            sendString ((char *) SendString_au8, strlen ((char *) SendString_au8));
             break;
         case PWS_SEND_LOGINNAME:
             Ret_u32 = PWS_GetSlotLoginName (Slot_u8, SendString_au8);
@@ -892,8 +870,7 @@ u32 Ret_u32;
             {
                 return (FALSE);
             }
-            sendString ((char *) SendString_au8,
-                        strlen ((char *) SendString_au8));
+            sendString ((char *) SendString_au8, strlen ((char *) SendString_au8));
             break;
         case PWS_SEND_TAB:
             sendTab ();
@@ -931,8 +908,7 @@ __attribute__ ((__aligned__ (4)))
 #endif
 typePasswordSafeSlot_st PWS_TestSlot_st;
 
-void IBN_PWS_Tests (unsigned char nParamsGet_u8, unsigned char CMD_u8,
-                    unsigned int Param_u32, unsigned char* String_pu8)
+void IBN_PWS_Tests (unsigned char nParamsGet_u8, unsigned char CMD_u8, unsigned int Param_u32, unsigned char* String_pu8)
 {
     u32 Ret_u32;
 
@@ -943,8 +919,7 @@ void IBN_PWS_Tests (unsigned char nParamsGet_u8, unsigned char CMD_u8,
         CI_LocalPrintf ("0 [slot] Init test slot [slot]\r\n");
         CI_LocalPrintf ("1 [slot] Read test slot\r\n");
         CI_LocalPrintf ("2        Get password safe key\r\n");
-        CI_LocalPrintf
-            ("3        Enable password safe access (PIN = 123456)\r\n");
+        CI_LocalPrintf ("3        Enable password safe access (PIN = 123456)\r\n");
         CI_LocalPrintf ("4        Build new key\r\n");
         CI_LocalPrintf ("5 [slot] Send password\r\n");
         CI_LocalPrintf ("\r\n");
@@ -955,12 +930,9 @@ void IBN_PWS_Tests (unsigned char nParamsGet_u8, unsigned char CMD_u8,
     {
         case 0:
             CI_LocalPrintf ("Init write test slot %d\r\n", Param_u32);
-            sprintf ((char *) PWS_TestSlot_st.SlotName_au8, "Slot %d",
-                     Param_u32);
-            sprintf ((char *) PWS_TestSlot_st.SlotLoginName_au8,
-                     "login name %d", Param_u32);
-            sprintf ((char *) PWS_TestSlot_st.SlotPassword_au8,
-                     "password slot %d", Param_u32);
+            sprintf ((char *) PWS_TestSlot_st.SlotName_au8, "Slot %d", Param_u32);
+            sprintf ((char *) PWS_TestSlot_st.SlotLoginName_au8, "login name %d", Param_u32);
+            sprintf ((char *) PWS_TestSlot_st.SlotPassword_au8, "password slot %d", Param_u32);
             PWS_TestSlot_st.SlotActiv_u8 = PWS_SLOT_ACTIV_TOKEN;
 
             // PWS_WriteSlot (0,"aaaa","bbbb");
@@ -974,25 +946,20 @@ void IBN_PWS_Tests (unsigned char nParamsGet_u8, unsigned char CMD_u8,
 
             if (PWS_SLOT_ACTIV_TOKEN == PWS_TestSlot_st.SlotActiv_u8)
             {
-                CI_LocalPrintf ("Slotname  : %s\r\n",
-                                PWS_TestSlot_st.SlotName_au8);
-                CI_LocalPrintf ("Loginname : %s\r\n",
-                                PWS_TestSlot_st.SlotLoginName_au8);
-                CI_LocalPrintf ("Password  : %s\r\n",
-                                PWS_TestSlot_st.SlotPassword_au8);
+                CI_LocalPrintf ("Slotname  : %s\r\n", PWS_TestSlot_st.SlotName_au8);
+                CI_LocalPrintf ("Loginname : %s\r\n", PWS_TestSlot_st.SlotLoginName_au8);
+                CI_LocalPrintf ("Password  : %s\r\n", PWS_TestSlot_st.SlotPassword_au8);
             }
             else
             {
-                CI_LocalPrintf ("Slot not active : %d\r\n",
-                                PWS_TestSlot_st.SlotActiv_u8);
+                CI_LocalPrintf ("Slot not active : %d\r\n", PWS_TestSlot_st.SlotActiv_u8);
             }
             break;
 
         case 2:
             if (FALSE == PWS_DecryptedPasswordSafeKey ())
             {
-                CI_LocalPrintf
-                    ("Get password safe failed. User//admin password entered ?\r\n");
+                CI_LocalPrintf ("Get password safe failed. User//admin password entered ?\r\n");
             }
             break;
 

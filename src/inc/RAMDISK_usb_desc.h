@@ -19,24 +19,18 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __RAMDISK_USB_DESC_H
 #define __RAMDISK_USB_DESC_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
-/* Exported types
-   ------------------------------------------------------------ */
-/* Exported constants
-   -------------------------------------------------------- */
+/* Exported types ------------------------------------------------------------ */
+/* Exported constants -------------------------------------------------------- */
 /* Exported vari -------------------------------------------------------- */
 
-/* Exported macro
-   ------------------------------------------------------------ */
-/* Exported define
-   ----------------------------------------------------------- */
+/* Exported macro ------------------------------------------------------------ */
+/* Exported define ----------------------------------------------------------- */
 #define RAMDISK_SIZ_DEVICE_DESC              18
 #define RAMDISK_SIZ_CONFIG_DESC              32
 
@@ -46,8 +40,7 @@
 #define RAMDISK_SIZ_STRING_SERIAL            50
 #define RAMDISK_SIZ_STRING_INTERFACE         16
 
-/* Exported functions -------------------------------------------------------
- */
+/* Exported functions ------------------------------------------------------- */
 extern const uint8_t RAMDISK_DeviceDescriptor[RAMDISK_SIZ_DEVICE_DESC];
 
 extern const uint8_t RAMDISK_ConfigDescriptor[RAMDISK_SIZ_CONFIG_DESC];

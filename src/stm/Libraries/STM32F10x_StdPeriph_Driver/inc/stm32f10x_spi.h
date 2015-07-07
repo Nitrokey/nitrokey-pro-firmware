@@ -18,13 +18,11 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __STM32F10x_SPI_H
 #define __STM32F10x_SPI_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -418,16 +416,13 @@ void SPI_Cmd (SPI_TypeDef * SPIx, FunctionalState NewState);
 
 void I2S_Cmd (SPI_TypeDef * SPIx, FunctionalState NewState);
 
-void SPI_I2S_ITConfig (SPI_TypeDef * SPIx, uint8_t SPI_I2S_IT,
-                       FunctionalState NewState);
-void SPI_I2S_DMACmd (SPI_TypeDef * SPIx, uint16_t SPI_I2S_DMAReq,
-                     FunctionalState NewState);
+void SPI_I2S_ITConfig (SPI_TypeDef * SPIx, uint8_t SPI_I2S_IT, FunctionalState NewState);
+void SPI_I2S_DMACmd (SPI_TypeDef * SPIx, uint16_t SPI_I2S_DMAReq, FunctionalState NewState);
 void SPI_I2S_SendData (SPI_TypeDef * SPIx, uint16_t Data);
 
 uint16_t SPI_I2S_ReceiveData (SPI_TypeDef * SPIx);
 
-void SPI_NSSInternalSoftwareConfig (SPI_TypeDef * SPIx,
-                                    uint16_t SPI_NSSInternalSoft);
+void SPI_NSSInternalSoftwareConfig (SPI_TypeDef * SPIx, uint16_t SPI_NSSInternalSoft);
 void SPI_SSOutputCmd (SPI_TypeDef * SPIx, FunctionalState NewState);
 
 void SPI_DataSizeConfig (SPI_TypeDef * SPIx, uint16_t SPI_DataSize);

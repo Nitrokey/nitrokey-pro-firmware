@@ -1,20 +1,14 @@
 /* hmac-sha1.c */
 /*
-   This file is part of the ARM-Crypto-Lib. Copyright (C) 2006-2010 Daniel
-   Otte (daniel.otte@rub.de)
+   This file is part of the ARM-Crypto-Lib. Copyright (C) 2006-2010 Daniel Otte (daniel.otte@rub.de)
 
-   This program is free software: you can redistribute it and/or modify it
-   under the terms of the GNU General Public License as published by the Free
-   Software Foundation, either version 3 of the License, or (at your option)
-   any later version.
+   This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+   Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-   or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-   for more details.
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-   You should have received a copy of the GNU General Public License along
-   with this program.  If not, see <http://www.gnu.org/licenses/>. */
+   You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 /**
  *
  * implementation of HMAC as described in RFC2104
@@ -39,8 +33,7 @@
 
 #ifndef HMAC_SHORTONLY
 
-void hmac_sha1_init (hmac_sha1_ctx_t * s, const void* key,
-                     uint16_t keylength_b)
+void hmac_sha1_init (hmac_sha1_ctx_t * s, const void* key, uint16_t keylength_b)
 {
     uint8_t buffer[SHA1_BLOCK_BYTES];
 
@@ -81,8 +74,7 @@ void hmac_sha1_nextBlock (hmac_sha1_ctx_t * s, const void* block)
     sha1_nextBlock (&(s->a), block);
 }
 
-void hmac_sha1_lastBlock (hmac_sha1_ctx_t * s, const void* block,
-                          uint16_t length_b)
+void hmac_sha1_lastBlock (hmac_sha1_ctx_t * s, const void* block, uint16_t length_b)
 {
     while (length_b >= SHA1_BLOCK_BITS)
     {
@@ -106,8 +98,7 @@ void hmac_sha1_final (void* dest, hmac_sha1_ctx_t * s)
  * keylength in bits!
  * message length in bits!
  */
-void hmac_sha1 (void* dest, const void* key, uint16_t keylength_b,
-                const void* msg, uint32_t msglength_b)
+void hmac_sha1 (void* dest, const void* key, uint16_t keylength_b, const void* msg, uint32_t msglength_b)
 {   /* a one-shot */
     sha1_ctx_t s;
 

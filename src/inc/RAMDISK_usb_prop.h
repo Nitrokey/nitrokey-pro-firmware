@@ -20,20 +20,16 @@
  */
 
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __ramdisk_usb_prop_H
 #define __ramdisk_usb_prop_H
-/* Includes
-   ------------------------------------------------------------------ */
-/* Exported types
-   ------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
+/* Exported types ------------------------------------------------------------ */
 
 
 
 
-/* Exported constants
-   -------------------------------------------------------- */
+/* Exported constants -------------------------------------------------------- */
 #define RAMDISK_Storage_GetConfiguration          NOP_Process
 /* #define RAMDISK_Storage_SetConfiguration NOP_Process */
 #define RAMDISK_Storage_GetInterface              NOP_Process
@@ -49,10 +45,8 @@
 #define RAMDISK_STORAGE_RESET         0xFF
 #define LUN_DATA_LENGTH            1
 
-/* Exported macro
-   ------------------------------------------------------------ */
-/* Exported functions -------------------------------------------------------
- */
+/* Exported macro ------------------------------------------------------------ */
+/* Exported functions ------------------------------------------------------- */
 void RAMDISK_init (void);
 
 void RAMDISK_Reset (void);
@@ -71,8 +65,7 @@ RESULT RAMDISK_Data_Setup (uint8_t);
 
 RESULT RAMDISK_NoData_Setup (uint8_t);
 
-RESULT RAMDISK_Get_Interface_Setting (uint8_t Interface,
-                                      uint8_t AlternateSetting);
+RESULT RAMDISK_Get_Interface_Setting (uint8_t Interface, uint8_t AlternateSetting);
 uint8_t* RAMDISK_GetDeviceDescriptor (uint16_t);
 
 uint8_t* RAMDISK_GetConfigDescriptor (uint16_t);

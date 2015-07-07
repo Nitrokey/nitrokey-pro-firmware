@@ -18,15 +18,12 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __USB_REGS_H
 #define __USB_REGS_H
 
-/* Includes
-   ------------------------------------------------------------------ */
-/* Exported types
-   ------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
+/* Exported types ------------------------------------------------------------ */
 typedef enum _EP_DBUF_DIR
 {
     /* double buffered endpoint direction */
@@ -43,8 +40,7 @@ enum EP_BUF_NUM
     EP_BUF1
 };
 
-/* Exported constants
-   -------------------------------------------------------- */
+/* Exported constants -------------------------------------------------------- */
 #define RegBase  (0x40005C00L)  /* USB_IP Peripheral Registers base address */
 #define PMAAddr  (0x40006000L)  /* USB_IP Packet Memory Area base address */
 
@@ -65,8 +61,7 @@ enum EP_BUF_NUM
 /******************************************************************************/
 /* Endpoint registers */
 /******************************************************************************/
-#define EP0REG  ((__IO unsigned *)(RegBase))    /* endpoint 0 register
-                                                   address */
+#define EP0REG  ((__IO unsigned *)(RegBase))    /* endpoint 0 register address */
 
 /* endpoints enumeration */
 #define ENDP0   ((uint8_t)0)
@@ -181,8 +176,7 @@ enum EP_BUF_NUM
 #define EPRX_DTOG1     (0x1000) /* EndPoint RX Data TOGgle bit1 */
 #define EPRX_DTOG2     (0x2000) /* EndPoint RX Data TOGgle bit1 */
 #define EPRX_DTOGMASK  (EPRX_STAT|EPREG_MASK)
-/* Exported macro
-   ------------------------------------------------------------ */
+/* Exported macro ------------------------------------------------------------ */
 /* SetCNTR */
 #define _SetCNTR(wRegValue)  (*CNTR   = (uint16_t)wRegValue)
 
@@ -561,12 +555,10 @@ enum EP_BUF_NUM
 #define _GetEPDblBuf1Count(bEpNum) (_GetEPRxCount(bEpNum))
 
 
-/* External variables
-   -------------------------------------------------------- */
-extern __IO uint16_t wIstr; /* ISTR register last read value */
+/* External variables -------------------------------------------------------- */
+extern __IO uint16_t wIstr;     /* ISTR register last read value */
 
-/* Exported functions -------------------------------------------------------
- */
+/* Exported functions ------------------------------------------------------- */
 void SetCNTR (uint16_t /* wRegValue */ );
 
 void SetISTR (uint16_t /* wRegValue */ );

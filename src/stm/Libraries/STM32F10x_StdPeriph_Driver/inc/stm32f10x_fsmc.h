@@ -18,13 +18,11 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __STM32F10x_FSMC_H
 #define __STM32F10x_FSMC_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -72,21 +70,8 @@ typedef struct
     uint32_t FSMC_WaitSignal;
     uint32_t FSMC_ExtendedMode;
     uint32_t FSMC_WriteBurst;
-    FSMC_NORSRAMTimingInitTypeDef* FSMC_ReadWriteTimingStruct;  /* Timing
-                                                                   Parameters
-                                                                   for write
-                                                                   and read
-                                                                   access if
-                                                                   the
-                                                                   ExtendedMode
-                                                                   is not
-                                                                   used */
-    FSMC_NORSRAMTimingInitTypeDef* FSMC_WriteTimingStruct;  /* Timing
-                                                               earameters for
-                                                               write access
-                                                               if the
-                                                               dxtendedMode
-                                                               is used */
+    FSMC_NORSRAMTimingInitTypeDef* FSMC_ReadWriteTimingStruct;  /* Timing Parameters for write and read access if the ndedndedMode is not used */
+    FSMC_NORSRAMTimingInitTypeDef* FSMC_WriteTimingStruct;  /* Timing earameters for write access if the dxtendedMode is used */
 } FSMC_NORSRAMInitTypeDef;
 
 /**
@@ -114,16 +99,8 @@ typedef struct
     uint32_t FSMC_ECCPageSize;
     uint32_t FSMC_TCLRSetupTime;
     uint32_t FSMC_TARSetupTime;
-    FSMC_NAND_PCCARDTimingInitTypeDef* FSMC_CommonSpaceTimingStruct;    /* FSMC
-                                                                           Common
-                                                                           Space
-                                                                           Timing
-                                                                         */
-    FSMC_NAND_PCCARDTimingInitTypeDef* FSMC_AttributeSpaceTimingStruct; /* FSMC
-                                                                           Attribute
-                                                                           Space
-                                                                           Timing
-                                                                         */
+    FSMC_NAND_PCCARDTimingInitTypeDef* FSMC_CommonSpaceTimingStruct;    /* FSMC Common Space Timing */
+    FSMC_NAND_PCCARDTimingInitTypeDef* FSMC_AttributeSpaceTimingStruct; /* FSMC Attribute Space Timing */
 } FSMC_NANDInitTypeDef;
 
 /**
@@ -135,21 +112,9 @@ typedef struct
     uint32_t FSMC_Waitfeature;
     uint32_t FSMC_TCLRSetupTime;
     uint32_t FSMC_TARSetupTime;
-    FSMC_NAND_PCCARDTimingInitTypeDef* FSMC_CommonSpaceTimingStruct;    /* FSMC
-                                                                           Common
-                                                                           Space
-                                                                           Timing
-                                                                         */
-    FSMC_NAND_PCCARDTimingInitTypeDef* FSMC_AttributeSpaceTimingStruct; /* FSMC
-                                                                           Attribute
-                                                                           Space
-                                                                           Timing
-                                                                         */
-    FSMC_NAND_PCCARDTimingInitTypeDef* FSMC_IOSpaceTimingStruct;    /* FSMC
-                                                                       IO
-                                                                       cpace
-                                                                       Timing
-                                                                     */
+    FSMC_NAND_PCCARDTimingInitTypeDef* FSMC_CommonSpaceTimingStruct;    /* FSMC Common Space Timing */
+    FSMC_NAND_PCCARDTimingInitTypeDef* FSMC_AttributeSpaceTimingStruct; /* FSMC Attribute Space Timing */
+    FSMC_NAND_PCCARDTimingInitTypeDef* FSMC_IOSpaceTimingStruct;    /* FSMC IO cpace Timing */
 } FSMC_PCCARDInitTypeDef;
 
 /**
@@ -608,8 +573,7 @@ void FSMC_NANDInit (FSMC_NANDInitTypeDef * FSMC_NANDInitStruct);
 
 void FSMC_PCCARDInit (FSMC_PCCARDInitTypeDef * FSMC_PCCARDInitStruct);
 
-void FSMC_NORSRAMStructInit (FSMC_NORSRAMInitTypeDef *
-                             FSMC_NORSRAMInitStruct);
+void FSMC_NORSRAMStructInit (FSMC_NORSRAMInitTypeDef * FSMC_NORSRAMInitStruct);
 void FSMC_NANDStructInit (FSMC_NANDInitTypeDef * FSMC_NANDInitStruct);
 
 void FSMC_PCCARDStructInit (FSMC_PCCARDInitTypeDef * FSMC_PCCARDInitStruct);
@@ -624,8 +588,7 @@ void FSMC_NANDECCCmd (uint32_t FSMC_Bank, FunctionalState NewState);
 
 uint32_t FSMC_GetECC (uint32_t FSMC_Bank);
 
-void FSMC_ITConfig (uint32_t FSMC_Bank, uint32_t FSMC_IT,
-                    FunctionalState NewState);
+void FSMC_ITConfig (uint32_t FSMC_Bank, uint32_t FSMC_IT, FunctionalState NewState);
 FlagStatus FSMC_GetFlagStatus (uint32_t FSMC_Bank, uint32_t FSMC_FLAG);
 
 void FSMC_ClearFlag (uint32_t FSMC_Bank, uint32_t FSMC_FLAG);

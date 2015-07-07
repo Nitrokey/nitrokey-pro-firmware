@@ -18,13 +18,11 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __STM32F10x_RCC_H
 #define __STM32F10x_RCC_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -414,14 +412,10 @@ void RCC_GetClocksFreq (RCC_ClocksTypeDef * RCC_Clocks);
 
 void RCC_AHBPeriphClockCmd (uint32_t RCC_AHBPeriph, FunctionalState NewState);
 
-void RCC_APB2PeriphClockCmd (uint32_t RCC_APB2Periph,
-                             FunctionalState NewState);
-void RCC_APB1PeriphClockCmd (uint32_t RCC_APB1Periph,
-                             FunctionalState NewState);
-void RCC_APB2PeriphResetCmd (uint32_t RCC_APB2Periph,
-                             FunctionalState NewState);
-void RCC_APB1PeriphResetCmd (uint32_t RCC_APB1Periph,
-                             FunctionalState NewState);
+void RCC_APB2PeriphClockCmd (uint32_t RCC_APB2Periph, FunctionalState NewState);
+void RCC_APB1PeriphClockCmd (uint32_t RCC_APB1Periph, FunctionalState NewState);
+void RCC_APB2PeriphResetCmd (uint32_t RCC_APB2Periph, FunctionalState NewState);
+void RCC_APB1PeriphResetCmd (uint32_t RCC_APB1Periph, FunctionalState NewState);
 void RCC_BackupResetCmd (FunctionalState NewState);
 
 void RCC_ClockSecuritySystemCmd (FunctionalState NewState);

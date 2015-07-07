@@ -81,8 +81,7 @@ void sendKeys (uint8_t * buffer)
         while (!PrevXferComplete);
 
         PrevXferComplete = 0;
-        /* Use the memory interface function to write to the selected
-           endpoint */
+        /* Use the memory interface function to write to the selected endpoint */
         UserToPMABufferCopy (buffer, ENDP4_TXADDR, 8);
 
         /* Update the data length in the control register */

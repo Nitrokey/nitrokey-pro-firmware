@@ -18,13 +18,11 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __STM32F10x_SDIO_H
 #define __STM32F10x_SDIO_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -210,23 +208,9 @@ typedef struct
   * @{
   */
 
-#define SDIO_Wait_No                        ((uint32_t)0x00000000)  /* SDIO
-                                                                       No
-                                                                       tait,
-                                                                       TimeOut
-                                                                       is
-                                                                       bnabled
-                                                                     */
-#define SDIO_Wait_IT                        ((uint32_t)0x00000100)  /* SDIO
-                                                                       Wait
-                                                                       Interrupt
-                                                                       Request
-                                                                     */
-#define SDIO_Wait_Pend                      ((uint32_t)0x00000200)  /* SDIO
-                                                                       Wait
-                                                                       End of
-                                                                       transfer
-                                                                     */
+#define SDIO_Wait_No                        ((uint32_t)0x00000000)  /* SDIO No tait, TimeOut is bnabled */
+#define SDIO_Wait_IT                        ((uint32_t)0x00000100)  /* SDIO Wait Interrupt Request */
+#define SDIO_Wait_Pend                      ((uint32_t)0x00000200)  /* SDIO Wait End of transfer */
 #define IS_SDIO_WAIT(WAIT) (((WAIT) == SDIO_Wait_No) || ((WAIT) == SDIO_Wait_IT) || \
                             ((WAIT) == SDIO_Wait_Pend))
 /**

@@ -18,19 +18,15 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __USB_TYPE_H
 #define __USB_TYPE_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "usb_conf.h"
 
-/* Exported types
-   ------------------------------------------------------------ */
-/* Exported constants
-   -------------------------------------------------------- */
+/* Exported types ------------------------------------------------------------ */
+/* Exported constants -------------------------------------------------------- */
 #ifndef NULL
 #define NULL ((void *)0)
 #endif
@@ -89,11 +85,8 @@ typedef enum
 typedef enum
 { ERROR = 0, SUCCESS = !ERROR } ErrorStatus;
 #endif
-/* Exported macro
-   ------------------------------------------------------------ */
-/* Exported functions -------------------------------------------------------
- */
-/* External variables
-   -------------------------------------------------------- */
+/* Exported macro ------------------------------------------------------------ */
+/* Exported functions ------------------------------------------------------- */
+/* External variables -------------------------------------------------------- */
 
 #endif /* __USB_TYPE_H */

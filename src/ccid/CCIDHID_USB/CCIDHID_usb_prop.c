@@ -20,8 +20,7 @@
  */
 
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "usb_lib.h"
 #include "CCIDHID_usb_conf.h"
 #include "CCIDHID_usb_desc.h"
@@ -40,18 +39,14 @@
 
 #define KEY_STORE_ADDRESS 0x801FC00
 
-/* Private typedef
-   ----------------------------------------------------------- */
-/* Private define
-   ------------------------------------------------------------ */
+/* Private typedef ----------------------------------------------------------- */
+/* Private define ------------------------------------------------------------ */
 #define HID_INTERFACE_NO    0   // interface number
-/* Private macro
-   ------------------------------------------------------------- */
-/* Private variables
-   --------------------------------------------------------- */
+/* Private macro ------------------------------------------------------------- */
+/* Private variables --------------------------------------------------------- */
 uint32_t ProtocolValue;
 
-uint8_t Request = 0;    // completed request at status stage
+uint8_t Request = 0;            // completed request at status stage
 
 uint8_t RequestType = 0;
 
@@ -134,18 +129,14 @@ ONE_DESCRIPTOR CCID_String_Descriptor[5] = {
 };
 
 
-/* Extern variables
-   ---------------------------------------------------------- */
+/* Extern variables ---------------------------------------------------------- */
 extern unsigned char Bot_State;
 
 extern Bulk_Only_CBW CBW;
 
-/* Private function prototypes
-   ----------------------------------------------- */
-/* Extern function prototypes
-   ------------------------------------------------ */
-/* Private functions
-   --------------------------------------------------------- */
+/* Private function prototypes ----------------------------------------------- */
+/* Extern function prototypes ------------------------------------------------ */
+/* Private functions --------------------------------------------------------- */
 /*******************************************************************************
 * Function Name  : CCID_init
 * Description    : CCID init routine.
@@ -156,8 +147,7 @@ extern Bulk_Only_CBW CBW;
 void USB_CCID_init (void)
 {
 
-    /* Update the serial number string descriptor with the data from the
-       unique ID */
+    /* Update the serial number string descriptor with the data from the unique ID */
     Get_SerialNum ();
 
     pInformation->Current_Configuration = 0;
@@ -261,8 +251,7 @@ void USB_CCID_Storage_SetConfiguration (void)
         ClearDTOG_TX (ENDP2);
         // ClearDTOG_TX(ENDP3);
         ClearDTOG_TX (ENDP4);
-        Bot_State = BOT_IDLE;   /* set the Bot state machine to the IDLE
-                                   state */
+        Bot_State = BOT_IDLE;   /* set the Bot state machine to the IDLE state */
     }
 }
 
@@ -277,8 +266,7 @@ void USB_CCID_Storage_SetConfiguration (void)
 #ifdef NOT_USED
 void USB_CCID_Storage_ClearFeature (void)
 {
-    /* when the host send a CBW with invalid signature or invalid length the
-       two Endpoints (IN & OUT) shall stall until receiving a CCID Storage
+    /* when the host send a CBW with invalid signature or invalid length the two Endpoints (IN & OUT) shall stall until receiving a CCID Storage
        Reset */
     if (CBW.dSignature != BOT_CBW_SIGNATURE)
         Bot_Abort (BOTH_DIR);
@@ -349,8 +337,7 @@ void USB_CCID_Status_In (void)
                 lastCapsLockChange = currentTime;
             }
 
-            if ((lastLEDState & SCROLL_LOCK_LED) !=
-                (LEDState & SCROLL_LOCK_LED))
+            if ((lastLEDState & SCROLL_LOCK_LED) != (LEDState & SCROLL_LOCK_LED))
             {   // numlock changed
                 if ((currentTime - lastScrollLockChange) < DOUBLE_CLICK_TIME)
                 {
@@ -368,8 +355,7 @@ void USB_CCID_Status_In (void)
             if (device_status == STATUS_READY)
             {
                 device_status = STATUS_RECEIVED_REPORT;
-                memcpy (HID_SetReport_Value_tmp, HID_SetReport_Value,
-                        KEYBOARD_FEATURE_COUNT);
+                memcpy (HID_SetReport_Value_tmp, HID_SetReport_Value, KEYBOARD_FEATURE_COUNT);
             }
             // parse_report(HID_SetReport_Value,HID_GetReport_Value_tmp);
             // HID_GetReport_Value_tmp[0]=0xdd;
@@ -404,9 +390,7 @@ RESULT USB_CCID_Data_Setup (uint8_t RequestNo)
 uint8_t* (*CopyRoutine) (uint16_t);
 
     CopyRoutine = NULL;
-    if ((RequestNo == GET_DESCRIPTOR)
-        && (Type_Recipient == (STANDARD_REQUEST | INTERFACE_RECIPIENT))
-        && (pInformation->USBwIndex0 == 0))
+    if ((RequestNo == GET_DESCRIPTOR) && (Type_Recipient == (STANDARD_REQUEST | INTERFACE_RECIPIENT)) && (pInformation->USBwIndex0 == 0))
 
     {
 
@@ -422,9 +406,7 @@ uint8_t* (*CopyRoutine) (uint16_t);
     }   /* End of GET_DESCRIPTOR */
 
   /*** GET_PROTOCOL ***/
-    /* else if ((Type_Recipient == (CLASS_REQUEST | INTERFACE_RECIPIENT)) &&
-       RequestNo == GET_PROTOCOL) { CopyRoutine = Keyboard_GetProtocolValue;
-       } */
+    /* else if ((Type_Recipient == (CLASS_REQUEST | INTERFACE_RECIPIENT)) && RequestNo == GET_PROTOCOL) { CopyRoutine = Keyboard_GetProtocolValue; } */
   /*** GET_PROTOCOL, GET_REPORT, SET_REPORT ***/
     else if ((Type_Recipient == (CLASS_REQUEST | INTERFACE_RECIPIENT)))
     {
@@ -483,8 +465,7 @@ uint8_t* (*CopyRoutine) (uint16_t);
 *******************************************************************************/
 RESULT USB_CCID_NoData_Setup (uint8_t RequestNo)
 {
-    if ((Type_Recipient == (CLASS_REQUEST | INTERFACE_RECIPIENT))
-        && (RequestNo == SET_PROTOCOL))
+    if ((Type_Recipient == (CLASS_REQUEST | INTERFACE_RECIPIENT)) && (RequestNo == SET_PROTOCOL))
     {
         return Keyboard_SetProtocol ();
     }
@@ -506,18 +487,15 @@ RESULT USB_CCID_NoData_Setup (uint8_t RequestNo)
 * Output         : None.
 * Return         : RESULT.
 *******************************************************************************/
-RESULT USB_CCID_Get_Interface_Setting (uint8_t Interface,
-                                       uint8_t AlternateSetting)
+RESULT USB_CCID_Get_Interface_Setting (uint8_t Interface, uint8_t AlternateSetting)
 {
     if (AlternateSetting > 0)
     {
-        return USB_UNSUPPORT;   /* in this application we don't have
-                                   AlternateSetting */
+        return USB_UNSUPPORT;   /* in this application we don't have AlternateSetting */
     }
     else if (Interface > 1)
     {
-        return USB_UNSUPPORT;   /* in this application we have only 1
-                                   interfaces */
+        return USB_UNSUPPORT;   /* in this application we have only 1 interfaces */
     }
     return USB_SUCCESS;
 }
@@ -563,8 +541,7 @@ uint8_t wValue0 = pInformation->USBwValue0;
     }
     else
     {
-        return Standard_GetDescriptorData (Length,
-                                           String_Descriptor[wValue0]);
+        return Standard_GetDescriptorData (Length, String_Descriptor[wValue0]);
     }
 }
 
@@ -581,7 +558,7 @@ uint8_t* USB_CCID_Get_Max_Lun (uint16_t Length)
     if (Length == 0)
     {
         pInformation->Ctrl_Info.Usb_wLength = 1;    // should not used
-                                                    // LUN_DATA_LENGTH;
+        // LUN_DATA_LENGTH;
         return 0;
     }
     else
@@ -674,8 +651,7 @@ uint8_t* Keyboard_GetReport_Feature (uint16_t Length)
         // HID_GetReport_Value[3] = 0xEF;
         // HID_GetReport_Value[63] = 0xFF;
 
-        memcpy (HID_GetReport_Value, HID_GetReport_Value_tmp,
-                KEYBOARD_FEATURE_COUNT);
+        memcpy (HID_GetReport_Value, HID_GetReport_Value_tmp, KEYBOARD_FEATURE_COUNT);
         // memcpy(HID_GetReport_Value,HID_SetReport_Value,KEYBOARD_FEATURE_COUNT);
         HID_GetReport_Value[0] = device_status;
 

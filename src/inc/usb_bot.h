@@ -18,15 +18,12 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __USB_BOT_H
 #define __USB_BOT_H
 
-/* Includes
-   ------------------------------------------------------------------ */
-/* Exported types
-   ------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
+/* Exported types ------------------------------------------------------------ */
 /* Bulk-only Command Block Wrapper */
 
 typedef struct _Bulk_Only_CBW
@@ -51,8 +48,7 @@ typedef struct _Bulk_Only_CSW
 }
 Bulk_Only_CSW;
 
-/* Exported constants
-   -------------------------------------------------------- */
+/* Exported constants -------------------------------------------------------- */
 
 /*****************************************************************************/
 /*********************** Bulk-Only Transfer State machine ********************/
@@ -82,10 +78,8 @@ Bulk_Only_CSW;
 #define DIR_OUT                       1
 #define BOTH_DIR                      2
 
-/* Exported macro
-   ------------------------------------------------------------ */
-/* Exported functions -------------------------------------------------------
- */
+/* Exported macro ------------------------------------------------------------ */
+/* Exported functions ------------------------------------------------------- */
 void Mass_Storage_In (void);
 
 void Mass_Storage_Out (void);

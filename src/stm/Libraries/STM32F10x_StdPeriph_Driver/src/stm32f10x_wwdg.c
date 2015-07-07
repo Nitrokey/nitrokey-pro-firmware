@@ -18,8 +18,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x_wwdg.h"
 #include "stm32f10x_rcc.h"
 
@@ -171,8 +170,7 @@ void WWDG_SetCounter (uint8_t Counter)
 {
     /* Check the parameters */
     assert_param (IS_WWDG_COUNTER (Counter));
-    /* Write to T[6:0] bits to configure the counter value, no need to do a
-       read-modify-write; writing a 0 to WDGA bit does nothing */
+    /* Write to T[6:0] bits to configure the counter value, no need to do a read-modify-write; writing a 0 to WDGA bit does nothing */
     WWDG->CR = Counter & BIT_Mask;
 }
 

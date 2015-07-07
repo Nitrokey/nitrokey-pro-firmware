@@ -387,15 +387,12 @@ void ICC_ResetAsync (void)
 /* Send a command to the ICC for Asynchronous ICC only.  */
 /* Return error code : */
 /****************************************************************/
-unsigned char ICC_SendCommandAsync (unsigned char* pTransmitBuffer,
-                                    unsigned int CommandSize,
-                                    unsigned char ProtocolType)
+unsigned char ICC_SendCommandAsync (unsigned char* pTransmitBuffer, unsigned int CommandSize, unsigned char ProtocolType)
 {
     if (ProtocolType == 0x00)
     {
         Reset_bProtocolTypeFlag;
-        if ((CommandSize == 0x05) && (ProcedureByte != InstructionByte)
-            && (ProcedureByte != (~InstructionByte)))
+        if ((CommandSize == 0x05) && (ProcedureByte != InstructionByte) && (ProcedureByte != (~InstructionByte)))
         {
             InstructionByte = *(pTransmitBuffer + 1);
         }
@@ -410,8 +407,7 @@ unsigned char ICC_SendCommandAsync (unsigned char* pTransmitBuffer,
 
     CRD_StartWaitingTime ();
 
-    while ((!bParityErrorFlag) && (!bWaitingTimeFlag)
-           && (!bBufferOverflowFlag))
+    while ((!bParityErrorFlag) && (!bWaitingTimeFlag) && (!bBufferOverflowFlag))
     {
     }
 
@@ -435,8 +431,7 @@ unsigned char ICC_SendCommandAsync (unsigned char* pTransmitBuffer,
 /* Return error code : */
 /* 0x00 if OK */
 /****************************************************************/
-unsigned char ICC_ReceiveAnswerAsync (unsigned char* pReceiveBuffer,
-                                      unsigned int* pAnswerSize)
+unsigned char ICC_ReceiveAnswerAsync (unsigned char* pReceiveBuffer, unsigned int* pAnswerSize)
 {
     unsigned int BufferMaxSize;
 
@@ -447,8 +442,7 @@ unsigned char ICC_ReceiveAnswerAsync (unsigned char* pReceiveBuffer,
 
     CRD_StartWaitingTime ();
 
-    while ((!bParityErrorFlag) && (!bWaitingTimeFlag)
-           && (!bBufferOverflowFlag))
+    while ((!bParityErrorFlag) && (!bWaitingTimeFlag) && (!bBufferOverflowFlag))
     {
     }
 

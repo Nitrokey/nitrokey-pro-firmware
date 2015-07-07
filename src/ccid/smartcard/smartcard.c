@@ -19,8 +19,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x_flash.h"
 #include "stm32f10x_systick.h"
 #include "stm32f10x_usart.h"
@@ -30,16 +29,11 @@
 #include "CCID_usb.h"
 #include "hw_config.h"
 
-/* Private typedef
-   ----------------------------------------------------------- */
-/* Private define
-   ------------------------------------------------------------ */
-/* Private macro
-   ------------------------------------------------------------- */
-/* Private variables
-   --------------------------------------------------------- */
-/* Global variables definition and initialization
-   ---------------------------- */
+/* Private typedef ----------------------------------------------------------- */
+/* Private define ------------------------------------------------------------ */
+/* Private macro ------------------------------------------------------------- */
+/* Private variables --------------------------------------------------------- */
+/* Global variables definition and initialization ---------------------------- */
 SC_ATR SC_A2R;
 
 u8 SC_ATR_Table[40];
@@ -47,36 +41,28 @@ u8 SC_ATR_Table[40];
 u8 SC_ATR_Length = 0;
 
 static vu8 SCData = 0;
-static u32 F_Table[16] =
-    { 372, 372, 558, 744, 1116, 1488, 1860, 0, 0, 512, 768, 1024, 1536, 2048,
-0, 0 };
-static u32 D_Table[16] =
-    { 0, 1, 2, 4, 8, 16, 32, 0, 12, 20, 0, 0, 0, 0, 0, 0 };
+static u32 F_Table[16] = { 372, 372, 558, 744, 1116, 1488, 1860, 0, 0, 512, 768, 1024, 1536, 2048,
+    0, 0
+};
+static u32 D_Table[16] = { 0, 1, 2, 4, 8, 16, 32, 0, 12, 20, 0, 0, 0, 0, 0, 0 };
 
-/* Private function prototypes
-   ----------------------------------------------- */
-/* Transport Layer
-   ----------------------------------------------------------- */
+/* Private function prototypes ----------------------------------------------- */
+/* Transport Layer ----------------------------------------------------------- */
 /*--------------APDU-----------*/
-static void SC_SendData (SC_ADPU_Commands * SC_ADPU,
-                         SC_ADPU_Responce * SC_ResponceStatus);
+static void SC_SendData (SC_ADPU_Commands * SC_ADPU, SC_ADPU_Responce * SC_ResponceStatus);
 
 /*------------ ATR ------------*/
-static void SC_AnswerReq (SC_State * SCState, u8 * card, u8 length);    /* Ask
-                                                                           ATR
-                                                                         */
+static void SC_AnswerReq (SC_State * SCState, u8 * card, u8 length);    /* Ask ATR */
 static u8 SC_decode_Answer2reset (u8 * card);   /* Decode ATR */
 
-/* Physical Port Layer
-   ------------------------------------------------------- */
+/* Physical Port Layer ------------------------------------------------------- */
 void SC_Init (void);
 
 static void SC_DeInit (void);
 
 static ErrorStatus USART_ByteReceive (u8 * Data, u32 TimeOut);
 
-/* Private functions
-   --------------------------------------------------------- */
+/* Private functions --------------------------------------------------------- */
 
 uc8 MasterRoot[2] = { 0x3F, 0x00 };
 uc8 GSMDir[2] = { 0x7F, 0x20 };
@@ -93,11 +79,9 @@ extern vu32 TimingDelay;
 static volatile ErrorStatus HSEStartUpStatus = SUCCESS;
 
 // vu32 CardInserted = 0;
-u32 CHV1Status = 0; // i = 0;
-vu8 ICCID_Content[10] =
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-vu8 IMSI_Content[9] =
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+u32 CHV1Status = 0;             // i = 0;
+vu8 ICCID_Content[10] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+vu8 IMSI_Content[9] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 
 // SC_State SCState = SC_POWER_OFF;
@@ -126,8 +110,8 @@ static void RCC_Configuration (void)
     {
         /* Enable Prefetch Buffer */
         FLASH_PrefetchBufferCmd (FLASH_PrefetchBuffer_Enable);  // RB
-                                                                // essarsary
-                                                                // ??
+        // essarsary
+        // ??
 
         /* Flash 2 wait state */
         FLASH_SetLatency (FLASH_Latency_2); // RB necessary ??
@@ -143,7 +127,7 @@ static void RCC_Configuration (void)
 
         /* PLLCLK = 8MHz * 9 = 72 MHz */
         RCC_PLLConfig (RCC_PLLSource_HSE_Div1, RCC_PLLMul_6);   // RB
-                                                                // _PLLMLLMul_9);
+        // _PLLMLLMul_9);
 
         /* Enable PLL */
         RCC_PLLCmd (ENABLE);
@@ -247,8 +231,7 @@ void GPIO_Configuration_Smartcard (void)
     // already done
 
     /* Configure SMARTCARD_POWER_PINs as output push-pull */
-    GPIO_InitStructure.GPIO_Pin =
-        SMARTCARD_POWER_PIN_1 | SMARTCARD_POWER_PIN_2;
+    GPIO_InitStructure.GPIO_Pin = SMARTCARD_POWER_PIN_1 | SMARTCARD_POWER_PIN_2;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init (SMARTCARD_POWER_PORT, &GPIO_InitStructure);
@@ -348,8 +331,7 @@ void Delay_noUSBCheck (u32 nCount)
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void SC_Handler (SC_State * SCState, SC_ADPU_Commands * SC_ADPU,
-                 SC_ADPU_Responce * SC_Response)
+void SC_Handler (SC_State * SCState, SC_ADPU_Commands * SC_ADPU, SC_ADPU_Responce * SC_Response)
 {
 u32 i = 0;
 
@@ -358,20 +340,17 @@ u32 i = 0;
         case SC_POWER_ON:
             if (SC_ADPU->Header.INS == SC_GET_A2R)
             {
-                /* Smartcard intialization
-                   ------------------------------------------ */
+                /* Smartcard intialization ------------------------------------------ */
                 SC_Init ();
                 SC_PowerCmd (ENABLE);
 
-                /* Reset Data from SC buffer
-                   ----------------------------------------- */
+                /* Reset Data from SC buffer ----------------------------------------- */
                 for (i = 0; i < 40; i++)
                 {
                     SC_ATR_Table[i] = 0;
                 }
 
-                /* Reset SC_A2R Structure
-                   -------------------------------------------- */
+                /* Reset SC_A2R Structure -------------------------------------------- */
                 SC_A2R.TS = 0;
                 SC_A2R.T0 = 0;
                 for (i = 0; i < SETUP_LENGTH; i++)
@@ -385,8 +364,7 @@ u32 i = 0;
                 SC_A2R.Tlength = 0;
                 SC_A2R.Hlength = 0;
 
-                /* Next State
-                   -------------------------------------------------------- */
+                /* Next State -------------------------------------------------------- */
                 *SCState = SC_RESET_LOW;
             }
             break;
@@ -394,14 +372,9 @@ u32 i = 0;
         case SC_RESET_LOW:
             if (SC_ADPU->Header.INS == SC_GET_A2R)
             {
-                while (((*SCState) != SC_POWER_OFF)
-                       && ((*SCState) != SC_ACTIVE))
+                while (((*SCState) != SC_POWER_OFF) && ((*SCState) != SC_ACTIVE))
                 {
-                    SC_AnswerReq (SCState, &SC_ATR_Table[0], 40);   /* Check
-                                                                       for
-                                                                       answer
-                                                                       to
-                                                                       eeset */
+                    SC_AnswerReq (SCState, &SC_ATR_Table[0], 40);   /* Check for answer to eeset */
                 }
             }
             break;
@@ -491,8 +464,7 @@ void SC_ParityErrorHandler (void)
 }
 
 
-void SC_SetHwParams (u8 cBaudrateIndex, u8 cConversion, u8 Guardtime,
-                     u8 Waitingtime)
+void SC_SetHwParams (u8 cBaudrateIndex, u8 cConversion, u8 Guardtime, u8 Waitingtime)
 {
 RCC_ClocksTypeDef RCC_ClocksStatus;
 
@@ -502,8 +474,7 @@ u32 apbclock = 0;
 
 USART_InitTypeDef USART_InitStructure;
 
-    /* Reconfigure the USART Baud Rate
-       ------------------------------------------- */
+    /* Reconfigure the USART Baud Rate ------------------------------------------- */
     RCC_GetClocksFreq (&RCC_ClocksStatus);
 
     apbclock = RCC_ClocksStatus.PCLK2_Frequency;
@@ -517,8 +488,7 @@ USART_InitTypeDef USART_InitStructure;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_Parity = USART_Parity_Even;
     USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-    USART_InitStructure.USART_HardwareFlowControl =
-        USART_HardwareFlowControl_None;
+    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
     USART_Init (USART1, &USART_InitStructure);
 
     /* USART Guard Time set to 16 Bit */
@@ -546,14 +516,12 @@ void SC_PTSConfig (void)
 
     USART_ClockInitTypeDef USART_ClockInitStructure;
 
-    /* Reconfigure the USART Baud Rate
-       ------------------------------------------- */
+    /* Reconfigure the USART Baud Rate ------------------------------------------- */
     RCC_GetClocksFreq (&RCC_ClocksStatus);
 
     apbclock = RCC_ClocksStatus.PCLK2_Frequency;
     apbclock /= ((USART1->GTPR & (u16) 0x00FF) * 2);
-    /* Enable the DMA Receive (Set DMAR bit only) to enable interrupt
-       generation in case of a framing error FE */
+    /* Enable the DMA Receive (Set DMAR bit only) to enable interrupt generation in case of a framing error FE */
     USART_DMACmd (USART1, USART_DMAReq_Rx, ENABLE);
 
     // SC_A2R.T0 = 0x11; // for slow serial testing
@@ -680,8 +648,7 @@ void SC_PTSConfig (void)
             /* PTS Confirm */
             if (PTSConfirmStatus == 0x01)
             {
-                workingbaudrate =
-                    apbclock * D_Table[(SC_A2R.T[0] & (u8) 0x0F)];
+                workingbaudrate = apbclock * D_Table[(SC_A2R.T[0] & (u8) 0x0F)];
                 workingbaudrate /= F_Table[((SC_A2R.T[0] >> 4) & (u8) 0x0F)];
 
                 USART_ClockInitStructure.USART_Clock = USART_Clock_Enable;
@@ -694,10 +661,8 @@ void SC_PTSConfig (void)
                 USART_InitStructure.USART_WordLength = USART_WordLength_9b;
                 USART_InitStructure.USART_StopBits = USART_StopBits_1;
                 USART_InitStructure.USART_Parity = USART_Parity_Even;
-                USART_InitStructure.USART_Mode =
-                    USART_Mode_Rx | USART_Mode_Tx;
-                USART_InitStructure.USART_HardwareFlowControl =
-                    USART_HardwareFlowControl_None;
+                USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+                USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
                 USART_Init (USART1, &USART_InitStructure);
             }
         }
@@ -774,8 +739,7 @@ u32 Counter = 0;
 #define SC_GET_NO_STATUS 			2
 #define SC_GET_WRONG_STATUS		3
 
-static s8 CheckForSCStatus (SC_ADPU_Commands * SC_ADPU,
-                            SC_ADPU_Responce * SC_ResponceStatus)
+static s8 CheckForSCStatus (SC_ADPU_Commands * SC_ADPU, SC_ADPU_Responce * SC_ResponceStatus)
 {
 u8 locData = 0;
 
@@ -789,9 +753,7 @@ u8 locData = 0;
         return (SC_GET_WRONG_STATUS);
     }
 
-    if (((locData & (u8) 0xFE) ==
-         (((u8) ~ (SC_ADPU->Header.INS)) & (u8) 0xFE))
-        || ((locData & (u8) 0xFE) == (SC_ADPU->Header.INS & (u8) 0xFE)))
+    if (((locData & (u8) 0xFE) == (((u8) ~ (SC_ADPU->Header.INS)) & (u8) 0xFE)) || ((locData & (u8) 0xFE) == (SC_ADPU->Header.INS & (u8) 0xFE)))
     {
         SC_ResponceStatus->Data[0] = locData;   /* ACK received */
         return (SC_GET_ACK_STATUS);
@@ -821,15 +783,13 @@ u8 locData = 0;
 * Output         : None
 * Return         : None
 *******************************************************************************/
-static void SC_SendData (SC_ADPU_Commands * SC_ADPU,
-                         SC_ADPU_Responce * SC_ResponceStatus)
+static void SC_SendData (SC_ADPU_Commands * SC_ADPU, SC_ADPU_Responce * SC_ResponceStatus)
 {
 u32 i = 0;
 
 u8 locData = 0;
 
-    /* Reset responce buffer
-       --------------------------------------------------- */
+    /* Reset responce buffer --------------------------------------------------- */
     for (i = 0; i < LCmax; i++)
     {
         SC_ResponceStatus->Data[i] = 0;
@@ -838,19 +798,16 @@ u8 locData = 0;
     SC_ResponceStatus->SW1 = 0;
     SC_ResponceStatus->SW2 = 0;
 
-    /* Enable the DMA Receive (Set DMAR bit only) to enable interrupt
-       generation in case of a framing error FE */
+    /* Enable the DMA Receive (Set DMAR bit only) to enable interrupt generation in case of a framing error FE */
     USART_DMACmd (USART1, USART_DMAReq_Rx, ENABLE);
 
-    /* Send header
-       ------------------------------------------------------------- */
+    /* Send header ------------------------------------------------------------- */
     SendDatabyte (SC_ADPU->Header.CLA);
     SendDatabyte (SC_ADPU->Header.INS);
     SendDatabyte (SC_ADPU->Header.P1);
     SendDatabyte (SC_ADPU->Header.P2);
 
-    /* Send body length to/from SC
-       --------------------------------------------- */
+    /* Send body length to/from SC --------------------------------------------- */
     if (SC_ADPU->Body.LC)
     {
         SendDatabyte (SC_ADPU->Body.LC);
@@ -869,12 +826,10 @@ u8 locData = 0;
         return;
     }
 
-    /* If no status bytes received
-       --------------------------------------------- */
+    /* If no status bytes received --------------------------------------------- */
     if (SC_ResponceStatus->SW1 == 0x00)
     {
-        /* Send body data to
-           SC-------------------------------------------------- */
+        /* Send body data to SC-------------------------------------------------- */
         if (SC_ADPU->Body.LC)
         {
             for (i = 0; i < SC_ADPU->Body.LC; i++)
@@ -889,22 +844,19 @@ u8 locData = 0;
 
         }
 
-        /* Or receive body data from SC
-           ------------------------------------------ */
+        /* Or receive body data from SC ------------------------------------------ */
         else if (SC_ADPU->Body.LE)
         {
             for (i = 0; i < SC_ADPU->Body.LE; i++)
             {
-                if (USART_ByteReceive (&locData, SC_Receive_Timeout) ==
-                    SUCCESS)
+                if (USART_ByteReceive (&locData, SC_Receive_Timeout) == SUCCESS)
                 {
                     SC_ResponceStatus->Data[i] = locData;
                 }
             }
         }
 
-        /* Wait SW1
-           -------------------------------------------------------------- */
+        /* Wait SW1 -------------------------------------------------------------- */
         i = 0;
         while (i < 10)
         {
@@ -918,8 +870,7 @@ u8 locData = 0;
                 i++;
             }
         }
-        /* Wait SW2
-           ------------------------------------------------------------ */
+        /* Wait SW2 ------------------------------------------------------------ */
         i = 0;
         while (i < 10)
         {
@@ -961,12 +912,10 @@ u8* card_local;
     switch (*SCstate)
     {
         case SC_RESET_LOW:
-            /* Check responce with reset low
-               --------------------------------------- */
+            /* Check responce with reset low --------------------------------------- */
             for (i = 0; i < length; i++)
             {
-                if ((USART_ByteReceive (&Data, SC_Receive_Timeout)) ==
-                    SUCCESS)
+                if ((USART_ByteReceive (&Data, SC_Receive_Timeout)) == SUCCESS)
                 {
                     card[i] = Data;
                     SC_ATR_Length++;
@@ -984,17 +933,14 @@ u8* card_local;
             break;
 
         case SC_RESET_HIGH:
-            /* Check responce with reset high
-               -------------------------------------- */
+            /* Check responce with reset high -------------------------------------- */
             SC_Reset (Bit_SET); /* Reset High */
 
             while (length--)
             {
-                if ((USART_ByteReceive (&Data, SC_Receive_Timeout)) ==
-                    SUCCESS)
+                if ((USART_ByteReceive (&Data, SC_Receive_Timeout)) == SUCCESS)
                 {
-                    *card_local++ = Data;   /* Receive data for timeout =
-                                               SC_Receive_Timeout */
+                    *card_local++ = Data;   /* Receive data for timeout = SC_Receive_Timeout */
                     SC_ATR_Length++;
                 }
             }
@@ -1012,8 +958,7 @@ u8* card_local;
             break;
 
         case SC_POWER_OFF:
-            /* Close Connection if no answer received
-               ------------------------------ */
+            /* Close Connection if no answer received ------------------------------ */
             // SC_Reset(Bit_SET); /* Reset high - a bit is used as level
             // shifter from 3.3 to 5 V */
             SC_Reset (Bit_RESET);
@@ -1050,9 +995,7 @@ u32 i = 0, flag = 0, buf = 0, protocol = 0;
 
     for (i = 0; i < 4; i++)
     {
-        SC_A2R.Tlength =
-            SC_A2R.Tlength +
-            (((SC_A2R.T0 & (u8) 0xF0) >> (4 + i)) & (u8) 0x1);
+        SC_A2R.Tlength = SC_A2R.Tlength + (((SC_A2R.T0 & (u8) 0xF0) >> (4 + i)) & (u8) 0x1);
     }
 
     for (i = 0; i < SC_A2R.Tlength; i++)
@@ -1078,9 +1021,7 @@ u32 i = 0, flag = 0, buf = 0, protocol = 0;
 
         for (i = 0; i < 4; i++)
         {
-            SC_A2R.Tlength =
-                SC_A2R.Tlength +
-                (((SC_A2R.T[buf - 1] & (u8) 0xF0) >> (4 + i)) & (u8) 0x1);
+            SC_A2R.Tlength = SC_A2R.Tlength + (((SC_A2R.T[buf - 1] & (u8) 0xF0) >> (4 + i)) & (u8) 0x1);
         }
 
         for (i = 0; i < SC_A2R.Tlength; i++)
@@ -1161,11 +1102,9 @@ void SC_Init (void)
         GPIO_Configuration_Smartcard ();
         nStartFlag = FALSE;
     }
-    /* USART1 configuration
-       ------------------------------------------------------ */
-    /* USART1 configured as follow: - Word Length = 9 Bits - 0.5 Stop Bit -
-       Even parity - BaudRate = 9677 baud - Hardware flow control disabled
-       (RTS and CTS signals) - Tx and Rx enabled - USART Clock enabled */
+    /* USART1 configuration ------------------------------------------------------ */
+    /* USART1 configured as follow: - Word Length = 9 Bits - 0.5 Stop Bit - Even parity - BaudRate = 9677 baud - Hardware flow control disabled (RTS
+       and CTS signals) - Tx and Rx enabled - USART Clock enabled */
 
     /* USART Clock set to 3.6 MHz (PCLK1 (36 MHZ) / 10) */
     USART_SetPrescaler (USART1, 0x0a);  // RB0x05
@@ -1185,8 +1124,7 @@ void SC_Init (void)
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_Parity = USART_Parity_Even;
     USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-    USART_InitStructure.USART_HardwareFlowControl =
-        USART_HardwareFlowControl_None;
+    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
     USART_Init (USART1, &USART_InitStructure);
 
     /* Enable the USART1 Parity Error Interrupt */
@@ -1366,8 +1304,7 @@ static ErrorStatus USART_ByteReceive (u8 * Data, u32 TimeOut)
 {
 u32 Counter = 0;
 
-    while ((USART_GetFlagStatus (USART1, USART_FLAG_RXNE) == RESET)
-           && (Counter != TimeOut))
+    while ((USART_GetFlagStatus (USART1, USART_FLAG_RXNE) == RESET) && (Counter != TimeOut))
     {
         Counter++;
     }
@@ -1433,10 +1370,7 @@ int WaitForATR (void)
 
 *******************************************************************************/
 
-int CRD_SendCommand (unsigned char* pTransmitBuffer,
-                     unsigned int nCommandSize,
-                     unsigned int nExpectedAnswerSize,
-                     unsigned int* nReceivedAnswerSize)
+int CRD_SendCommand (unsigned char* pTransmitBuffer, unsigned int nCommandSize, unsigned int nExpectedAnswerSize, unsigned int* nReceivedAnswerSize)
 {
     int i;
 
@@ -1493,8 +1427,7 @@ int CRD_SendCommand (unsigned char* pTransmitBuffer,
     /* Flush the USART1 DR */
     (void) USART_ReceiveData (USART1);
 
-    for (i = 0; i < ICC_MESSAGE_BUFFER_MAX_LENGTH - USB_MESSAGE_HEADER_SIZE;
-         i++)
+    for (i = 0; i < ICC_MESSAGE_BUFFER_MAX_LENGTH - USB_MESSAGE_HEADER_SIZE; i++)
     {
         pTransmitBuffer[i] = 0xa5;
     }
@@ -1502,19 +1435,19 @@ int CRD_SendCommand (unsigned char* pTransmitBuffer,
     /* Get answer */
     //
     for (i = 0; i < ICC_MESSAGE_BUFFER_MAX_LENGTH - USB_MESSAGE_HEADER_SIZE; i++)   // max
-                                                                                    // buffer
-                                                                                    // size
-                                                                                    // (had
-                                                                                    // to
-                                                                                    // be
-                                                                                    // checked)
+        // buffer
+        // size
+        // (had
+        // to
+        // be
+        // checked)
     {
         nDelayTime = SC_Receive_Timeout;
         if (0 == i)
         {
             nDelayTime = SC_Receive_Timeout * 10000L;   // Long long wait for
-                                                        // first byte, allow
-                                                        // card to work
+            // first byte, allow
+            // card to work
         }
 
         if ((USART_ByteReceive (&pTransmitBuffer[i], nDelayTime)) != SUCCESS)
@@ -1527,18 +1460,16 @@ int CRD_SendCommand (unsigned char* pTransmitBuffer,
             case 0:
                 // ACK byte ?
                 if (((pTransmitBuffer[i] & (u8) 0xFE) ==
-                     (((u8) ~ (pTransmitBuffer[1])) & (u8) 0xFE))
-                    || ((pTransmitBuffer[i] & (u8) 0xFE) ==
-                        (pTransmitBuffer[1] & (u8) 0xFE)))
+                     (((u8) ~ (pTransmitBuffer[1])) & (u8) 0xFE)) || ((pTransmitBuffer[i] & (u8) 0xFE) == (pTransmitBuffer[1] & (u8) 0xFE)))
                 {
                     break;
                 }
                 // Get Error state
                 if (((pTransmitBuffer[i] & (u8) 0xF0) == 0x60)) // ||
-                                                                // TransansmitBuffer[i]
-                                                                // &
-                                                                // ()0xF0F0)
-                                                                // == 0x90))
+                    // TransansmitBuffer[i]
+                    // &
+                    // ()0xF0F0)
+                    // == 0x90))
                 {
                     nStatus = SC_GET_WRONG_STATUS;
                 }
@@ -1672,11 +1603,9 @@ int scTest (void)
     }
 
     /*
-       { unsigned char pTransmitBuffer[40]; unsigned int nCommandSize;
-       unsigned int nExpectedAnswerSize; unsigned int nReceivedAnswerSize;
+       { unsigned char pTransmitBuffer[40]; unsigned int nCommandSize; unsigned int nExpectedAnswerSize; unsigned int nReceivedAnswerSize;
 
-       pTransmitBuffer[0] = 0xFF; pTransmitBuffer[1] = 0x11;
-       pTransmitBuffer[2] = 0x13; pTransmitBuffer[3] = 0xFD; CRD_SendCommand
+       pTransmitBuffer[0] = 0xFF; pTransmitBuffer[1] = 0x11; pTransmitBuffer[2] = 0x13; pTransmitBuffer[3] = 0xFD; CRD_SendCommand
        (pTransmitBuffer,4,2,&nReceivedAnswerSize);
 
        Delay_noUSBCheck(5); } */

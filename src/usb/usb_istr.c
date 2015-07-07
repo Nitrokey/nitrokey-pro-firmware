@@ -18,8 +18,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 #include "usb_type.h"
 #include "usb_regs.h"
@@ -28,40 +27,25 @@
 #include "usb_init.h"
 #include "usb_int.h"
 
-/* Private typedef
-   ----------------------------------------------------------- */
-/* Private define
-   ------------------------------------------------------------ */
-/* Private macro
-   ------------------------------------------------------------- */
-/* Private variables
-   --------------------------------------------------------- */
-__IO uint16_t wIstr;    /* ISTR register last read value */
+/* Private typedef ----------------------------------------------------------- */
+/* Private define ------------------------------------------------------------ */
+/* Private macro ------------------------------------------------------------- */
+/* Private variables --------------------------------------------------------- */
+__IO uint16_t wIstr;            /* ISTR register last read value */
 
-__IO uint8_t bIntPackSOF = 0;   /* SOFs received between 2 consecutive
-                                   packets */
+__IO uint8_t bIntPackSOF = 0;   /* SOFs received between 2 consecutive packets */
 
-/* Extern variables
-   ---------------------------------------------------------- */
-/* Private function prototypes
-   ----------------------------------------------- */
-/* Private functions
-   --------------------------------------------------------- */
+/* Extern variables ---------------------------------------------------------- */
+/* Private function prototypes ----------------------------------------------- */
+/* Private functions --------------------------------------------------------- */
 /* function pointers to non-control endpoints service routines */
 void (*pEpInt_IN[7]) (void) =
 {
-EP1_IN_Callback,
-        EP2_IN_Callback,
-        EP3_IN_Callback,
-        EP4_IN_Callback, EP5_IN_Callback, EP6_IN_Callback, EP7_IN_Callback,};
+EP1_IN_Callback, EP2_IN_Callback, EP3_IN_Callback, EP4_IN_Callback, EP5_IN_Callback, EP6_IN_Callback, EP7_IN_Callback,};
 
 void (*pEpInt_OUT[7]) (void) =
 {
-EP1_OUT_Callback,
-        EP2_OUT_Callback,
-        EP3_OUT_Callback,
-        EP4_OUT_Callback,
-        EP5_OUT_Callback, EP6_OUT_Callback, EP7_OUT_Callback,};
+EP1_OUT_Callback, EP2_OUT_Callback, EP3_OUT_Callback, EP4_OUT_Callback, EP5_OUT_Callback, EP6_OUT_Callback, EP7_OUT_Callback,};
 
 
 /*******************************************************************************
@@ -157,8 +141,7 @@ void USB_Istr (void)
     {
         _SetISTR ((uint16_t) CLR_ESOF);
         /* resume handling timing is made with ESOFs */
-        Resume (RESUME_ESOF);   /* request without change of the machine
-                                   state */
+        Resume (RESUME_ESOF);   /* request without change of the machine state */
 
 #ifdef ESOF_CALLBACK
         ESOF_Callback ();

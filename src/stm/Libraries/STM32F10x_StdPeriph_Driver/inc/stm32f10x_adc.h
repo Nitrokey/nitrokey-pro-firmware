@@ -18,13 +18,11 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __STM32F10x_ADC_H
 #define __STM32F10x_ADC_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -437,8 +435,7 @@ void ADC_Cmd (ADC_TypeDef * ADCx, FunctionalState NewState);
 
 void ADC_DMACmd (ADC_TypeDef * ADCx, FunctionalState NewState);
 
-void ADC_ITConfig (ADC_TypeDef * ADCx, uint16_t ADC_IT,
-                   FunctionalState NewState);
+void ADC_ITConfig (ADC_TypeDef * ADCx, uint16_t ADC_IT, FunctionalState NewState);
 void ADC_ResetCalibration (ADC_TypeDef * ADCx);
 
 FlagStatus ADC_GetResetCalibrationStatus (ADC_TypeDef * ADCx);
@@ -455,8 +452,7 @@ void ADC_DiscModeChannelCountConfig (ADC_TypeDef * ADCx, uint8_t Number);
 
 void ADC_DiscModeCmd (ADC_TypeDef * ADCx, FunctionalState NewState);
 
-void ADC_RegularChannelConfig (ADC_TypeDef * ADCx, uint8_t ADC_Channel,
-                               uint8_t Rank, uint8_t ADC_SampleTime);
+void ADC_RegularChannelConfig (ADC_TypeDef * ADCx, uint8_t ADC_Channel, uint8_t Rank, uint8_t ADC_SampleTime);
 void ADC_ExternalTrigConvCmd (ADC_TypeDef * ADCx, FunctionalState NewState);
 
 uint16_t ADC_GetConversionValue (ADC_TypeDef * ADCx);
@@ -467,29 +463,20 @@ void ADC_AutoInjectedConvCmd (ADC_TypeDef * ADCx, FunctionalState NewState);
 
 void ADC_InjectedDiscModeCmd (ADC_TypeDef * ADCx, FunctionalState NewState);
 
-void ADC_ExternalTrigInjectedConvConfig (ADC_TypeDef * ADCx,
-                                         uint32_t ADC_ExternalTrigInjecConv);
-void ADC_ExternalTrigInjectedConvCmd (ADC_TypeDef * ADCx,
-                                      FunctionalState NewState);
-void ADC_SoftwareStartInjectedConvCmd (ADC_TypeDef * ADCx,
-                                       FunctionalState NewState);
+void ADC_ExternalTrigInjectedConvConfig (ADC_TypeDef * ADCx, uint32_t ADC_ExternalTrigInjecConv);
+void ADC_ExternalTrigInjectedConvCmd (ADC_TypeDef * ADCx, FunctionalState NewState);
+void ADC_SoftwareStartInjectedConvCmd (ADC_TypeDef * ADCx, FunctionalState NewState);
 FlagStatus ADC_GetSoftwareStartInjectedConvCmdStatus (ADC_TypeDef * ADCx);
 
-void ADC_InjectedChannelConfig (ADC_TypeDef * ADCx, uint8_t ADC_Channel,
-                                uint8_t Rank, uint8_t ADC_SampleTime);
+void ADC_InjectedChannelConfig (ADC_TypeDef * ADCx, uint8_t ADC_Channel, uint8_t Rank, uint8_t ADC_SampleTime);
 void ADC_InjectedSequencerLengthConfig (ADC_TypeDef * ADCx, uint8_t Length);
 
-void ADC_SetInjectedOffset (ADC_TypeDef * ADCx, uint8_t ADC_InjectedChannel,
-                            uint16_t Offset);
-uint16_t ADC_GetInjectedConversionValue (ADC_TypeDef * ADCx,
-                                         uint8_t ADC_InjectedChannel);
+void ADC_SetInjectedOffset (ADC_TypeDef * ADCx, uint8_t ADC_InjectedChannel, uint16_t Offset);
+uint16_t ADC_GetInjectedConversionValue (ADC_TypeDef * ADCx, uint8_t ADC_InjectedChannel);
 void ADC_AnalogWatchdogCmd (ADC_TypeDef * ADCx, uint32_t ADC_AnalogWatchdog);
 
-void ADC_AnalogWatchdogThresholdsConfig (ADC_TypeDef * ADCx,
-                                         uint16_t HighThreshold,
-                                         uint16_t LowThreshold);
-void ADC_AnalogWatchdogSingleChannelConfig (ADC_TypeDef * ADCx,
-                                            uint8_t ADC_Channel);
+void ADC_AnalogWatchdogThresholdsConfig (ADC_TypeDef * ADCx, uint16_t HighThreshold, uint16_t LowThreshold);
+void ADC_AnalogWatchdogSingleChannelConfig (ADC_TypeDef * ADCx, uint8_t ADC_Channel);
 void ADC_TempSensorVrefintCmd (FunctionalState NewState);
 
 FlagStatus ADC_GetFlagStatus (ADC_TypeDef * ADCx, uint8_t ADC_FLAG);

@@ -1,0 +1,39 @@
+/**
+  @page note Note for MDK-ARM
+  
+  @verbatim
+  ******************** (C) COPYRIGHT 2010 STMicroelectronics *******************
+  * @file    note.txt
+  * @author  MCD Application Team
+  * @version V3.3.0
+  * @date    04/16/2010
+  * @brief   This file contains the needed steps to use the default startup file
+  *          provided by RealView Microcontroller Development Kit(MDK-ARM).
+  ******************************************************************************
+  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE TIME.
+  * AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY DIRECT,
+  * INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING FROM THE
+  * CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE CODING
+  * INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  ******************************************************************************
+
+
+With MDK-ARM toolchain, a simple putchar function executes a SWI and activates 
+a low level putchar function. 
+You have to redirect the low level to your own implementation of these functions.
+
+To guarantee that no functions using the semihosting SWI are included in your 
+application, either:
+
+1. Ensure that the MicroLib option is checked since the microlib does not support
+semihosting
+or 
+2. Use
+- IMPORT __use_no_semihosting_swi from assembly language
+- #pragma import(__use_no_semihosting_swi) from C.
+ 
+ @endverbatim
+ 
+* <h3><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h3>
+*/

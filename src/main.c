@@ -47,7 +47,7 @@ uint64_t currentTime = 0;
 __IO uint8_t device_status = STATUS_READY;
 
 
-jmp_buf jmpRestartUSB;  // reentrypoint for USB device change
+jmp_buf jmpRestartUSB;          // reentrypoint for USB device change
 
 void Test1 (void);
 
@@ -142,8 +142,7 @@ int main (void)
             numLockClicked = 0;
             // sendString("NumLock",7);
 
-    uint8_t slot_number =
-        ((uint8_t *) SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET)[0];
+    uint8_t slot_number = ((uint8_t *) SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET)[0];
             if (slot_number <= 1)
             {
     uint8_t programmed = *((uint8_t *) hotp_slots[slot_number]);
@@ -155,8 +154,7 @@ int main (void)
     uint8_t config = get_hotp_slot_config (slot_number);
 
                     if (config & (1 << SLOT_CONFIG_TOKENID))
-                        sendString ((char *) (hotp_slots[slot_number] +
-                                              TOKEN_ID_OFFSET), 12);
+                        sendString ((char *) (hotp_slots[slot_number] + TOKEN_ID_OFFSET), 12);
 
                     if (config & (1 << SLOT_CONFIG_DIGITS))
                         sendNumberN (code, 8);
@@ -174,8 +172,7 @@ int main (void)
             capsLockClicked = 0;
             // sendString("CapsLock",8);
 
-    uint8_t slot_number =
-        ((uint8_t *) SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET)[1];
+    uint8_t slot_number = ((uint8_t *) SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET)[1];
             if (slot_number <= 1)
             {
     uint8_t programmed = *((uint8_t *) hotp_slots[slot_number]);
@@ -187,8 +184,7 @@ int main (void)
     uint8_t config = get_hotp_slot_config (slot_number);
 
                     if (config & (1 << SLOT_CONFIG_TOKENID))
-                        sendString ((char *) (hotp_slots[slot_number] +
-                                              TOKEN_ID_OFFSET), 12);
+                        sendString ((char *) (hotp_slots[slot_number] + TOKEN_ID_OFFSET), 12);
 
                     if (config & (1 << SLOT_CONFIG_DIGITS))
                         sendNumberN (code, 8);
@@ -206,8 +202,7 @@ int main (void)
             scrollLockClicked = 0;
             // sendString("ScrollLock",10);
 
-    uint8_t slot_number =
-        ((uint8_t *) SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET)[2];
+    uint8_t slot_number = ((uint8_t *) SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET)[2];
             if (slot_number <= 1)
             {
     uint8_t programmed = *((uint8_t *) hotp_slots[slot_number]);
@@ -219,8 +214,7 @@ int main (void)
     uint8_t config = get_hotp_slot_config (slot_number);
 
                     if (config & (1 << SLOT_CONFIG_TOKENID))
-                        sendString ((char *) (hotp_slots[slot_number] +
-                                              TOKEN_ID_OFFSET), 12);
+                        sendString ((char *) (hotp_slots[slot_number] + TOKEN_ID_OFFSET), 12);
 
                     if (config & (1 << SLOT_CONFIG_DIGITS))
                         sendNumberN (code, 8);
@@ -265,8 +259,7 @@ int main (void)
 *******************************************************************************/
 void assert_failed (uint8_t * file, uint32_t line)
 {
-    /* User can add his own implementation to report the file name and line
-       number, ex: printf("Wrong parameters value: file %s on line %d\r\n",
+    /* User can add his own implementation to report the file name and line number, ex: printf("Wrong parameters value: file %s on line %d\r\n",
        file, line) */
 
     /* Infinite loop */

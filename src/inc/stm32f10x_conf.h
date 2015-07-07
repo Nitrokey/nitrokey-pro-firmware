@@ -19,13 +19,11 @@
  */
 
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __STM32F10x_CONF_H
 #define __STM32F10x_CONF_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 /* Uncomment the line below to enable peripheral header file inclusion */
 /* #include "stm32f10x_adc.h" */
 /* #include "stm32f10x_bkp.h" */
@@ -48,19 +46,14 @@
 #include "stm32f10x_tim.h"
 /* #include "stm32f10x_usart.h" */
 /* #include "stm32f10x_wwdg.h" */
-#include "misc.h"   /* High level functions for NVIC and SysTick (add-on to
-                       CMSIS functions) */
+#include "misc.h"   /* High level functions for NVIC and SysTick (add-on to CMSIS functions) */
 
-/* Exported types
-   ------------------------------------------------------------ */
-/* Exported constants
-   -------------------------------------------------------- */
-/* Uncomment the line below to expanse the "assert_param" macro in the
-   Standard Peripheral Library drivers code */
+/* Exported types ------------------------------------------------------------ */
+/* Exported constants -------------------------------------------------------- */
+/* Uncomment the line below to expanse the "assert_param" macro in the Standard Peripheral Library drivers code */
 /* #define USE_FULL_ASSERT 1 */
 
-/* Exported macro
-   ------------------------------------------------------------ */
+/* Exported macro ------------------------------------------------------------ */
 #ifdef  USE_FULL_ASSERT
 
 /*******************************************************************************
@@ -73,8 +66,7 @@
 * Return         : None
 *******************************************************************************/
 #define assert_param(expr) ((expr) ? (void)0 : assert_failed((uint8_t *)__FILE__, __LINE__))
-/* Exported functions -------------------------------------------------------
- */
+/* Exported functions ------------------------------------------------------- */
 void assert_failed (uint8_t * file, uint32_t line);
 #else
 #define assert_param(expr) ((void)0)

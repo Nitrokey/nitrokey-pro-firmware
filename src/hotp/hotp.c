@@ -28,14 +28,12 @@
 #include "string.h"
 #include "memory_ops.h"
 
-__I uint32_t hotp_slots[NUMBER_OF_HOTP_SLOTS] =
-    { SLOTS_PAGE1_ADDRESS + HOTP_SLOT1_OFFSET,
+__I uint32_t hotp_slots[NUMBER_OF_HOTP_SLOTS] = { SLOTS_PAGE1_ADDRESS + HOTP_SLOT1_OFFSET,
     SLOTS_PAGE1_ADDRESS + HOTP_SLOT2_OFFSET,
     SLOTS_PAGE1_ADDRESS + HOTP_SLOT3_OFFSET
 };
 
-__I uint32_t hotp_slot_counters[NUMBER_OF_HOTP_SLOTS] =
-    { SLOT1_COUNTER_ADDRESS,
+__I uint32_t hotp_slot_counters[NUMBER_OF_HOTP_SLOTS] = { SLOT1_COUNTER_ADDRESS,
     SLOT2_COUNTER_ADDRESS,
     SLOT3_COUNTER_ADDRESS
 };
@@ -45,26 +43,24 @@ __I uint32_t hotp_slot_offsets[NUMBER_OF_HOTP_SLOTS] = { HOTP_SLOT1_OFFSET,
     HOTP_SLOT3_OFFSET
 };
 
-__I uint32_t totp_slots[NUMBER_OF_TOTP_SLOTS] =
-    { SLOTS_PAGE1_ADDRESS + TOTP_SLOT1_OFFSET,
-SLOTS_PAGE1_ADDRESS + TOTP_SLOT2_OFFSET,
+__I uint32_t totp_slots[NUMBER_OF_TOTP_SLOTS] = { SLOTS_PAGE1_ADDRESS + TOTP_SLOT1_OFFSET,
+    SLOTS_PAGE1_ADDRESS + TOTP_SLOT2_OFFSET,
     SLOTS_PAGE1_ADDRESS + TOTP_SLOT3_OFFSET,
-        SLOTS_PAGE1_ADDRESS + TOTP_SLOT4_OFFSET,
+    SLOTS_PAGE1_ADDRESS + TOTP_SLOT4_OFFSET,
     SLOTS_PAGE1_ADDRESS + TOTP_SLOT5_OFFSET,
-        SLOTS_PAGE1_ADDRESS + TOTP_SLOT6_OFFSET,
+    SLOTS_PAGE1_ADDRESS + TOTP_SLOT6_OFFSET,
     SLOTS_PAGE1_ADDRESS + TOTP_SLOT7_OFFSET,
-        SLOTS_PAGE1_ADDRESS + TOTP_SLOT8_OFFSET,
+    SLOTS_PAGE1_ADDRESS + TOTP_SLOT8_OFFSET,
     SLOTS_PAGE1_ADDRESS + TOTP_SLOT9_OFFSET,
-        SLOTS_PAGE1_ADDRESS + TOTP_SLOT10_OFFSET,
+    SLOTS_PAGE1_ADDRESS + TOTP_SLOT10_OFFSET,
     SLOTS_PAGE1_ADDRESS + TOTP_SLOT11_OFFSET,
-        SLOTS_PAGE1_ADDRESS + TOTP_SLOT12_OFFSET,
+    SLOTS_PAGE1_ADDRESS + TOTP_SLOT12_OFFSET,
     SLOTS_PAGE1_ADDRESS + TOTP_SLOT13_OFFSET,
-        SLOTS_PAGE1_ADDRESS + TOTP_SLOT14_OFFSET,
+    SLOTS_PAGE1_ADDRESS + TOTP_SLOT14_OFFSET,
     SLOTS_PAGE1_ADDRESS + TOTP_SLOT15_OFFSET
 };
 
-__I uint32_t totp_slot_offsets[NUMBER_OF_TOTP_SLOTS] =
-    { TOTP_SLOT1_OFFSET, TOTP_SLOT2_OFFSET, TOTP_SLOT3_OFFSET,
+__I uint32_t totp_slot_offsets[NUMBER_OF_TOTP_SLOTS] = { TOTP_SLOT1_OFFSET, TOTP_SLOT2_OFFSET, TOTP_SLOT3_OFFSET,
     TOTP_SLOT4_OFFSET, TOTP_SLOT5_OFFSET, TOTP_SLOT6_OFFSET,
     TOTP_SLOT7_OFFSET, TOTP_SLOT8_OFFSET, TOTP_SLOT9_OFFSET,
     TOTP_SLOT10_OFFSET, TOTP_SLOT11_OFFSET, TOTP_SLOT12_OFFSET,
@@ -79,9 +75,7 @@ uint64_t endian_swap (uint64_t x)
         ((x << 40) & 0x00FF000000000000) |
         ((x << 24) & 0x0000FF0000000000) |
         ((x << 8) & 0x000000FF00000000) |
-        ((x >> 8) & 0x00000000FF000000) |
-        ((x >> 24) & 0x0000000000FF0000) |
-        ((x >> 40) & 0x000000000000FF00) | (x << 56);
+        ((x >> 8) & 0x00000000FF000000) | ((x >> 24) & 0x0000000000FF0000) | ((x >> 40) & 0x000000000000FF00) | (x << 56);
     return x;
 }
 
@@ -91,9 +85,7 @@ uint32_t dynamic_truncate (uint8_t * hmac_result)
 uint8_t offset = hmac_result[19] & 0xf;
 
 uint32_t bin_code = (hmac_result[offset] & 0x7f) << 24
-        | (hmac_result[offset + 1] & 0xff) << 16
-        | (hmac_result[offset + 2] & 0xff) << 8
-        | (hmac_result[offset + 3] & 0xff);
+        | (hmac_result[offset + 1] & 0xff) << 16 | (hmac_result[offset + 2] & 0xff) << 8 | (hmac_result[offset + 3] & 0xff);
 
     return bin_code;
 }
@@ -151,11 +143,9 @@ uint16_t halfword = (data[i]) + (data[i + 1] << 8);
 
 }
 
-/* Get a HOTP/TOTP truncated value counter - HOTP/TOTP counter value secret
-   - pointer to secret stored in memory secret_length - length of the secret
+/* Get a HOTP/TOTP truncated value counter - HOTP/TOTP counter value secret - pointer to secret stored in memory secret_length - length of the secret
    len - length of the truncated result, 6 or 8 */
-uint32_t get_hotp_value (uint64_t counter, uint8_t * secret,
-                         uint8_t secret_length, uint8_t len)
+uint32_t get_hotp_value (uint64_t counter, uint8_t * secret, uint8_t secret_length, uint8_t len)
 {
 uint8_t hmac_result[20];
 
@@ -259,9 +249,7 @@ FLASH_Status err = FLASH_COMPLETE;
     {
         if (getu32 (TIME_ADDRESS + TIME_OFFSET * i) == 0xffffffff)
         {
-            err =
-                FLASH_ProgramWord (TIME_ADDRESS + TIME_OFFSET * i,
-                                   (time) & 0xffffffff);
+            err = FLASH_ProgramWord (TIME_ADDRESS + TIME_OFFSET * i, (time) & 0xffffffff);
             if (err != FLASH_COMPLETE)
                 return err;
             flag = 1;
@@ -331,17 +319,12 @@ FLASH_Status err = FLASH_COMPLETE;
 
 
         /*
-           err=FLASH_ErasePage(BACKUP_PAGE_ADDRESS); if (err!=FLASH_COMPLETE)
-           return err;
+           err=FLASH_ErasePage(BACKUP_PAGE_ADDRESS); if (err!=FLASH_COMPLETE) return err;
 
-           //write address to backup page
-           err=GLASH_ProgramHalfWord(BACKUP_PAGE_ADDRESS, addr); if
-           (err!=FLASH_COMPLETE) return err;
+           //write address to backup page err=GEASH_ProgramHalfWord(BACKUP_PAGE_ADDRESS, addr); if (err!=FLASH_COMPLETE) return err;
 
-           err=FLASH_ProgramWord(BACKUP_PAGE_ADDRESS+4, counter&0xffffffff);
-           if (err!=FLASH_COMPLETE) return err;
-           err=FLASH_ProgramWord(BACKUP_PAGE_ADDRESS+8,
-           (counter>>32)&0xffffffff); if (err!=FLASH_COMPLETE) return err; */
+           err=FLASH_ProgramWord(BACKUP_PAGE_ADDRESS+4, counter&0xffffffff); if (err!=FLASH_COMPLETE) return err;
+           err=FLASH_ProgramWord(BACKUP_PAGE_ADDRESS+8, (counter>>32)&0xffffffff); if (err!=FLASH_COMPLETE) return err; */
 
         FLASH_Unlock ();
         err = FLASH_ErasePage (BACKUP_PAGE_ADDRESS);
@@ -354,21 +337,16 @@ FLASH_Status err = FLASH_COMPLETE;
         err = FLASH_ProgramWord (BACKUP_PAGE_ADDRESS, counter & 0xffffffff);
         if (err != FLASH_COMPLETE)
             return err;
-        err =
-            FLASH_ProgramWord (BACKUP_PAGE_ADDRESS + 4,
-                               (counter >> 32) & 0xffffffff);
+        err = FLASH_ProgramWord (BACKUP_PAGE_ADDRESS + 4, (counter >> 32) & 0xffffffff);
         if (err != FLASH_COMPLETE)
             return err;
 
 
-        err =
-            FLASH_ProgramWord (BACKUP_PAGE_ADDRESS + BACKUP_ADDRESS_OFFSET,
-                               addr);
+        err = FLASH_ProgramWord (BACKUP_PAGE_ADDRESS + BACKUP_ADDRESS_OFFSET, addr);
         if (err != FLASH_COMPLETE)
             return err;
 
-        err =
-            FLASH_ProgramWord (BACKUP_PAGE_ADDRESS + BACKUP_LENGTH_OFFSET, 8);
+        err = FLASH_ProgramWord (BACKUP_PAGE_ADDRESS + BACKUP_LENGTH_OFFSET, 8);
         if (err != FLASH_COMPLETE)
             return err;
 
@@ -386,9 +364,7 @@ FLASH_Status err = FLASH_COMPLETE;
             return err;
 
 
-        err =
-            FLASH_ProgramHalfWord (BACKUP_PAGE_ADDRESS + BACKUP_OK_OFFSET,
-                                   0x4F4B);
+        err = FLASH_ProgramHalfWord (BACKUP_PAGE_ADDRESS + BACKUP_OK_OFFSET, 0x4F4B);
         if (err != FLASH_COMPLETE)
             return err;
 
@@ -457,10 +433,7 @@ uint8_t config = 0;
         return 0;
 
     counter = get_counter_value (hotp_slot_counters[slot]);
-    result =
-        get_hotp_value (counter,
-                        (uint8_t *) (hotp_slots[slot] + SECRET_OFFSET), 20,
-                        len);
+    result = get_hotp_value (counter, (uint8_t *) (hotp_slots[slot] + SECRET_OFFSET), 20, len);
     err = increment_counter_page (hotp_slot_counters[slot]);
     if (err != FLASH_COMPLETE)
         return 0;
@@ -479,14 +452,11 @@ FLASH_Status err = FLASH_COMPLETE;
     FLASH_Unlock ();
     FLASH_ErasePage (BACKUP_PAGE_ADDRESS);
     write_data_to_flash (data, len, BACKUP_PAGE_ADDRESS);
-    err =
-        FLASH_ProgramHalfWord (BACKUP_PAGE_ADDRESS + BACKUP_LENGTH_OFFSET,
-                               len);
+    err = FLASH_ProgramHalfWord (BACKUP_PAGE_ADDRESS + BACKUP_LENGTH_OFFSET, len);
     if (err != FLASH_COMPLETE)
     {
     };
-    err =
-        FLASH_ProgramWord (BACKUP_PAGE_ADDRESS + BACKUP_ADDRESS_OFFSET, addr);
+    err = FLASH_ProgramWord (BACKUP_PAGE_ADDRESS + BACKUP_ADDRESS_OFFSET, addr);
     if (err != FLASH_COMPLETE)
     {
     }
@@ -529,8 +499,7 @@ uint8_t* secret = (uint8_t *) (data + SECRET_OFFSET);
 
     if (secret[0] == 0)
     {
-        memcpy (data + SECRET_OFFSET, page_buffer + offset + SECRET_OFFSET,
-                20);
+        memcpy (data + SECRET_OFFSET, page_buffer + offset + SECRET_OFFSET, 20);
     }
 
     // make changes to page
@@ -544,9 +513,7 @@ uint8_t* secret = (uint8_t *) (data + SECRET_OFFSET);
     FLASH_Unlock ();
     FLASH_ErasePage (current_slot_address);
     write_data_to_flash (page_buffer, SLOT_PAGE_SIZE, current_slot_address);
-    err =
-        FLASH_ProgramHalfWord (BACKUP_PAGE_ADDRESS + BACKUP_OK_OFFSET,
-                               0x4F4B);
+    err = FLASH_ProgramHalfWord (BACKUP_PAGE_ADDRESS + BACKUP_OK_OFFSET, 0x4F4B);
     if (err != FLASH_COMPLETE)
     {
     };
@@ -560,15 +527,13 @@ uint8_t* secret = (uint8_t *) (data + SECRET_OFFSET);
 uint8_t check_backups ()
 {
 
-uint32_t address =
-    getu32 ((uint8_t *) BACKUP_PAGE_ADDRESS + BACKUP_ADDRESS_OFFSET);
+uint32_t address = getu32 ((uint8_t *) BACKUP_PAGE_ADDRESS + BACKUP_ADDRESS_OFFSET);
 uint16_t ok = getu16 ((uint8_t *) BACKUP_PAGE_ADDRESS + BACKUP_OK_OFFSET);
 
-uint16_t length =
-    getu16 ((uint8_t *) BACKUP_PAGE_ADDRESS + BACKUP_LENGTH_OFFSET);
+uint16_t length = getu16 ((uint8_t *) BACKUP_PAGE_ADDRESS + BACKUP_LENGTH_OFFSET);
 
     if (ok == 0x4F4B)   // backed up data was correctly written to its
-                        // destination
+        // destination
         return 0;
     else
     {
@@ -578,8 +543,7 @@ uint16_t length =
             FLASH_Unlock ();
 
             FLASH_ErasePage (address);
-            write_data_to_flash ((uint8_t *) BACKUP_PAGE_ADDRESS, length,
-                                 address);
+            write_data_to_flash ((uint8_t *) BACKUP_PAGE_ADDRESS, length, address);
             FLASH_ErasePage (BACKUP_PAGE_ADDRESS);
             FLASH_Lock ();
 
@@ -588,8 +552,8 @@ uint16_t length =
         }
         else
             return 2;   // something bad happened, but before the original
-                        // page was earsed, so we're safe (or there is
-                        // nothing on the backup page)
+        // page was earsed, so we're safe (or there is
+        // nothing on the backup page)
 
 
     }
@@ -660,9 +624,7 @@ uint8_t len = 6;
 
     // result= get_hotp_value(challenge,(uint8_t
     // *)(totp_slots[slot]+SECRET_OFFSET),20,len);
-    result =
-        get_hotp_value (time, (uint8_t *) (totp_slots[slot] + SECRET_OFFSET),
-                        20, len);
+    result = get_hotp_value (time, (uint8_t *) (totp_slots[slot] + SECRET_OFFSET), 20, len);
 
     return result;
 

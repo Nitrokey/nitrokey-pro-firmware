@@ -18,20 +18,17 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __USB_DEF_H
 #define __USB_DEF_H
 
-/* Includes
-   ------------------------------------------------------------------ */
-/* Exported types
-   ------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
+/* Exported types ------------------------------------------------------------ */
 typedef enum _RECIPIENT_TYPE
 {
-    DEVICE_RECIPIENT,   /* Recipient device */
-    INTERFACE_RECIPIENT,    /* Recipient interface */
-    ENDPOINT_RECIPIENT, /* Recipient endpoint */
+    DEVICE_RECIPIENT,           /* Recipient device */
+    INTERFACE_RECIPIENT,        /* Recipient interface */
+    ENDPOINT_RECIPIENT,         /* Recipient endpoint */
     OTHER_RECIPIENT
 } RECIPIENT_TYPE;
 
@@ -71,8 +68,7 @@ typedef enum _FEATURE_SELECTOR
     DEVICE_REMOTE_WAKEUP
 } FEATURE_SELECTOR;
 
-/* Exported constants
-   -------------------------------------------------------- */
+/* Exported constants -------------------------------------------------------- */
 /* Definition of "USBbmRequestType" */
 #define REQUEST_TYPE      0x60  /* Mask to get request type */
 #define STANDARD_REQUEST  0x00  /* Standard request */
@@ -81,9 +77,7 @@ typedef enum _FEATURE_SELECTOR
 
 #define RECIPIENT         0x1F  /* Mask to get recipient */
 
-/* Exported macro
-   ------------------------------------------------------------ */
-/* Exported functions -------------------------------------------------------
- */
+/* Exported macro ------------------------------------------------------------ */
+/* Exported functions ------------------------------------------------------- */
 
 #endif /* __USB_DEF_H */

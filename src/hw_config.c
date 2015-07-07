@@ -19,8 +19,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x_it.h"
 #include "stm32f10x_systick.h"
 #include "hw_config.h"
@@ -37,27 +36,20 @@
 
 #include "CcidLocalAccess.h"
 
-/* Private typedef
-   ----------------------------------------------------------- */
-/* Private define
-   ------------------------------------------------------------ */
-/* Private macro
-   ------------------------------------------------------------- */
-/* Private variables
-   --------------------------------------------------------- */
+/* Private typedef ----------------------------------------------------------- */
+/* Private define ------------------------------------------------------------ */
+/* Private macro ------------------------------------------------------------- */
+/* Private variables --------------------------------------------------------- */
 
-/* Extern variables
-   ---------------------------------------------------------- */
+/* Extern variables ---------------------------------------------------------- */
 uint8_t blinkOATHLEDTimes = 0;
 
 uint64_t lastOATHBlinkTime = 0;
 
-/* Private function prototypes
-   ----------------------------------------------- */
+/* Private function prototypes ----------------------------------------------- */
 void RCC_Config (void);
 
-/* Private functions
-   --------------------------------------------------------- */
+/* Private functions --------------------------------------------------------- */
 
 /*******************************************************************************
 
@@ -73,8 +65,7 @@ void DisableFirmwareDownloadPort (void)
     RCC_APB2PeriphClockCmd (FIRMWARE_DL_PERIPH, ENABLE);
 
     // set pin modes
-    GPIO_InitStructure.GPIO_Pin =
-        SMARTCARD_POWER_PIN_1 | SMARTCARD_POWER_PIN_2;
+    GPIO_InitStructure.GPIO_Pin = SMARTCARD_POWER_PIN_1 | SMARTCARD_POWER_PIN_2;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init (FIRMWARE_DL_PIN_PORT, &GPIO_InitStructure);
@@ -94,13 +85,10 @@ void DisableSmartcardLED (void)
     /*
        GPIO_InitTypeDef GPIO_InitStructure;
 
-       // enable port clock RCC_APB2PeriphClockCmd(SMARTCARD_LED_PERIPH,
-       ENABLE);
+       // enable port clock RCC_APB2PeriphClockCmd(SMARTCARD_LED_PERIPH, ENABLE);
 
-       // set pin modes GPIO_InitStructure.GPIO_Pin = SMARTCARD_LED_PIN;
-       GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-       GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-       GPIO_Init(SMARTCARD_LED_PIN_PORT, &GPIO_InitStructure); */
+       // set pin modes GPIO_InitStructure.GPIO_Pin = SMARTCARD_LED_PIN; GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+       GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; GPIO_Init(SMARTCARD_LED_PIN_PORT, &GPIO_InitStructure); */
 }
 
 /*******************************************************************************
@@ -479,56 +467,32 @@ void Get_SerialNum (void)
 
     if (Device_Serial0 != 0)
     {
-        SerialString[48] =
-            HexToAscii ((uint8_t) ((Device_Serial2 & 0xF0000000) >> 28));
-        SerialString[46] =
-            HexToAscii ((uint8_t) ((Device_Serial2 & 0x0F000000) >> 24));
-        SerialString[44] =
-            HexToAscii ((uint8_t) ((Device_Serial2 & 0x00F00000) >> 20));
-        SerialString[42] =
-            HexToAscii ((uint8_t) ((Device_Serial2 & 0x000F0000) >> 16));
-        SerialString[40] =
-            HexToAscii ((uint8_t) ((Device_Serial2 & 0x0000F000) >> 12));
-        SerialString[38] =
-            HexToAscii ((uint8_t) ((Device_Serial2 & 0x00000F00) >> 8));
-        SerialString[36] =
-            HexToAscii ((uint8_t) ((Device_Serial2 & 0x000000F0) >> 4));
-        SerialString[34] =
-            HexToAscii ((uint8_t) ((Device_Serial2 & 0x0000000F) >> 0));
+        SerialString[48] = HexToAscii ((uint8_t) ((Device_Serial2 & 0xF0000000) >> 28));
+        SerialString[46] = HexToAscii ((uint8_t) ((Device_Serial2 & 0x0F000000) >> 24));
+        SerialString[44] = HexToAscii ((uint8_t) ((Device_Serial2 & 0x00F00000) >> 20));
+        SerialString[42] = HexToAscii ((uint8_t) ((Device_Serial2 & 0x000F0000) >> 16));
+        SerialString[40] = HexToAscii ((uint8_t) ((Device_Serial2 & 0x0000F000) >> 12));
+        SerialString[38] = HexToAscii ((uint8_t) ((Device_Serial2 & 0x00000F00) >> 8));
+        SerialString[36] = HexToAscii ((uint8_t) ((Device_Serial2 & 0x000000F0) >> 4));
+        SerialString[34] = HexToAscii ((uint8_t) ((Device_Serial2 & 0x0000000F) >> 0));
 
-        SerialString[32] =
-            HexToAscii ((uint8_t) ((Device_Serial1 & 0xF0000000) >> 28));
-        SerialString[30] =
-            HexToAscii ((uint8_t) ((Device_Serial1 & 0x0F000000) >> 24));
-        SerialString[28] =
-            HexToAscii ((uint8_t) ((Device_Serial1 & 0x00F00000) >> 20));
-        SerialString[26] =
-            HexToAscii ((uint8_t) ((Device_Serial1 & 0x000F0000) >> 16));
-        SerialString[24] =
-            HexToAscii ((uint8_t) ((Device_Serial1 & 0x0000F000) >> 12));
-        SerialString[22] =
-            HexToAscii ((uint8_t) ((Device_Serial1 & 0x00000F00) >> 8));
-        SerialString[20] =
-            HexToAscii ((uint8_t) ((Device_Serial1 & 0x000000F0) >> 4));
-        SerialString[18] =
-            HexToAscii ((uint8_t) ((Device_Serial1 & 0x0000000F) >> 0));
+        SerialString[32] = HexToAscii ((uint8_t) ((Device_Serial1 & 0xF0000000) >> 28));
+        SerialString[30] = HexToAscii ((uint8_t) ((Device_Serial1 & 0x0F000000) >> 24));
+        SerialString[28] = HexToAscii ((uint8_t) ((Device_Serial1 & 0x00F00000) >> 20));
+        SerialString[26] = HexToAscii ((uint8_t) ((Device_Serial1 & 0x000F0000) >> 16));
+        SerialString[24] = HexToAscii ((uint8_t) ((Device_Serial1 & 0x0000F000) >> 12));
+        SerialString[22] = HexToAscii ((uint8_t) ((Device_Serial1 & 0x00000F00) >> 8));
+        SerialString[20] = HexToAscii ((uint8_t) ((Device_Serial1 & 0x000000F0) >> 4));
+        SerialString[18] = HexToAscii ((uint8_t) ((Device_Serial1 & 0x0000000F) >> 0));
 
-        SerialString[2] =
-            HexToAscii ((uint8_t) ((Device_Serial0 & 0xF0000000) >> 28));
-        SerialString[4] =
-            HexToAscii ((uint8_t) ((Device_Serial0 & 0x0F000000) >> 24));
-        SerialString[6] =
-            HexToAscii ((uint8_t) ((Device_Serial0 & 0x00F00000) >> 20));
-        SerialString[8] =
-            HexToAscii ((uint8_t) ((Device_Serial0 & 0x000F0000) >> 16));
-        SerialString[10] =
-            HexToAscii ((uint8_t) ((Device_Serial0 & 0x0000F000) >> 12));
-        SerialString[12] =
-            HexToAscii ((uint8_t) ((Device_Serial0 & 0x00000F00) >> 8));
-        SerialString[14] =
-            HexToAscii ((uint8_t) ((Device_Serial0 & 0x000000F0) >> 4));
-        SerialString[16] =
-            HexToAscii ((uint8_t) ((Device_Serial0 & 0x0000000F) >> 0));
+        SerialString[2] = HexToAscii ((uint8_t) ((Device_Serial0 & 0xF0000000) >> 28));
+        SerialString[4] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x0F000000) >> 24));
+        SerialString[6] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x00F00000) >> 20));
+        SerialString[8] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x000F0000) >> 16));
+        SerialString[10] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x0000F000) >> 12));
+        SerialString[12] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x00000F00) >> 8));
+        SerialString[14] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x000000F0) >> 4));
+        SerialString[16] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x0000000F) >> 0));
     }
 }
 
@@ -540,9 +504,7 @@ void Get_SerialNum (void)
 *******************************************************************************/
 void RCC_Config (void)
 {
-    /* Setup the microcontroller system. Initialize the Embedded Flash
-       Interface, initialize the PLL and update the SystemFrequency variable.
-     */
+    /* Setup the microcontroller system. Initialize the Embedded Flash Interface, initialize the PLL and update the SystemFrequency variable. */
     SystemInit ();
 
 }

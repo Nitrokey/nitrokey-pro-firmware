@@ -19,8 +19,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "usb_lib.h"
 #include "usb_desc.h"
 #include "usb_pwr.h"
@@ -30,14 +29,10 @@
 #include "mass_mal.h"
 #include "usb_prop.h"
 
-/* Private typedef
-   ----------------------------------------------------------- */
-/* Private define
-   ------------------------------------------------------------ */
-/* Private macro
-   ------------------------------------------------------------- */
-/* Private variables
-   --------------------------------------------------------- */
+/* Private typedef ----------------------------------------------------------- */
+/* Private define ------------------------------------------------------------ */
+/* Private macro ------------------------------------------------------------- */
+/* Private variables --------------------------------------------------------- */
 uint32_t Max_Lun = 0;
 
 DEVICE_INFO MASS_Device_Info;
@@ -120,18 +115,14 @@ ONE_DESCRIPTOR* String_Descriptor[5] = {
 /*************************************************************************/
 
 
-/* Extern variables
-   ---------------------------------------------------------- */
+/* Extern variables ---------------------------------------------------------- */
 extern unsigned char Bot_State;
 
 extern Bulk_Only_CBW CBW;
 
-/* Private function prototypes
-   ----------------------------------------------- */
-/* Extern function prototypes
-   ------------------------------------------------ */
-/* Private functions
-   --------------------------------------------------------- */
+/* Private function prototypes ----------------------------------------------- */
+/* Extern function prototypes ------------------------------------------------ */
+/* Private functions --------------------------------------------------------- */
 /*******************************************************************************
 * Function Name  : MASS_init
 * Description    : Mass Storage init routine.
@@ -141,8 +132,7 @@ extern Bulk_Only_CBW CBW;
 *******************************************************************************/
 void MASS_init ()
 {
-    /* Update the serial number string descriptor with the data from the
-       unique ID */
+    /* Update the serial number string descriptor with the data from the unique ID */
     Get_SerialNum ();
 
     pInformation->Current_Configuration = 0;
@@ -227,8 +217,7 @@ void Mass_Storage_SetConfiguration (void)
 
         ClearDTOG_TX (ENDP1);
         ClearDTOG_RX (ENDP2);
-        Bot_State = BOT_IDLE;   /* set the Bot state machine to the IDLE
-                                   state */
+        Bot_State = BOT_IDLE;   /* set the Bot state machine to the IDLE state */
     }
 }
 
@@ -241,8 +230,7 @@ void Mass_Storage_SetConfiguration (void)
 *******************************************************************************/
 void Mass_Storage_ClearFeature (void)
 {
-    /* when the host send a CBW with invalid signature or invalid length the
-       two Endpoints (IN & OUT) shall stall until receiving a Mass Storage
+    /* when the host send a CBW with invalid signature or invalid length the two Endpoints (IN & OUT) shall stall until receiving a Mass Storage
        Reset */
     if (CBW.dSignature != BOT_CBW_SIGNATURE)
         Bot_Abort (BOTH_DIR);
@@ -297,9 +285,7 @@ uint8_t* (*CopyRoutine) (uint16_t);
 
     CopyRoutine = NULL;
     if ((Type_Recipient == (CLASS_REQUEST | INTERFACE_RECIPIENT))
-        && (RequestNo == GET_MAX_LUN) && (pInformation->USBwValue == 0)
-        && (pInformation->USBwIndex == 0)
-        && (pInformation->USBwLength == 0x01))
+        && (RequestNo == GET_MAX_LUN) && (pInformation->USBwValue == 0) && (pInformation->USBwIndex == 0) && (pInformation->USBwLength == 0x01))
     {
         CopyRoutine = Get_Max_Lun;
     }
@@ -332,8 +318,7 @@ RESULT MASS_NoData_Setup (uint8_t RequestNo)
 {
     if ((Type_Recipient == (CLASS_REQUEST | INTERFACE_RECIPIENT))
         && (RequestNo == MASS_STORAGE_RESET) && (pInformation->USBwValue == 0)
-        && (pInformation->USBwIndex == 0)
-        && (pInformation->USBwLength == 0x00))
+        && (pInformation->USBwIndex == 0) && (pInformation->USBwLength == 0x00))
     {
         /* Initialize Endpoint 1 */
         ClearDTOG_TX (ENDP1);
@@ -358,18 +343,15 @@ RESULT MASS_NoData_Setup (uint8_t RequestNo)
 * Output         : None.
 * Return         : RESULT.
 *******************************************************************************/
-RESULT MASS_Get_Interface_Setting (uint8_t Interface,
-                                   uint8_t AlternateSetting)
+RESULT MASS_Get_Interface_Setting (uint8_t Interface, uint8_t AlternateSetting)
 {
     if (AlternateSetting > 0)
     {
-        return USB_UNSUPPORT;   /* in this application we don't have
-                                   AlternateSetting */
+        return USB_UNSUPPORT;   /* in this application we don't have AlternateSetting */
     }
     else if (Interface > 0)
     {
-        return USB_UNSUPPORT;   /* in this application we have only 1
-                                   interfaces */
+        return USB_UNSUPPORT;   /* in this application we have only 1 interfaces */
     }
     return USB_SUCCESS;
 }
@@ -415,8 +397,7 @@ uint8_t wValue0 = pInformation->USBwValue0;
     }
     else
     {
-        return Standard_GetDescriptorData (Length,
-                                           String_Descriptor[wValue0]);
+        return Standard_GetDescriptorData (Length, String_Descriptor[wValue0]);
     }
 }
 

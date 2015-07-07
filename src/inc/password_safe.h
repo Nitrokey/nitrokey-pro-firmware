@@ -30,8 +30,7 @@
 
 #include "stm32f10x.h"
 
-void IBN_PWS_Tests (unsigned char nParamsGet_u8, unsigned char CMD_u8,
-                    unsigned int Param_u32, unsigned char* String_pu8);
+void IBN_PWS_Tests (unsigned char nParamsGet_u8, unsigned char CMD_u8, unsigned int Param_u32, unsigned char* String_pu8);
 
 // #define FLASH_PAGE_SIZE 512 // AVR
 #define FLASH_PAGE_SIZE 1024    // stm32f10x
@@ -104,14 +103,14 @@ typedef
     __attribute__ ((__packed__))
 #endif
 {
-u8 SlotActiv_u8;    // Shows the state of the slot 1 byte // 1
+u8 SlotActiv_u8;                // Shows the state of the slot 1 byte // 1
 
 u8 SlotName_au8[PWS_SLOTNAME_LENGTH];   // Contains the name of the slot 11
-                                        // byte // 12
+    // byte // 12
 u8 SlotPassword_au8[PWS_PASSWORD_LENGTH];   // Contains the password of the
-                                            // slot 20 byte // 32
+    // slot 20 byte // 32
 u8 SlotLoginName_au8[PWS_LOGINNAME_LENGTH]; // Contains the loginname of the
-                                            // slot 32 byte // 64
+    // slot 32 byte // 64
 }   // Sum 32 byte
 
 #if (defined __ICCAVR32__)
@@ -136,9 +135,9 @@ typedef
 #endif
 {
 typePasswordSafeSlot_st Slot_st[PWS_SLOT_COUNT];    // Contains the password
-                                                    // of the slot 16 byte //
-                                                    // 16
-u32 SlotWriteCount_u32; // Shows flash write count 4 byte // 1
+    // of the slot 16 byte //
+    // 16
+u32 SlotWriteCount_u32;         // Shows flash write count 4 byte // 1
 }   // Sum 32 byte
 
 #if (defined __ICCAVR32__)

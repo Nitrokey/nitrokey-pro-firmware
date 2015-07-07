@@ -18,8 +18,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x_iwdg.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -43,8 +42,7 @@
   * @{
   */
 
-/* ---------------------- IWDG registers bit mask
-   ---------------------------- */
+/* ---------------------- IWDG registers bit mask ---------------------------- */
 
 /* KR register bit mask */
 #define KR_KEY_Reload    ((uint16_t)0xAAAA)

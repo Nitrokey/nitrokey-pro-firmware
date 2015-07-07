@@ -18,8 +18,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x_dac.h"
 #include "stm32f10x_rcc.h"
 
@@ -132,25 +131,21 @@ uint32_t tmpreg1 = 0, tmpreg2 = 0;
     /* Check the DAC parameters */
     assert_param (IS_DAC_TRIGGER (DAC_InitStruct->DAC_Trigger));
     assert_param (IS_DAC_GENERATE_WAVE (DAC_InitStruct->DAC_WaveGeneration));
-    assert_param (IS_DAC_LFSR_UNMASK_TRIANGLE_AMPLITUDE
-                  (DAC_InitStruct->DAC_LFSRUnmask_TriangleAmplitude));
-    assert_param (IS_DAC_OUTPUT_BUFFER_STATE
-                  (DAC_InitStruct->DAC_OutputBuffer));
+    assert_param (IS_DAC_LFSR_UNMASK_TRIANGLE_AMPLITUDE (DAC_InitStruct->DAC_LFSRUnmask_TriangleAmplitude));
+    assert_param (IS_DAC_OUTPUT_BUFFER_STATE (DAC_InitStruct->DAC_OutputBuffer));
 /*---------------------------- DAC CR Configuration --------------------------*/
     /* Get the DAC CR value */
     tmpreg1 = DAC->CR;
     /* Clear BOFFx, TENx, TSELx, WAVEx and MAMPx bits */
     tmpreg1 &= ~(CR_CLEAR_Mask << DAC_Channel);
-    /* Configure for the selected DAC channel: buffer output, trigger, wave
-       genration, mask/amplitude for wave genration */
+    /* Configure for the selected DAC channel: buffer output, trigger, wave genration, mask/amplitude for wave genration */
     /* Set TSELx and TENx bits according to DAC_Trigger value */
     /* Set WAVEx bits according to DAC_WaveGeneration value */
     /* Set MAMPx bits according to DAC_LFSRUnmask_TriangleAmplitude value */
     /* Set BOFFx bit according to DAC_OutputBuffer value */
     tmpreg2 =
-        (DAC_InitStruct->DAC_Trigger | DAC_InitStruct->
-         DAC_WaveGeneration | DAC_InitStruct->
-         DAC_LFSRUnmask_TriangleAmplitude | DAC_InitStruct->DAC_OutputBuffer);
+        (DAC_InitStruct->DAC_Trigger | DAC_InitStruct->DAC_WaveGeneration |
+         DAC_InitStruct->DAC_LFSRUnmask_TriangleAmplitude | DAC_InitStruct->DAC_OutputBuffer);
     /* Calculate CR register value depending on DAC_Channel */
     tmpreg1 |= tmpreg2 << DAC_Channel;
     /* Write to DAC CR */
@@ -294,8 +289,7 @@ void DAC_DualSoftwareTriggerCmd (FunctionalState NewState)
   *   This parameter can be: ENABLE or DISABLE.
   * @retval : None
   */
-void DAC_WaveGenerationCmd (uint32_t DAC_Channel, uint32_t DAC_Wave,
-                            FunctionalState NewState)
+void DAC_WaveGenerationCmd (uint32_t DAC_Channel, uint32_t DAC_Wave, FunctionalState NewState)
 {
     /* Check the parameters */
     assert_param (IS_DAC_CHANNEL (DAC_Channel));
@@ -330,8 +324,7 @@ void DAC_SetChannel1Data (uint32_t DAC_Align, uint16_t Data)
     assert_param (IS_DAC_ALIGN (DAC_Align));
     assert_param (IS_DAC_DATA (Data));
     /* Set the DAC channel1 selected data holding register */
-    *((__IO uint32_t *) (DAC_BASE + DHR12R1_Offset + DAC_Align)) =
-        (uint32_t) Data;
+    *((__IO uint32_t *) (DAC_BASE + DHR12R1_Offset + DAC_Align)) = (uint32_t) Data;
 }
 
 /**
@@ -351,8 +344,7 @@ void DAC_SetChannel2Data (uint32_t DAC_Align, uint16_t Data)
     assert_param (IS_DAC_ALIGN (DAC_Align));
     assert_param (IS_DAC_DATA (Data));
     /* Set the DAC channel2 selected data holding register */
-    *((__IO uint32_t *) (DAC_BASE + DHR12R2_Offset + DAC_Align)) =
-        (uint32_t) Data;
+    *((__IO uint32_t *) (DAC_BASE + DHR12R2_Offset + DAC_Align)) = (uint32_t) Data;
 }
 
 /**
@@ -369,8 +361,7 @@ void DAC_SetChannel2Data (uint32_t DAC_Align, uint16_t Data)
   *   holding register.
   * @retval : None
   */
-void DAC_SetDualChannelData (uint32_t DAC_Align, uint16_t Data2,
-                             uint16_t Data1)
+void DAC_SetDualChannelData (uint32_t DAC_Align, uint16_t Data2, uint16_t Data1)
 {
 uint32_t data = 0;
 
@@ -405,9 +396,7 @@ uint16_t DAC_GetDataOutputValue (uint32_t DAC_Channel)
     /* Check the parameters */
     assert_param (IS_DAC_CHANNEL (DAC_Channel));
     /* Returns the DAC channel data output register value */
-    return (uint16_t) (*(__IO uint32_t *)
-                       (DAC_BASE + DOR_Offset +
-                        ((uint32_t) DAC_Channel >> 2)));
+    return (uint16_t) (*(__IO uint32_t *) (DAC_BASE + DOR_Offset + ((uint32_t) DAC_Channel >> 2)));
 }
 
 /**

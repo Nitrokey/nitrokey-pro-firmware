@@ -20,21 +20,16 @@
  */
 
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __PLATFORM_CONFIG_H
 #define __PLATFORM_CONFIG_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
-/* Exported types
-   ------------------------------------------------------------ */
-/* Exported constants
-   -------------------------------------------------------- */
-/* Uncomment the line corresponding to the STMicroelectronics evaluation
-   board used to run the example */
+/* Exported types ------------------------------------------------------------ */
+/* Exported constants -------------------------------------------------------- */
+/* Uncomment the line corresponding to the STMicroelectronics evaluation board used to run the example */
 
 #undef 	USE_STM3210E_EVAL
 #define USE_STM3210B_EVAL   // RB used for USE_STM3210_KEIL_EVAL
@@ -107,9 +102,7 @@
 extern int nGlobalStickState;
 
 
-/* Exported macro
-   ------------------------------------------------------------ */
-/* Exported functions -------------------------------------------------------
- */
+/* Exported macro ------------------------------------------------------------ */
+/* Exported functions ------------------------------------------------------- */
 
 #endif /* __PLATFORM_CONFIG_H */

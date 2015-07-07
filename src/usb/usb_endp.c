@@ -19,8 +19,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "usb_lib.h"
 #include "usb_bot.h"
 #include "usb_istr.h"
@@ -28,20 +27,14 @@
 #include "platform_config.h"
 #include "CCID_usb.h"
 
-/* Private typedef
-   ----------------------------------------------------------- */
-/* Private define
-   ------------------------------------------------------------ */
-/* Private macro
-   ------------------------------------------------------------- */
-/* Private variables
-   --------------------------------------------------------- */
+/* Private typedef ----------------------------------------------------------- */
+/* Private define ------------------------------------------------------------ */
+/* Private macro ------------------------------------------------------------- */
+/* Private variables --------------------------------------------------------- */
 extern __IO uint8_t PrevXferComplete;
 
-/* Private function prototypes
-   ----------------------------------------------- */
-/* Private functions
-   --------------------------------------------------------- */
+/* Private function prototypes ----------------------------------------------- */
+/* Private functions --------------------------------------------------------- */
 
 /*******************************************************************************
 * Function Name  : EP1_IN_Callback
@@ -95,16 +88,14 @@ void EP2_IN_Callback (void)
 *******************************************************************************/
 void XEP3_IN_Callback (void)
 {
-    /* Set the transfer complete token to inform upper layer that the current
-       transfer has been complete */
+    /* Set the transfer complete token to inform upper layer that the current transfer has been complete */
     PrevXferComplete = 1;
     // SwitchSmartcardLED(DISABLE);
 }
 
 void EP4_IN_Callback (void)
 {
-    /* Set the transfer complete token to inform upper layer that the current
-       transfer has been complete */
+    /* Set the transfer complete token to inform upper layer that the current transfer has been complete */
     PrevXferComplete = 1;
     // SwitchSmartcardLED(DISABLE);
 }

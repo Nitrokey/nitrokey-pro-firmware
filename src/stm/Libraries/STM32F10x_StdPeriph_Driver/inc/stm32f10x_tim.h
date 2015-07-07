@@ -18,13 +18,11 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __STM32F10x_TIM_H
 #define __STM32F10x_TIM_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -934,8 +932,7 @@ typedef struct
 
 void TIM_DeInit (TIM_TypeDef * TIMx);
 
-void TIM_TimeBaseInit (TIM_TypeDef * TIMx,
-                       TIM_TimeBaseInitTypeDef * TIM_TimeBaseInitStruct);
+void TIM_TimeBaseInit (TIM_TypeDef * TIMx, TIM_TimeBaseInitTypeDef * TIM_TimeBaseInitStruct);
 void TIM_OC1Init (TIM_TypeDef * TIMx, TIM_OCInitTypeDef * TIM_OCInitStruct);
 
 void TIM_OC2Init (TIM_TypeDef * TIMx, TIM_OCInitTypeDef * TIM_OCInitStruct);
@@ -946,12 +943,9 @@ void TIM_OC4Init (TIM_TypeDef * TIMx, TIM_OCInitTypeDef * TIM_OCInitStruct);
 
 void TIM_ICInit (TIM_TypeDef * TIMx, TIM_ICInitTypeDef * TIM_ICInitStruct);
 
-void TIM_PWMIConfig (TIM_TypeDef * TIMx,
-                     TIM_ICInitTypeDef * TIM_ICInitStruct);
-void TIM_BDTRConfig (TIM_TypeDef * TIMx,
-                     TIM_BDTRInitTypeDef * TIM_BDTRInitStruct);
-void TIM_TimeBaseStructInit (TIM_TimeBaseInitTypeDef *
-                             TIM_TimeBaseInitStruct);
+void TIM_PWMIConfig (TIM_TypeDef * TIMx, TIM_ICInitTypeDef * TIM_ICInitStruct);
+void TIM_BDTRConfig (TIM_TypeDef * TIMx, TIM_BDTRInitTypeDef * TIM_BDTRInitStruct);
+void TIM_TimeBaseStructInit (TIM_TimeBaseInitTypeDef * TIM_TimeBaseInitStruct);
 void TIM_OCStructInit (TIM_OCInitTypeDef * TIM_OCInitStruct);
 
 void TIM_ICStructInit (TIM_ICInitTypeDef * TIM_ICInitStruct);
@@ -962,40 +956,23 @@ void TIM_Cmd (TIM_TypeDef * TIMx, FunctionalState NewState);
 
 void TIM_CtrlPWMOutputs (TIM_TypeDef * TIMx, FunctionalState NewState);
 
-void TIM_ITConfig (TIM_TypeDef * TIMx, uint16_t TIM_IT,
-                   FunctionalState NewState);
+void TIM_ITConfig (TIM_TypeDef * TIMx, uint16_t TIM_IT, FunctionalState NewState);
 void TIM_GenerateEvent (TIM_TypeDef * TIMx, uint16_t TIM_EventSource);
 
-void TIM_DMAConfig (TIM_TypeDef * TIMx, uint16_t TIM_DMABase,
-                    uint16_t TIM_DMABurstLength);
-void TIM_DMACmd (TIM_TypeDef * TIMx, uint16_t TIM_DMASource,
-                 FunctionalState NewState);
+void TIM_DMAConfig (TIM_TypeDef * TIMx, uint16_t TIM_DMABase, uint16_t TIM_DMABurstLength);
+void TIM_DMACmd (TIM_TypeDef * TIMx, uint16_t TIM_DMASource, FunctionalState NewState);
 void TIM_InternalClockConfig (TIM_TypeDef * TIMx);
 
-void TIM_ITRxExternalClockConfig (TIM_TypeDef * TIMx,
-                                  uint16_t TIM_InputTriggerSource);
-void TIM_TIxExternalClockConfig (TIM_TypeDef * TIMx,
-                                 uint16_t TIM_TIxExternalCLKSource,
-                                 uint16_t TIM_ICPolarity, uint16_t ICFilter);
-void TIM_ETRClockMode1Config (TIM_TypeDef * TIMx,
-                              uint16_t TIM_ExtTRGPrescaler,
-                              uint16_t TIM_ExtTRGPolarity,
-                              uint16_t ExtTRGFilter);
-void TIM_ETRClockMode2Config (TIM_TypeDef * TIMx,
-                              uint16_t TIM_ExtTRGPrescaler,
-                              uint16_t TIM_ExtTRGPolarity,
-                              uint16_t ExtTRGFilter);
-void TIM_ETRConfig (TIM_TypeDef * TIMx, uint16_t TIM_ExtTRGPrescaler,
-                    uint16_t TIM_ExtTRGPolarity, uint16_t ExtTRGFilter);
-void TIM_PrescalerConfig (TIM_TypeDef * TIMx, uint16_t Prescaler,
-                          uint16_t TIM_PSCReloadMode);
+void TIM_ITRxExternalClockConfig (TIM_TypeDef * TIMx, uint16_t TIM_InputTriggerSource);
+void TIM_TIxExternalClockConfig (TIM_TypeDef * TIMx, uint16_t TIM_TIxExternalCLKSource, uint16_t TIM_ICPolarity, uint16_t ICFilter);
+void TIM_ETRClockMode1Config (TIM_TypeDef * TIMx, uint16_t TIM_ExtTRGPrescaler, uint16_t TIM_ExtTRGPolarity, uint16_t ExtTRGFilter);
+void TIM_ETRClockMode2Config (TIM_TypeDef * TIMx, uint16_t TIM_ExtTRGPrescaler, uint16_t TIM_ExtTRGPolarity, uint16_t ExtTRGFilter);
+void TIM_ETRConfig (TIM_TypeDef * TIMx, uint16_t TIM_ExtTRGPrescaler, uint16_t TIM_ExtTRGPolarity, uint16_t ExtTRGFilter);
+void TIM_PrescalerConfig (TIM_TypeDef * TIMx, uint16_t Prescaler, uint16_t TIM_PSCReloadMode);
 void TIM_CounterModeConfig (TIM_TypeDef * TIMx, uint16_t TIM_CounterMode);
 
-void TIM_SelectInputTrigger (TIM_TypeDef * TIMx,
-                             uint16_t TIM_InputTriggerSource);
-void TIM_EncoderInterfaceConfig (TIM_TypeDef * TIMx, uint16_t TIM_EncoderMode,
-                                 uint16_t TIM_IC1Polarity,
-                                 uint16_t TIM_IC2Polarity);
+void TIM_SelectInputTrigger (TIM_TypeDef * TIMx, uint16_t TIM_InputTriggerSource);
+void TIM_EncoderInterfaceConfig (TIM_TypeDef * TIMx, uint16_t TIM_EncoderMode, uint16_t TIM_IC1Polarity, uint16_t TIM_IC2Polarity);
 void TIM_ForcedOC1Config (TIM_TypeDef * TIMx, uint16_t TIM_ForcedAction);
 
 void TIM_ForcedOC2Config (TIM_TypeDef * TIMx, uint16_t TIM_ForcedAction);
@@ -1052,10 +1029,8 @@ void TIM_OC4PolarityConfig (TIM_TypeDef * TIMx, uint16_t TIM_OCPolarity);
 
 void TIM_CCxCmd (TIM_TypeDef * TIMx, uint16_t TIM_Channel, uint16_t TIM_CCx);
 
-void TIM_CCxNCmd (TIM_TypeDef * TIMx, uint16_t TIM_Channel,
-                  uint16_t TIM_CCxN);
-void TIM_SelectOCxM (TIM_TypeDef * TIMx, uint16_t TIM_Channel,
-                     uint16_t TIM_OCMode);
+void TIM_CCxNCmd (TIM_TypeDef * TIMx, uint16_t TIM_Channel, uint16_t TIM_CCxN);
+void TIM_SelectOCxM (TIM_TypeDef * TIMx, uint16_t TIM_Channel, uint16_t TIM_OCMode);
 void TIM_UpdateDisableConfig (TIM_TypeDef * TIMx, FunctionalState NewState);
 
 void TIM_UpdateRequestConfig (TIM_TypeDef * TIMx, uint16_t TIM_UpdateSource);
@@ -1068,8 +1043,7 @@ void TIM_SelectOutputTrigger (TIM_TypeDef * TIMx, uint16_t TIM_TRGOSource);
 
 void TIM_SelectSlaveMode (TIM_TypeDef * TIMx, uint16_t TIM_SlaveMode);
 
-void TIM_SelectMasterSlaveMode (TIM_TypeDef * TIMx,
-                                uint16_t TIM_MasterSlaveMode);
+void TIM_SelectMasterSlaveMode (TIM_TypeDef * TIMx, uint16_t TIM_MasterSlaveMode);
 void TIM_SetCounter (TIM_TypeDef * TIMx, uint16_t Counter);
 
 void TIM_SetAutoreload (TIM_TypeDef * TIMx, uint16_t Autoreload);

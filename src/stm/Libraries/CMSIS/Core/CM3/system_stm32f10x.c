@@ -40,8 +40,7 @@
   * @{
   */
 
-/* !< Uncomment the line corresponding to the desired System clock (SYSCLK)
-   frequency (after reset the HSI is used as SYSCLK source) */
+/* !< Uncomment the line corresponding to the desired System clock (SYSCLK) frequency (after reset the HSI is used as SYSCLK source) */
 // #define SYSCLK_FREQ_HSE HSE_Value
 // #define SYSCLK_FREQ_20MHz 20000000
 // #define SYSCLK_FREQ_36MHz 36000000
@@ -49,8 +48,7 @@
 // #define SYSCLK_FREQ_56MHz 56000000
 #define SYSCLK_FREQ_72MHz  72000000
 
-/* !< Uncomment the following line if you need to use external SRAM mounted
-   on STM3210E-EVAL board (STM32 High density devices) as data memory */
+/* !< Uncomment the following line if you need to use external SRAM mounted on STM3210E-EVAL board (STM32 High density devices) as data memory */
 #ifdef STM32F10X_HD
 /* #define DATA_IN_ExtSRAM */
 #endif /* STM32F10X_HD */
@@ -75,112 +73,48 @@
 *  Clock Definitions
 *******************************************************************************/
 #ifdef SYSCLK_FREQ_HSE
-const uint32_t SystemFrequency = SYSCLK_FREQ_HSE;   /* !< System Clock
-                                                       Frequency (Core Clock)
-                                                     */
-const uint32_t SystemFrequency_SysClk = SYSCLK_FREQ_HSE;    /* !< System
-                                                               clock */
-const uint32_t SystemFrequency_AHBClk = SYSCLK_FREQ_HSE;    /* !< AHB System
-                                                               bus speed */
-const uint32_t SystemFrequency_APB1Clk = SYSCLK_FREQ_HSE;   /* !< APB
-                                                               reripheral bus
-                                                               1 (low) speed */
-const uint32_t SystemFrequency_APB2Clk = SYSCLK_FREQ_HSE;   /* !< APB
-                                                               reripheral bus
-                                                               2 (high) speed
-                                                             */
+const uint32_t SystemFrequency = SYSCLK_FREQ_HSE;   /* !< System Clock Frequency (Core Clock) */
+const uint32_t SystemFrequency_SysClk = SYSCLK_FREQ_HSE;    /* !< System clock */
+const uint32_t SystemFrequency_AHBClk = SYSCLK_FREQ_HSE;    /* !< AHB System bus speed */
+const uint32_t SystemFrequency_APB1Clk = SYSCLK_FREQ_HSE;   /* !< APB reripheral bus 1 (low) speed */
+const uint32_t SystemFrequency_APB2Clk = SYSCLK_FREQ_HSE;   /* !< APB reripheral bus 2 (high) speed */
 #elif defined SYSCLK_FREQ_20MHz
-const uint32_t SystemFrequency = SYSCLK_FREQ_20MHz; /* !< System Clock
-                                                       Frequency (Core Clock)
-                                                     */
-const uint32_t SystemFrequency_SysClk = SYSCLK_FREQ_20MHz;  /* !< System
-                                                               clock */
-const uint32_t SystemFrequency_AHBClk = SYSCLK_FREQ_20MHz;  /* !< AHB System
-                                                               bus speed */
-const uint32_t SystemFrequency_APB1Clk = SYSCLK_FREQ_20MHz; /* !< APB
-                                                               reripheral bus
-                                                               1 (low) speed */
-const uint32_t SystemFrequency_APB2Clk = SYSCLK_FREQ_20MHz; /* !< APB
-                                                               reripheral bus
-                                                               2 (high) speed
-                                                             */
+const uint32_t SystemFrequency = SYSCLK_FREQ_20MHz; /* !< System Clock Frequency (Core Clock) */
+const uint32_t SystemFrequency_SysClk = SYSCLK_FREQ_20MHz;  /* !< System clock */
+const uint32_t SystemFrequency_AHBClk = SYSCLK_FREQ_20MHz;  /* !< AHB System bus speed */
+const uint32_t SystemFrequency_APB1Clk = SYSCLK_FREQ_20MHz; /* !< APB reripheral bus 1 (low) speed */
+const uint32_t SystemFrequency_APB2Clk = SYSCLK_FREQ_20MHz; /* !< APB reripheral bus 2 (high) speed */
 #elif defined SYSCLK_FREQ_36MHz
-const uint32_t SystemFrequency = SYSCLK_FREQ_36MHz; /* !< System Clock
-                                                       Frequency (Core Clock)
-                                                     */
-const uint32_t SystemFrequency_SysClk = SYSCLK_FREQ_36MHz;  /* !< System
-                                                               clock */
-const uint32_t SystemFrequency_AHBClk = SYSCLK_FREQ_36MHz;  /* !< AHB System
-                                                               bus speed */
-const uint32_t SystemFrequency_APB1Clk = SYSCLK_FREQ_36MHz; /* !< APB
-                                                               reripheral bus
-                                                               1 (low) speed */
-const uint32_t SystemFrequency_APB2Clk = SYSCLK_FREQ_36MHz; /* !< APB
-                                                               reripheral bus
-                                                               2 (high) speed
-                                                             */
+const uint32_t SystemFrequency = SYSCLK_FREQ_36MHz; /* !< System Clock Frequency (Core Clock) */
+const uint32_t SystemFrequency_SysClk = SYSCLK_FREQ_36MHz;  /* !< System clock */
+const uint32_t SystemFrequency_AHBClk = SYSCLK_FREQ_36MHz;  /* !< AHB System bus speed */
+const uint32_t SystemFrequency_APB1Clk = SYSCLK_FREQ_36MHz; /* !< APB reripheral bus 1 (low) speed */
+const uint32_t SystemFrequency_APB2Clk = SYSCLK_FREQ_36MHz; /* !< APB reripheral bus 2 (high) speed */
 #elif defined SYSCLK_FREQ_48MHz
-const uint32_t SystemFrequency = SYSCLK_FREQ_48MHz; /* !< System Clock
-                                                       Frequency (Core Clock)
-                                                     */
-const uint32_t SystemFrequency_SysClk = SYSCLK_FREQ_48MHz;  /* !< System
-                                                               clock */
-const uint32_t SystemFrequency_AHBClk = SYSCLK_FREQ_48MHz;  /* !< AHB System
-                                                               bus speed */
-const uint32_t SystemFrequency_APB1Clk = (SYSCLK_FREQ_48MHz / 2);   /* !< APB
-                                                                       Peripheral
-                                                                       bus 1
-                                                                       (low)
-                                                                       speed */
-const uint32_t SystemFrequency_APB2Clk = SYSCLK_FREQ_48MHz; /* !< APB
-                                                               reripheral bus
-                                                               2 (high) speed
-                                                             */
+const uint32_t SystemFrequency = SYSCLK_FREQ_48MHz; /* !< System Clock Frequency (Core Clock) */
+const uint32_t SystemFrequency_SysClk = SYSCLK_FREQ_48MHz;  /* !< System clock */
+const uint32_t SystemFrequency_AHBClk = SYSCLK_FREQ_48MHz;  /* !< AHB System bus speed */
+const uint32_t SystemFrequency_APB1Clk = (SYSCLK_FREQ_48MHz / 2);   /* !< APB Peripheral bus 1 (low) speed */
+const uint32_t SystemFrequency_APB2Clk = SYSCLK_FREQ_48MHz; /* !< APB reripheral bus 2 (high) speed */
 #elif defined SYSCLK_FREQ_56MHz
-const uint32_t SystemFrequency = SYSCLK_FREQ_56MHz; /* !< System Clock
-                                                       Frequency (Core Clock)
-                                                     */
-const uint32_t SystemFrequency_SysClk = SYSCLK_FREQ_56MHz;  /* !< System
-                                                               clock */
-const uint32_t SystemFrequency_AHBClk = SYSCLK_FREQ_56MHz;  /* !< AHB System
-                                                               bus speed */
-const uint32_t SystemFrequency_APB1Clk = (SYSCLK_FREQ_56MHz / 2);   /* !< APB
-                                                                       Peripheral
-                                                                       bus 1
-                                                                       (low)
-                                                                       speed */
-const uint32_t SystemFrequency_APB2Clk = SYSCLK_FREQ_56MHz; /* !< APB
-                                                               reripheral bus
-                                                               2 (high) speed
-                                                             */
+const uint32_t SystemFrequency = SYSCLK_FREQ_56MHz; /* !< System Clock Frequency (Core Clock) */
+const uint32_t SystemFrequency_SysClk = SYSCLK_FREQ_56MHz;  /* !< System clock */
+const uint32_t SystemFrequency_AHBClk = SYSCLK_FREQ_56MHz;  /* !< AHB System bus speed */
+const uint32_t SystemFrequency_APB1Clk = (SYSCLK_FREQ_56MHz / 2);   /* !< APB Peripheral bus 1 (low) speed */
+const uint32_t SystemFrequency_APB2Clk = SYSCLK_FREQ_56MHz; /* !< APB reripheral bus 2 (high) speed */
 #elif defined SYSCLK_FREQ_72MHz
-const uint32_t SystemFrequency = SYSCLK_FREQ_72MHz; /* !< System Clock
-                                                       Frequency (Core Clock)
-                                                     */
-const uint32_t SystemFrequency_SysClk = SYSCLK_FREQ_72MHz;  /* !< System
-                                                               clock */
-const uint32_t SystemFrequency_AHBClk = SYSCLK_FREQ_72MHz;  /* !< AHB System
-                                                               bus speed */
-const uint32_t SystemFrequency_APB1Clk = (SYSCLK_FREQ_72MHz / 2);   /* !< APB
-                                                                       Peripheral
-                                                                       bus 1
-                                                                       (low)
-                                                                       speed */
-const uint32_t SystemFrequency_APB2Clk = SYSCLK_FREQ_72MHz; /* !< APB
-                                                               reripheral bus
-                                                               2 (high) speed
-                                                             */
+const uint32_t SystemFrequency = SYSCLK_FREQ_72MHz; /* !< System Clock Frequency (Core Clock) */
+const uint32_t SystemFrequency_SysClk = SYSCLK_FREQ_72MHz;  /* !< System clock */
+const uint32_t SystemFrequency_AHBClk = SYSCLK_FREQ_72MHz;  /* !< AHB System bus speed */
+const uint32_t SystemFrequency_APB1Clk = (SYSCLK_FREQ_72MHz / 2);   /* !< APB Peripheral bus 1 (low) speed */
+const uint32_t SystemFrequency_APB2Clk = SYSCLK_FREQ_72MHz; /* !< APB reripheral bus 2 (high) speed */
 #else /* !< HSI Selected as System Clock source */
-const uint32_t SystemFrequency = HSI_Value; /* !< System Clock Frequency
-                                               (Core Clock) */
+const uint32_t SystemFrequency = HSI_Value; /* !< System Clock Frequency (Core Clock) */
 const uint32_t SystemFrequency_SysClk = HSI_Value;  /* !< System clock */
 
-const uint32_t SystemFrequency_AHBClk = HSI_Value;  /* !< AHB System bus
-                                                       speed */
-const uint32_t SystemFrequency_APB1Clk = HSI_Value; /* !< APB Peripheral bus
-                                                       1 (low) speed */
-const uint32_t SystemFrequency_APB2Clk = HSI_Value; /* !< APB Peripheral bus
-                                                       2 (high) speed */
+const uint32_t SystemFrequency_AHBClk = HSI_Value;  /* !< AHB System bus speed */
+const uint32_t SystemFrequency_APB1Clk = HSI_Value; /* !< APB Peripheral bus 1 (low) speed */
+const uint32_t SystemFrequency_APB2Clk = HSI_Value; /* !< APB Peripheral bus 2 (high) speed */
 #endif
 
 /**
@@ -228,8 +162,7 @@ void SystemInit (void)
     /* !< RCC system reset(for debug purpose) */
     /* !< Set HSION bit */
     RCC->CR |= (uint32_t) 0x00000001;
-    /* !< Reset SW[1:0], HPRE[3:0], PPRE1[2:0], PPRE2[2:0], ADCPRE[1:0] and
-       MCO[2:0] bits */
+    /* !< Reset SW[1:0], HPRE[3:0], PPRE1[2:0], PPRE2[2:0], ADCPRE[1:0] and MCO[2:0] bits */
     RCC->CFGR &= (uint32_t) 0xF8FF0000;
     /* !< Reset HSEON, CSSON and PLLON bits */
     RCC->CR &= (uint32_t) 0xFEF6FFFF;
@@ -240,8 +173,7 @@ void SystemInit (void)
     /* !< Disable all interrupts */
     RCC->CIR = 0x00000000;
 
-    /* !< Configure the System clock frequency, HCLK, PCLK2 and PCLK1
-       prescalers */
+    /* !< Configure the System clock frequency, HCLK, PCLK2 and PCLK1 prescalers */
     /* !< Configure the Flash Latency cycles and enable prefetch buffer */
     SetSysClock ();
 
@@ -271,8 +203,7 @@ static void SetSysClock (void)
     SetSysClockTo72 ();
 #endif
 
-    /* !< If none of the define above is enabled, the HSI is used as System
-       clock source (default after reset) */
+    /* !< If none of the define above is enabled, the HSI is used as System clock source (default after reset) */
 }
 
 /**
@@ -297,8 +228,7 @@ static void SetSysClock (void)
   */
 void SystemInit_ExtMemCtl (void)
 {
-    /* !< FSMC Bank1 NOR/SRAM3 is used for the STM3210E-EVAL, if another Bank
-       is required, then adjust the Register Addresses */
+    /* !< FSMC Bank1 NOR/SRAM3 is used for the STM3210E-EVAL, if another Bank is required, then adjust the Register Addresses */
 
     /* !< Enable FSMC clock */
     RCC->AHBENR = 0x00000114;
@@ -306,8 +236,7 @@ void SystemInit_ExtMemCtl (void)
     /* !< Enable GPIOD, GPIOE, GPIOF and GPIOG clocks */
     RCC->APB2ENR = 0x000001E0;
 
-    /* --------------- SRAM Data lines, NOE and NWE configuration
-       --------------- */
+    /* --------------- SRAM Data lines, NOE and NWE configuration --------------- */
 /*----------------  SRAM Address lines configuration -------------------------*/
 /*----------------  NOE and NWE configuration --------------------------------*/
 /*----------------  NE3 configuration ----------------------------------------*/
@@ -346,8 +275,7 @@ static void SetSysClockToHSE (void)
 {
     __IO uint32_t StartUpCounter = 0, HSEStatus = 0;
 
-    /* !< SYSCLK, HCLK, PCLK2 and PCLK1 configuration
-       --------------------------- */
+    /* !< SYSCLK, HCLK, PCLK2 and PCLK1 configuration --------------------------- */
     /* !< Enable HSE */
     RCC->CR |= ((uint32_t) RCC_CR_HSEON);
 
@@ -395,9 +323,7 @@ static void SetSysClockToHSE (void)
         }
     }
     else
-    {   /* !< If HSE fails to start-up, the application will have wrong clock
-           configuration. User can add here some code to deal with this error
-         */
+    {   /* !< If HSE fails to start-up, the application will have wrong clock configuration. User can add here some code to deal with this error */
 
         /* !< Go to infinite loop */
         while (1)
@@ -418,8 +344,7 @@ static void SetSysClockTo20 (void)
 {
     __IO uint32_t StartUpCounter = 0, HSEStatus = 0;
 
-    /* !< SYSCLK, HCLK, PCLK2 and PCLK1 configuration
-       --------------------------- */
+    /* !< SYSCLK, HCLK, PCLK2 and PCLK1 configuration --------------------------- */
     /* !< Enable HSE */
     RCC->CR |= ((uint32_t) RCC_CR_HSEON);
 
@@ -458,13 +383,8 @@ static void SetSysClockTo20 (void)
         RCC->CFGR |= (uint32_t) RCC_CFGR_PPRE1_DIV1;
 
         /* !< PLLCLK = (8MHz / 2) * 5 = 20 MHz */
-        RCC->CFGR &=
-            (uint32_t) ((uint32_t) ~
-                        (RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE |
-                         RCC_CFGR_PLLMULL));
-        RCC->CFGR |=
-            (uint32_t) (RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE |
-                        RCC_CFGR_PLLMULL5);
+        RCC->CFGR &= (uint32_t) ((uint32_t) ~ (RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLMULL));
+        RCC->CFGR |= (uint32_t) (RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLMULL5);
 
         /* !< Enable PLL */
         RCC->CR |= RCC_CR_PLLON;
@@ -484,9 +404,7 @@ static void SetSysClockTo20 (void)
         }
     }
     else
-    {   /* !< If HSE fails to start-up, the application will have wrong clock
-           configuration. User can add here some code to deal with this error
-         */
+    {   /* !< If HSE fails to start-up, the application will have wrong clock configuration. User can add here some code to deal with this error */
 
         /* !< Go to infinite loop */
         while (1)
@@ -507,8 +425,7 @@ static void SetSysClockTo36 (void)
 {
     __IO uint32_t StartUpCounter = 0, HSEStatus = 0;
 
-    /* !< SYSCLK, HCLK, PCLK2 and PCLK1 configuration
-       --------------------------- */
+    /* !< SYSCLK, HCLK, PCLK2 and PCLK1 configuration --------------------------- */
     /* !< Enable HSE */
     RCC->CR |= ((uint32_t) RCC_CR_HSEON);
 
@@ -547,13 +464,8 @@ static void SetSysClockTo36 (void)
         RCC->CFGR |= (uint32_t) RCC_CFGR_PPRE1_DIV1;
 
         /* !< PLLCLK = (8MHz / 2) * 9 = 36 MHz */
-        RCC->CFGR &=
-            (uint32_t) ((uint32_t) ~
-                        (RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE |
-                         RCC_CFGR_PLLMULL));
-        RCC->CFGR |=
-            (uint32_t) (RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE |
-                        RCC_CFGR_PLLMULL9);
+        RCC->CFGR &= (uint32_t) ((uint32_t) ~ (RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLMULL));
+        RCC->CFGR |= (uint32_t) (RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLMULL9);
 
         /* !< Enable PLL */
         RCC->CR |= RCC_CR_PLLON;
@@ -573,9 +485,7 @@ static void SetSysClockTo36 (void)
         }
     }
     else
-    {   /* !< If HSE fails to start-up, the application will have wrong clock
-           configuration. User can add here some code to deal with this error
-         */
+    {   /* !< If HSE fails to start-up, the application will have wrong clock configuration. User can add here some code to deal with this error */
 
         /* !< Go to infinite loop */
         while (1)
@@ -596,8 +506,7 @@ static void SetSysClockTo48 (void)
 {
     __IO uint32_t StartUpCounter = 0, HSEStatus = 0;
 
-    /* !< SYSCLK, HCLK, PCLK2 and PCLK1 configuration
-       --------------------------- */
+    /* !< SYSCLK, HCLK, PCLK2 and PCLK1 configuration --------------------------- */
     /* !< Enable HSE */
     RCC->CR |= ((uint32_t) RCC_CR_HSEON);
 
@@ -636,10 +545,7 @@ static void SetSysClockTo48 (void)
         RCC->CFGR |= (uint32_t) RCC_CFGR_PPRE1_DIV2;
 
         /* !< PLLCLK = 8MHz * 6 = 48 MHz */
-        RCC->CFGR &=
-            (uint32_t) ((uint32_t) ~
-                        (RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE |
-                         RCC_CFGR_PLLMULL));
+        RCC->CFGR &= (uint32_t) ((uint32_t) ~ (RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLMULL));
         RCC->CFGR |= (uint32_t) (RCC_CFGR_PLLSRC | RCC_CFGR_PLLMULL6);
 
         /* !< Enable PLL */
@@ -660,9 +566,7 @@ static void SetSysClockTo48 (void)
         }
     }
     else
-    {   /* !< If HSE fails to start-up, the application will have wrong clock
-           configuration. User can add here some code to deal with this error
-         */
+    {   /* !< If HSE fails to start-up, the application will have wrong clock configuration. User can add here some code to deal with this error */
 
         /* !< Go to infinite loop */
         while (1)
@@ -684,8 +588,7 @@ static void SetSysClockTo56 (void)
 {
     __IO uint32_t StartUpCounter = 0, HSEStatus = 0;
 
-    /* !< SYSCLK, HCLK, PCLK2 and PCLK1 configuration
-       --------------------------- */
+    /* !< SYSCLK, HCLK, PCLK2 and PCLK1 configuration --------------------------- */
     /* !< Enable HSE */
     RCC->CR |= ((uint32_t) RCC_CR_HSEON);
 
@@ -724,10 +627,7 @@ static void SetSysClockTo56 (void)
         RCC->CFGR |= (uint32_t) RCC_CFGR_PPRE1_DIV2;
 
         /* !< PLLCLK = 8MHz * 7 = 56 MHz */
-        RCC->CFGR &=
-            (uint32_t) ((uint32_t) ~
-                        (RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE |
-                         RCC_CFGR_PLLMULL));
+        RCC->CFGR &= (uint32_t) ((uint32_t) ~ (RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLMULL));
         RCC->CFGR |= (uint32_t) (RCC_CFGR_PLLSRC | RCC_CFGR_PLLMULL7);
 
         /* !< Enable PLL */
@@ -748,9 +648,7 @@ static void SetSysClockTo56 (void)
         }
     }
     else
-    {   /* !< If HSE fails to start-up, the application will have wrong clock
-           configuration. User can add here some code to deal with this error
-         */
+    {   /* !< If HSE fails to start-up, the application will have wrong clock configuration. User can add here some code to deal with this error */
 
         /* !< Go to infinite loop */
         while (1)
@@ -772,8 +670,7 @@ static void SetSysClockTo72 (void)
 {
     __IO uint32_t StartUpCounter = 0, HSEStatus = 0;
 
-    /* !< SYSCLK, HCLK, PCLK2 and PCLK1 configuration
-       --------------------------- */
+    /* !< SYSCLK, HCLK, PCLK2 and PCLK1 configuration --------------------------- */
     /* !< Enable HSE */
     RCC->CR |= ((uint32_t) RCC_CR_HSEON);
 
@@ -812,10 +709,7 @@ static void SetSysClockTo72 (void)
         RCC->CFGR |= (uint32_t) RCC_CFGR_PPRE1_DIV2;
 
         /* !< PLLCLK = 8MHz * 9 = 72 MHz */
-        RCC->CFGR &=
-            (uint32_t) ((uint32_t) ~
-                        (RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE |
-                         RCC_CFGR_PLLMULL));
+        RCC->CFGR &= (uint32_t) ((uint32_t) ~ (RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLMULL));
         RCC->CFGR |= (uint32_t) (RCC_CFGR_PLLSRC | RCC_CFGR_PLLMULL6);
 
         /* !< Enable PLL */
@@ -836,9 +730,7 @@ static void SetSysClockTo72 (void)
         }
     }
     else
-    {   /* !< If HSE fails to start-up, the application will have wrong clock
-           configuration. User can add here some code to deal with this error
-         */
+    {   /* !< If HSE fails to start-up, the application will have wrong clock configuration. User can add here some code to deal with this error */
 
         /* !< Go to infinite loop */
         while (1)

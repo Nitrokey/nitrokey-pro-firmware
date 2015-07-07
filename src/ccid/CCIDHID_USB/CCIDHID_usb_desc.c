@@ -19,8 +19,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "CCIDHID_usb_desc.h"
 
 #define WBVAL(x) (x&0xff),((x>>8)&0xff)
@@ -85,8 +84,7 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
     0x00,   /* bCountryCode: Hardware target country */
     0x01,   /* bNumDescriptors: Number of HID class descriptors to follow */
     0x22,   /* bDescriptorType */
-    KEYBOARD_SIZ_REPORT_DESC,   /* wItemLength: Total length of Report
-                                   descriptor */
+    KEYBOARD_SIZ_REPORT_DESC,   /* wItemLength: Total length of Report descriptor */
     0x00,
 
     // Endpoint 1 descriptor (Interrupt in SCR)
@@ -110,8 +108,7 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
     0x0B,   /* bInterfaceClass = CCID */
     0x00,   /* bInterfaceSubClass */
     0x00,   /* bInterfaceProtocol */
-    0x00,   /* 0x04, = 0 ??? iInterface Index of string descriptor (befor
-               0x64) */
+    0x00,   /* 0x04, = 0 ??? iInterface Index of string descriptor (befor 0x64) */
 
     // CCID class descriptor
     0x36,   // bLength: CCID Descriptor size
@@ -147,8 +144,7 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
 
     // 0x24,0x00,0x00,0x00, /* dwMaxCCIDMessageLength : Maximun block size +
     // header*/
-    0x0F, 0x01, 0x00, 0x00, /* dwMaxCCIDMessageLength : Maximun block size +
-                               header */
+    0x0F, 0x01, 0x00, 0x00, /* dwMaxCCIDMessageLength : Maximun block size + header */
     /* 261 + 10 */
 
     0x00,   /* bClassGetResponse */
@@ -163,7 +159,7 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
     0x81,   // bEndpointAddress: Endpoint 4 IN
     0x03,   // bmAttributes: Interrupt endpoint
     0x40,   // 0x08, zur sicherheit 0x40 // wMaxPacketSize(LSB): 8 char max
-            // (0x0008)
+    // (0x0008)
     0x00,   // wMaxPacketSize (MSB)
     0x18,   // bInterval: Polling Interval (24 ms = 0x18)
 
@@ -181,7 +177,7 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
     0x07,   /* bLength */
     0x05,   // bDescriptorType: Endpoint descriptor type
     0x82,   // RB to avoid doublebuffering ? 0x82,// bEndpointAddress:
-            // Endpoint 2 IN
+    // Endpoint 2 IN
     0x02,   // bmAttributes: Bulk endpoint
     0x40,   // wMaxPacketSize(LSB): 64 char max (0x0040)
     0x00,   // wMaxPacketSize (MSB)
@@ -263,12 +259,11 @@ const uint8_t CCID_StringProduct[CCID_SIZ_STRING_PRODUCT] = {
 uint8_t CCID_StringSerial[CCID_SIZ_STRING_SERIAL] = {
     CCID_SIZ_STRING_SERIAL,
     0x03,
-    /* Serial number " " - (3 * 8 Byte defined in sourcecode)* 2 + 2 = 50
-       byte */
+    /* Serial number " " - (3 * 8 Byte defined in sourcecode)* 2 + 2 = 50 byte */
     ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0,
-        ' ', 0,
+    ' ', 0,
     ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0,
-        ' ', 0,
+    ' ', 0,
     ' ', 0, ' ', 0, ' ', 0, ' ', 0
 };
 

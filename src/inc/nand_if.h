@@ -18,18 +18,14 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __NAND_IF_H
 #define __NAND_IF_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
-/* Exported types
-   ------------------------------------------------------------ */
-/* Exported constants
-   -------------------------------------------------------- */
+/* Exported types ------------------------------------------------------------ */
+/* Exported constants -------------------------------------------------------- */
 #define NAND_OK   0
 #define NAND_FAIL 1
 
@@ -40,8 +36,7 @@
 
 #define MAX_PHY_BLOCKS_PER_ZONE  1024
 #define MAX_LOG_BLOCKS_PER_ZONE  1000
-/* Private
-   Str---------------------------------------------------------------- */
+/* Private Str---------------------------------------------------------------- */
 typedef struct __SPARE_AREA
 {
     uint16_t LogicalIndex;
@@ -64,23 +59,17 @@ typedef enum
     UNUSED_BLOCK
 } BLOCK_STATE;
 
-/* Private macro
-   -------------------------------------------------------------- */
+/* Private macro -------------------------------------------------------------- */
 // #define WEAR_LEVELLING_SUPPORT
 #define WEAR_DEPTH         10
 #define PAGE_TO_WRITE      (Transfer_Length/512)
-/* Private variables
-   ---------------------------------------------------------- */
-/* Private function prototypes
-   ------------------------------------------------ */
-/* exported functions
-   --------------------------------------------------------- */
+/* Private variables ---------------------------------------------------------- */
+/* Private function prototypes ------------------------------------------------ */
+/* exported functions --------------------------------------------------------- */
 uint16_t NAND_Init (void);
 
-uint16_t NAND_Write (uint32_t Memory_Offset, uint32_t * Writebuff,
-                     uint16_t Transfer_Length);
-uint16_t NAND_Read (uint32_t Memory_Offset, uint32_t * Readbuff,
-                    uint16_t Transfer_Length);
+uint16_t NAND_Write (uint32_t Memory_Offset, uint32_t * Writebuff, uint16_t Transfer_Length);
+uint16_t NAND_Read (uint32_t Memory_Offset, uint32_t * Readbuff, uint16_t Transfer_Length);
 uint16_t NAND_Format (void);
 
 SPARE_AREA ReadSpareArea (uint32_t address);

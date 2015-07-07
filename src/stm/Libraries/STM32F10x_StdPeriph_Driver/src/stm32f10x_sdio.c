@@ -18,8 +18,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x_sdio.h"
 #include "stm32f10x_rcc.h"
 
@@ -187,11 +186,9 @@ uint32_t tmpreg = 0;
     /* Check the parameters */
     assert_param (IS_SDIO_CLOCK_EDGE (SDIO_InitStruct->SDIO_ClockEdge));
     assert_param (IS_SDIO_CLOCK_BYPASS (SDIO_InitStruct->SDIO_ClockBypass));
-    assert_param (IS_SDIO_CLOCK_POWER_SAVE
-                  (SDIO_InitStruct->SDIO_ClockPowerSave));
+    assert_param (IS_SDIO_CLOCK_POWER_SAVE (SDIO_InitStruct->SDIO_ClockPowerSave));
     assert_param (IS_SDIO_BUS_WIDE (SDIO_InitStruct->SDIO_BusWide));
-    assert_param (IS_SDIO_HARDWARE_FLOW_CONTROL
-                  (SDIO_InitStruct->SDIO_HardwareFlowControl));
+    assert_param (IS_SDIO_HARDWARE_FLOW_CONTROL (SDIO_InitStruct->SDIO_HardwareFlowControl));
 
 /*---------------------------- SDIO CLKCR Configuration ------------------------*/
     /* Get the SDIO CLKCR value */
@@ -207,9 +204,8 @@ uint32_t tmpreg = 0;
     /* Set NEGEDGE bits according to SDIO_ClockEdge value */
     /* Set HWFC_EN bits according to SDIO_HardwareFlowControl value */
     tmpreg |=
-        (SDIO_InitStruct->SDIO_ClockDiv | SDIO_InitStruct->
-         SDIO_ClockPowerSave | SDIO_InitStruct->
-         SDIO_ClockBypass | SDIO_InitStruct->SDIO_BusWide | SDIO_InitStruct->
+        (SDIO_InitStruct->SDIO_ClockDiv | SDIO_InitStruct->SDIO_ClockPowerSave |
+         SDIO_InitStruct->SDIO_ClockBypass | SDIO_InitStruct->SDIO_BusWide | SDIO_InitStruct->
          SDIO_ClockEdge | SDIO_InitStruct->SDIO_HardwareFlowControl);
 
     /* Write to SDIO CLKCR */
@@ -230,8 +226,7 @@ void SDIO_StructInit (SDIO_InitTypeDef * SDIO_InitStruct)
     SDIO_InitStruct->SDIO_ClockBypass = SDIO_ClockBypass_Disable;
     SDIO_InitStruct->SDIO_ClockPowerSave = SDIO_ClockPowerSave_Disable;
     SDIO_InitStruct->SDIO_BusWide = SDIO_BusWide_1b;
-    SDIO_InitStruct->SDIO_HardwareFlowControl =
-        SDIO_HardwareFlowControl_Disable;
+    SDIO_InitStruct->SDIO_HardwareFlowControl = SDIO_HardwareFlowControl_Disable;
 }
 
 /**
@@ -378,9 +373,8 @@ uint32_t tmpreg = 0;
     /* Set WAITINT and WAITPEND bits according to SDIO_Wait value */
     /* Set CPSMEN bits according to SDIO_CPSM value */
     tmpreg |=
-        (uint32_t) SDIO_CmdInitStruct->SDIO_CmdIndex | SDIO_CmdInitStruct->
-        SDIO_Response | SDIO_CmdInitStruct->SDIO_Wait | SDIO_CmdInitStruct->
-        SDIO_CPSM;
+        (uint32_t) SDIO_CmdInitStruct->SDIO_CmdIndex | SDIO_CmdInitStruct->SDIO_Response |
+        SDIO_CmdInitStruct->SDIO_Wait | SDIO_CmdInitStruct->SDIO_CPSM;
 
     /* Write to SDIO CMD */
     SDIO->CMD = tmpreg;
@@ -445,12 +439,9 @@ uint32_t tmpreg = 0;
 
     /* Check the parameters */
     assert_param (IS_SDIO_DATA_LENGTH (SDIO_DataInitStruct->SDIO_DataLength));
-    assert_param (IS_SDIO_BLOCK_SIZE
-                  (SDIO_DataInitStruct->SDIO_DataBlockSize));
-    assert_param (IS_SDIO_TRANSFER_DIR
-                  (SDIO_DataInitStruct->SDIO_TransferDir));
-    assert_param (IS_SDIO_TRANSFER_MODE
-                  (SDIO_DataInitStruct->SDIO_TransferMode));
+    assert_param (IS_SDIO_BLOCK_SIZE (SDIO_DataInitStruct->SDIO_DataBlockSize));
+    assert_param (IS_SDIO_TRANSFER_DIR (SDIO_DataInitStruct->SDIO_TransferDir));
+    assert_param (IS_SDIO_TRANSFER_MODE (SDIO_DataInitStruct->SDIO_TransferMode));
     assert_param (IS_SDIO_DPSM (SDIO_DataInitStruct->SDIO_DPSM));
 
 /*---------------------------- SDIO DTIMER Configuration ---------------------*/
@@ -471,10 +462,8 @@ uint32_t tmpreg = 0;
     /* Set DTDIR bit according to SDIO_TransferDir value */
     /* Set DBCKSIZE bits according to SDIO_DataBlockSize value */
     tmpreg |=
-        (uint32_t) SDIO_DataInitStruct->
-        SDIO_DataBlockSize | SDIO_DataInitStruct->
-        SDIO_TransferDir | SDIO_DataInitStruct->
-        SDIO_TransferMode | SDIO_DataInitStruct->SDIO_DPSM;
+        (uint32_t) SDIO_DataInitStruct->SDIO_DataBlockSize |
+        SDIO_DataInitStruct->SDIO_TransferDir | SDIO_DataInitStruct->SDIO_TransferMode | SDIO_DataInitStruct->SDIO_DPSM;
 
     /* Write to SDIO DCTRL */
     SDIO->DCTRL = tmpreg;
@@ -635,8 +624,7 @@ void SDIO_CEATAITCmd (FunctionalState NewState)
     /* Check the parameters */
     assert_param (IS_FUNCTIONAL_STATE (NewState));
 
-    *(__IO uint32_t *) CMD_NIEN_BB =
-        (uint32_t) ((~((uint32_t) NewState)) & ((uint32_t) 0x1));
+    *(__IO uint32_t *) CMD_NIEN_BB = (uint32_t) ((~((uint32_t) NewState)) & ((uint32_t) 0x1));
 }
 
 /**

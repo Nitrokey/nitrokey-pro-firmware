@@ -19,20 +19,16 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __usb_prop_H
 #define __usb_prop_H
-/* Includes
-   ------------------------------------------------------------------ */
-/* Exported types
-   ------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
+/* Exported types ------------------------------------------------------------ */
 
 
 
 
-/* Exported constants
-   -------------------------------------------------------- */
+/* Exported constants -------------------------------------------------------- */
 #define Mass_Storage_GetConfiguration          NOP_Process
 /* #define Mass_Storage_SetConfiguration NOP_Process */
 #define Mass_Storage_GetInterface              NOP_Process
@@ -48,10 +44,8 @@
 #define MASS_STORAGE_RESET         0xFF
 #define LUN_DATA_LENGTH            1
 
-/* Exported macro
-   ------------------------------------------------------------ */
-/* Exported functions -------------------------------------------------------
- */
+/* Exported macro ------------------------------------------------------------ */
+/* Exported functions ------------------------------------------------------- */
 void MASS_init (void);
 
 void MASS_Reset (void);
@@ -70,8 +64,7 @@ RESULT MASS_Data_Setup (uint8_t);
 
 RESULT MASS_NoData_Setup (uint8_t);
 
-RESULT MASS_Get_Interface_Setting (uint8_t Interface,
-                                   uint8_t AlternateSetting);
+RESULT MASS_Get_Interface_Setting (uint8_t Interface, uint8_t AlternateSetting);
 uint8_t* MASS_GetDeviceDescriptor (uint16_t);
 
 uint8_t* MASS_GetConfigDescriptor (uint16_t);

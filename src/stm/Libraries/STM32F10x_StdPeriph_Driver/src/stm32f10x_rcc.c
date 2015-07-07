@@ -18,8 +18,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x_rcc.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -153,8 +152,7 @@
   * @{
   */
 
-static __I uint8_t APBAHBPrescTable[16] =
-    { 0, 0, 0, 0, 1, 2, 3, 4, 1, 2, 3, 4, 6, 7, 8, 9 };
+static __I uint8_t APBAHBPrescTable[16] = { 0, 0, 0, 0, 1, 2, 3, 4, 1, 2, 3, 4, 6, 7, 8, 9 };
 static __I uint8_t ADCPrescTable[4] = { 2, 4, 6, 8 };
 
 /**
@@ -182,8 +180,7 @@ void RCC_DeInit (void)
 {
     /* Set HSION bit */
     RCC->CR |= (uint32_t) 0x00000001;
-    /* Reset SW[1:0], HPRE[3:0], PPRE1[2:0], PPRE2[2:0], ADCPRE[1:0] and
-       MCO[2:0] bits */
+    /* Reset SW[1:0], HPRE[3:0], PPRE1[2:0], PPRE2[2:0], ADCPRE[1:0] and MCO[2:0] bits */
     RCC->CFGR &= (uint32_t) 0xF8FF0000;
 
     /* Reset HSEON, CSSON and PLLON bits */
@@ -212,14 +209,12 @@ void RCC_HSEConfig (uint32_t RCC_HSE)
 {
     /* Check the parameters */
     assert_param (IS_RCC_HSE (RCC_HSE));
-    /* Reset HSEON and HSEBYP bits before configuring the HSE
-       ------------------ */
+    /* Reset HSEON and HSEBYP bits before configuring the HSE ------------------ */
     /* Reset HSEON bit */
     RCC->CR &= CR_HSEON_Reset;
     /* Reset HSEBYP bit */
     RCC->CR &= CR_HSEBYP_Reset;
-    /* Configure HSE (RCC_HSE_OFF is already covered by the code section
-       above) */
+    /* Configure HSE (RCC_HSE_OFF is already covered by the code section above) */
     switch (RCC_HSE)
     {
         case RCC_HSE_ON:
@@ -494,14 +489,12 @@ void RCC_ITConfig (uint8_t RCC_IT, FunctionalState NewState)
     assert_param (IS_FUNCTIONAL_STATE (NewState));
     if (NewState != DISABLE)
     {
-        /* Perform Byte access to RCC_CIR[12:8] bits to enable the selected
-           interrupts */
+        /* Perform Byte access to RCC_CIR[12:8] bits to enable the selected interrupts */
         *(__IO uint8_t *) CIR_BYTE2_ADDRESS |= RCC_IT;
     }
     else
     {
-        /* Perform Byte access to RCC_CIR[12:8] bits to disable the selected
-           interrupts */
+        /* Perform Byte access to RCC_CIR[12:8] bits to disable the selected interrupts */
         *(__IO uint8_t *) CIR_BYTE2_ADDRESS &= (uint8_t) ~ RCC_IT;
     }
 }
@@ -563,14 +556,12 @@ void RCC_LSEConfig (uint8_t RCC_LSE)
 {
     /* Check the parameters */
     assert_param (IS_RCC_LSE (RCC_LSE));
-    /* Reset LSEON and LSEBYP bits before configuring the LSE
-       ------------------ */
+    /* Reset LSEON and LSEBYP bits before configuring the LSE ------------------ */
     /* Reset LSEON bit */
     *(__IO uint8_t *) BDCR_ADDRESS = RCC_LSE_OFF;
     /* Reset LSEBYP bit */
     *(__IO uint8_t *) BDCR_ADDRESS = RCC_LSE_OFF;
-    /* Configure LSE (RCC_LSE_OFF is already covered by the code section
-       above) */
+    /* Configure LSE (RCC_LSE_OFF is already covered by the code section above) */
     switch (RCC_LSE)
     {
         case RCC_LSE_ON:
@@ -647,8 +638,7 @@ void RCC_GetClocksFreq (RCC_ClocksTypeDef * RCC_Clocks)
 {
 uint32_t tmp = 0, pllmull = 0, pllsource = 0, presc = 0;
 
-    /* Get SYSCLK source
-       ------------------------------------------------------- */
+    /* Get SYSCLK source ------------------------------------------------------- */
     tmp = RCC->CFGR & CFGR_SWS_Mask;
     switch (tmp)
     {
@@ -659,14 +649,12 @@ uint32_t tmp = 0, pllmull = 0, pllsource = 0, presc = 0;
             RCC_Clocks->SYSCLK_Frequency = HSE_Value;
             break;
         case 0x08: /* PLL used as system clock */
-            /* Get PLL clock source and multiplication factor
-               ---------------------- */
+            /* Get PLL clock source and multiplication factor ---------------------- */
             pllmull = RCC->CFGR & CFGR_PLLMull_Mask;
             pllmull = (pllmull >> 18) + 2;
             pllsource = RCC->CFGR & CFGR_PLLSRC_Mask;
             if (pllsource == 0x00)
-            {   /* HSI oscillator clock divided by 2 selected as PLL clock
-                   entry */
+            {   /* HSI oscillator clock divided by 2 selected as PLL clock entry */
                 RCC_Clocks->SYSCLK_Frequency = (HSI_Value >> 1) * pllmull;
             }
             else
@@ -685,8 +673,7 @@ uint32_t tmp = 0, pllmull = 0, pllsource = 0, presc = 0;
             RCC_Clocks->SYSCLK_Frequency = HSI_Value;
             break;
     }
-    /* Compute HCLK, PCLK1, PCLK2 and ADCCLK clocks frequencies
-       ---------------- */
+    /* Compute HCLK, PCLK1, PCLK2 and ADCCLK clocks frequencies ---------------- */
     /* Get HCLK prescaler */
     tmp = RCC->CFGR & CFGR_HPRE_Set_Mask;
     tmp = tmp >> 4;
@@ -759,8 +746,7 @@ void RCC_AHBPeriphClockCmd (uint32_t RCC_AHBPeriph, FunctionalState NewState)
   *   This parameter can be: ENABLE or DISABLE.
   * @retval : None
   */
-void RCC_APB2PeriphClockCmd (uint32_t RCC_APB2Periph,
-                             FunctionalState NewState)
+void RCC_APB2PeriphClockCmd (uint32_t RCC_APB2Periph, FunctionalState NewState)
 {
     /* Check the parameters */
     assert_param (IS_RCC_APB2_PERIPH (RCC_APB2Periph));
@@ -791,8 +777,7 @@ void RCC_APB2PeriphClockCmd (uint32_t RCC_APB2Periph,
   *   This parameter can be: ENABLE or DISABLE.
   * @retval : None
   */
-void RCC_APB1PeriphClockCmd (uint32_t RCC_APB1Periph,
-                             FunctionalState NewState)
+void RCC_APB1PeriphClockCmd (uint32_t RCC_APB1Periph, FunctionalState NewState)
 {
     /* Check the parameters */
     assert_param (IS_RCC_APB1_PERIPH (RCC_APB1Periph));
@@ -821,8 +806,7 @@ void RCC_APB1PeriphClockCmd (uint32_t RCC_APB1Periph,
   *   This parameter can be: ENABLE or DISABLE.
   * @retval : None
   */
-void RCC_APB2PeriphResetCmd (uint32_t RCC_APB2Periph,
-                             FunctionalState NewState)
+void RCC_APB2PeriphResetCmd (uint32_t RCC_APB2Periph, FunctionalState NewState)
 {
     /* Check the parameters */
     assert_param (IS_RCC_APB2_PERIPH (RCC_APB2Periph));
@@ -852,8 +836,7 @@ void RCC_APB2PeriphResetCmd (uint32_t RCC_APB2Periph,
   *   This parameter can be: ENABLE or DISABLE.
   * @retval : None
   */
-void RCC_APB1PeriphResetCmd (uint32_t RCC_APB1Periph,
-                             FunctionalState NewState)
+void RCC_APB1PeriphResetCmd (uint32_t RCC_APB1Periph, FunctionalState NewState)
 {
     /* Check the parameters */
     assert_param (IS_RCC_APB1_PERIPH (RCC_APB1Periph));
@@ -1029,8 +1012,7 @@ void RCC_ClearITPendingBit (uint8_t RCC_IT)
 {
     /* Check the parameters */
     assert_param (IS_RCC_CLEAR_IT (RCC_IT));
-    /* Perform Byte access to RCC_CIR[23:16] bits to clear the selected
-       interrupt pending bits */
+    /* Perform Byte access to RCC_CIR[23:16] bits to clear the selected interrupt pending bits */
     *(__IO uint8_t *) CIR_BYTE3_ADDRESS = RCC_IT;
 }
 

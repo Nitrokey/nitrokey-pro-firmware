@@ -19,17 +19,14 @@
  */
 
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __MSD_H
 #define __MSD_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
-/* Private define
-   ------------------------------------------------------------ */
+/* Private define ------------------------------------------------------------ */
 /* Block Size */
 #define BLOCK_SIZE    512
 
@@ -37,20 +34,12 @@
 #define DUMMY   0xFF
 
 /* Start Data tokens */
-/* Tokens (necessary because at nop/idle (and CS active) only 0xff is on the
-   data/command line) */
-#define MSD_START_DATA_SINGLE_BLOCK_READ 0xFE   /* Data token start byte,
-                                                   Start Single Block Read */
-#define MSD_START_DATA_MULTIPLE_BLOCK_READ  0xFE    /* Data token start byte,
-                                                       Start Multiple Block
-                                                       Read */
-#define MSD_START_DATA_SINGLE_BLOCK_WRITE 0xFE  /* Data token start byte,
-                                                   Start Single Block Write */
-#define MSD_START_DATA_MULTIPLE_BLOCK_WRITE 0xFD    /* Data token start byte,
-                                                       Start Multiple Block
-                                                       Write */
-#define MSD_STOP_DATA_MULTIPLE_BLOCK_WRITE 0xFD /* Data toke stop byte, Stop
-                                                   Multiple Block Write */
+/* Tokens (necessary because at nop/idle (and CS active) only 0xff is on the data/command line) */
+#define MSD_START_DATA_SINGLE_BLOCK_READ 0xFE   /* Data token start byte, Start Single Block Read */
+#define MSD_START_DATA_MULTIPLE_BLOCK_READ  0xFE    /* Data token start byte, Start Multiple Block Read */
+#define MSD_START_DATA_SINGLE_BLOCK_WRITE 0xFE  /* Data token start byte, Start Single Block Write */
+#define MSD_START_DATA_MULTIPLE_BLOCK_WRITE 0xFD    /* Data token start byte, Start Multiple Block Write */
+#define MSD_STOP_DATA_MULTIPLE_BLOCK_WRITE 0xFD /* Data toke stop byte, Stop Multiple Block Write */
 
 /* MSD functions return */
 #define MSD_SUCCESS       0x00
@@ -100,25 +89,23 @@
 #define MSD_READ_OCR               39   /* CMD39=0x67 */
 #define MSD_CRC_ON_OFF             40   /* CMD40=0x68 */
 
-/* Exported types
-   ------------------------------------------------------------ */
-/* Private variables
-   --------------------------------------------------------- */
-typedef struct _MSD_CSD /* Card Specific Data */
+/* Exported types ------------------------------------------------------------ */
+/* Private variables --------------------------------------------------------- */
+typedef struct _MSD_CSD         /* Card Specific Data */
 {
-    __IO uint8_t CSDStruct; /* CSD structure */
+    __IO uint8_t CSDStruct;     /* CSD structure */
     __IO uint8_t SysSpecVersion;    /* System specification version */
-    __IO uint8_t Reserved1; /* Reserved */
-    __IO uint8_t TAAC;  /* Data read access-time 1 */
-    __IO uint8_t NSAC;  /* Data read access-time 2 in CLK cycles */
+    __IO uint8_t Reserved1;     /* Reserved */
+    __IO uint8_t TAAC;          /* Data read access-time 1 */
+    __IO uint8_t NSAC;          /* Data read access-time 2 in CLK cycles */
     __IO uint8_t MaxBusClkFrec; /* Max. bus clock frequency */
     __IO uint16_t CardComdClasses;  /* Card command classes */
     __IO uint8_t RdBlockLen;    /* Max. read data block length */
     __IO uint8_t PartBlockRead; /* Partial blocks for read allowed */
     __IO uint8_t WrBlockMisalign;   /* Write block misalignment */
     __IO uint8_t RdBlockMisalign;   /* Read block misalignment */
-    __IO uint8_t DSRImpl;   /* DSR implemented */
-    __IO uint8_t Reserved2; /* Reserved */
+    __IO uint8_t DSRImpl;       /* DSR implemented */
+    __IO uint8_t Reserved2;     /* Reserved */
     __IO uint16_t DeviceSize;   /* Device Size */
     __IO uint8_t MaxRdCurrentVDDMin;    /* Max. read current @ VDD min */
     __IO uint8_t MaxRdCurrentVDDMax;    /* Max. read current @ VDD max */
@@ -133,52 +120,45 @@ typedef struct _MSD_CSD /* Card Specific Data */
     __IO uint8_t WrSpeedFact;   /* Write speed factor */
     __IO uint8_t MaxWrBlockLen; /* Max. write data block length */
     __IO uint8_t WriteBlockPaPartial;   /* Partial blocks for write allowed */
-    __IO uint8_t Reserved3; /* Reserded */
+    __IO uint8_t Reserved3;     /* Reserded */
     __IO uint8_t ContentProtectAppli;   /* Content protection application */
     __IO uint8_t FileFormatGrouop;  /* File format group */
-    __IO uint8_t CopyFlag;  /* Copy flag (OTP) */
+    __IO uint8_t CopyFlag;      /* Copy flag (OTP) */
     __IO uint8_t PermWrProtect; /* Permanent write protection */
     __IO uint8_t TempWrProtect; /* Temporary write protection */
     __IO uint8_t FileFormat;    /* File Format */
-    __IO uint8_t ECC;   /* ECC code */
-    __IO uint8_t msd_CRC;   /* CRC */
-    __IO uint8_t Reserved4; /* always 1 */
+    __IO uint8_t ECC;           /* ECC code */
+    __IO uint8_t msd_CRC;       /* CRC */
+    __IO uint8_t Reserved4;     /* always 1 */
 }
 sMSD_CSD;
 
-typedef struct _MSD_CID /* Card Identification Data */
+typedef struct _MSD_CID         /* Card Identification Data */
 {
     __IO uint8_t ManufacturerID;    /* ManufacturerID */
     __IO uint16_t OEM_AppliID;  /* OEM/Application ID */
     __IO uint32_t ProdName1;    /* Product Name part1 */
-    __IO uint8_t ProdName2; /* Product Name part2 */
-    __IO uint8_t ProdRev;   /* Product Revision */
-    __IO uint32_t ProdSN;   /* Product Serial Number */
-    __IO uint8_t Reserved1; /* Reserved1 */
+    __IO uint8_t ProdName2;     /* Product Name part2 */
+    __IO uint8_t ProdRev;       /* Product Revision */
+    __IO uint32_t ProdSN;       /* Product Serial Number */
+    __IO uint8_t Reserved1;     /* Reserved1 */
     __IO uint16_t ManufactDate; /* Manufacturing Date */
-    __IO uint8_t msd_CRC;   /* CRC */
-    __IO uint8_t Reserved2; /* always 1 */
+    __IO uint8_t msd_CRC;       /* CRC */
+    __IO uint8_t Reserved2;     /* always 1 */
 }
 sMSD_CID;
 
-/* Exported constants
-   -------------------------------------------------------- */
-/* Exported macro
-   ------------------------------------------------------------ */
-/* Exported functions -------------------------------------------------------
- */
+/* Exported constants -------------------------------------------------------- */
+/* Exported macro ------------------------------------------------------------ */
+/* Exported functions ------------------------------------------------------- */
 
 /*----- High layer function -----*/
 uint8_t MSD_Init (void);
 
-uint8_t MSD_WriteBlock (uint8_t * pBuffer, uint32_t WriteAddr,
-                        uint16_t NumByteToWrite);
-uint8_t MSD_ReadBlock (uint8_t * pBuffer, uint32_t ReadAddr,
-                       uint16_t NumByteToRead);
-uint8_t MSD_WriteBuffer (uint8_t * pBuffer, uint32_t WriteAddr,
-                         uint32_t NumByteToWrite);
-uint8_t MSD_ReadBuffer (uint8_t * pBuffer, uint32_t ReadAddr,
-                        uint32_t NumByteToRead);
+uint8_t MSD_WriteBlock (uint8_t * pBuffer, uint32_t WriteAddr, uint16_t NumByteToWrite);
+uint8_t MSD_ReadBlock (uint8_t * pBuffer, uint32_t ReadAddr, uint16_t NumByteToRead);
+uint8_t MSD_WriteBuffer (uint8_t * pBuffer, uint32_t WriteAddr, uint32_t NumByteToWrite);
+uint8_t MSD_ReadBuffer (uint8_t * pBuffer, uint32_t ReadAddr, uint32_t NumByteToRead);
 uint8_t MSD_GetCSDRegister (sMSD_CSD * MSD_csd);
 
 uint8_t MSD_GetCIDRegister (sMSD_CID * MSD_cid);

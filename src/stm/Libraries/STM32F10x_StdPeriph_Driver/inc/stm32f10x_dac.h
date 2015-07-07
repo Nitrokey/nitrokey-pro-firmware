@@ -18,13 +18,11 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Define to prevent recursive inclusion
-   ------------------------------------- */
+/* Define to prevent recursive inclusion ------------------------------------- */
 #ifndef __STM32F10x_DAC_H
 #define __STM32F10x_DAC_H
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "stm32f10x.h"
 
 /** @addtogroup StdPeriph_Driver
@@ -247,14 +245,12 @@ void DAC_SoftwareTriggerCmd (uint32_t DAC_Channel, FunctionalState NewState);
 
 void DAC_DualSoftwareTriggerCmd (FunctionalState NewState);
 
-void DAC_WaveGenerationCmd (uint32_t DAC_Channel, uint32_t DAC_Wave,
-                            FunctionalState NewState);
+void DAC_WaveGenerationCmd (uint32_t DAC_Channel, uint32_t DAC_Wave, FunctionalState NewState);
 void DAC_SetChannel1Data (uint32_t DAC_Align, uint16_t Data);
 
 void DAC_SetChannel2Data (uint32_t DAC_Align, uint16_t Data);
 
-void DAC_SetDualChannelData (uint32_t DAC_Align, uint16_t Data2,
-                             uint16_t Data1);
+void DAC_SetDualChannelData (uint32_t DAC_Align, uint16_t Data2, uint16_t Data1);
 uint16_t DAC_GetDataOutputValue (uint32_t DAC_Channel);
 
 #endif /*__STM32F10x_DAC_H */

@@ -1,0 +1,52 @@
+/**
+  @page note Note for TrueSTUDIO
+  
+  @verbatim
+  ******************** (C) COPYRIGHT 2010 STMicroelectronics ********************
+  * @file    note.txt
+  * @author  MCD Application Team
+  * @version V3.3.0
+  * @date    04/16/2010
+  * @brief   This file contains the needed step to use "printf" with TrueSTUDIO 
+  *          toolchain.
+  ******************************************************************************
+  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE TIME.
+  * AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY DIRECT,
+  * INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING FROM THE
+  * CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE CODING
+  * INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  ******************************************************************************
+
+
+The C runtime library include many functions, including some that typically 
+handle I/O. The I/O related runtime functions include printf(), fopen(), fclose(),
+and many others.
+
+It is common to redirect the I/O from these functions to the actual embedded 
+platform, such as redirecting printf() output to an LCD display or a serial cable,
+or to redirect file operations like fopen() and fclose() to some Flash file 
+system middleware.
+
+The free Lite version of TrueSTUDIO do not support I/O redirection, and instead 
+have do-nothing stubs compiled into the C runtime library.
+
+To support printf() redirection in the full version, just add the following code 
+in in _write() function in the TrueSTUDIO Minimal System calls file "syscalls.c" 
+located at TrueSTUDIO Pro install directory.
+
+/*****************************************/
+   int Index;
+  
+   for (Index = 0; Index < len; Index++)
+   {
+      __io_putchar( *ptr++ );
+   }
+
+   return len;
+/*****************************************/
+     
+ @endverbatim
+ 
+ * <h3><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h3>
+ */

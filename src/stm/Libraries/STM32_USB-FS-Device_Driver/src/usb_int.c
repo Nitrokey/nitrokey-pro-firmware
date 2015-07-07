@@ -18,32 +18,24 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Includes
-   ------------------------------------------------------------------ */
+/* Includes ------------------------------------------------------------------ */
 #include "usb_lib.h"
 
-/* Private typedef
-   ----------------------------------------------------------- */
-/* Private define
-   ------------------------------------------------------------ */
-/* Private macro
-   ------------------------------------------------------------- */
-/* Private variables
-   --------------------------------------------------------- */
+/* Private typedef ----------------------------------------------------------- */
+/* Private define ------------------------------------------------------------ */
+/* Private macro ------------------------------------------------------------- */
+/* Private variables --------------------------------------------------------- */
 uint16_t SaveRState;
 
 uint16_t SaveTState;
 
-/* Extern variables
-   ---------------------------------------------------------- */
+/* Extern variables ---------------------------------------------------------- */
 extern void (*pEpInt_IN[7]) (void); /* Handles IN interrupts */
 
 extern void (*pEpInt_OUT[7]) (void);    /* Handles OUT interrupts */
 
-/* Private function prototypes
-   ----------------------------------------------- */
-/* Private functions
-   --------------------------------------------------------- */
+/* Private function prototypes ----------------------------------------------- */
+/* Private functions --------------------------------------------------------- */
 
 /*******************************************************************************
 * Function Name  : CTR_LP.
@@ -114,8 +106,7 @@ void CTR_LP (void)
                 }
                 else if ((wEPVal & EP_SETUP) != 0)
                 {
-                    _ClearEP_CTR_RX (ENDP0);    /* SETUP bit kept frozen
-                                                   while CTR_RX = 1 */
+                    _ClearEP_CTR_RX (ENDP0);    /* SETUP bit kept frozen while CTR_RX = 1 */
                     Setup0_Process ();
                     /* before terminate set Tx & Rx status */
                     _SetEPRxStatus (ENDP0, SaveRState);

@@ -151,8 +151,6 @@ unsigned char ICC_PowerOnAsync (unsigned char);
 
 void ICC_ResetAsync (void);
 
-unsigned char ICC_GetAtrAsync (unsigned char, unsigned char* ,
-                               unsigned int* );
-unsigned char ICC_SendCommandAsync (unsigned char* , unsigned int,
-                                    unsigned char);
+unsigned char ICC_GetAtrAsync (unsigned char, unsigned char* , unsigned int* );
+unsigned char ICC_SendCommandAsync (unsigned char* , unsigned int, unsigned char);
 unsigned char ICC_ReceiveAnswerAsync (unsigned char* , unsigned int* );

@@ -37,19 +37,19 @@ typedef struct
     unsigned short BytesPerSector;  // 11
     unsigned char SectorsPerCluster;    // 13
     unsigned short ReservedSectors; // 14
-    unsigned char FATCount; // 16
+    unsigned char FATCount;     // 16
     unsigned short RootEntries; // 17
-    unsigned short Sectors; // 19
+    unsigned short Sectors;     // 19
     unsigned char MediaType;    // 21
     unsigned short FATSectors;  // 22
     unsigned short SectorsPerTrack; // 24
-    unsigned short Heads;   // 26
+    unsigned short Heads;       // 26
     unsigned long HiddenSectors;    // 28
-    unsigned long TotSec32; // 32
-    unsigned char Drive;    // 36
-    unsigned char Res1; // 37
-    unsigned char BootSig;  // 38
-    unsigned long VolumeID; // 39
+    unsigned long TotSec32;     // 32
+    unsigned char Drive;        // 36
+    unsigned char Res1;         // 37
+    unsigned char BootSig;      // 38
+    unsigned long VolumeID;     // 39
     unsigned char VolumeLabel[11];  // 43
     unsigned char FatType[8];   // 54
     unsigned char Res2[450];    // 62
@@ -73,7 +73,7 @@ typedef struct
      {
     unsigned char DirName[11];  // 0
     unsigned char DirAttribute; // 11
-    unsigned char DirNTRes; // 12
+    unsigned char DirNTRes;     // 12
     unsigned char DirCrtTimeTenth;  // 13
     unsigned short DirCrtTime;  // 14
     unsigned short DirCrtDate;  // 16
@@ -92,8 +92,7 @@ void InitFatSector (char* pRamDisk);
 
 void CreateDefaultDirEntry (char* pRamDisk);
 
-void SetFAT12Entry (char* pFAT12Sec, unsigned short nEntry,
-                    unsigned short nData);
+void SetFAT12Entry (char* pFAT12Sec, unsigned short nEntry, unsigned short nData);
 unsigned short GetFAT12Entry (char* pFAT12Sec, unsigned short nEntry);
 
 void CreateFilesystem (char* pRamDisk);

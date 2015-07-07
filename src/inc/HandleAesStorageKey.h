@@ -39,7 +39,6 @@ u8 CheckStorageKey_u8 (void);
 
 u8 StartupCheck_u8 (void);
 
-void HighLevelTests (unsigned char nParamsGet_u8, unsigned char CMD_u8,
-                     unsigned int Param_u32, unsigned char* String_pu8);
+void HighLevelTests (unsigned char nParamsGet_u8, unsigned char CMD_u8, unsigned int Param_u32, unsigned char* String_pu8);
 
 #endif /* HANDLE_AES_STORAGE_KEY_H */
