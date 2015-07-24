@@ -31,7 +31,8 @@
 
 #include "CCID_usb.h"
 #include "CCID_usb_prop.h"
-#include "CCID_usb_desc.h"
+#include "CCIDHID_usb_desc.h"
+//#include "CCID_usb_desc.h"
 #include "RAMDISK_usb_desc.h"
 
 #include "CcidLocalAccess.h"
