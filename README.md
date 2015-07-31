@@ -25,7 +25,7 @@ or this one which is configured for automake 1.14:
 https://github.com/ggkitsas/OpenOCD-SWD
 
 #### STM
-1. When using the MCU's bootloader use [STM Boot Loader Demonstrator or stm32flash](https://code.google.com/p/stm32flash/) under Linux.
+1. When using the MCU's bootloader use STM Boot Loader Demonstrator or [stm32flash](http://sourceforge.net/p/stm32flash/wiki/Home/) under Linux.
 2. Read-protect the flash
 
-`sudo ~/bin/stm32flash -w crypto.hex -v /dev/ttyUSB0`
+`sudo stm32flash -w crypto.hex -v /dev/ttyUSB0`

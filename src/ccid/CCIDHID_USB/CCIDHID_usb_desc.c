@@ -251,8 +251,8 @@ const uint8_t CCID_StringProduct[CCID_SIZ_STRING_PRODUCT] = {
     CCID_SIZ_STRING_PRODUCT,
     0x03,
     /* Product name: "Nitrokey Pro" */
-    'N', 0, 'i', 0, 't', 0, 'r', 0, 'o', 0, 'k', 0, 'e', 0, 'y', 0,
-    'P', 0, 'r', 0, 'o'
+    'N', 0, 'i', 0, 't', 0, 'r', 0, 'o', 0, 'k', 0, 'e', 0, 'y', 0, ' ', 0,
+    'P', 0, 'r', 0, 'o', 0
 };
 
 
