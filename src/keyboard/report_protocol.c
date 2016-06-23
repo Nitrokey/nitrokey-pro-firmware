@@ -327,7 +327,7 @@ uint8_t slot_name[15];
         return 1;
     }
 
-    if (slot_no >= 0x10 && slot_no <= 0x10 + NUMBER_OF_HOTP_SLOTS)
+    if (slot_no >= 0x10 && slot_no < 0x10 + NUMBER_OF_HOTP_SLOTS)
     {   // HOTP slot
         slot_no = slot_no & 0x0F;
 
@@ -338,7 +338,7 @@ uint64_t counter = getu64 (report + CMD_WTS_COUNTER_OFFSET);
 
 
     }
-    else if (slot_no >= 0x20 && slot_no <= 0x20 + NUMBER_OF_TOTP_SLOTS)
+    else if (slot_no >= 0x20 && slot_no < 0x20 + NUMBER_OF_TOTP_SLOTS)
     {   // TOTP slot
         slot_no = slot_no & 0x0F;
 
@@ -365,7 +365,7 @@ uint8_t slot_no = report[1];
 
 uint64_t counter;
 
-    if (slot_no >= 0x10 && slot_no <= 0x10 + NUMBER_OF_HOTP_SLOTS)
+    if (slot_no >= 0x10 && slot_no < 0x10 + NUMBER_OF_HOTP_SLOTS)
     {   // HOTP slot
         slot_no = slot_no & 0x0F;
 uint8_t is_programmed = *((uint8_t *) (hotp_slots[slot_no]));
@@ -380,7 +380,7 @@ uint8_t is_programmed = *((uint8_t *) (hotp_slots[slot_no]));
         }
 
     }
-    else if (slot_no >= 0x20 && slot_no <= 0x20 + NUMBER_OF_TOTP_SLOTS)
+    else if (slot_no >= 0x20 && slot_no < 0x20 + NUMBER_OF_TOTP_SLOTS)
     {   // TOTP slot
         slot_no = slot_no & 0x0F;
 uint8_t is_programmed = *((uint8_t *) (totp_slots[slot_no]));
@@ -413,7 +413,7 @@ uint8_t slot_no = report[1];
 
 uint64_t counter;
 
-    if (slot_no >= 0x10 && slot_no <= 0x10 + NUMBER_OF_HOTP_SLOTS)
+    if (slot_no >= 0x10 && slot_no < 0x10 + NUMBER_OF_HOTP_SLOTS)
     {   // HOTP slot
         slot_no = slot_no & 0x0F;
 uint8_t is_programmed = *((uint8_t *) (hotp_slots[slot_no]));
@@ -432,7 +432,7 @@ uint8_t is_programmed = *((uint8_t *) (hotp_slots[slot_no]));
         }
 
     }
-    else if (slot_no >= 0x20 && slot_no <= 0x20 + NUMBER_OF_TOTP_SLOTS)
+    else if (slot_no >= 0x20 && slot_no < 0x20 + NUMBER_OF_TOTP_SLOTS)
     {   // TOTP slot
         slot_no = slot_no & 0x0F;
 uint8_t is_programmed = *((uint8_t *) (totp_slots[slot_no]));
@@ -471,7 +471,7 @@ uint32_t result = 0;
 
 uint8_t slot_no = report[CMD_GC_SLOT_NUMBER_OFFSET];
 
-    if (slot_no >= 0x10 && slot_no <= 0x10 + NUMBER_OF_HOTP_SLOTS)
+    if (slot_no >= 0x10 && slot_no < 0x10 + NUMBER_OF_HOTP_SLOTS)
     {   // HOTP slot
         slot_no = slot_no & 0x0F;
 uint8_t is_programmed = *((uint8_t *) (hotp_slots[slot_no]));
@@ -487,7 +487,7 @@ uint8_t is_programmed = *((uint8_t *) (hotp_slots[slot_no]));
             output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_SLOT_NOT_PROGRAMMED;
 
     }
-    else if (slot_no >= 0x20 && slot_no <= 0x20 + NUMBER_OF_TOTP_SLOTS)
+    else if (slot_no >= 0x20 && slot_no < 0x20 + NUMBER_OF_TOTP_SLOTS)
     {   // TOTP slot
         slot_no = slot_no & 0x0F;
 uint8_t is_programmed = *((uint8_t *) (totp_slots[slot_no]));
@@ -536,14 +536,14 @@ uint8_t slot_tmp[64];
     memset (slot_tmp, 0xFF, 64);
 
 
-    if (slot_no >= 0x10 && slot_no <= 0x10 + NUMBER_OF_HOTP_SLOTS)  // HOTP
+    if (slot_no >= 0x10 && slot_no < 0x10 + NUMBER_OF_HOTP_SLOTS)  // HOTP
         // slot
     {
         slot_no = slot_no & 0x0F;
         write_to_slot (slot_tmp, hotp_slot_offsets[slot_no], 64);
         erase_counter (slot_no);
     }
-    else if (slot_no >= 0x20 && slot_no <= 0x20 + NUMBER_OF_TOTP_SLOTS) // TOTP
+    else if (slot_no >= 0x20 && slot_no < 0x20 + NUMBER_OF_TOTP_SLOTS) // TOTP
         // slot
     {
         slot_no = slot_no & 0x0F;
