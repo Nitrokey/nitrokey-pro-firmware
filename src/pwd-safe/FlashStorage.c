@@ -946,9 +946,6 @@ u32 i1;
 
 uint8_t page_buffer[FLASH_PAGE_SIZE];
 
-uint8_t* page;
-
-
     // Clear user page
     for (i1 = 0; i1 < 7; i1++)
     {

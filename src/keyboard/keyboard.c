@@ -126,7 +126,6 @@ uint8_t i;
 void sendNumberN (uint32_t number, uint8_t len)
 {
 uint8_t result[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-uint32_t tmp_number = number;
 
 uint8_t i;
 
