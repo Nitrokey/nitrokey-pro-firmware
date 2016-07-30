@@ -60,8 +60,6 @@ uint32_t received_crc32;
 
 uint32_t calculated_crc32;
 
-uint8_t i;
-
 uint8_t not_authorized = 0;
 
     // uint64_t counter=*((uint64_t *)(report+REPORT_COUNTER_VALUE_OFFSET));
@@ -362,8 +360,6 @@ uint8_t cmd_read_slot_name (uint8_t * report, uint8_t * output)
 {
 
 uint8_t slot_no = report[1];
-
-uint64_t counter;
 
     if (slot_no >= 0x10 && slot_no <= 0x10 + NUMBER_OF_HOTP_SLOTS)
     {   // HOTP slot
@@ -1060,8 +1056,6 @@ u8 MasterKey_au8[AES_KEYSIZE_256_BIT];
 
 uint8_t cmd_getProDebug (uint8_t * report, uint8_t * output)
 {
-u32 ret;
-
 unsigned char data[OUTPUT_CMD_RESULT_LENGTH];
 
 unsigned int data_length = 0;

@@ -187,34 +187,6 @@ static void NVIC_Configuration (void)
 }
 
 /*******************************************************************************
-* Function Name  : EXTI_Configuration
-* Description    : Configures the External Interrupts controller.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
-static void EXTI_Configuration (void)
-{
-    EXTI_InitTypeDef EXTI_InitStructure;
-
-    /* Smartcard OFF Pin */
-    GPIO_EXTILineConfig (SC_PortSource, SC_PinSource_1);
-    GPIO_EXTILineConfig (SC_PortSource, SC_PinSource_2);
-
-    // GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource8);
-    // GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource6);
-
-    /* Clear SC EXTI Line Pending Bit */
-    EXTI_ClearITPendingBit (SC_EXTI);
-
-    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
-    EXTI_InitStructure.EXTI_Line = SC_EXTI;
-    EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-    EXTI_Init (&EXTI_InitStructure);
-}
-
-/*******************************************************************************
 * Function Name  : GPIO_Configuration_Smartcard
 * Description    : configure the poweron port for the smartcard
 * Input          : None.
