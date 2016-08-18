@@ -60,44 +60,11 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
     0x02,   /* bDescriptorType */
     CCID_SIZ_CONFIG_DESC,
     0x00,
-    0x02,   /* bNumInterfaces */
+    0x01,   /* bNumInterfaces */
     0x01,   /* bConfigurationValue */
     0x00,   /* iConfiguration CCID = 6 ???? */
     USB_CONFIG_BUS_POWERED, /* bmAttributes */
     100 / 2,    /* MaxPower 200 mA */
-
-    // Interface 1 descriptor (Interface 1 = HID Keyboard)
-    0x09,   /* bLength */
-    USB_INTERFACE_DESCRIPTOR_TYPE,  /* bDescriptorType */
-    0x00,   /* bInterfaceNumber */
-    0x00,   /* bAlternateSetting */
-    0x01,   /* bNumEndpoints = 1 */
-    0x03,   /* bInterfaceClass: HID */
-    0x00,   /* bInterfaceSubClass : 1=BOOT, 0=no boot */
-    0x00,   /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
-    0,  /* iInterface: Index of string descriptor */
-      /******************** Descriptor of Keyboard HID ********************/
-    0x09,   /* bLength: HID Descriptor size */
-    HID_DESCRIPTOR_TYPE,    /* bDescriptorType: HID */
-    0x10,   /* bcdHID: HID Class Spec release number */
-    0x01,
-    0x00,   /* bCountryCode: Hardware target country */
-    0x01,   /* bNumDescriptors: Number of HID class descriptors to follow */
-    0x22,   /* bDescriptorType */
-    KEYBOARD_SIZ_REPORT_DESC,   /* wItemLength: Total length of Report descriptor */
-    0x00,
-
-    // Endpoint 1 descriptor (Interrupt in SCR)
-    0x07,   /* bLength */
-    0x05,   // bDescriptorType: Endpoint descriptor type
-    0x84,   // bEndpointAddress: Endpoint 1 IN
-    0x03,   // bmAttributes: Interrupt endpoint
-    0x08,   // wMaxPacketSize(LSB): 8 char max (0x0008)
-    0x00,   // wMaxPacketSize (MSB)
-    0x0A,
-    /* Terminator */
-    // 0 /* bLength */
-
 
     // Interface 0 descriptor (Interface 0 = Smart Card Reader)
     0x09,   /* bLength */
@@ -237,7 +204,7 @@ const uint8_t CCID_StringProduct[CCID_SIZ_STRING_PRODUCT] = {
     0x03,
     /* Product name: "Nitrokey Pro" */
     'N', 0, 'i', 0, 't', 0, 'r', 0, 'o', 0, 'k', 0, 'e', 0, 'y', 0, ' ', 0,
-    'P', 0, 'r', 0, 'o', 0
+    'H', 0, 'S', 0, 'M', 0
 };
 
 
