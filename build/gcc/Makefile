@@ -34,7 +34,7 @@
 
 # Cmd interface paramenters
 VID?=0x20a0
-PID?=0x4108
+PID?=0x4230
 
 
 ###########################################
