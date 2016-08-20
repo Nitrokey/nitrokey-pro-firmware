@@ -41,7 +41,7 @@ const uint8_t CCID_DeviceDescriptor[CCID_SIZ_DEVICE_DESC] = {
     // WBVAL(0x3437), /* 0x3437 = idProduct germalto usb-sl reader - for
     // testing */
 
-    WBVAL (0x0100), /* bcdDevice version 1.00 */
+    WBVAL (0x0101), /* bcdDevice version 1.01 */
 
     1,  /* index of string Manufacturer */
     2,  /* index of string descriptor of product */
