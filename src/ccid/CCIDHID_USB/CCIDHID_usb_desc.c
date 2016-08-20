@@ -69,7 +69,7 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
     // Interface 0 descriptor (Interface 0 = Smart Card Reader)
     0x09,   /* bLength */
     0x04,   /* bDescriptorType */
-    0x01,   /* bInterfaceNumber */
+    0x00,   /* bInterfaceNumber */
     0x00,   /* bAlternateSetting */
     0x03,   /* bNumEndpoints = 3 */
     0x0B,   /* bInterfaceClass = CCID */
