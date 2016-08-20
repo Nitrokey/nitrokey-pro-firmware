@@ -4,7 +4,7 @@
 # by Martin Thomas, Kaiserslautern, Germany 
 # <eversmith@heizung-thomas.de>
 #
-# based on the WinAVR makefile written by Eric B. Weddington, Jörg Wunsch, et al.
+# based on the WinAVR makefile written by Eric B. Weddington, Jï¿½rg Wunsch, et al.
 # Released to the Public Domain
 # Please read the make user manual!
 #
@@ -34,7 +34,7 @@
 
 # Cmd interface paramenters
 VID?=0x20a0
-PID?=0x4108
+PID?=0x4230
 HW_REV?=4
 BUILD_DEBUG=0
 
@@ -490,7 +490,7 @@ endif
 	@echo $(MSG_FLASH) $@
 	$(OBJCOPY) -O $(FORMAT) $< $@
 	ln -sf $@ last.hex
-	
+
 # Create final output file (.bin) from ELF output file.
 %.bin: %.elf
 	@echo
