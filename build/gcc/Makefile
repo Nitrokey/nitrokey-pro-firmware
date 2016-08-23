@@ -67,7 +67,7 @@ RUN_MODE=ROM_RUN
 
 
 # Target file name (without extension).
-TARGET = nitrokey-pro-firmware-hw$(HW_REV)
+TARGET = nitrokey-hsm-firmware-hw$(HW_REV)
 
 # List C source files here. (C dependencies are automatically generated.)
 # use file-extension c for "c-only"-files
