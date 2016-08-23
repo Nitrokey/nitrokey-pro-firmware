@@ -1,3 +1,10 @@
+Nitrokey HSM firmware
+=====================
+This branch hosts a variation of Pro firmware adjusted for HSM device and with disabled HID interface. Below is the README copy for Pro firmware project.
+
+To build this firmware just issue `make release` command in the main directory (PID will be set to HSM respectively, no need to tune it by hand). Requires `gcc-arm-none-eabi` package under Ubuntu 16.04.
+
+
 Nitrokey Pro firmware [![Build Status](https://travis-ci.org/Nitrokey/nitrokey-pro-firmware.svg?branch=master)](https://travis-ci.org/Nitrokey/nitrokey-pro-firmware)  [![Code Health](https://landscape.io/github/Nitrokey/nitrokey-pro-firmware/master/landscape.svg?style=flat)](https://landscape.io/github/Nitrokey/nitrokey-pro-firmware/master) [![Coverity Scan Build](https://scan.coverity.com/projects/4745/badge.svg)](https://scan.coverity.com/projects/4745)
 =====================
 
