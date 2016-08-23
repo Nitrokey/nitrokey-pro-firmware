@@ -58,8 +58,7 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
     /* Configuration 1 */
     0x09,   /* bLength ConfigDescriptor */
     0x02,   /* bDescriptorType */
-    CCID_SIZ_CONFIG_DESC,
-    0x00,
+    CCID_SIZ_CONFIG_DESC,  0x00, /* uint16_t wTotalLength */
     0x01,   /* bNumInterfaces */
     0x01,   /* bConfigurationValue */
     0x00,   /* iConfiguration CCID = 6 ???? */
