@@ -47,7 +47,8 @@ release: firmware
 	mkdir -p release && \
 	rm release/* -v && \
 	cd release && \
-	cp $(BUILD_DIR)/nitrokey-pro-firmware.elf $(BUILD_DIR)/nitrokey-pro-firmware.hex . && \
+	cp $(BUILD_DIR)/nitrokey-hsm-firmware.elf $(BUILD_DIR)/nitrokey-hsm-firmware.hex . && \
 	find . -name *.elf -type f -printf "%f" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512; md5sum -b {} > {}.md5' && \
     find . -name *.hex -type f -printf "%f" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512; md5sum -b {} > {}.md5' && \
-	zip nitrokey-pro-`git describe`.zip nitrokey-pro-firmware.hex*
+	zip nitrokey-hsm-`git describe`.zip nitrokey-hsm-firmware.hex* && \
+	ls -lh
