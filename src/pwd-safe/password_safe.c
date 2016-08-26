@@ -133,11 +133,7 @@ typePasswordSafeSlot_st PWS_BufferSlot_st;
 
 u8 PWS_WriteSlot (u8 Slot_u8, typePasswordSafeSlot_st * Slot_st)
 {
-u8* WritePointer_pu8;
-
 u8* AesKeyPointer_pu8;
-
-void* p;
 
     CI_LocalPrintf
         ("PWS_WriteSlot: Slot %d. Name -%s- Loginname -%s- PW -%s-\r\n",
@@ -187,9 +183,6 @@ int i;
     CI_LocalPrintf ("\n\r");
 #endif
 
-    // Get write address
-    WritePointer_pu8 = (u8 *) (PWS_FLASH_START_ADDRESS + (PWS_SLOT_LENGTH * Slot_u8));
-
     // Write to flash
 uint8_t page_buffer[FLASH_PAGE_SIZE];
 
@@ -198,7 +191,6 @@ uint8_t* page = (uint8_t *) PWS_FLASH_START_ADDRESS;
     memcpy (page_buffer, page, FLASH_PAGE_SIZE);
     memcpy (page_buffer + (PWS_SLOT_LENGTH * Slot_u8), Slot_st_encrypted, PWS_SLOT_LENGTH);
 
-    p = (void *) Slot_st_encrypted;
     FLASH_Unlock ();
     FLASH_ErasePage (PWS_FLASH_START_ADDRESS);
     write_data_to_flash (page_buffer, FLASH_PAGE_SIZE, PWS_FLASH_START_ADDRESS);
@@ -224,11 +216,7 @@ uint8_t* page = (uint8_t *) PWS_FLASH_START_ADDRESS;
 
 u8 PWS_EraseSlot (u8 Slot_u8)
 {
-u8* WritePointer_pu8;
-
 u8* AesKeyPointer_pu8;
-
-void* p;
 
 #if (defined __GNUC__) && (defined __AVR32__)
     __attribute__ ((__aligned__ (4)))
@@ -285,9 +273,6 @@ int i;
     CI_LocalPrintf ("\n\r");
 #endif
 
-    // Get write address
-    WritePointer_pu8 = (u8 *) (PWS_FLASH_START_ADDRESS + (PWS_SLOT_LENGTH * Slot_u8));
-
     // Write to flash
 uint8_t page_buffer[FLASH_PAGE_SIZE];
 
@@ -296,7 +281,6 @@ uint8_t* page = (uint8_t *) PWS_FLASH_START_ADDRESS;
     memcpy (page_buffer, page, FLASH_PAGE_SIZE);
     memcpy (page_buffer + (PWS_SLOT_LENGTH * Slot_u8), Slot_st_encrypted, PWS_SLOT_LENGTH);
 
-    p = (void *) Slot_st_encrypted;
     FLASH_Unlock ();
     FLASH_ErasePage (PWS_FLASH_START_ADDRESS);
     write_data_to_flash (page_buffer, FLASH_PAGE_SIZE, PWS_FLASH_START_ADDRESS);
