@@ -35,6 +35,7 @@
 #include "string.h"
 #include "CcidLocalAccess.h"
 #include "HandleAesStorageKey.h"
+#include "debug.h"
 
 
 
@@ -127,6 +128,7 @@ int main (void)
     StartupCheck_u8 ();
 
     /* Endless loop after USB startup */
+    Debugf("Entering loop after USB startup\n");
     while (1)
     {
         if (device_status == STATUS_RECEIVED_REPORT)

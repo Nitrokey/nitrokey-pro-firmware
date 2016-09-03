@@ -32,6 +32,7 @@
 /* Private macro ------------------------------------------------------------- */
 /* Private variables --------------------------------------------------------- */
 extern __IO uint8_t PrevXferComplete;
+extern __IO uint8_t DebugTransferComplete;
 
 /* Private function prototypes ----------------------------------------------- */
 /* Private functions --------------------------------------------------------- */
@@ -99,3 +100,9 @@ void EP4_IN_Callback (void)
     PrevXferComplete = 1;
     // SwitchSmartcardLED(DISABLE);
 }
+
+void EP5_IN_Callback (void)
+{
+    DebugTransferComplete = 1;
+}
+

@@ -219,6 +219,12 @@ void USB_CCID_Reset (void)
     SetEPRxStatus (ENDP4, EP_RX_DIS);
     SetEPTxStatus (ENDP4, EP_TX_NAK);
 
+    /* Initialize Endpoint 5 */
+    SetEPType (ENDP5, EP_INTERRUPT);
+    SetEPTxAddr (ENDP5, ENDP5_TXADDR);
+    SetEPTxStatus (ENDP5, EP_TX_NAK);
+    SetEPRxStatus (ENDP5, EP_RX_DIS);
+
     /* */
     SetEPRxCount (ENDP0, Device_Property->MaxPacketSize);
     SetEPRxValid (ENDP0);
