@@ -567,7 +567,7 @@ uint8_t card_password[26];
     memcpy (card_password, report + 1, 25);
 
     res = cardAuthenticate (card_password);
-    memcpy (card_password, 0, sizeof (card_password));
+    memset (card_password, 0, sizeof (card_password));
 
     if (res == TRUE)
     {
@@ -594,7 +594,7 @@ uint8_t user_password[26];
     memcpy (user_password, report + 1, 25);
 
     res = userAuthenticate (user_password);
-    memcpy (user_password, 0, sizeof (user_password));
+    memset (user_password, 0, sizeof (user_password));
 
     if (res == 0)
     {
@@ -633,8 +633,8 @@ uint8_t new_pin[26];
     }
 
     res = changeUserPin (old_pin, new_pin);
-    memcpy (old_pin, 0, sizeof (old_pin));
-    memcpy (new_pin, 0, sizeof (new_pin));
+    memset (old_pin, 0, sizeof (old_pin));
+    memset (new_pin, 0, sizeof (new_pin));
 
     if (0 == res)
     {
@@ -669,8 +669,8 @@ uint8_t new_admin_pin[26];
     }
 
     res = changeAdminPin (old_admin_pin, new_admin_pin);
-    memcpy (old_admin_pin, 0, sizeof (old_admin_pin));
-    memcpy (old_admin_pin, 0, sizeof (new_admin_pin));
+    memset (old_admin_pin, 0, sizeof (old_admin_pin));
+    memset (old_admin_pin, 0, sizeof (new_admin_pin));
 
     if (0 == res)
     {
@@ -699,7 +699,7 @@ uint8_t new_pin[25];
 
 
     res = cardAuthenticate (admin_pin);
-    memcpy (admin_pin, 0, sizeof (admin_pin));
+    memset (admin_pin, 0, sizeof (admin_pin));
 
     if (res != TRUE)
     {
@@ -708,7 +708,7 @@ uint8_t new_pin[25];
     }
 
     res = unblockPin (new_pin);
-    memcpy (new_pin, 0, sizeof (new_pin));
+    memset (new_pin, 0, sizeof (new_pin));
     if (0 == res)
     {
         output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
@@ -730,7 +730,7 @@ uint8_t cmd_authorize (uint8_t * report, uint8_t * output)
         if (memcmp (report + 5, temp_password, 25) == 0)
         {
             authorized_crc = getu32 (report + 1);
-            memcpy (temp_password, 0, sizeof (temp_password));
+            memset (temp_password, 0, sizeof (temp_password));
             tmp_password_set = 0;
             return 0;
         }
@@ -754,7 +754,7 @@ uint8_t cmd_user_authorize (uint8_t * report, uint8_t * output)
         {
             authorized_user_crc = getu32 (report + 1);
             authorized_user_crc_set = 1;
-            memcpy (temp_user_password, 0, sizeof (temp_user_password));
+            memset (temp_user_password, 0, sizeof (temp_user_password));
             tmp_user_password_set = 0;
             return 0;
         }
