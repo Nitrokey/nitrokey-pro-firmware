@@ -3,6 +3,7 @@ email: false
 language: c
 compiler: arm-none-eabi-gcc
 before_install:
+    - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
     - sudo apt-get update
     - sudo apt-get install -y libc6:i386
     - wget https://launchpad.net/gcc-arm-embedded/4.9/4.9-2014-q4-major/+download/gcc-arm-none-eabi-4_9-2014q4-20141203-linux.tar.bz2
@@ -13,7 +14,7 @@ before_install:
 
 env:
   global:
-   - secure: "AfAFHnCYLW7yelVDfj4hsdf/OL/pts8ourjHICaSFcTK5IuHnOiN74dljQMh7Hvv7Ef5Bax1eN5lBO2xOJOl9UfycWrfpeOD4V0kLFCIoHuakXVwAjhjAfttDNYYC2UgrioHLGzG/Y7oo8xZlu4Y0RLO3/wY/CKl9/AkHrUyXng="
+    - secure: "gq/SzGx5U1mcOAukHS1zT+M1Gk8GuBhmlQWPx1RwwjxcADEhpu0eGFqBn3xc69MtLYNM4y0SAanIPQI1OckosTSr70UaNEe4hydK929zv/V6vhT9RI4BZIOW1euXtSxvIz8LJJ0lAHFNP5Hwe2RKuQkumTKAa/Y75cWIJWZDBgE="
 
 addons:
   coverity_scan:
