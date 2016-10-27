@@ -26,4 +26,4 @@ addons:
     build_command:  "make -j2 firmware"
     branch_pattern: coverity-scan_2
 
-script: make -j2 firmware
+script: if [ "${COVERITY_SCAN_BRANCH}" != 1  ]; then make -j2 firmware ; fi
