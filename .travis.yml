@@ -22,6 +22,6 @@ addons:
       name: "Nitrokey/nitrokey-pro-firmware"
       description: "Build submitted via Travis CI"
     notification_email: szczepan@nitrokey.com
-    build_command_prepend: "cov-configure --compiler arm-none-gnueabi-gcc --template"
-    build_command:   "make -j2 firmware"
+    build_command_prepend: "cov-configure --compiler arm-none-gnueabi-gcc --comptype gcc --template; make clean"
+    build_command:  "make -j2 firmware"
     branch_pattern: coverity-scan_2

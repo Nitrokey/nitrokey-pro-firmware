@@ -9,7 +9,7 @@ DEPS=gcc-arm-none-eabi
 
 firmware:
 	cd $(BUILD_DIR) && \
-	make && \
+	${MAKE} && \
 	cd -
 #	mv $(BUILD_DIR)/crypto.elf .
 
@@ -38,7 +38,7 @@ flash-versaloon:
 	
 clean:
 	cd $(BUILD_DIR) && \
-	make clean
+	${MAKE} clean
 
 deps:
 	sudo apt-get install ${DEPS}
