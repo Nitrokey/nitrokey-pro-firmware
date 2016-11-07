@@ -52,6 +52,10 @@ __IO uint32_t authorized_user_crc = 0xFFFFFFFF;
 __IO uint32_t authorized_user_crc_set = 0;
 
 
+bool is_valid_temp_user_password(const uint8_t *user_password);
+
+bool is_valid_temp_password(const uint8_t *password);
+
 uint8_t parse_report(uint8_t *report, uint8_t *output) {
   uint8_t cmd_type = report[CMD_TYPE_OFFSET];
 
@@ -645,41 +649,16 @@ uint8_t cmd_unblock_pin(uint8_t *report, uint8_t *output) {
 }
 
 uint8_t cmd_authorize(uint8_t *report, uint8_t *output) {
-
-  if (tmp_password_set == 1) {
-
-    if (memcmp(report + 5, temp_password, 25) == 0) {
-      authorized_crc = getu32(report + 1);
-      memset(temp_password, 0, sizeof(temp_password));
-      tmp_password_set = 0;
-      return 0;
-    } else {
-      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
-      return 1;
-    }
-  }
-
-  return 1;
+  return 0;
 }
+
+bool is_valid_temp_password(const uint8_t *password) { return memcmp(password, temp_password, 25) == 0; }
 
 uint8_t cmd_user_authorize(uint8_t *report, uint8_t *output) {
-
-  if (tmp_user_password_set == 1) {
-
-    if (memcmp(report + 5, temp_user_password, 25) == 0) {
-      authorized_user_crc = getu32(report + 1);
-      authorized_user_crc_set = 1;
-      memset(temp_user_password, 0, sizeof(temp_user_password));
-      tmp_user_password_set = 0;
-      return 0;
-    } else {
-      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
-      return 1;
-    }
-  }
-
-  return 1;
+  return 0;
 }
+
+bool is_valid_temp_user_password(const uint8_t *user_password) { return memcmp(user_password, temp_user_password, 25) == 0; }
 
 
 uint8_t cmd_factory_reset(uint8_t *report, uint8_t *output) {
