@@ -51,7 +51,7 @@ const int packet_header_size = 8;
 
 bool is_valid_temp_user_password(const uint8_t *user_password);
 
-bool is_valid_temp_password(const uint8_t *password);
+bool is_valid_admin_temp_password(const uint8_t *password);
 
 bool is_user_PIN_protection_enabled();
 
@@ -125,7 +125,7 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
         break;
 
       case CMD_ERASE_SLOT:
-        if (is_valid_temp_password(report+2))
+        if (is_valid_admin_temp_password(report + 2))
           cmd_erase_slot(report, output);
         else
           not_authorized = 1;
@@ -648,7 +648,7 @@ uint8_t cmd_authorize(uint8_t *report, uint8_t *output) {
   return 0;
 }
 
-bool is_valid_temp_password(const uint8_t *password) { return memcmp(password, temp_password, 25) == 0; }
+bool is_valid_admin_temp_password(const uint8_t *password) { return memcmp(password, temp_password, 25) == 0; }
 
 uint8_t cmd_user_authorize(uint8_t *report, uint8_t *output) {
   return 0;
