@@ -51,10 +51,13 @@ __IO uint32_t authorized_user_crc = 0xFFFFFFFF;
 
 __IO uint32_t authorized_user_crc_set = 0;
 
+const int packet_header_size = 8;
 
 bool is_valid_temp_user_password(const uint8_t *user_password);
 
 bool is_valid_temp_password(const uint8_t *password);
+
+bool is_user_PIN_protection_enabled();
 
 uint8_t parse_report(uint8_t *report, uint8_t *output) {
   uint8_t cmd_type = report[CMD_TYPE_OFFSET];
@@ -106,21 +109,16 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
         break;
 
       case CMD_READ_SLOT:
-        // if (calculated_crc32==authorized_crc)
         cmd_read_slot(report, output);
-        // else
-        // not_authorized=1;
         break;
 
-      case CMD_GET_CODE:
-        if ((authorized_user_crc_set
-             && calculated_crc32 == authorized_user_crc) ||
-            *((uint8_t *) (SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET + 3)) != 1) {
-          authorized_user_crc = 0xFFFFFFFF;
-          authorized_user_crc_set = 0;
-          cmd_get_code(report, output);
-        } else
-          not_authorized = 1;
+      case CMD_GET_CODE: {
+        uint8_t *const user_temp_password = report + CMD_GC_PASSWORD_OFFSET;
+        if (!is_user_PIN_protection_enabled() || is_valid_temp_user_password(user_temp_password)) {
+              cmd_get_code(report, output);
+            } else
+              not_authorized = 1;
+        }
         break;
 
       case CMD_WRITE_CONFIG:
@@ -272,6 +270,8 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
 
   return 0;
 }
+
+bool is_user_PIN_protection_enabled() { return *((uint8_t *) (SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET + 3)) == 1; }
 
 uint8_t cmd_get_status(uint8_t *report, uint8_t *output) {
 
