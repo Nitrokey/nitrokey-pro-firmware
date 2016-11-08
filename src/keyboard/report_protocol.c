@@ -55,6 +55,10 @@ bool is_valid_admin_temp_password(const uint8_t *password);
 
 bool is_user_PIN_protection_enabled();
 
+bool is_HOTP_slot_number(uint8_t slot_no);
+
+bool is_TOTP_slot_number(uint8_t slot_no);
+
 uint8_t parse_report(uint8_t *report, uint8_t *output) {
   uint8_t cmd_type = report[CMD_TYPE_OFFSET];
 
@@ -300,47 +304,40 @@ uint8_t cmd_get_user_password_retry_count(uint8_t *report, uint8_t *output) {
 
 
 uint8_t cmd_write_to_slot(uint8_t *report, uint8_t *output) {
-
   uint8_t slot_no = report[CMD_WTS_SLOT_NUMBER_OFFSET];
-
   uint8_t slot_tmp[64];           // this is will be the new slot contents
-
-  uint8_t slot_name[15];
 
   memset(slot_tmp, 0, 64);
   slot_tmp[0] = 0x01; // marks slot as programmed
-  memcpy(slot_tmp + 1, report + CMD_WTS_SLOT_NAME_OFFSET, 51);
-  memcpy(slot_name, report + CMD_WTS_SLOT_NAME_OFFSET, 15);
+  uint8_t *slot_name = report + CMD_WTS_SLOT_NAME_OFFSET;
+  memcpy(slot_tmp + 1, slot_name, 51);
 
   if (slot_name[0] == 0) {
     output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_NO_NAME_ERROR;
     return 1;
   }
 
-  if (slot_no >= 0x10 && slot_no < 0x10 + NUMBER_OF_HOTP_SLOTS) {   // HOTP slot
+  if (is_HOTP_slot_number(slot_no)) {
     slot_no = slot_no & 0x0F;
-
     uint64_t counter = getu64(report + CMD_WTS_COUNTER_OFFSET);
-
     set_counter_value(hotp_slot_counters[slot_no], counter);
     write_to_slot(slot_tmp, hotp_slot_offsets[slot_no], 64);
 
-
-  } else if (slot_no >= 0x20 && slot_no < 0x20 + NUMBER_OF_TOTP_SLOTS) {   // TOTP slot
+  } else if (is_TOTP_slot_number(slot_no)) {
     slot_no = slot_no & 0x0F;
-
     write_to_slot(slot_tmp, totp_slot_offsets[slot_no], 64);
-
 
   } else {
     output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_SLOT;
-
-
   }
 
 
   return 0;
 }
+
+bool is_TOTP_slot_number(uint8_t slot_no) { return slot_no >= 0x20 && slot_no < 0x20 + NUMBER_OF_TOTP_SLOTS; }
+
+bool is_HOTP_slot_number(uint8_t slot_no) { return slot_no >= 0x10 && slot_no < 0x10 + NUMBER_OF_HOTP_SLOTS; }
 
 
 uint8_t cmd_read_slot_name(uint8_t *report, uint8_t *output) {
