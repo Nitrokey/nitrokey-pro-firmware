@@ -46,7 +46,9 @@ __IO uint32_t authorized_crc = 0xFFFFFFFF;
 __IO uint8_t temp_user_password[25];
 
 __IO uint8_t tmp_user_password_set = 0;
+__IO struct OTP_slot_content local_slot_content;
 
+int write_to_slot_transaction_started = 0;
 const int packet_header_size = 8;
 
 bool is_valid_temp_user_password(const uint8_t *user_password);
@@ -97,11 +99,31 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
         cmd_get_status(report, output);
         break;
 
-      case CMD_WRITE_TO_SLOT:
-        if (calculated_crc32 == authorized_crc)
-          cmd_write_to_slot(report, output);
-        else
+      case CMD_WRITE_TO_SLOT_2: {
+        struct write_to_slot_2_payload *const payload = (struct write_to_slot_2_payload*) report;
+        if(is_valid_admin_temp_password(payload->temporary_admin_password)
+            && write_to_slot_transaction_started == 1){
+          write_to_slot_transaction_started = 0;
+          local_slot_content.slot_number = payload->slot_number;
+          local_slot_content.slot_counter = payload->slot_counter;
+          memcpy(local_slot_content.slot_name, payload->slot_name, sizeof(payload->slot_name));
+          cmd_write_to_slot( (uint8_t*) &local_slot_content, output);
+        } else
           not_authorized = 1;
+      }
+        break;
+
+      case CMD_WRITE_TO_SLOT: {
+        struct write_to_slot_1_payload *const payload = (struct write_to_slot_1_payload*) report;
+        if(is_valid_admin_temp_password(payload->temporary_admin_password)) {
+          write_to_slot_transaction_started = 1;
+          memset((void *) &local_slot_content, 0, sizeof(local_slot_content));
+          local_slot_content._slot_config = payload->_slot_config;
+          memcpy(local_slot_content.slot_token_id, payload->slot_token_id, sizeof(payload->slot_token_id));
+          memcpy(local_slot_content.slot_secret, payload->slot_secret, sizeof(payload->slot_secret));
+        } else
+          not_authorized = 1;
+        }
         break;
 
       case CMD_READ_SLOT_NAME:

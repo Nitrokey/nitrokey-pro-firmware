@@ -41,6 +41,7 @@
 #define CMD_FACTORY_RESET                   0x13
 #define CMD_CHANGE_USER_PIN                 0x14
 #define CMD_CHANGE_ADMIN_PIN                0x15
+#define CMD_WRITE_TO_SLOT_2                 0x16
 
 #define CMD_GET_PW_SAFE_SLOT_STATUS       0x60
 #define CMD_GET_PW_SAFE_SLOT_NAME         0x61
@@ -246,3 +247,68 @@ uint8_t cmd_getProDebug (uint8_t * report, uint8_t * output);
 /*
    uint8_t cmd_test_counter(uint8_t *report,uint8_t *output); uint8_t cmd_test_time(uint8_t *report,uint8_t *output); */
 // END - OTP Test Routine ----------------------------------
+
+#define __packed __attribute__((__packed__))
+
+
+struct write_to_slot_1_payload {
+    uint8_t _zero;
+    uint8_t temporary_admin_password[25];
+    uint8_t slot_secret[20];
+    union {
+        uint8_t _slot_config;
+        struct {
+            bool use_8_digits   : 1;
+            bool use_enter      : 1;
+            bool use_tokenID    : 1;
+        };
+    };
+    union {
+        uint8_t slot_token_id[13]; /** OATH Token Identifier */
+        struct { /** @see https://openauthentication.org/token-specs/ */
+            uint8_t omp[2];
+            uint8_t tt[2];
+            uint8_t mui[8];
+            uint8_t keyboard_layout; //disabled feature in nitroapp as of 20160805
+        } slot_token_fields;
+    };
+} __packed;
+
+struct write_to_slot_2_payload {
+    uint8_t _zero;
+    uint8_t temporary_admin_password[25];
+    uint8_t slot_number;
+    uint8_t slot_name[15];
+    union {
+        uint64_t slot_counter;
+        uint8_t slot_counter_s[8];
+    } __packed;
+} __packed;
+
+struct OTP_slot_content {
+    uint8_t _zero;
+    uint8_t slot_number;
+    uint8_t slot_name[15];
+    uint8_t slot_secret[20];
+    union {
+        uint8_t _slot_config;
+        struct {
+            bool use_8_digits   : 1;
+            bool use_enter      : 1;
+            bool use_tokenID    : 1;
+        };
+    };
+    union {
+        uint8_t slot_token_id[13]; /** OATH Token Identifier */
+        struct { /** @see https://openauthentication.org/token-specs/ */
+            uint8_t omp[2];
+            uint8_t tt[2];
+            uint8_t mui[8];
+            uint8_t keyboard_layout; //disabled feature in nitroapp as of 20160805
+        } slot_token_fields;
+    };
+    union {
+        uint64_t slot_counter;
+        uint8_t slot_counter_s[8];
+    } __packed;
+} __packed;
