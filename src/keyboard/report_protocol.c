@@ -144,7 +144,7 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
         break;
 
       case CMD_WRITE_CONFIG:
-        if (calculated_crc32 == authorized_crc)
+        if (is_valid_admin_temp_password(report+6))
           cmd_write_config(report, output);
         else
           not_authorized = 1;
@@ -486,7 +486,7 @@ uint8_t cmd_write_config(uint8_t *report, uint8_t *output) {
 
   memset(slot_tmp, 0, 64);
 
-  memcpy(slot_tmp, report + 1, 64);
+  memcpy(slot_tmp, report + 1, 5);
 
   write_to_slot(slot_tmp, GLOBAL_CONFIG_OFFSET, 64);
 
