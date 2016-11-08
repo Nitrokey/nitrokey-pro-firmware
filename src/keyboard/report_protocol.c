@@ -47,10 +47,6 @@ __IO uint8_t temp_user_password[25];
 
 __IO uint8_t tmp_user_password_set = 0;
 
-__IO uint32_t authorized_user_crc = 0xFFFFFFFF;
-
-__IO uint32_t authorized_user_crc_set = 0;
-
 const int packet_header_size = 8;
 
 bool is_valid_temp_user_password(const uint8_t *user_password);
