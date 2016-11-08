@@ -144,7 +144,7 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
         break;
 
       case CMD_WRITE_CONFIG:
-        if (is_valid_admin_temp_password(report+6))
+        if (is_valid_admin_temp_password(report + 6))
           cmd_write_config(report, output);
         else
           not_authorized = 1;
