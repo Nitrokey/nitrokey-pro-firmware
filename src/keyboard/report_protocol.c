@@ -41,8 +41,6 @@ __IO uint8_t temp_password[25];
 
 __IO uint8_t tmp_password_set = 0;
 
-__IO uint32_t authorized_crc = 0xFFFFFFFF;
-
 __IO uint8_t temp_user_password[25];
 
 __IO uint8_t tmp_user_password_set = 0;
@@ -275,9 +273,6 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
 
     if (not_authorized)
       output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_NOT_AUTHORIZED;
-
-    if (calculated_crc32 == authorized_crc)
-      authorized_crc = 0xFFFFFFFF;
 
   } else
     output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_CRC;
