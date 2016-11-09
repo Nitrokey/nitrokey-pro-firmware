@@ -42,7 +42,7 @@ uint8_t temp_user_password[25];
 
 OTP_slot_content local_slot_content;
 
-int write_to_slot_transaction_started = 0;
+bool write_to_slot_transaction_started = FALSE;
 
 bool is_valid_temp_user_password(const uint8_t *const user_password);
 bool is_valid_admin_temp_password(const uint8_t *const password);
@@ -80,8 +80,8 @@ uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
       case CMD_WRITE_TO_SLOT_2: {
         write_to_slot_2_payload const * const payload = (write_to_slot_2_payload*) report;
         if(is_valid_admin_temp_password(payload->temporary_admin_password)
-            && write_to_slot_transaction_started == 1){
-          write_to_slot_transaction_started = 0;
+            && write_to_slot_transaction_started == TRUE){
+          write_to_slot_transaction_started = FALSE;
           local_slot_content.slot_number = payload->slot_number;
           local_slot_content.slot_counter = payload->slot_counter;
           memcpy(local_slot_content.slot_name, payload->slot_name, sizeof(payload->slot_name));
@@ -94,7 +94,7 @@ uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
       case CMD_WRITE_TO_SLOT: {
         write_to_slot_1_payload const * const payload = (write_to_slot_1_payload*) report;
         if(is_valid_admin_temp_password(payload->temporary_admin_password)) {
-          write_to_slot_transaction_started = 1;
+          write_to_slot_transaction_started = TRUE;
           memset((void *) &local_slot_content, 0, sizeof(local_slot_content));
           local_slot_content._slot_config = payload->_slot_config;
           memcpy(local_slot_content.slot_token_id, payload->slot_token_id, sizeof(payload->slot_token_id));
@@ -122,14 +122,14 @@ uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
         break;
 
       case CMD_WRITE_CONFIG:
-        if (is_valid_admin_temp_password(report + 6))
+        if (is_valid_admin_temp_password(report + CMD_WRITE_CONFIG_PASSWORD_OFFSET))
           cmd_write_config(report, output);
         else
           not_authorized = 1;
         break;
 
       case CMD_ERASE_SLOT:
-        if (is_valid_admin_temp_password(report + 2))
+        if (is_valid_admin_temp_password(report + CMD_ERASE_SLOT_PASSWORD_OFFSET))
           cmd_erase_slot(report, output);
         else
           not_authorized = 1;

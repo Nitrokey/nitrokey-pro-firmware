@@ -300,3 +300,6 @@ typedef struct {
         uint8_t slot_counter_s[8];
     } __packed;
 } __packed OTP_slot_content;
+
+static const int CMD_WRITE_CONFIG_PASSWORD_OFFSET = 6;
+static const int CMD_ERASE_SLOT_PASSWORD_OFFSET = 2;
