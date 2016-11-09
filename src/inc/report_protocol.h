@@ -18,7 +18,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define FIRMWARE_VERSION 07
+#define FIRMWARE_VERSION (0x08)
 
 #define CMD_GET_STATUS                      0x00
 #define CMD_WRITE_TO_SLOT                   0x01
