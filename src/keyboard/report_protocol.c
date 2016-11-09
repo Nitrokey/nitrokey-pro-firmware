@@ -663,15 +663,7 @@ uint8_t cmd_unblock_pin(uint8_t *report, uint8_t *output) {
   }
 }
 
-uint8_t cmd_authorize(uint8_t *report, uint8_t *output) {
-  return 0;
-}
-
 bool is_valid_admin_temp_password(const uint8_t *password) { return memcmp(password, temp_password, 25) == 0; }
-
-uint8_t cmd_user_authorize(uint8_t *report, uint8_t *output) {
-  return 0;
-}
 
 bool is_valid_temp_user_password(const uint8_t *user_password) { return memcmp(user_password, temp_user_password, 25) == 0; }
 

@@ -159,15 +159,6 @@
  */
 
 
-/*
-   CMD_AUTHORIZE
-
-   report: 1b command type 4b authorized crc 25b temporary password
-
-
- */
-
-
 
 __IO extern uint8_t device_status;
 
@@ -195,13 +186,9 @@ uint8_t cmd_erase_slot (uint8_t * report, uint8_t * output);
 
 uint8_t cmd_first_authenticate (uint8_t * report, uint8_t * output);
 
-uint8_t cmd_authorize (uint8_t * report, uint8_t * output);
-
 uint8_t cmd_get_password_retry_count (uint8_t * report, uint8_t * output);
 
 uint8_t cmd_user_authenticate (uint8_t * report, uint8_t * output);
-
-uint8_t cmd_user_authorize (uint8_t * report, uint8_t * output);
 
 uint8_t cmd_factory_reset (uint8_t * report, uint8_t * output);
 
