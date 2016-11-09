@@ -44,13 +44,13 @@ OTP_slot_content local_slot_content;
 
 int write_to_slot_transaction_started = 0;
 
-bool is_valid_temp_user_password(const uint8_t *user_password);
-bool is_valid_admin_temp_password(const uint8_t *password);
+bool is_valid_temp_user_password(const uint8_t *const user_password);
+bool is_valid_admin_temp_password(const uint8_t *const password);
 bool is_user_PIN_protection_enabled(void);
 bool is_HOTP_slot_number(uint8_t slot_no);
 bool is_TOTP_slot_number(uint8_t slot_no);
 
-uint8_t parse_report(uint8_t *report, uint8_t *output) {
+uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
   uint8_t cmd_type = report[CMD_TYPE_OFFSET];
   uint32_t received_crc32;
   uint32_t calculated_crc32;
@@ -78,7 +78,7 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
         break;
 
       case CMD_WRITE_TO_SLOT_2: {
-        write_to_slot_2_payload *const payload = (write_to_slot_2_payload*) report;
+        write_to_slot_2_payload const * const payload = (write_to_slot_2_payload*) report;
         if(is_valid_admin_temp_password(payload->temporary_admin_password)
             && write_to_slot_transaction_started == 1){
           write_to_slot_transaction_started = 0;
@@ -92,7 +92,7 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
         break;
 
       case CMD_WRITE_TO_SLOT: {
-        write_to_slot_1_payload *const payload = (write_to_slot_1_payload*) report;
+        write_to_slot_1_payload const * const payload = (write_to_slot_1_payload*) report;
         if(is_valid_admin_temp_password(payload->temporary_admin_password)) {
           write_to_slot_transaction_started = 1;
           memset((void *) &local_slot_content, 0, sizeof(local_slot_content));
@@ -617,9 +617,9 @@ uint8_t cmd_unblock_pin(uint8_t *report, uint8_t *output) {
   }
 }
 
-bool is_valid_admin_temp_password(const uint8_t *password) { return memcmp(password, temp_password, 25) == 0; }
+bool is_valid_admin_temp_password(const uint8_t *const password) { return memcmp(password, temp_password, 25) == 0; }
 
-bool is_valid_temp_user_password(const uint8_t *user_password) { return memcmp(user_password, temp_user_password, 25) == 0; }
+bool is_valid_temp_user_password(const uint8_t *const user_password) { return memcmp(user_password, temp_user_password, 25) == 0; }
 
 
 uint8_t cmd_factory_reset(uint8_t *report, uint8_t *output) {
