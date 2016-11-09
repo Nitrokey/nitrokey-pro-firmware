@@ -162,11 +162,11 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
         break;
 
       case CMD_AUTHORIZE:
-        cmd_authorize(report, output);
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_UNKNOWN_COMMAND;
         break;
 
       case CMD_USER_AUTHORIZE:
-        cmd_user_authorize(report, output);
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_UNKNOWN_COMMAND;
         break;
 
       case CMD_GET_PASSWORD_RETRY_COUNT:
