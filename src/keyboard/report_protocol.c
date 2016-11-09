@@ -38,43 +38,23 @@
 #include "password_safe.h"
 
 __IO uint8_t temp_password[25];
-
-__IO uint8_t tmp_password_set = 0;
-
 __IO uint8_t temp_user_password[25];
 
-__IO uint8_t tmp_user_password_set = 0;
 __IO struct OTP_slot_content local_slot_content;
 
 int write_to_slot_transaction_started = 0;
-const int packet_header_size = 8;
 
 bool is_valid_temp_user_password(const uint8_t *user_password);
-
 bool is_valid_admin_temp_password(const uint8_t *password);
-
 bool is_user_PIN_protection_enabled();
-
 bool is_HOTP_slot_number(uint8_t slot_no);
-
 bool is_TOTP_slot_number(uint8_t slot_no);
 
 uint8_t parse_report(uint8_t *report, uint8_t *output) {
   uint8_t cmd_type = report[CMD_TYPE_OFFSET];
-
   uint32_t received_crc32;
-
   uint32_t calculated_crc32;
-
-  uint8_t i;
-
   uint8_t not_authorized = 0;
-
-  // uint64_t counter=*((uint64_t *)(report+REPORT_COUNTER_VALUE_OFFSET));
-
-
-
-  // received_crc32=((uint32_t *)report)[KEYBOARD_FEATURE_COUNT/4-1];
 
   received_crc32 = getu32(report + KEYBOARD_FEATURE_COUNT - 4);
   CRC_ResetDR();
@@ -171,15 +151,6 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
         cmd_get_password_retry_count(report, output);
         break;
 
-        // FLASH_Unlock();
-        // FLASH_ErasePage(oath_slots[slot]);
-        // FLASH_ErasePage(oath_slots[slot]+COUNTER_PAGE_OFFSET);
-
-        // write_data_to_flash(report+REPORT_COUNTER_VALUE_OFFSET,8,oath_slots[slot]+COUNTER_PAGE_OFFSET);
-        // write_data_to_flash(report+REPORT_SECRET_VALUE_OFFSET,20,oath_slots[slot]+SECRET_OFFSET);
-
-        // FLASH_Lock();
-
       case CMD_GET_USER_PASSWORD_RETRY_COUNT:
         cmd_get_user_password_retry_count(report, output);
         break;
@@ -257,18 +228,10 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
         cmd_unblock_pin(report, output);
         break;
 
-        // START - OTP Test Routine --------------------------------
-        /*
-           case CMD_TEST_COUNTER: cmd_test_counter(report,output); break;
-
-           case CMD_TEST_TIME: cmd_test_time(report,output); break; */
-        // END - OTP Test Routine ----------------------------------
-
       default:   // Non of the above cases was selected => unknown
         // command
         output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_UNKNOWN_COMMAND;
         break;
-
     }
 
     if (not_authorized)
@@ -530,7 +493,6 @@ uint8_t cmd_first_authenticate(uint8_t *report, uint8_t *output) {
 
   if (res == TRUE) {
     memcpy(temp_password, report + 26, 25);
-    tmp_password_set = 1;
     getAID();
     return 0;
   } else {
@@ -553,7 +515,6 @@ uint8_t cmd_user_authenticate(uint8_t *report, uint8_t *output) {
 
   if (res == 0) {
     memcpy(temp_user_password, report + 26, 25);
-    tmp_user_password_set = 1;
     getAID();
     return 0;
   } else {
