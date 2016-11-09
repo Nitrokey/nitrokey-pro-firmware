@@ -282,6 +282,10 @@ struct write_to_slot_2_payload {
     union {
         uint64_t slot_counter;
         uint8_t slot_counter_s[8];
+        struct {
+            uint16_t slot_interval;
+            uint16_t __padding[3];
+        };
     } __packed;
 } __packed;
 
