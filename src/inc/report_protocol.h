@@ -162,11 +162,8 @@
 
 __IO extern uint8_t device_status;
 
-extern __IO uint8_t temp_password[25];
-
-extern __IO uint8_t tmp_password_set;
-
-extern __IO uint32_t authorized_crc;
+//extern __IO uint8_t temp_password[25];
+//extern uint8_t temp_password[25];
 
 uint8_t parse_report (uint8_t * report, uint8_t * output);
 

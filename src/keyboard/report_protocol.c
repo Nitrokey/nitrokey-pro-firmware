@@ -37,8 +37,8 @@
 #include "time.h"
 #include "password_safe.h"
 
-__IO uint8_t temp_password[25];
-__IO uint8_t temp_user_password[25];
+uint8_t temp_password[25];
+uint8_t temp_user_password[25];
 
 OTP_slot_content local_slot_content;
 
@@ -46,7 +46,7 @@ int write_to_slot_transaction_started = 0;
 
 bool is_valid_temp_user_password(const uint8_t *user_password);
 bool is_valid_admin_temp_password(const uint8_t *password);
-bool is_user_PIN_protection_enabled();
+bool is_user_PIN_protection_enabled(void);
 bool is_HOTP_slot_number(uint8_t slot_no);
 bool is_TOTP_slot_number(uint8_t slot_no);
 
@@ -251,7 +251,7 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
   return 0;
 }
 
-bool is_user_PIN_protection_enabled() { return *((uint8_t *) (SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET + 3)) == 1; }
+bool is_user_PIN_protection_enabled(void) { return *((uint8_t *) (SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET + 3)) == 1; }
 
 uint8_t cmd_get_status(uint8_t *report, uint8_t *output) {
 
@@ -323,8 +323,6 @@ bool is_HOTP_slot_number(uint8_t slot_no) { return slot_no >= 0x10 && slot_no < 
 uint8_t cmd_read_slot_name(uint8_t *report, uint8_t *output) {
 
   uint8_t slot_no = report[1];
-
-  uint64_t counter;
 
   if (is_HOTP_slot_number(slot_no)) {   // HOTP slot
     slot_no = slot_no & 0x0F;
@@ -860,8 +858,6 @@ uint8_t cmd_newAesKey(uint8_t *report, uint8_t *output) {
 
 
 uint8_t cmd_getProDebug(uint8_t *report, uint8_t *output) {
-  u32 ret;
-
   unsigned char data[OUTPUT_CMD_RESULT_LENGTH];
 
   unsigned int data_length = 0;
