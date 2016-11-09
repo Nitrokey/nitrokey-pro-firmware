@@ -40,7 +40,7 @@
 __IO uint8_t temp_password[25];
 __IO uint8_t temp_user_password[25];
 
-__IO struct OTP_slot_content local_slot_content;
+OTP_slot_content local_slot_content;
 
 int write_to_slot_transaction_started = 0;
 
@@ -78,7 +78,7 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
         break;
 
       case CMD_WRITE_TO_SLOT_2: {
-        struct write_to_slot_2_payload *const payload = (struct write_to_slot_2_payload*) report;
+        write_to_slot_2_payload *const payload = (write_to_slot_2_payload*) report;
         if(is_valid_admin_temp_password(payload->temporary_admin_password)
             && write_to_slot_transaction_started == 1){
           write_to_slot_transaction_started = 0;
@@ -92,7 +92,7 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
         break;
 
       case CMD_WRITE_TO_SLOT: {
-        struct write_to_slot_1_payload *const payload = (struct write_to_slot_1_payload*) report;
+        write_to_slot_1_payload *const payload = (write_to_slot_1_payload*) report;
         if(is_valid_admin_temp_password(payload->temporary_admin_password)) {
           write_to_slot_transaction_started = 1;
           memset((void *) &local_slot_content, 0, sizeof(local_slot_content));

@@ -238,7 +238,7 @@ uint8_t cmd_getProDebug (uint8_t * report, uint8_t * output);
 #define __packed __attribute__((__packed__))
 
 
-struct write_to_slot_1_payload {
+typedef struct {
     uint8_t _zero;
     uint8_t temporary_admin_password[25];
     uint8_t slot_secret[20];
@@ -259,9 +259,9 @@ struct write_to_slot_1_payload {
             uint8_t keyboard_layout; //disabled feature in nitroapp as of 20160805
         } slot_token_fields;
     };
-} __packed;
+} __packed write_to_slot_1_payload;
 
-struct write_to_slot_2_payload {
+typedef struct {
     uint8_t _zero;
     uint8_t temporary_admin_password[25];
     uint8_t slot_number;
@@ -274,9 +274,9 @@ struct write_to_slot_2_payload {
             uint16_t __padding[3];
         };
     } __packed;
-} __packed;
+} __packed write_to_slot_2_payload;
 
-struct OTP_slot_content {
+typedef struct {
     uint8_t _zero;
     uint8_t slot_number;
     uint8_t slot_name[15];
@@ -302,4 +302,4 @@ struct OTP_slot_content {
         uint64_t slot_counter;
         uint8_t slot_counter_s[8];
     } __packed;
-} __packed;
+} __packed OTP_slot_content;
