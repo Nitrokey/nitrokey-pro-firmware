@@ -236,7 +236,7 @@ uint8_t cmd_getProDebug (uint8_t * report, uint8_t * output);
 
 
 typedef struct {
-    uint8_t _zero;
+    uint8_t _command_type;
     uint8_t temporary_admin_password[25];
     uint8_t slot_secret[20];
     union {
@@ -259,7 +259,7 @@ typedef struct {
 } __packed write_to_slot_1_payload;
 
 typedef struct {
-    uint8_t _zero;
+    uint8_t _command_type;
     uint8_t temporary_admin_password[25];
     uint8_t slot_number;
     uint8_t slot_name[15];
@@ -274,7 +274,7 @@ typedef struct {
 } __packed write_to_slot_2_payload;
 
 typedef struct {
-    uint8_t _zero;
+    uint8_t _command_type;
     uint8_t slot_number;
     uint8_t slot_name[15];
     uint8_t slot_secret[20];
