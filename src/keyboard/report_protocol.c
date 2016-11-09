@@ -125,7 +125,7 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
         break;
 
       case CMD_ERASE_SLOT:
-        if (calculated_crc32 == authorized_crc)
+        if (is_valid_temp_password(report+2))
           cmd_erase_slot(report, output);
         else
           not_authorized = 1;
