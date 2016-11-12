@@ -130,7 +130,6 @@
 
 #define CMD_GC_SLOT_NUMBER_OFFSET   (1)
 #define CMD_GC_CHALLENGE_OFFSET     (CMD_GC_SLOT_NUMBER_OFFSET + 1)
-// absolute 0x14
 #define CMD_GC_PASSWORD_OFFSET      (CMD_GC_CHALLENGE_OFFSET + 8 + 8 + 1)
 
 /*
@@ -162,9 +161,6 @@
 
 
 __IO extern uint8_t device_status;
-
-//extern __IO uint8_t temp_password[25];
-//extern uint8_t temp_password[25];
 
 uint8_t parse_report (uint8_t * report, uint8_t * output);
 
