@@ -37,37 +37,26 @@
 #include "time.h"
 #include "password_safe.h"
 
-__IO uint8_t temp_password[25];
+uint8_t temp_password[25];
+uint8_t temp_user_password[25];
+bool temp_admin_password_set = FALSE;
+bool temp_user_password_set = FALSE;
 
-__IO uint8_t tmp_password_set = 0;
+OTP_slot_content local_slot_content;
 
-__IO uint32_t authorized_crc = 0xFFFFFFFF;
+bool write_to_slot_transaction_started = FALSE;
 
-__IO uint8_t temp_user_password[25];
+bool is_valid_temp_user_password(const uint8_t *const user_password);
+bool is_valid_admin_temp_password(const uint8_t *const password);
+bool is_user_PIN_protection_enabled(void);
+bool is_HOTP_slot_number(uint8_t slot_no);
+bool is_TOTP_slot_number(uint8_t slot_no);
 
-__IO uint8_t tmp_user_password_set = 0;
-
-__IO uint32_t authorized_user_crc = 0xFFFFFFFF;
-
-__IO uint32_t authorized_user_crc_set = 0;
-
-
-uint8_t parse_report(uint8_t *report, uint8_t *output) {
+uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
   uint8_t cmd_type = report[CMD_TYPE_OFFSET];
-
   uint32_t received_crc32;
-
   uint32_t calculated_crc32;
-
-  uint8_t i;
-
   uint8_t not_authorized = 0;
-
-  // uint64_t counter=*((uint64_t *)(report+REPORT_COUNTER_VALUE_OFFSET));
-
-
-
-  // received_crc32=((uint32_t *)report)[KEYBOARD_FEATURE_COUNT/4-1];
 
   received_crc32 = getu32(report + KEYBOARD_FEATURE_COUNT - 4);
   CRC_ResetDR();
@@ -90,11 +79,31 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
         cmd_get_status(report, output);
         break;
 
-      case CMD_WRITE_TO_SLOT:
-        if (calculated_crc32 == authorized_crc)
-          cmd_write_to_slot(report, output);
-        else
+      case CMD_WRITE_TO_SLOT_2: {
+        write_to_slot_2_payload const * const payload = (write_to_slot_2_payload*) report;
+        if(is_valid_admin_temp_password(payload->temporary_admin_password)
+            && write_to_slot_transaction_started == TRUE){
+          write_to_slot_transaction_started = FALSE;
+          local_slot_content.slot_number = payload->slot_number;
+          local_slot_content.slot_counter = payload->slot_counter;
+          memcpy(local_slot_content.slot_name, payload->slot_name, sizeof(payload->slot_name));
+          cmd_write_to_slot( (uint8_t*) &local_slot_content, output);
+        } else
           not_authorized = 1;
+      }
+        break;
+
+      case CMD_WRITE_TO_SLOT: {
+        write_to_slot_1_payload const * const payload = (write_to_slot_1_payload*) report;
+        if(is_valid_admin_temp_password(payload->temporary_admin_password)) {
+          write_to_slot_transaction_started = TRUE;
+          memset((void *) &local_slot_content, 0, sizeof(local_slot_content));
+          local_slot_content._slot_config = payload->_slot_config;
+          memcpy(local_slot_content.slot_token_id, payload->slot_token_id, sizeof(payload->slot_token_id));
+          memcpy(local_slot_content.slot_secret, payload->slot_secret, sizeof(payload->slot_secret));
+        } else
+          not_authorized = 1;
+        }
         break;
 
       case CMD_READ_SLOT_NAME:
@@ -102,32 +111,27 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
         break;
 
       case CMD_READ_SLOT:
-        // if (calculated_crc32==authorized_crc)
         cmd_read_slot(report, output);
-        // else
-        // not_authorized=1;
         break;
 
-      case CMD_GET_CODE:
-        if ((authorized_user_crc_set
-             && calculated_crc32 == authorized_user_crc) ||
-            *((uint8_t *) (SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET + 3)) != 1) {
-          authorized_user_crc = 0xFFFFFFFF;
-          authorized_user_crc_set = 0;
-          cmd_get_code(report, output);
-        } else
-          not_authorized = 1;
+      case CMD_GET_CODE: {
+        uint8_t *const user_temp_password = report + CMD_GC_PASSWORD_OFFSET;
+        if (!is_user_PIN_protection_enabled() || is_valid_temp_user_password(user_temp_password)) {
+              cmd_get_code(report, output);
+            } else
+              not_authorized = 1;
+        }
         break;
 
       case CMD_WRITE_CONFIG:
-        if (calculated_crc32 == authorized_crc)
+        if (is_valid_admin_temp_password(report + CMD_WRITE_CONFIG_PASSWORD_OFFSET))
           cmd_write_config(report, output);
         else
           not_authorized = 1;
         break;
 
       case CMD_ERASE_SLOT:
-        if (calculated_crc32 == authorized_crc)
+        if (is_valid_admin_temp_password(report + CMD_ERASE_SLOT_PASSWORD_OFFSET))
           cmd_erase_slot(report, output);
         else
           not_authorized = 1;
@@ -138,25 +142,16 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
         break;
 
       case CMD_AUTHORIZE:
-        cmd_authorize(report, output);
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_UNKNOWN_COMMAND;
         break;
 
       case CMD_USER_AUTHORIZE:
-        cmd_user_authorize(report, output);
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_UNKNOWN_COMMAND;
         break;
 
       case CMD_GET_PASSWORD_RETRY_COUNT:
         cmd_get_password_retry_count(report, output);
         break;
-
-        // FLASH_Unlock();
-        // FLASH_ErasePage(oath_slots[slot]);
-        // FLASH_ErasePage(oath_slots[slot]+COUNTER_PAGE_OFFSET);
-
-        // write_data_to_flash(report+REPORT_COUNTER_VALUE_OFFSET,8,oath_slots[slot]+COUNTER_PAGE_OFFSET);
-        // write_data_to_flash(report+REPORT_SECRET_VALUE_OFFSET,20,oath_slots[slot]+SECRET_OFFSET);
-
-        // FLASH_Lock();
 
       case CMD_GET_USER_PASSWORD_RETRY_COUNT:
         cmd_get_user_password_retry_count(report, output);
@@ -235,25 +230,14 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
         cmd_unblock_pin(report, output);
         break;
 
-        // START - OTP Test Routine --------------------------------
-        /*
-           case CMD_TEST_COUNTER: cmd_test_counter(report,output); break;
-
-           case CMD_TEST_TIME: cmd_test_time(report,output); break; */
-        // END - OTP Test Routine ----------------------------------
-
       default:   // Non of the above cases was selected => unknown
         // command
         output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_UNKNOWN_COMMAND;
         break;
-
     }
 
     if (not_authorized)
       output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_NOT_AUTHORIZED;
-
-    if (calculated_crc32 == authorized_crc)
-      authorized_crc = 0xFFFFFFFF;
 
   } else
     output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_CRC;
@@ -268,6 +252,8 @@ uint8_t parse_report(uint8_t *report, uint8_t *output) {
 
   return 0;
 }
+
+bool is_user_PIN_protection_enabled(void) { return *((uint8_t *) (SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET + 3)) == 1; }
 
 uint8_t cmd_get_status(uint8_t *report, uint8_t *output) {
 
@@ -300,56 +286,47 @@ uint8_t cmd_get_user_password_retry_count(uint8_t *report, uint8_t *output) {
 
 
 uint8_t cmd_write_to_slot(uint8_t *report, uint8_t *output) {
-
   uint8_t slot_no = report[CMD_WTS_SLOT_NUMBER_OFFSET];
-
   uint8_t slot_tmp[64];           // this is will be the new slot contents
-
-  uint8_t slot_name[15];
 
   memset(slot_tmp, 0, 64);
   slot_tmp[0] = 0x01; // marks slot as programmed
-  memcpy(slot_tmp + 1, report + CMD_WTS_SLOT_NAME_OFFSET, 51);
-  memcpy(slot_name, report + CMD_WTS_SLOT_NAME_OFFSET, 15);
+  uint8_t *slot_name = report + CMD_WTS_SLOT_NAME_OFFSET;
+  memcpy(slot_tmp + 1, slot_name, 51);
 
   if (slot_name[0] == 0) {
     output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_NO_NAME_ERROR;
     return 1;
   }
 
-  if (slot_no >= 0x10 && slot_no < 0x10 + NUMBER_OF_HOTP_SLOTS) {   // HOTP slot
+  if (is_HOTP_slot_number(slot_no)) {
     slot_no = slot_no & 0x0F;
-
     uint64_t counter = getu64(report + CMD_WTS_COUNTER_OFFSET);
-
     set_counter_value(hotp_slot_counters[slot_no], counter);
     write_to_slot(slot_tmp, hotp_slot_offsets[slot_no], 64);
 
-
-  } else if (slot_no >= 0x20 && slot_no < 0x20 + NUMBER_OF_TOTP_SLOTS) {   // TOTP slot
+  } else if (is_TOTP_slot_number(slot_no)) {
     slot_no = slot_no & 0x0F;
-
     write_to_slot(slot_tmp, totp_slot_offsets[slot_no], 64);
-
 
   } else {
     output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_SLOT;
-
-
   }
 
 
   return 0;
 }
 
+bool is_TOTP_slot_number(uint8_t slot_no) { return slot_no >= 0x20 && slot_no < 0x20 + NUMBER_OF_TOTP_SLOTS; }
+
+bool is_HOTP_slot_number(uint8_t slot_no) { return slot_no >= 0x10 && slot_no < 0x10 + NUMBER_OF_HOTP_SLOTS; }
+
 
 uint8_t cmd_read_slot_name(uint8_t *report, uint8_t *output) {
 
   uint8_t slot_no = report[1];
 
-  uint64_t counter;
-
-  if (slot_no >= 0x10 && slot_no < 0x10 + NUMBER_OF_HOTP_SLOTS) {   // HOTP slot
+  if (is_HOTP_slot_number(slot_no)) {   // HOTP slot
     slot_no = slot_no & 0x0F;
     uint8_t is_programmed = *((uint8_t *) (hotp_slots[slot_no]));
 
@@ -359,7 +336,7 @@ uint8_t cmd_read_slot_name(uint8_t *report, uint8_t *output) {
       output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_SLOT_NOT_PROGRAMMED;
     }
 
-  } else if (slot_no >= 0x20 && slot_no < 0x20 + NUMBER_OF_TOTP_SLOTS) {   // TOTP slot
+  } else if (is_TOTP_slot_number(slot_no)) {   // TOTP slot
     slot_no = slot_no & 0x0F;
     uint8_t is_programmed = *((uint8_t *) (totp_slots[slot_no]));
 
@@ -385,7 +362,7 @@ uint8_t cmd_read_slot(uint8_t *report, uint8_t *output) {
 
   uint64_t counter;
 
-  if (slot_no >= 0x10 && slot_no < 0x10 + NUMBER_OF_HOTP_SLOTS) {   // HOTP slot
+  if (is_HOTP_slot_number(slot_no)) {   // HOTP slot
     slot_no = slot_no & 0x0F;
     uint8_t is_programmed = *((uint8_t *) (hotp_slots[slot_no]));
 
@@ -399,7 +376,7 @@ uint8_t cmd_read_slot(uint8_t *report, uint8_t *output) {
       output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_SLOT_NOT_PROGRAMMED;
     }
 
-  } else if (slot_no >= 0x20 && slot_no < 0x20 + NUMBER_OF_TOTP_SLOTS) {   // TOTP slot
+  } else if (is_TOTP_slot_number(slot_no)) {   // TOTP slot
     slot_no = slot_no & 0x0F;
     uint8_t is_programmed = *((uint8_t *) (totp_slots[slot_no]));
 
@@ -431,7 +408,7 @@ uint8_t cmd_get_code(uint8_t *report, uint8_t *output) {
 
   uint8_t slot_no = report[CMD_GC_SLOT_NUMBER_OFFSET];
 
-  if (slot_no >= 0x10 && slot_no < 0x10 + NUMBER_OF_HOTP_SLOTS) {   // HOTP slot
+  if (is_HOTP_slot_number(slot_no)) {   // HOTP slot
     slot_no = slot_no & 0x0F;
     uint8_t is_programmed = *((uint8_t *) (hotp_slots[slot_no]));
 
@@ -443,7 +420,7 @@ uint8_t cmd_get_code(uint8_t *report, uint8_t *output) {
     } else
       output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_SLOT_NOT_PROGRAMMED;
 
-  } else if (slot_no >= 0x20 && slot_no < 0x20 + NUMBER_OF_TOTP_SLOTS) {   // TOTP slot
+  } else if (is_TOTP_slot_number(slot_no)) {   // TOTP slot
     slot_no = slot_no & 0x0F;
     uint8_t is_programmed = *((uint8_t *) (totp_slots[slot_no]));
 
@@ -467,7 +444,7 @@ uint8_t cmd_write_config(uint8_t *report, uint8_t *output) {
 
   memset(slot_tmp, 0, 64);
 
-  memcpy(slot_tmp, report + 1, 64);
+  memcpy(slot_tmp, report + 1, 5);
 
   write_to_slot(slot_tmp, GLOBAL_CONFIG_OFFSET, 64);
 
@@ -485,13 +462,13 @@ uint8_t cmd_erase_slot(uint8_t *report, uint8_t *output) {
   memset(slot_tmp, 0xFF, 64);
 
 
-  if (slot_no >= 0x10 && slot_no < 0x10 + NUMBER_OF_HOTP_SLOTS)  // HOTP
+  if (is_HOTP_slot_number(slot_no))  // HOTP
     // slot
   {
     slot_no = slot_no & 0x0F;
     write_to_slot(slot_tmp, hotp_slot_offsets[slot_no], 64);
     erase_counter(slot_no);
-  } else if (slot_no >= 0x20 && slot_no < 0x20 + NUMBER_OF_TOTP_SLOTS) // TOTP
+  } else if (is_TOTP_slot_number(slot_no)) // TOTP
     // slot
   {
     slot_no = slot_no & 0x0F;
@@ -516,7 +493,7 @@ uint8_t cmd_first_authenticate(uint8_t *report, uint8_t *output) {
 
   if (res == TRUE) {
     memcpy(temp_password, report + 26, 25);
-    tmp_password_set = 1;
+    temp_admin_password_set = TRUE;
     getAID();
     return 0;
   } else {
@@ -539,7 +516,7 @@ uint8_t cmd_user_authenticate(uint8_t *report, uint8_t *output) {
 
   if (res == 0) {
     memcpy(temp_user_password, report + 26, 25);
-    tmp_user_password_set = 1;
+    temp_user_password_set = TRUE;
     getAID();
     return 0;
   } else {
@@ -644,42 +621,9 @@ uint8_t cmd_unblock_pin(uint8_t *report, uint8_t *output) {
   }
 }
 
-uint8_t cmd_authorize(uint8_t *report, uint8_t *output) {
+bool is_valid_admin_temp_password(const uint8_t *const password) { return temp_admin_password_set && memcmp(password, temp_password, 25) == 0; }
 
-  if (tmp_password_set == 1) {
-
-    if (memcmp(report + 5, temp_password, 25) == 0) {
-      authorized_crc = getu32(report + 1);
-      memset(temp_password, 0, sizeof(temp_password));
-      tmp_password_set = 0;
-      return 0;
-    } else {
-      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
-      return 1;
-    }
-  }
-
-  return 1;
-}
-
-uint8_t cmd_user_authorize(uint8_t *report, uint8_t *output) {
-
-  if (tmp_user_password_set == 1) {
-
-    if (memcmp(report + 5, temp_user_password, 25) == 0) {
-      authorized_user_crc = getu32(report + 1);
-      authorized_user_crc_set = 1;
-      memset(temp_user_password, 0, sizeof(temp_user_password));
-      tmp_user_password_set = 0;
-      return 0;
-    } else {
-      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
-      return 1;
-    }
-  }
-
-  return 1;
-}
+bool is_valid_temp_user_password(const uint8_t *const user_password) { return temp_user_password_set && memcmp(user_password, temp_user_password, 25) == 0; }
 
 
 uint8_t cmd_factory_reset(uint8_t *report, uint8_t *output) {
@@ -918,8 +862,6 @@ uint8_t cmd_newAesKey(uint8_t *report, uint8_t *output) {
 
 
 uint8_t cmd_getProDebug(uint8_t *report, uint8_t *output) {
-  u32 ret;
-
   unsigned char data[OUTPUT_CMD_RESULT_LENGTH];
 
   unsigned int data_length = 0;
@@ -937,30 +879,3 @@ uint8_t cmd_lockDevice(uint8_t *report, uint8_t *output) {
   PWS_DisableKey();
   return 0;
 }
-
-
-// START - OTP Test Routine --------------------------------
-/*
-   uint8_t cmd_test_counter(uint8_t *report,uint8_t *output){
-
-   int i; uint8_t slot_no = report[CMD_DATA_OFFSET]; uint16_t tests_number = getu16(report+CMD_DATA_OFFSET+1); uint16_t results = 0; uint64_t counter
-   = get_counter_value(hotp_slot_counters[slot_no]); uint64_t counter_new = 0;
-
-   for(i=0;i<tests_number;i++){ set_counter_vao],(hotp_slot_counters[slot_no], counter); counter_new=get_counter_value(hotp_slot_counters[slot_no]);
-   if(counter == counter_new){ results++; } }
-
-   memcpy(output+OUTPUT_CMD_RESULT_OFFSET,&results,2);
-
-   return 0; }
-
-   uint8_t cmd_test_time(uint8_t *report,uint8_t *output){
-
-   int i,err; uint32_t time; uint32_t read_time; uint16_t tests_number = getu16(report+CMD_DATA_OFFSET+1); uint16_t results = 0;
-
-   for(i=0;i<tests_number;i++){ time = (current_time - 1388534400)/60; err = set_time_value(time); read_time = get_time_value(); if(!err && read_time
-   == time) { results++; } }
-
-   memcpy(output+OUTPUT_CMD_RESULT_OFFSET,&results,2);
-
-   return 0; } */
-// END - OTP Test Routine ----------------------------------
