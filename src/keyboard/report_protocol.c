@@ -39,6 +39,8 @@
 
 uint8_t temp_password[25];
 uint8_t temp_user_password[25];
+bool temp_admin_password_set = FALSE;
+bool temp_user_password_set = FALSE;
 
 OTP_slot_content local_slot_content;
 
@@ -491,6 +493,7 @@ uint8_t cmd_first_authenticate(uint8_t *report, uint8_t *output) {
 
   if (res == TRUE) {
     memcpy(temp_password, report + 26, 25);
+    temp_admin_password_set = TRUE;
     getAID();
     return 0;
   } else {
@@ -513,6 +516,7 @@ uint8_t cmd_user_authenticate(uint8_t *report, uint8_t *output) {
 
   if (res == 0) {
     memcpy(temp_user_password, report + 26, 25);
+    temp_user_password_set = TRUE;
     getAID();
     return 0;
   } else {
@@ -617,9 +621,9 @@ uint8_t cmd_unblock_pin(uint8_t *report, uint8_t *output) {
   }
 }
 
-bool is_valid_admin_temp_password(const uint8_t *const password) { return memcmp(password, temp_password, 25) == 0; }
+bool is_valid_admin_temp_password(const uint8_t *const password) { return temp_admin_password_set && memcmp(password, temp_password, 25) == 0; }
 
-bool is_valid_temp_user_password(const uint8_t *const user_password) { return memcmp(user_password, temp_user_password, 25) == 0; }
+bool is_valid_temp_user_password(const uint8_t *const user_password) { return temp_user_password_set && memcmp(user_password, temp_user_password, 25) == 0; }
 
 
 uint8_t cmd_factory_reset(uint8_t *report, uint8_t *output) {
