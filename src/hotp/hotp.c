@@ -493,11 +493,13 @@ uint8_t* page = (uint8_t *) current_slot_address;
 
     memcpy (page_buffer, page, SLOT_PAGE_SIZE);
 
-    // check if the secret from the tool is empty and if it is use the old
-    // secret
-uint8_t* secret = (uint8_t *) (data + SECRET_OFFSET);
-
-    if (secret[0] == 0)
+    // Check if the secret from the tool is empty and if it is use the old secret
+    // Secret could begin with 0x00, so checking the whole secret before keeping the old one in mandatory
+    // The while last loop points secret[-1]. Well, it's right, == result does not matter and mem exits, we need a -1
+    uint8_t* secret = (uint8_t *) (data + SECRET_OFFSET);
+    int8_t i = 20;
+    while (i >= 0 && secret[--i] == 0x00);
+    if (i < 0)
     {
         memcpy (data + SECRET_OFFSET, page_buffer + offset + SECRET_OFFSET, 20);
     }
