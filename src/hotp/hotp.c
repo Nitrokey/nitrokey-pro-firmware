@@ -495,10 +495,15 @@ uint8_t* page = (uint8_t *) current_slot_address;
 
     // check if the secret from the tool is empty and if it is use the old
     // secret
-uint8_t* secret = (uint8_t *) (data + SECRET_OFFSET);
-
-    if (secret[0] == 0)
-    {
+    uint8_t* secret = (uint8_t *) (data + SECRET_OFFSET);
+    uint8_t empty = TRUE;
+    for (int i = 0; i<20; i++) {
+      if (secret[i] != 0x00) {
+        empty = FALSE;
+        break;
+      }
+    }
+    if (empty == TRUE) {
         memcpy (data + SECRET_OFFSET, page_buffer + offset + SECRET_OFFSET, 20);
     }
 
