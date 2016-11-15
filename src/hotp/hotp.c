@@ -433,7 +433,7 @@ uint8_t config = 0;
         return 0;
 
     counter = get_counter_value (hotp_slot_counters[slot]);
-    result = get_hotp_value (counter, (uint8_t *) (hotp_slots[slot] + SECRET_OFFSET), 20, len);
+    result = get_hotp_value (counter, (uint8_t *) (hotp_slots[slot] + SECRET_OFFSET), SECRET_LENGTH, len);
     err = increment_counter_page (hotp_slot_counters[slot]);
     if (err != FLASH_COMPLETE)
         return 0;
@@ -629,7 +629,7 @@ uint8_t len = 6;
 
     // result= get_hotp_value(challenge,(uint8_t
     // *)(totp_slots[slot]+SECRET_OFFSET),20,len);
-    result = get_hotp_value (time, (uint8_t *) (totp_slots[slot] + SECRET_OFFSET), 20, len);
+    result = get_hotp_value (time, (uint8_t *) (totp_slots[slot] + SECRET_OFFSET), SECRET_LENGTH, len);
 
     return result;
 

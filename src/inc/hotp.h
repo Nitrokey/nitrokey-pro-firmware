@@ -106,6 +106,7 @@ extern __I uint32_t totp_slot_offsets[NUMBER_OF_TOTP_SLOTS];
 
 extern uint8_t page_buffer[SLOT_PAGE_SIZE];
 
+static const int SECRET_LENGTH = 20;
 uint64_t current_time;
 
 uint64_t endian_swap (uint64_t x);
