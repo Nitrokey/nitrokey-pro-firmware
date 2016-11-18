@@ -96,9 +96,15 @@ uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
           if (otp_data->type == 'N') {
             size_t bytes_count = s_min(sizeof(otp_data->data), sizeof(local_slot_content.name));
             memcpy(local_slot_content.name, otp_data->data, bytes_count);
+            memcpy(&output[OUTPUT_CMD_RESULT_OFFSET], local_slot_content.name, sizeof(local_slot_content.name));
           } else if (otp_data->type == 'S') {
-            size_t bytes_count = s_min(sizeof(otp_data->data), sizeof(local_slot_content.secret));
-            memcpy(local_slot_content.secret, otp_data->data, bytes_count);
+            size_t offset = otp_data->id * sizeof(otp_data->data);
+            if (offset > sizeof(local_slot_content.secret) ){
+              offset = 0;
+            }
+            size_t bytes_count = s_min(sizeof(otp_data->data), sizeof(local_slot_content.secret)-offset);
+            memcpy(local_slot_content.secret+offset, otp_data->data, bytes_count);
+            memcpy(&output[OUTPUT_CMD_RESULT_OFFSET], local_slot_content.secret, sizeof(local_slot_content.secret));
           }
         } else
           not_authorized = 1;
