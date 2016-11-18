@@ -37,7 +37,6 @@
 #include "HandleAesStorageKey.h"
 
 
-
 int nGlobalStickState = STICK_STATE_SMARTCARD;
 
 int nFlagSendSMCardInserted = TRUE;
@@ -49,9 +48,11 @@ __IO uint8_t device_status = STATUS_READY;
 
 jmp_buf jmpRestartUSB;          // reentrypoint for USB device change
 
-void Test1 (void);
+void Test1(void);
 
-void test2 (void);
+void test2(void);
+
+void sendHOTPCodeForSlot(uint8_t slot_number);
 
 /*******************************************************************************
 
@@ -59,19 +60,15 @@ void test2 (void);
 
 *******************************************************************************/
 
-void test2 (void)
-{
-    static int i = 0;
+void test2(void) {
+  static int i = 0;
 
-    i++;
-    if (i & 1)
-    {
-        GPIO_ResetBits (GPIOB, GPIO_Pin_1); // org
-    }
-    else
-    {
-        GPIO_SetBits (GPIOB, GPIO_Pin_1);   // org
-    }
+  i++;
+  if (i & 1) {
+    GPIO_ResetBits(GPIOB, GPIO_Pin_1); // org
+  } else {
+    GPIO_SetBits(GPIOB, GPIO_Pin_1);   // org
+  }
 }
 
 /*******************************************************************************
@@ -80,20 +77,18 @@ void test2 (void)
 
 *******************************************************************************/
 
-void Test1 (void)
-{
-    GPIO_InitTypeDef GPIO_InitStructure;
+void Test1(void) {
+  GPIO_InitTypeDef GPIO_InitStructure;
 
-    // enable port clock
-    RCC_APB2PeriphClockCmd (RCC_APB2Periph_GPIOB, ENABLE);
+  // enable port clock
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
-    // set pin modes
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init (GPIOB, &GPIO_InitStructure);
+  // set pin modes
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(GPIOB, &GPIO_InitStructure);
 }
-
 
 
 /*******************************************************************************
@@ -103,148 +98,84 @@ void Test1 (void)
 *******************************************************************************/
 
 
-int main (void)
-{
+int main(void) {
 
-    USB_SetDeviceConfiguration (STICK_STATE_SMARTCARD);
+  USB_SetDeviceConfiguration(STICK_STATE_SMARTCARD);
 
-    setjmp (jmpRestartUSB); // entrypoint for the changed USB device
+  setjmp (jmpRestartUSB); // entrypoint for the changed USB device
 
-    Set_System ();
-    // RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-    // RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+  Set_System();
+  // RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+  // RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
-    SysTick_Config (720000);    // set systemtick to 10 ms - for delay ()
-
-
-    /* Setup before USB startup */
-
-    check_backups ();
-    SmartCardInitInterface ();
-
-    USB_Start ();
-
-    StartupCheck_u8 ();
-
-    /* Endless loop after USB startup */
-    while (1)
-    {
-        if (device_status == STATUS_RECEIVED_REPORT)
-        {
-            device_status = STATUS_BUSY;
-            parse_report (HID_SetReport_Value_tmp, HID_GetReport_Value_tmp);
-            device_status = STATUS_READY;
-
-        }
-
-        if (numLockClicked)
-        {
-            numLockClicked = 0;
-            // sendString("NumLock",7);
-
-    uint8_t slot_number = ((uint8_t *) SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET)[0];
-            if (slot_number <= 1)
-            {
-    uint8_t programmed = *((uint8_t *) hotp_slots[slot_number]);
-
-                if (programmed == 0x01)
-                {
-    uint32_t code = get_code_from_hotp_slot (slot_number);
-
-    uint8_t config = get_hotp_slot_config (slot_number);
-
-                    if (config & (1 << SLOT_CONFIG_TOKENID))
-                        sendString ((char *) (hotp_slots[slot_number] + TOKEN_ID_OFFSET), 12);
-
-                    if (config & (1 << SLOT_CONFIG_DIGITS))
-                        sendNumberN (code, 8);
-                    else
-                        sendNumberN (code, 6);
-
-                    if (config & (1 << SLOT_CONFIG_ENTER))
-                        sendEnter ();
-                }
-            }
-
-        }
-        if (capsLockClicked)
-        {
-            capsLockClicked = 0;
-            // sendString("CapsLock",8);
-
-    uint8_t slot_number = ((uint8_t *) SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET)[1];
-            if (slot_number <= 1)
-            {
-    uint8_t programmed = *((uint8_t *) hotp_slots[slot_number]);
-
-                if (programmed == 0x01)
-                {
-    uint32_t code = get_code_from_hotp_slot (slot_number);
-
-    uint8_t config = get_hotp_slot_config (slot_number);
-
-                    if (config & (1 << SLOT_CONFIG_TOKENID))
-                        sendString ((char *) (hotp_slots[slot_number] + TOKEN_ID_OFFSET), 12);
-
-                    if (config & (1 << SLOT_CONFIG_DIGITS))
-                        sendNumberN (code, 8);
-                    else
-                        sendNumberN (code, 6);
-
-                    if (config & (1 << SLOT_CONFIG_ENTER))
-                        sendEnter ();
-                }
-            }
-
-        }
-        if (scrollLockClicked)
-        {
-            scrollLockClicked = 0;
-            // sendString("ScrollLock",10);
-
-    uint8_t slot_number = ((uint8_t *) SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET)[2];
-            if (slot_number <= 1)
-            {
-    uint8_t programmed = *((uint8_t *) hotp_slots[slot_number]);
-
-                if (programmed == 0x01)
-                {
-    uint32_t code = get_code_from_hotp_slot (slot_number);
-
-    uint8_t config = get_hotp_slot_config (slot_number);
-
-                    if (config & (1 << SLOT_CONFIG_TOKENID))
-                        sendString ((char *) (hotp_slots[slot_number] + TOKEN_ID_OFFSET), 12);
-
-                    if (config & (1 << SLOT_CONFIG_DIGITS))
-                        sendNumberN (code, 8);
-                    else
-                        sendNumberN (code, 6);
-
-                    if (config & (1 << SLOT_CONFIG_ENTER))
-                        sendEnter ();
-                }
-            }
-
-            // smartcard test
-            // int result;
-            // result = getAID();
-
-            // sendString("Verify:",7);
-            // sendNumber(result);
-            // sendEnter();
+  SysTick_Config(720000);    // set systemtick to 10 ms - for delay ()
 
 
-        }
+  /* Setup before USB startup */
 
-        CCID_CheckUsbCommunication ();
-        if (TRUE == nFlagSendSMCardInserted)
-        {
-            CCID_SendCardDetect (); // Send card detect to host
-            nFlagSendSMCardInserted = FALSE;
-        }
+  check_backups();
+  SmartCardInitInterface();
 
+  USB_Start();
+
+  StartupCheck_u8();
+
+  /* Endless loop after USB startup */
+  while (1) {
+    if (device_status == STATUS_RECEIVED_REPORT) {
+      device_status = STATUS_BUSY;
+      parse_report(HID_SetReport_Value_tmp, HID_GetReport_Value_tmp);
+      device_status = STATUS_READY;
     }
+
+    if (numLockClicked) {
+      numLockClicked = 0;
+      uint8_t slot_number = ((uint8_t *) SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET)[0];
+      sendHOTPCodeForSlot(slot_number);
+    }
+
+    if (capsLockClicked) {
+      capsLockClicked = 0;
+      uint8_t slot_number = ((uint8_t *) SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET)[1];
+      sendHOTPCodeForSlot(slot_number);
+    }
+
+    if (scrollLockClicked) {
+      scrollLockClicked = 0;
+      uint8_t slot_number = ((uint8_t *) SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET)[2];
+      sendHOTPCodeForSlot(slot_number);
+    }
+
+    CCID_CheckUsbCommunication();
+    if (TRUE == nFlagSendSMCardInserted) {
+      CCID_SendCardDetect(); // Send card detect to host
+      nFlagSendSMCardInserted = FALSE;
+    }
+
+  }
+}
+
+void sendHOTPCodeForSlot(uint8_t slot_number) {
+  if (slot_number <= 1) {
+        OTP_slot *const otp_slot = (OTP_slot *) get_HOTP_slot_offset(slot_number);
+        bool programmed = otp_slot->type != 0xFF;
+
+        if (programmed) {
+          uint32_t code = get_code_from_hotp_slot(slot_number);
+          uint8_t config = get_hotp_slot_config(slot_number);
+
+          if (config & (1 << SLOT_CONFIG_TOKENID))
+            sendString(otp_slot->token_id, sizeof(otp_slot->token_id)-1); //last byte is keyboard config
+
+          if (config & (1 << SLOT_CONFIG_DIGITS))
+            sendNumberN(code, 8);
+          else
+            sendNumberN(code, 6);
+
+          if (config & (1 << SLOT_CONFIG_ENTER))
+            sendEnter();
+        }
+      }
 }
 
 #ifdef USE_FULL_ASSERT
