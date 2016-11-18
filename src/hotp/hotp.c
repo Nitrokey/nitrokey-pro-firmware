@@ -1,3 +1,4 @@
+const int SECRET_LENGTH = 40;
 /*
  * Author: Copyright (C) Andrzej Surowiec 2012
  *
@@ -28,46 +29,33 @@
 #include "string.h"
 #include "memory_ops.h"
 
-__I uint32_t hotp_slots[NUMBER_OF_HOTP_SLOTS] = { SLOTS_PAGE1_ADDRESS + HOTP_SLOT1_OFFSET,
-    SLOTS_PAGE1_ADDRESS + HOTP_SLOT2_OFFSET,
-    SLOTS_PAGE1_ADDRESS + HOTP_SLOT3_OFFSET
-};
-
 __I uint32_t hotp_slot_counters[NUMBER_OF_HOTP_SLOTS] = { SLOT1_COUNTER_ADDRESS,
     SLOT2_COUNTER_ADDRESS,
     SLOT3_COUNTER_ADDRESS
 };
 
-__I uint32_t hotp_slot_offsets[NUMBER_OF_HOTP_SLOTS] = { HOTP_SLOT1_OFFSET,
-    HOTP_SLOT2_OFFSET,
-    HOTP_SLOT3_OFFSET
-};
-
-__I uint32_t totp_slots[NUMBER_OF_TOTP_SLOTS] = { SLOTS_PAGE1_ADDRESS + TOTP_SLOT1_OFFSET,
-    SLOTS_PAGE1_ADDRESS + TOTP_SLOT2_OFFSET,
-    SLOTS_PAGE1_ADDRESS + TOTP_SLOT3_OFFSET,
-    SLOTS_PAGE1_ADDRESS + TOTP_SLOT4_OFFSET,
-    SLOTS_PAGE1_ADDRESS + TOTP_SLOT5_OFFSET,
-    SLOTS_PAGE1_ADDRESS + TOTP_SLOT6_OFFSET,
-    SLOTS_PAGE1_ADDRESS + TOTP_SLOT7_OFFSET,
-    SLOTS_PAGE1_ADDRESS + TOTP_SLOT8_OFFSET,
-    SLOTS_PAGE1_ADDRESS + TOTP_SLOT9_OFFSET,
-    SLOTS_PAGE1_ADDRESS + TOTP_SLOT10_OFFSET,
-    SLOTS_PAGE1_ADDRESS + TOTP_SLOT11_OFFSET,
-    SLOTS_PAGE1_ADDRESS + TOTP_SLOT12_OFFSET,
-    SLOTS_PAGE1_ADDRESS + TOTP_SLOT13_OFFSET,
-    SLOTS_PAGE1_ADDRESS + TOTP_SLOT14_OFFSET,
-    SLOTS_PAGE1_ADDRESS + TOTP_SLOT15_OFFSET
-};
-
-__I uint32_t totp_slot_offsets[NUMBER_OF_TOTP_SLOTS] = { TOTP_SLOT1_OFFSET, TOTP_SLOT2_OFFSET, TOTP_SLOT3_OFFSET,
-    TOTP_SLOT4_OFFSET, TOTP_SLOT5_OFFSET, TOTP_SLOT6_OFFSET,
-    TOTP_SLOT7_OFFSET, TOTP_SLOT8_OFFSET, TOTP_SLOT9_OFFSET,
-    TOTP_SLOT10_OFFSET, TOTP_SLOT11_OFFSET, TOTP_SLOT12_OFFSET,
-    TOTP_SLOT13_OFFSET, TOTP_SLOT14_OFFSET, TOTP_SLOT15_OFFSET
-};
-
 uint8_t page_buffer[SLOT_PAGE_SIZE];
+
+
+uint32_t get_HOTP_slot_offset(int slot_count){
+    return SLOTS_PAGE1_ADDRESS + get_slot_offset(slot_count);
+}
+
+uint32_t get_TOTP_slot_offset(int slot_count){
+    return SLOTS_PAGE1_ADDRESS + get_slot_offset(slot_count + 3);
+}
+
+uint32_t get_slot_offset(int slot_count){
+    const int global_config_offset = 64;
+    size_t slot_offset = sizeof(OTP_slot) * slot_count + global_config_offset;
+    const int first_page_limit = SLOT_PAGE_SIZE - sizeof(OTP_slot); //TODO check these limits
+    const int second_page_start = 1024+8;
+    if (slot_offset > first_page_limit){
+        slot_offset -= first_page_limit;
+        slot_offset += second_page_start;
+    }
+    return slot_offset;
+}
 
 uint64_t endian_swap (uint64_t x)
 {
@@ -428,12 +416,13 @@ uint8_t config = 0;
     if (config & (1 << SLOT_CONFIG_DIGITS))
         len = 8;
 
-    result = *((uint8_t *) hotp_slots[slot]);
+    OTP_slot * hotp_slot = ((OTP_slot *) get_HOTP_slot_offset(slot));
+    result = hotp_slot->type;
     if (result == 0xFF) // unprogrammed slot
         return 0;
 
     counter = get_counter_value (hotp_slot_counters[slot]);
-    result = get_hotp_value (counter, (uint8_t *) (hotp_slots[slot] + SECRET_OFFSET), SECRET_LENGTH, len);
+    result = get_hotp_value (counter, hotp_slot->secret, SECRET_LENGTH, len);
     err = increment_counter_page (hotp_slot_counters[slot]);
     if (err != FLASH_COMPLETE)
         return 0;
@@ -472,25 +461,27 @@ void erase_counter (uint8_t slot)
 }
 
 
-void write_to_slot (uint8_t * data, uint16_t offset, uint16_t len)
+void write_to_slot(OTP_slot *new_slot_data, uint32_t offset, uint16_t len)
 {
+   uint8_t page_buffer[SLOT_PAGE_SIZE];
 
 FLASH_Status err = FLASH_COMPLETE;
 
     // choose the proper slot page
-uint32_t current_slot_address;
+  uint32_t current_slot_address;
 
-    if (offset < 1024)
-        current_slot_address = SLOTS_PAGE1_ADDRESS;
-    else
-    {
-        offset -= 1024;
+    if (offset > SLOTS_PAGE2_ADDRESS){
         current_slot_address = SLOTS_PAGE2_ADDRESS;
+        offset-= SLOTS_PAGE2_ADDRESS;
+    } else {
+        current_slot_address = SLOTS_PAGE1_ADDRESS;
+        if (offset>SLOTS_PAGE1_ADDRESS){
+            offset -= SLOTS_PAGE1_ADDRESS;
+        }
     }
 
     // copy entire page to ram
-uint8_t* page = (uint8_t *) current_slot_address;
-
+    uint8_t* page = (uint8_t *) current_slot_address;
     memcpy (page_buffer, page, SLOT_PAGE_SIZE);
 
     // check if the secret from the tool is empty and if it is use the old
@@ -509,7 +500,7 @@ uint8_t* page = (uint8_t *) current_slot_address;
     }
 
     // make changes to page
-    memcpy (page_buffer + offset, data, len);
+    memcpy (page_buffer + offset, new_slot_data, len);
 
     // write page to backup location
     backup_data (page_buffer, SLOT_PAGE_SIZE, current_slot_address);
@@ -576,7 +567,8 @@ uint8_t result = 0;
         return 0;
     else
     {
-        result = ((uint8_t *) hotp_slots[slot_number])[CONFIG_OFFSET];
+      OTP_slot* otp_slot = (OTP_slot *) get_HOTP_slot_offset(slot_number);
+      result = otp_slot->config;
     }
 
     return result;
@@ -590,7 +582,8 @@ uint8_t result = 0;
         return 0;
     else
     {
-        result = ((uint8_t *) totp_slots[slot_number])[CONFIG_OFFSET];
+      OTP_slot* otp_slot = (OTP_slot *) get_TOTP_slot_offset(slot_number);
+      result = otp_slot->config;
     }
 
     return result;
@@ -615,11 +608,13 @@ uint8_t len = 6;
 
     // memset(time,0,18);
 
-    interval = getu16 (totp_slots[slot] + INTERVAL_OFFSET);
+    OTP_slot* otp_slot = (OTP_slot *) get_TOTP_slot_offset(slot);
+
+    interval = otp_slot->interval_or_counter;
 
     time = current_time / interval;
 
-    result = *((uint8_t *) totp_slots[slot]);
+    result = otp_slot->type;
     if (result == 0xFF) // unprogrammed slot
         return 0;
 
@@ -630,7 +625,7 @@ uint8_t len = 6;
 
     // result= get_hotp_value(challenge,(uint8_t
     // *)(totp_slots[slot]+SECRET_OFFSET),20,len);
-    result = get_hotp_value (time, (uint8_t *) (totp_slots[slot] + SECRET_OFFSET), SECRET_LENGTH, len);
+    result = get_hotp_value (time, otp_slot->secret, SECRET_LENGTH, len);
 
     return result;
 

@@ -17,6 +17,9 @@
  * You should have received a copy of the GNU General Public License
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
+#pragma once
+
+#include <stdint.h>
 
 #define NUMBER_OF_HOTP_SLOTS 3
 #define NUMBER_OF_TOTP_SLOTS 15
@@ -65,48 +68,26 @@
 
 #define GLOBAL_CONFIG_OFFSET 0
 
-#define HOTP_SLOT1_OFFSET 64
-#define HOTP_SLOT2_OFFSET 128
-#define HOTP_SLOT3_OFFSET 192
 
-#define TOTP_SLOT1_OFFSET 256
-#define TOTP_SLOT2_OFFSET 320
-#define TOTP_SLOT3_OFFSET 384
-#define TOTP_SLOT4_OFFSET 448
-#define TOTP_SLOT5_OFFSET 512
-#define TOTP_SLOT6_OFFSET 576
-#define TOTP_SLOT7_OFFSET 640
-#define TOTP_SLOT8_OFFSET 704
-#define TOTP_SLOT9_OFFSET 768
-#define TOTP_SLOT10_OFFSET 832
-#define TOTP_SLOT11_OFFSET 896
-#define TOTP_SLOT12_OFFSET 1088
-#define TOTP_SLOT13_OFFSET 1152
-#define TOTP_SLOT14_OFFSET 1216
-#define TOTP_SLOT15_OFFSET 1280
+#define __packed __attribute__((__packed__))
 
-#define SLOT_TYPE_OFFSET 0
-#define SLOT_NAME_OFFSET 1
-#define SECRET_OFFSET 16
-#define CONFIG_OFFSET 36
-#define TOKEN_ID_OFFSET 37
-#define INTERVAL_OFFSET 50
+//0 - HOTP, 1 - TOTP, FF - not programmed
+
+typedef struct {
+    uint8_t type;
+    uint8_t name[15];
+    uint8_t secret[40];
+    uint8_t config;
+    uint8_t token_id[13];
+    uint64_t interval_or_counter;
+} __packed OTP_slot;
+//} OTP_slot;
 
 #define TIME_OFFSET 4
 
-extern __I uint32_t hotp_slots[NUMBER_OF_HOTP_SLOTS];
-
-extern __I uint32_t totp_slots[NUMBER_OF_TOTP_SLOTS];
-
 extern __I uint32_t hotp_slot_counters[NUMBER_OF_HOTP_SLOTS];
 
-extern __I uint32_t hotp_slot_offsets[NUMBER_OF_HOTP_SLOTS];
 
-extern __I uint32_t totp_slot_offsets[NUMBER_OF_TOTP_SLOTS];
-
-extern uint8_t page_buffer[SLOT_PAGE_SIZE];
-
-static const int SECRET_LENGTH = 20;
 uint64_t current_time;
 
 uint64_t endian_swap (uint64_t x);
@@ -130,7 +111,7 @@ uint32_t get_code_from_hotp_slot (uint8_t slot);
 
 uint8_t increment_counter_page (uint32_t addr);
 
-void write_to_slot (uint8_t * data, uint16_t offset, uint16_t len);
+void write_to_slot(OTP_slot *new_slot_data, uint32_t offset, uint16_t len);
 
 void backup_data (uint8_t * data, uint16_t len, uint32_t addr);
 
@@ -141,3 +122,7 @@ uint8_t get_hotp_slot_config (uint8_t slot_number);
 uint8_t get_totp_slot_config (uint8_t slot_number);
 
 uint32_t get_code_from_totp_slot (uint8_t slot, uint64_t challenge);
+
+extern uint32_t get_HOTP_slot_offset(int slot_count);
+extern uint32_t get_TOTP_slot_offset(int slot_count);
+extern uint32_t get_slot_offset(int slot_count);
