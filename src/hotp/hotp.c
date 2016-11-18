@@ -495,16 +495,17 @@ uint8_t* page = (uint8_t *) current_slot_address;
 
     // check if the secret from the tool is empty and if it is use the old
     // secret
-    uint8_t* secret = (uint8_t *) (data + SECRET_OFFSET);
+    uint8_t* secret = new_slot_data->secret;
     uint8_t empty = TRUE;
-    for (int i = 0; i<20; i++) {
+    for (int i = 0; i<SECRET_LENGTH; i++) {
       if (secret[i] != 0x00) {
         empty = FALSE;
         break;
       }
     }
     if (empty == TRUE) {
-        memcpy (data + SECRET_OFFSET, page_buffer + offset + SECRET_OFFSET, 20);
+      OTP_slot * stored_otp_slot = (OTP_slot *) (page_buffer + offset);
+      memcpy (new_slot_data->secret, stored_otp_slot->secret, SECRET_LENGTH);
     }
 
     // make changes to page
