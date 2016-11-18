@@ -872,9 +872,8 @@ uint8_t cmd_newAesKey(uint8_t *report, uint8_t *output) {
   memcpy(admin_password, report + 1, 25);
 
   ret = BuildPasswordSafeKey_u32();
-  if (TRUE == ret)
-    output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
-  else {
+  if (TRUE != ret)
+  {
     output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_AES_CREATE_KEY_FAILED;
     return 0;
   }
