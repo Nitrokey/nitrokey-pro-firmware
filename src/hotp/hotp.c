@@ -1,4 +1,3 @@
-const int SECRET_LENGTH = 40;
 /*
  * Author: Copyright (C) Andrzej Surowiec 2012
  *
@@ -28,6 +27,8 @@ const int SECRET_LENGTH = 40;
 #include "hotp.h"
 #include "string.h"
 #include "memory_ops.h"
+
+const int SECRET_LENGTH = SECRET_LENGTH_DEFINE;
 
 __I uint32_t hotp_slot_counters[NUMBER_OF_HOTP_SLOTS] = { SLOT1_COUNTER_ADDRESS,
     SLOT2_COUNTER_ADDRESS,
