@@ -975,23 +975,24 @@ unsigned short cRet;
     if (APDU_ANSWER_COMMAND_CORRECT != cRet)
         return 0;
 
+  const size_t SLOT_SIZE = sizeof(OTP_slot);
     // Erase OTP slots
 uint8_t slot_no;
 
-uint8_t slot_tmp[64];
+uint8_t slot_tmp[SLOT_SIZE];
 
-    memset (slot_tmp, 0xFF, 64);
+    memset (slot_tmp, 0xFF, SLOT_SIZE);
 
-    for (slot_no = 0; slot_no < NUMBER_OF_HOTP_SLOTS; slot_no++)    // HOTP
+  for (slot_no = 0; slot_no < NUMBER_OF_HOTP_SLOTS; slot_no++)    // HOTP
         // slots
     {
-        write_to_slot (slot_tmp, hotp_slot_offsets[slot_no], 64);
+        write_to_slot (slot_tmp, get_HOTP_slot_offset(slot_no), SLOT_SIZE);
         erase_counter (slot_no);
     }
     for (slot_no = 0; slot_no < NUMBER_OF_TOTP_SLOTS; slot_no++)    // TOTP
         // slots
     {
-        write_to_slot (slot_tmp, totp_slot_offsets[slot_no], 64);
+        write_to_slot (slot_tmp, get_TOTP_slot_offset(slot_no), SLOT_SIZE);
     }
 
     // Default flash memory
