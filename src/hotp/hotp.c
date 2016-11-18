@@ -44,11 +44,31 @@ uint32_t get_HOTP_slot_offset(int slot_count){
 uint32_t get_TOTP_slot_offset(int slot_count){
     return SLOTS_PAGE1_ADDRESS + get_slot_offset(slot_count + 3);
 }
-
+/*
+78 per slot
+0 64-141
+1 142-219
+2 220-297
+3 298-375
+4 376-453
+5 454-531
+6 532-609
+7 610-687
+8 688-765
+9 766-843
+10 844-921
+11 922-999
+12 1110-1187
+13 1188-1265
+14 1266-1343
+15 1344-1421
+16 1422-1499
+17 1500-1577
+ */
 uint32_t get_slot_offset(int slot_count){
     const int global_config_offset = 64;
     size_t slot_offset = sizeof(OTP_slot) * slot_count + global_config_offset;
-    const int first_page_limit = SLOT_PAGE_SIZE - sizeof(OTP_slot); //TODO check these limits
+    const int first_page_limit = SLOT_PAGE_SIZE - sizeof(OTP_slot);
     const int second_page_start = 1024+8;
     if (slot_offset > first_page_limit){
         slot_offset -= first_page_limit;

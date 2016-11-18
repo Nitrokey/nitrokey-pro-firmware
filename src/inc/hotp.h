@@ -75,13 +75,13 @@
 
 typedef struct {
     uint8_t type;
+    uint8_t slot_number;
     uint8_t name[15];
     uint8_t secret[40];
     uint8_t config;
     uint8_t token_id[13];
     uint64_t interval_or_counter;
 } __packed OTP_slot;
-//} OTP_slot;
 
 #define TIME_OFFSET 4
 

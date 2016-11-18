@@ -18,6 +18,9 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#pragma once
+#include "hotp.h"
+
 #define FIRMWARE_VERSION (0x08)
 
 #define CMD_GET_STATUS                      0x00
@@ -42,6 +45,8 @@
 #define CMD_CHANGE_USER_PIN                 0x14
 #define CMD_CHANGE_ADMIN_PIN                0x15
 #define CMD_WRITE_TO_SLOT_2                 0x16
+#define CMD_SEND_OTP_DATA                       0x17
+
 
 #define CMD_GET_PW_SAFE_SLOT_STATUS       0x60
 #define CMD_GET_PW_SAFE_SLOT_NAME         0x61
@@ -159,14 +164,13 @@
  */
 
 
-
 __IO extern uint8_t device_status;
 
 uint8_t parse_report (uint8_t * report, uint8_t * output);
 
 uint8_t cmd_get_status (uint8_t * report, uint8_t * output);
 
-uint8_t cmd_write_to_slot (uint8_t * report, uint8_t * output);
+uint8_t cmd_write_to_slot (OTP_slot *new_slot_data, uint8_t * output);
 
 uint8_t cmd_read_slot_name (uint8_t * report, uint8_t * output);
 
@@ -235,7 +239,11 @@ uint8_t cmd_getProDebug (uint8_t * report, uint8_t * output);
 typedef struct {
     uint8_t _command_type;
     uint8_t temporary_admin_password[25];
-    uint8_t slot_secret[20];
+    uint8_t slot_number;
+    union {
+        uint64_t slot_counter_or_interval;
+        uint8_t slot_counter_s[8];
+    } __packed;
     union {
         uint8_t _slot_config;
         struct {
@@ -253,50 +261,15 @@ typedef struct {
             uint8_t keyboard_layout; //disabled feature in nitroapp as of 20160805
         } slot_token_fields;
     };
-} __packed write_to_slot_1_payload;
-
-typedef struct {
-    uint8_t _command_type;
-    uint8_t temporary_admin_password[25];
-    uint8_t slot_number;
-    uint8_t slot_name[15];
-    union {
-        uint64_t slot_counter;
-        uint8_t slot_counter_s[8];
-        struct {
-            uint16_t slot_interval;
-            uint16_t __padding[3];
-        };
-    } __packed;
-} __packed write_to_slot_2_payload;
-
-typedef struct {
-    uint8_t _command_type;
-    uint8_t slot_number;
-    uint8_t slot_name[15];
-    uint8_t slot_secret[20];
-    union {
-        uint8_t _slot_config;
-        struct {
-            bool use_8_digits   : 1;
-            bool use_enter      : 1;
-            bool use_tokenID    : 1;
-        };
-    };
-    union {
-        uint8_t slot_token_id[13]; /** OATH Token Identifier */
-        struct { /** @see https://openauthentication.org/token-specs/ */
-            uint8_t omp[2];
-            uint8_t tt[2];
-            uint8_t mui[8];
-            uint8_t keyboard_layout; //disabled feature in nitroapp as of 20160805
-        } slot_token_fields;
-    };
-    union {
-        uint64_t slot_counter;
-        uint8_t slot_counter_s[8];
-    } __packed;
-} __packed OTP_slot_content;
+} __packed write_to_slot_payload;
 
 static const int CMD_WRITE_CONFIG_PASSWORD_OFFSET = 6;
 static const int CMD_ERASE_SLOT_PASSWORD_OFFSET = 2;
+
+typedef struct {
+    uint8_t temporary_admin_password[25];
+    uint8_t type; //0-secret, 1-name
+    uint8_t id; //multiple reports
+    uint8_t length; //data length
+    uint8_t data[30]; //data, does not need null termination
+} __packed cmd_send_OTP_data;
