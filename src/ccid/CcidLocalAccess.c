@@ -634,14 +634,6 @@ int CcidAesDec (int nSendLength, unsigned char* cSendData, int nReceiveLength, u
 
 u32 getRandomNumber (u32 Size_u32, u8 * Data_pu8)
 {
-u32 Ret_u32;
-
-u32 i;
-
-time_t now;
-
-static u8 FlasgTimeIsSet_u8 = FALSE;
-
     // Size ok ?
     if (APDU_MAX_RESPONSE_LEN <= Size_u32)
     {
@@ -649,9 +641,10 @@ static u8 FlasgTimeIsSet_u8 = FALSE;
     }
 
     // Get a random number from smartcard
-    Ret_u32 = CcidGetChallenge (Size_u32, Data_pu8);
+    CcidGetChallenge (Size_u32, Data_pu8);
 
 #ifdef GENERATE_RANDOM_NUMBER_WITH_2ND_SOURCE
+    // FIXME check does this actually add entropy?
     // Paranoia: if the random number is not really random, xor it with
     // another random number from a second source
     if (FALSE == FlasgTimeIsSet_u8)
@@ -879,39 +872,13 @@ int getAID (void)
 
     InitSCTStruct (&tSCT);
 
-    unsigned short cRet;
-
     unsigned char nReturnSize;
 
     CcidSelectOpenPGPApp ();
-    cRet = CcidGetData (0x00, 0x4F, &nReturnSize);
+    CcidGetData (0x00, 0x4F, &nReturnSize);
 
     return nReturnSize;
 }
-
-uint32_t getSerialNumber (void)
-{
-
-uint32_t serial;
-
-uint8_t buffer[4];
-
-    InitSCTStruct (&tSCT);
-
-unsigned short cRet;
-
-unsigned char nReturnSize;
-
-    CcidSelectOpenPGPApp ();
-    cRet = CcidGetData (0x00, 0x4F, &nReturnSize);
-
-
-
-    return 0;
-
-
-}
-
 
 uint8_t getByteOfData (uint8_t x)
 {
@@ -925,8 +892,6 @@ uint8_t cardAuthenticate (uint8_t * password)
     InitSCTStruct (&tSCT);
 
 unsigned short cRet;
-
-unsigned char nReturnSize;
 
     CcidSelectOpenPGPApp ();
     cRet = CcidVerifyPin (3, password);
@@ -945,8 +910,6 @@ uint8_t userAuthenticate (uint8_t * password)
     InitSCTStruct (&tSCT);
 
 unsigned short cRet;
-
-unsigned char nReturnSize;
 
     CcidSelectOpenPGPApp ();
     cRet = CcidVerifyPin (1, password);
@@ -1007,8 +970,6 @@ uint8_t changeUserPin (uint8_t * password, uint8_t * new_password)
 
 unsigned short cRet;
 
-unsigned char nReturnSize;
-
     CcidSelectOpenPGPApp ();
     cRet = CcidChangePin (1, password, new_password);
 
@@ -1026,8 +987,6 @@ uint8_t changeAdminPin (uint8_t * password, uint8_t * new_password)
     InitSCTStruct (&tSCT);
 
 unsigned short cRet;
-
-unsigned char nReturnSize;
 
     CcidSelectOpenPGPApp ();
     cRet = CcidChangePin (3, password, new_password);
@@ -1153,6 +1112,7 @@ unsigned int nRet;
 
 uint8_t testScAesKey (int nLen, unsigned char* pcKey)
 {
+    //function unused in NK Pro
 int nRet;
 
 unsigned char acBufferOut[32];
@@ -1166,31 +1126,15 @@ unsigned char acBufferOut[32];
 
     nRet = CcidAesDec (nLen, pcKey, nLen, acBufferOut);
 
-    switch (nRet)
-    {
-        case APDU_ANSWER_COMMAND_CORRECT:
-            memcpy (pcKey, acBufferOut, nLen);
-            return TRUE;
-        case APDU_ANSWER_REF_DATA_NOT_FOUND:
-            memset (pcKey, 0, nLen);
-            return FALSE;
-        default:
-            nRet;
-    }
-    /*
-       if (APDU_ANSWER_COMMAND_CORRECT == nRet) { //CI_LocalPrintf ("Decrypted AES key : "); //HexPrint (nLen,acBufferOut); //CI_LocalPrintf
-       ("\r\n"); } else { memset (pcKey,0,nLen); //CI_LocalPrintf ("fail\n\r"); return (FALSE); }
-
-       memcpy (pcKey,acBufferOut,nLen); return (TRUE); */
+    if (APDU_ANSWER_COMMAND_CORRECT == nRet)
+        return (TRUE);
+    else
+        return (FALSE);
 }
 
 uint8_t testSendUserPW2 (unsigned char* pcPW)
 {
     unsigned short nRet;
-
-    int n;
-
-    n = strlen ((char *) pcPW);
 
     // CI_LocalPrintf ("Send user password : ");
     nRet = CcidVerifyPin (2, pcPW);

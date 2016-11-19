@@ -104,11 +104,9 @@ extern uint8_t HID_GetReport_Value[32 + 1];
 uint32_t crc (uint32_t time)
 {
 
-int i, j;
+int i;
 
 uint32_t value = time << 8;
-
-uint32_t crc;
 
     for (i = 0; i < 24; i++)
     {
