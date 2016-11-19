@@ -42,7 +42,7 @@ uint8_t temp_user_password[25];
 bool temp_admin_password_set = FALSE;
 bool temp_user_password_set = FALSE;
 
-OTP_slot_content local_slot_content;
+OTP_slot local_slot_content;
 
 bool write_to_slot_transaction_started = FALSE;
 
@@ -51,6 +51,13 @@ bool is_valid_admin_temp_password(const uint8_t *const password);
 bool is_user_PIN_protection_enabled(void);
 bool is_HOTP_slot_number(uint8_t slot_no);
 bool is_TOTP_slot_number(uint8_t slot_no);
+
+size_t s_min(size_t a, size_t b){
+  if (a<b){
+    return a;
+  }
+  return b;
+}
 
 uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
   uint8_t cmd_type = report[CMD_TYPE_OFFSET];
@@ -79,28 +86,41 @@ uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
         cmd_get_status(report, output);
         break;
 
-      case CMD_WRITE_TO_SLOT_2: {
-        write_to_slot_2_payload const * const payload = (write_to_slot_2_payload*) report;
-        if(is_valid_admin_temp_password(payload->temporary_admin_password)
-            && write_to_slot_transaction_started == TRUE){
-          write_to_slot_transaction_started = FALSE;
-          local_slot_content.slot_number = payload->slot_number;
-          local_slot_content.slot_counter = payload->slot_counter;
-          memcpy(local_slot_content.slot_name, payload->slot_name, sizeof(payload->slot_name));
-          cmd_write_to_slot( (uint8_t*) &local_slot_content, output);
+      case CMD_SEND_OTP_DATA: {
+        cmd_send_OTP_data const * const otp_data = (cmd_send_OTP_data*) (report+1);
+        if(is_valid_admin_temp_password(otp_data->temporary_admin_password)){
+          if (!write_to_slot_transaction_started){
+            memset((void *) &local_slot_content, 0, sizeof(local_slot_content));
+          }
+          write_to_slot_transaction_started = TRUE;
+          if (otp_data->type == 'N') {
+            size_t bytes_count = s_min(sizeof(otp_data->data), sizeof(local_slot_content.name));
+            memcpy(local_slot_content.name, otp_data->data, bytes_count);
+            memcpy(&output[OUTPUT_CMD_RESULT_OFFSET], local_slot_content.name, sizeof(local_slot_content.name));
+          } else if (otp_data->type == 'S') {
+            size_t offset = otp_data->id * sizeof(otp_data->data);
+            if (offset > sizeof(local_slot_content.secret) ){
+              offset = 0;
+            }
+            size_t bytes_count = s_min(sizeof(otp_data->data), sizeof(local_slot_content.secret)-offset);
+            memcpy(local_slot_content.secret+offset, otp_data->data, bytes_count);
+            memcpy(&output[OUTPUT_CMD_RESULT_OFFSET], local_slot_content.secret, sizeof(local_slot_content.secret));
+          }
         } else
           not_authorized = 1;
       }
         break;
 
       case CMD_WRITE_TO_SLOT: {
-        write_to_slot_1_payload const * const payload = (write_to_slot_1_payload*) report;
-        if(is_valid_admin_temp_password(payload->temporary_admin_password)) {
-          write_to_slot_transaction_started = TRUE;
-          memset((void *) &local_slot_content, 0, sizeof(local_slot_content));
-          local_slot_content._slot_config = payload->_slot_config;
-          memcpy(local_slot_content.slot_token_id, payload->slot_token_id, sizeof(payload->slot_token_id));
-          memcpy(local_slot_content.slot_secret, payload->slot_secret, sizeof(payload->slot_secret));
+        write_to_slot_payload const * const payload = (write_to_slot_payload*) report;
+        if(is_valid_admin_temp_password(payload->temporary_admin_password)
+           && write_to_slot_transaction_started == TRUE) {
+          write_to_slot_transaction_started = FALSE;
+          local_slot_content.slot_number = payload->slot_number;
+          local_slot_content.interval_or_counter = payload->slot_counter_or_interval;
+          local_slot_content.config = payload->_slot_config;
+          memcpy(local_slot_content.token_id, payload->slot_token_id, sizeof(payload->slot_token_id));
+          cmd_write_to_slot(&local_slot_content, output);
         } else
           not_authorized = 1;
         }
@@ -285,29 +305,26 @@ uint8_t cmd_get_user_password_retry_count(uint8_t *report, uint8_t *output) {
 }
 
 
-uint8_t cmd_write_to_slot(uint8_t *report, uint8_t *output) {
-  uint8_t slot_no = report[CMD_WTS_SLOT_NUMBER_OFFSET];
-  uint8_t slot_tmp[64];           // this is will be the new slot contents
+uint8_t cmd_write_to_slot(OTP_slot *new_slot_data, uint8_t *output) {
+  uint8_t slot_no = new_slot_data->slot_number;
+  const int BUFFER_SIZE = sizeof(OTP_slot);
 
-  memset(slot_tmp, 0, 64);
-  slot_tmp[0] = 0x01; // marks slot as programmed
-  uint8_t *slot_name = report + CMD_WTS_SLOT_NAME_OFFSET;
-  memcpy(slot_tmp + 1, slot_name, 51);
-
-  if (slot_name[0] == 0) {
+  if (new_slot_data->name[0] == 0) {
     output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_NO_NAME_ERROR;
     return 1;
   }
 
   if (is_HOTP_slot_number(slot_no)) {
     slot_no = slot_no & 0x0F;
-    uint64_t counter = getu64(report + CMD_WTS_COUNTER_OFFSET);
+    uint64_t counter = new_slot_data->interval_or_counter;
     set_counter_value(hotp_slot_counters[slot_no], counter);
-    write_to_slot(slot_tmp, hotp_slot_offsets[slot_no], 64);
+    new_slot_data->type = 'H';
+    write_to_slot(new_slot_data, get_HOTP_slot_offset(slot_no), BUFFER_SIZE);
 
   } else if (is_TOTP_slot_number(slot_no)) {
     slot_no = slot_no & 0x0F;
-    write_to_slot(slot_tmp, totp_slot_offsets[slot_no], 64);
+    new_slot_data->type = 'T';
+    write_to_slot(new_slot_data, get_TOTP_slot_offset(slot_no), BUFFER_SIZE);
 
   } else {
     output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_SLOT;
@@ -321,6 +338,17 @@ bool is_TOTP_slot_number(uint8_t slot_no) { return slot_no >= 0x20 && slot_no < 
 
 bool is_HOTP_slot_number(uint8_t slot_no) { return slot_no >= 0x10 && slot_no < 0x10 + NUMBER_OF_HOTP_SLOTS; }
 
+bool is_HOTP_slot_programmed(int slot_no){
+  OTP_slot* otp_slot = (OTP_slot *) get_HOTP_slot_offset(slot_no);
+  bool is_programmed = otp_slot->type != 0xFF;
+  return is_programmed;
+}
+
+bool is_TOTP_slot_programmed(int slot_no){
+  OTP_slot* otp_slot = (OTP_slot *) get_TOTP_slot_offset(slot_no);
+  bool is_programmed = otp_slot->type != 0xFF;
+  return is_programmed;
+}
 
 uint8_t cmd_read_slot_name(uint8_t *report, uint8_t *output) {
 
@@ -328,27 +356,25 @@ uint8_t cmd_read_slot_name(uint8_t *report, uint8_t *output) {
 
   if (is_HOTP_slot_number(slot_no)) {   // HOTP slot
     slot_no = slot_no & 0x0F;
-    uint8_t is_programmed = *((uint8_t *) (hotp_slots[slot_no]));
 
-    if (is_programmed == 0x01) {
-      memcpy(output + OUTPUT_CMD_RESULT_OFFSET, (uint8_t *) (hotp_slots[slot_no] + SLOT_NAME_OFFSET), 15);
+    if ( is_HOTP_slot_programmed(slot_no) ) {
+      OTP_slot *const slot = (OTP_slot*)get_HOTP_slot_offset(slot_no);
+      memcpy(output + OUTPUT_CMD_RESULT_OFFSET, slot->name, 15);
     } else {
       output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_SLOT_NOT_PROGRAMMED;
     }
 
   } else if (is_TOTP_slot_number(slot_no)) {   // TOTP slot
     slot_no = slot_no & 0x0F;
-    uint8_t is_programmed = *((uint8_t *) (totp_slots[slot_no]));
-
-    if (is_programmed == 0x01) {
-      memcpy(output + OUTPUT_CMD_RESULT_OFFSET, (uint8_t *) (totp_slots[slot_no] + SLOT_NAME_OFFSET), 15);
+    if (is_TOTP_slot_programmed(slot_no)) {
+      OTP_slot *const slot = (OTP_slot*)get_TOTP_slot_offset(slot_no);
+      memcpy(output + OUTPUT_CMD_RESULT_OFFSET, slot->name, 15);
     } else {
       output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_SLOT_NOT_PROGRAMMED;
     }
 
   } else {
     output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_SLOT;
-
   }
 
 
@@ -364,12 +390,12 @@ uint8_t cmd_read_slot(uint8_t *report, uint8_t *output) {
 
   if (is_HOTP_slot_number(slot_no)) {   // HOTP slot
     slot_no = slot_no & 0x0F;
-    uint8_t is_programmed = *((uint8_t *) (hotp_slots[slot_no]));
 
-    if (is_programmed == 0x01) {
-      memcpy(output + OUTPUT_CMD_RESULT_OFFSET, (uint8_t *) (hotp_slots[slot_no] + SLOT_NAME_OFFSET), 15);
-      memcpy(output + OUTPUT_CMD_RESULT_OFFSET + 15, (uint8_t *) (hotp_slots[slot_no] + CONFIG_OFFSET), 1);
-      memcpy(output + OUTPUT_CMD_RESULT_OFFSET + 16, (uint8_t *) (hotp_slots[slot_no] + TOKEN_ID_OFFSET), 13);
+    if (is_HOTP_slot_programmed(slot_no)) {
+      OTP_slot* otp_slot = (OTP_slot *) get_HOTP_slot_offset(slot_no);
+      memcpy(output + OUTPUT_CMD_RESULT_OFFSET, otp_slot->name, 15);
+      memcpy(output + OUTPUT_CMD_RESULT_OFFSET + 15, &otp_slot->config, 1);
+      memcpy(output + OUTPUT_CMD_RESULT_OFFSET + 16, otp_slot->token_id, 13);
       counter = get_counter_value(hotp_slot_counters[slot_no]);
       memcpy(output + OUTPUT_CMD_RESULT_OFFSET + 29, &counter, 8);
     } else {
@@ -378,13 +404,12 @@ uint8_t cmd_read_slot(uint8_t *report, uint8_t *output) {
 
   } else if (is_TOTP_slot_number(slot_no)) {   // TOTP slot
     slot_no = slot_no & 0x0F;
-    uint8_t is_programmed = *((uint8_t *) (totp_slots[slot_no]));
-
-    if (is_programmed == 0x01) {
-      memcpy(output + OUTPUT_CMD_RESULT_OFFSET, (uint8_t *) (totp_slots[slot_no] + SLOT_NAME_OFFSET), 15);
-      memcpy(output + OUTPUT_CMD_RESULT_OFFSET + 15, (uint8_t *) (totp_slots[slot_no] + CONFIG_OFFSET), 1);
-      memcpy(output + OUTPUT_CMD_RESULT_OFFSET + 16, (uint8_t *) (totp_slots[slot_no] + TOKEN_ID_OFFSET), 13);
-      memcpy(output + OUTPUT_CMD_RESULT_OFFSET + 29, (uint8_t *) (totp_slots[slot_no] + INTERVAL_OFFSET), 2);
+    if (is_TOTP_slot_programmed(slot_no)) {
+      OTP_slot* otp_slot = (OTP_slot *) get_TOTP_slot_offset(slot_no);
+      memcpy(output + OUTPUT_CMD_RESULT_OFFSET, otp_slot->name, 15);
+      memcpy(output + OUTPUT_CMD_RESULT_OFFSET + 15, &otp_slot->config, 1);
+      memcpy(output + OUTPUT_CMD_RESULT_OFFSET + 16, otp_slot->token_id, 13);
+      memcpy(output + OUTPUT_CMD_RESULT_OFFSET + 29, &otp_slot->interval_or_counter, 8);
     } else {
       output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_SLOT_NOT_PROGRAMMED;
     }
@@ -410,24 +435,28 @@ uint8_t cmd_get_code(uint8_t *report, uint8_t *output) {
 
   if (is_HOTP_slot_number(slot_no)) {   // HOTP slot
     slot_no = slot_no & 0x0F;
-    uint8_t is_programmed = *((uint8_t *) (hotp_slots[slot_no]));
+    OTP_slot* otp_slot = (OTP_slot *) get_HOTP_slot_offset(slot_no);
+    bool is_programmed = otp_slot->type != 0xFF;
 
-    if (is_programmed == 0x01) {
+    if (is_programmed) {
 
       result = get_code_from_hotp_slot(slot_no);
       memcpy(output + OUTPUT_CMD_RESULT_OFFSET, &result, 4);
-      memcpy(output + OUTPUT_CMD_RESULT_OFFSET + 4, (uint8_t *) hotp_slots[slot_no] + CONFIG_OFFSET, 14);
+      memcpy(output + OUTPUT_CMD_RESULT_OFFSET + 4, &otp_slot->config, sizeof(otp_slot->config));
+      memcpy(output + OUTPUT_CMD_RESULT_OFFSET + 5, otp_slot->token_id , sizeof(otp_slot->token_id));
     } else
       output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_SLOT_NOT_PROGRAMMED;
 
   } else if (is_TOTP_slot_number(slot_no)) {   // TOTP slot
     slot_no = slot_no & 0x0F;
-    uint8_t is_programmed = *((uint8_t *) (totp_slots[slot_no]));
+    OTP_slot* otp_slot = (OTP_slot *) get_TOTP_slot_offset(slot_no);
+    bool is_programmed = otp_slot->type != 0xFF;
 
-    if (is_programmed == 0x01) {
+    if (is_programmed) {
       result = get_code_from_totp_slot(slot_no, challenge);
       memcpy(output + OUTPUT_CMD_RESULT_OFFSET, &result, 4);
-      memcpy(output + OUTPUT_CMD_RESULT_OFFSET + 4, (uint8_t *) totp_slots[slot_no] + CONFIG_OFFSET, 14);
+      memcpy(output + OUTPUT_CMD_RESULT_OFFSET + 4, &otp_slot->config, sizeof(otp_slot->config));
+      memcpy(output + OUTPUT_CMD_RESULT_OFFSET + 5, otp_slot->token_id , sizeof(otp_slot->token_id));
     } else
       output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_SLOT_NOT_PROGRAMMED;
   } else {
@@ -446,7 +475,7 @@ uint8_t cmd_write_config(uint8_t *report, uint8_t *output) {
 
   memcpy(slot_tmp, report + 1, 5);
 
-  write_to_slot(slot_tmp, GLOBAL_CONFIG_OFFSET, 64);
+  write_to_slot((OTP_slot *) slot_tmp, GLOBAL_CONFIG_OFFSET, 64);
 
   return 0;
 
@@ -457,22 +486,23 @@ uint8_t cmd_erase_slot(uint8_t *report, uint8_t *output) {
 
   uint8_t slot_no = report[CMD_WTS_SLOT_NUMBER_OFFSET];
 
-  uint8_t slot_tmp[64];
+  const int buffer_size = sizeof(OTP_slot);
+  uint8_t slot_tmp[buffer_size];
 
-  memset(slot_tmp, 0xFF, 64);
+  memset(slot_tmp, 0xFF, buffer_size);
 
 
   if (is_HOTP_slot_number(slot_no))  // HOTP
     // slot
   {
     slot_no = slot_no & 0x0F;
-    write_to_slot(slot_tmp, hotp_slot_offsets[slot_no], 64);
+    write_to_slot((OTP_slot *) slot_tmp, get_HOTP_slot_offset(slot_no), buffer_size);
     erase_counter(slot_no);
   } else if (is_TOTP_slot_number(slot_no)) // TOTP
     // slot
   {
     slot_no = slot_no & 0x0F;
-    write_to_slot(slot_tmp, totp_slot_offsets[slot_no], 64);
+    write_to_slot((OTP_slot *) slot_tmp, get_TOTP_slot_offset(slot_no), buffer_size);
   } else {
     output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_SLOT;
   }
@@ -844,9 +874,8 @@ uint8_t cmd_newAesKey(uint8_t *report, uint8_t *output) {
   memcpy(admin_password, report + 1, 25);
 
   ret = BuildPasswordSafeKey_u32();
-  if (TRUE == ret)
-    output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
-  else {
+  if (TRUE != ret)
+  {
     output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_AES_CREATE_KEY_FAILED;
     return 0;
   }
