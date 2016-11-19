@@ -156,7 +156,7 @@ int main(void) {
 }
 
 void sendHOTPCodeForSlot(uint8_t slot_number) {
-  if (slot_number <= 1) {
+  if (slot_number <= 2) {
         OTP_slot *const otp_slot = (OTP_slot *) get_HOTP_slot_offset(slot_number);
         bool programmed = otp_slot->type != 0xFF;
 
