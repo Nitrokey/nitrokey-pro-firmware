@@ -318,10 +318,12 @@ uint8_t cmd_write_to_slot(OTP_slot *new_slot_data, uint8_t *output) {
     slot_no = slot_no & 0x0F;
     uint64_t counter = new_slot_data->interval_or_counter;
     set_counter_value(hotp_slot_counters[slot_no], counter);
+    new_slot_data->type = 'H';
     write_to_slot(new_slot_data, get_HOTP_slot_offset(slot_no), BUFFER_SIZE);
 
   } else if (is_TOTP_slot_number(slot_no)) {
     slot_no = slot_no & 0x0F;
+    new_slot_data->type = 'T';
     write_to_slot(new_slot_data, get_TOTP_slot_offset(slot_no), BUFFER_SIZE);
 
   } else {

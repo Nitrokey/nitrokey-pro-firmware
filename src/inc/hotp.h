@@ -73,7 +73,7 @@
 #define SECRET_LENGTH_DEFINE 40
 
 typedef struct {
-    uint8_t type; //0 - HOTP, 1 - TOTP, FF - not programmed
+    uint8_t type; //'H' - HOTP, 'T' - TOTP, FF - not programmed
     uint8_t slot_number;
     uint8_t name[15];
     uint8_t secret[SECRET_LENGTH_DEFINE];
