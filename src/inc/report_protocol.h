@@ -44,7 +44,6 @@
 #define CMD_FACTORY_RESET                   0x13
 #define CMD_CHANGE_USER_PIN                 0x14
 #define CMD_CHANGE_ADMIN_PIN                0x15
-#define CMD_WRITE_TO_SLOT_2                 0x16
 #define CMD_SEND_OTP_DATA                       0x17
 
 
