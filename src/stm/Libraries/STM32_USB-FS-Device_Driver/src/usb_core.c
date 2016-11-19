@@ -180,7 +180,7 @@ uint8_t* Standard_GetStatus (uint16_t Length)
     if (Type_Recipient == (STANDARD_REQUEST | DEVICE_RECIPIENT))
     {
         /* Get Device Status */
-//uint8_t Feature = pInformation->Current_Feature;
+uint8_t Feature = pInformation->Current_Feature;
 
         /* Remote Wakeup enabled */
         ClrBit (StatusInfo0, 1);

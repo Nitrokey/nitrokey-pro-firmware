@@ -641,11 +641,10 @@ u32 getRandomNumber (u32 Size_u32, u8 * Data_pu8)
     }
 
     // Get a random number from smartcard
-    // TODO: COMMENT FROM FLORIAN: IGNORE RETURN VALUE?
     CcidGetChallenge (Size_u32, Data_pu8);
 
 #ifdef GENERATE_RANDOM_NUMBER_WITH_2ND_SOURCE
-    // TODO: COMMENT FROM FLORIAN: DOES THIS ACTUALLY ADD ENTROPY?
+    // FIXME check does this actually add entropy?
     // Paranoia: if the random number is not really random, xor it with
     // another random number from a second source
     if (FALSE == FlasgTimeIsSet_u8)
@@ -876,7 +875,6 @@ int getAID (void)
     unsigned char nReturnSize;
 
     CcidSelectOpenPGPApp ();
-    // TODO: COMMENT FROM FLORIAN: IGNORE RETURN VALUE?
     CcidGetData (0x00, 0x4F, &nReturnSize);
 
     return nReturnSize;
@@ -1114,6 +1112,7 @@ unsigned int nRet;
 
 uint8_t testScAesKey (int nLen, unsigned char* pcKey)
 {
+    //function unused in NK Pro
 int nRet;
 
 unsigned char acBufferOut[32];
@@ -1131,11 +1130,6 @@ unsigned char acBufferOut[32];
         return (TRUE);
     else
         return (FALSE);
-    /*
-       if (APDU_ANSWER_COMMAND_CORRECT == nRet) { //CI_LocalPrintf ("Decrypted AES key : "); //HexPrint (nLen,acBufferOut); //CI_LocalPrintf
-       ("\r\n"); } else { memset (pcKey,0,nLen); //CI_LocalPrintf ("fail\n\r"); return (FALSE); }
-
-       memcpy (pcKey,acBufferOut,nLen); return (TRUE); */
 }
 
 uint8_t testSendUserPW2 (unsigned char* pcPW)
