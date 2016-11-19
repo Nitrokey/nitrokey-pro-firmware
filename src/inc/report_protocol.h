@@ -269,6 +269,5 @@ typedef struct {
     uint8_t temporary_admin_password[25];
     uint8_t type; //0-secret, 1-name
     uint8_t id; //multiple reports
-    uint8_t length; //data length
     uint8_t data[30]; //data, does not need null termination
 } __packed cmd_send_OTP_data;
