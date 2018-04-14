@@ -17,10 +17,35 @@ include_directories(stm/Libraries/STM32_USB-FS-Device_Driver/inc)
 include_directories(stm/Libraries/STM32F10x_StdPeriph_Driver/inc)
 
 set (RUN_MODE ROM_RUN)
+set (MCU cortex-m3)
+set (SUBMDL stm32f103)
+##USE_THUMB_MODE = YES
+#THUMB    = -mthumb
 set (VID 0x20a0)
 set (PID 0x4108)
 
 add_definitions(-D${RUN_MODE} -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD -DUSE_STM3210E_EVAL -DGLOBAL_VID=${VID} -DGLOBAL_PID=${PID})
+#
+#CFLAGS = -g$(DEBUG)
+#CFLAGS += $(CDEFS) $(CINCS)
+#CFLAGS += -O$(OPT)
+#CFLAGS += -Wall -Wcast-align -Wimplicit
+#CFLAGS += -Wpointer-arith -Wswitch
+#CFLAGS += -Wredundant-decls -Wreturn-type -Wshadow -Wunused
+#CFLAGS += -Wa,-adhlns=$(subst $(suffix $<),.lst,$<)
+#CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
+#CFLAGS += -Wcast-qual
+#CONLYFLAGS += -Wmissing-prototypes
+#CONLYFLAGS += -Wstrict-prototypes
+#CONLYFLAGS += -Wmissing-declarations
+set(CFLAGS )
+set(GENDEPFLAGS )
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=${MCU} ${THUMB_IW} -I. ${CFLAGS} ${GENDEPFLAGS}")
+#set (LDFLAGS -Tstm32.ld)
+#link_libraries( ${LDFLAGS} )
+#ASFLAGS = $(ADEFS) -Wa,-adhlns=$(<:.S=.lst),-g$(DEBUG)
+
+#-mcpu=$(MCU)
 
 add_executable(src
         ccid/CCIDHID_USB/CCIDHID_usb_desc.c
