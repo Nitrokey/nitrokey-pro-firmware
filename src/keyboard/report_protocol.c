@@ -510,14 +510,15 @@ uint8_t cmd_erase_slot(uint8_t *report, uint8_t *output) {
 }
 
 uint8_t cmd_first_authenticate(uint8_t *report, uint8_t *output) {
-
   uint8_t res = 1;
+  uint8_t card_password[26]; //must be a C string
 
-  uint8_t card_password[26];
+  //invalidate current admin password
+  memset(temp_password, 0, sizeof(temp_password));
+  temp_admin_password_set = FALSE;
 
-  memset(card_password, 0, 26);
   memcpy(card_password, report + 1, 25);
-
+  card_password[sizeof(card_password)-1] = 0;
   res = cardAuthenticate(card_password);
   memset(card_password, 0, sizeof(card_password));
 
@@ -525,7 +526,7 @@ uint8_t cmd_first_authenticate(uint8_t *report, uint8_t *output) {
     memcpy(temp_password, report + 26, 25);
     temp_admin_password_set = TRUE;
     getAID();
-    return 0;
+    return 0;   //success
   } else {
     output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
     return 1;   // wrong card password
@@ -533,23 +534,24 @@ uint8_t cmd_first_authenticate(uint8_t *report, uint8_t *output) {
 }
 
 uint8_t cmd_user_authenticate(uint8_t *report, uint8_t *output) {
-
   uint8_t res = 1;
+  uint8_t user_password[26]; //must be a C string
 
-  uint8_t user_password[26];
+  //invalidate current user password
+  memset(temp_user_password, 0, sizeof(temp_user_password));
+  temp_user_password_set = FALSE;
 
-  memset(user_password, 0, 26);
   memcpy(user_password, report + 1, 25);
-
+  user_password[sizeof(user_password)-1] = 0;
   res = userAuthenticate(user_password);
   memset(user_password, 0, sizeof(user_password));
 
-  if (res == 0) {
+  if (res == 0) { //correct User PIN
     memcpy(temp_user_password, report + 26, 25);
     temp_user_password_set = TRUE;
     getAID();
-    return 0;
-  } else {
+    return 0;   //successfull authentication
+  } else {      //incorrect User PIN
     output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
     return 1;   // wrong card password
   }
