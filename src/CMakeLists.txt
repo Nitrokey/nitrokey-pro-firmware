@@ -29,7 +29,8 @@ add_definitions(-D${RUN_MODE} -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD -DUSE_STM321
 #CFLAGS = -g$(DEBUG)
 #CFLAGS += $(CDEFS) $(CINCS)
 #CFLAGS += -O$(OPT)
-#CFLAGS += -Wall -Wcast-align -Wimplicit
+set(CFLAGS )
+set(CFLAGS "${CFLAGS} -Wall -Wcast-align -Wimplicit")
 #CFLAGS += -Wpointer-arith -Wswitch
 #CFLAGS += -Wredundant-decls -Wreturn-type -Wshadow -Wunused
 #CFLAGS += -Wa,-adhlns=$(subst $(suffix $<),.lst,$<)
@@ -38,9 +39,8 @@ add_definitions(-D${RUN_MODE} -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD -DUSE_STM321
 #CONLYFLAGS += -Wmissing-prototypes
 #CONLYFLAGS += -Wstrict-prototypes
 #CONLYFLAGS += -Wmissing-declarations
-set(CFLAGS )
 set(GENDEPFLAGS )
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=${MCU} ${THUMB_IW} -I. ${CFLAGS} ${GENDEPFLAGS}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CFLAGS} -mcpu=${MCU} ${THUMB_IW} -I. ${CFLAGS} ${GENDEPFLAGS}")
 #set (LDFLAGS -Tstm32.ld)
 #link_libraries( ${LDFLAGS} )
 #ASFLAGS = $(ADEFS) -Wa,-adhlns=$(<:.S=.lst),-g$(DEBUG)
