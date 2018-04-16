@@ -72,10 +72,10 @@ uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
   memset(output, 0, KEYBOARD_FEATURE_COUNT);
   output[OUTPUT_CMD_TYPE_OFFSET] = cmd_type;
 
-  output[OUTPUT_CMD_CRC_OFFSET] = calculated_crc32 & 0xFF;
-  output[OUTPUT_CMD_CRC_OFFSET + 1] = (calculated_crc32 >> 8) & 0xFF;
-  output[OUTPUT_CMD_CRC_OFFSET + 2] = (calculated_crc32 >> 16) & 0xFF;
-  output[OUTPUT_CMD_CRC_OFFSET + 3] = (calculated_crc32 >> 24) & 0xFF;
+  output[OUTPUT_CMD_CRC_OFFSET] = (uint8_t) (calculated_crc32 & 0xFF);
+  output[OUTPUT_CMD_CRC_OFFSET + 1] = (uint8_t) ((calculated_crc32 >> 8) & 0xFF);
+  output[OUTPUT_CMD_CRC_OFFSET + 2] = (uint8_t) ((calculated_crc32 >> 16) & 0xFF);
+  output[OUTPUT_CMD_CRC_OFFSET + 3] = (uint8_t) ((calculated_crc32 >> 24) & 0xFF);
 
   if (calculated_crc32 == received_crc32) {
 
