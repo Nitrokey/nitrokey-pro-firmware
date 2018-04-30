@@ -20,6 +20,8 @@
  */
 
 /* Includes ------------------------------------------------------------------ */
+#include <stdlib.h>
+#include <CcidLocalAccess.h>
 #include "stm32f10x_it.h"
 #include "stm32f10x_systick.h"
 #include "hw_config.h"
@@ -405,6 +407,21 @@ void USB_Cable_Config (FunctionalState NewState)
 
 *******************************************************************************/
 
+typedef struct {
+  uint8_t left:4;
+  uint8_t right:4;
+} hexbyte;
+
+char HexToAscii2 (uint8_t nHex, uint8_t byte_part)
+{
+  if (byte_part==1)
+    nHex = ((hexbyte *) &nHex)->left;
+  else
+    nHex = ((hexbyte *) &nHex)->right;
+
+  return HexToAscii(nHex);
+}
+
 char HexToAscii (uint8_t nHex)
 {
     if (10 > nHex)
@@ -422,10 +439,33 @@ char HexToAscii (uint8_t nHex)
 * Return         : None.
 *******************************************************************************/
 
+#ifdef DEVICE_NITROKEY_PRO
 __IO uint32_t cardSerial = 0;;
+#endif
+
+#include "string.h"
 
 void Get_SerialNum (void)
 {
+#ifndef DEVICE_NITROKEY_PRO
+  uint8_t buf[15] = { };
+  const uint8_t serial_buf_size = sizeof(buf);
+  const retCode results = getSerialNumber(buf, serial_buf_size);
+
+  if (results.smartcard_ret != APDU_EOF) {
+      *((uint32_t *) buf) = *((uint32_t *) &results);
+      for (int i = 0; i < serial_buf_size; i++) {
+          *((uint16_t *) CCID_StringSerial + i+1) = (uint8_t) HexToAscii2(buf[i/2], i%2);
+      }
+      return;
+  }
+
+  for (int i = 0; i < serial_buf_size; i++) {
+      *((uint16_t *) CCID_StringSerial + i+1) = (uint8_t) buf[i];
+  }
+#endif //#ifndef DEVICE_NITROKEY_PRO
+
+#ifdef DEVICE_NITROKEY_PRO
     uint32_t Device_Serial0, Device_Serial1, Device_Serial2;
 
     uint8_t* SerialString;
@@ -495,6 +535,7 @@ void Get_SerialNum (void)
         SerialString[14] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x000000F0) >> 4));
         SerialString[16] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x0000000F) >> 0));
     }
+#endif
 }
 
 /*******************************************************************************
