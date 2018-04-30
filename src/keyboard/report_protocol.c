@@ -316,10 +316,12 @@ uint8_t cmd_get_status(uint8_t *report, uint8_t *output) {
 
   output[OUTPUT_CMD_RESULT_OFFSET] = FIRMWARE_VERSION & 0xFF;
   output[OUTPUT_CMD_RESULT_OFFSET + 1] = (FIRMWARE_VERSION >> 8) & 0xFF;
+#ifdef DEVICE_NITROKEY_PRO
   output[OUTPUT_CMD_RESULT_OFFSET + 2] = cardSerial & 0xFF;
   output[OUTPUT_CMD_RESULT_OFFSET + 3] = (cardSerial >> 8) & 0xFF;
   output[OUTPUT_CMD_RESULT_OFFSET + 4] = (cardSerial >> 16) & 0xFF;
   output[OUTPUT_CMD_RESULT_OFFSET + 5] = (cardSerial >> 24) & 0xFF;
+#endif
   memcpy(output + OUTPUT_CMD_RESULT_OFFSET + 6, (uint8_t *) SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET, 3);
   memcpy(output + OUTPUT_CMD_RESULT_OFFSET + 9, (uint8_t *) SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET + 3, 2);
 
