@@ -433,14 +433,15 @@ char HexToAscii (uint8_t nHex)
 
 /*******************************************************************************
 * Function Name  : Get_SerialNum.
-* Description    : Create the serial number string descriptor.
-* Input          : None.
-* Output         : None.
+* Description    : Create the serial number string descriptor using data got from
+*                  the smartcard.
+* Input          : None in params. Gets data from smartcard.
+* Output         : None in params. Writes to CCID_StringSerial.
 * Return         : None.
 *******************************************************************************/
 
 #ifdef DEVICE_NITROKEY_PRO
-__IO uint32_t cardSerial = 0;;
+__IO uint32_t cardSerial = 0;
 #endif
 
 #include "string.h"
