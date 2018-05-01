@@ -40,6 +40,7 @@
 #define APDU_ANSWER_WRONG_P1_P2             	0x6B00  /* Wrong parameters P1-P2 */
 #define APDU_ANSWER_INS_NOT_SUPPORTED			0x6D00  /* Instruction (INS) not supported */
 #define APDU_ANSWER_CLA_NOT_SUPPORTED           0x6E00  /* Class (CLA) not supported */
+#define APDU_EOF           0x6282  /* End of file/record reached before reading Le bytes */
 // #endif
 
 #define APDU_ANSWER_COMMAND_CORRECT				0x9000  /* Command correct */
@@ -60,7 +61,13 @@ void CcidLocalAccessTest (void);
 
 int getAID (void);
 
-uint32_t getSerialNumber (void);
+typedef struct {
+  uint16_t smartcard_ret;
+  uint8_t execution_phase;
+  uint8_t len;
+} retCode;
+
+retCode getSerialNumber (uint8_t*, uint16_t);
 
 uint8_t getByteOfData (uint8_t x);
 

@@ -228,10 +228,8 @@ unsigned short SendAPDU (typeSmartcardTransfer * tSCT)
 
     SendTPDU (tSCT);
 
-    if (APDU_ANSWER_RECEIVE_INCORRECT == tSCT->cAPDUAnswerStatus)   // return
-        // on
-        // orror
-        // ??
+    if (APDU_ANSWER_RECEIVE_INCORRECT == tSCT->cAPDUAnswerStatus
+        && APDU_EOF != tSCT->cAPDUAnswerStatus)
     {
         return (tSCT->cAPDUAnswerStatus);
     }
@@ -242,10 +240,7 @@ unsigned short SendAPDU (typeSmartcardTransfer * tSCT)
         GenerateChainedTPDU (tSCT);
         SendTPDU (tSCT);
 
-        if ((APDU_ANSWER_CHAINED_DATA != tSCT->cAPDUAnswerStatus) &&    // return
-            // on
-            // error
-            // ??
+        if ((APDU_ANSWER_CHAINED_DATA != tSCT->cAPDUAnswerStatus) &&
             (APDU_ANSWER_COMMAND_CORRECT != tSCT->cAPDUAnswerStatus))
         {
             return (tSCT->cAPDUAnswerStatus);
@@ -889,27 +884,59 @@ int getAID (void)
     return nReturnSize;
 }
 
-uint32_t getSerialNumber (void)
+uint32_t min(const uint32_t a, const uint32_t b){
+  return a>b ? b : a;
+}
+
+uint16_t send_data_no_response(uint8_t *data, uint8_t data_length){
+  uint16_t cRet;
+  tSCT.cAPDULength = data_length;
+  memcpy ((void *) &tSCT.cAPDU, data, tSCT.cAPDULength);
+  cRet = SendAPDU (&tSCT);
+  return cRet;
+}
+
+/**
+ * Get smart card's serial number and copy it to out_serial_number.
+ * @param out_serial_number buffer to place the data, result is in ASCII
+ * @param buffer_length length of out_serial_number
+ * @return smartcard status and execution phase info
+ */
+retCode getSerialNumber (uint8_t * out_serial_number, const uint16_t buffer_length)
 {
+  InitSCTStruct (&tSCT);
+  retCode cRet = {};
 
-uint32_t serial;
+  //Select HSM App - 1
+  unsigned char cSelectHSM1[] = { 0x00, 0xA4, 0x04, 0x00, 0x0B, 0xE8, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x81, 0xC3, 0x1F, 0x02, 0x01 };
+  cRet.smartcard_ret = send_data_no_response(cSelectHSM1, sizeof(cSelectHSM1));
+  cRet.execution_phase++;
+  if (APDU_ANSWER_COMMAND_CORRECT != cRet.smartcard_ret) return cRet;
 
-uint8_t buffer[4];
+  //Select HSM App - 2
+  unsigned char cSelectHSM[] = { 0x00, 0xA4, 0x00, 0x00, 0x02, 0x2F, 0x02, 0x00 };
+  cRet.smartcard_ret = send_data_no_response (cSelectHSM, sizeof(cSelectHSM));
+  cRet.execution_phase++;
+  if (APDU_ANSWER_COMMAND_CORRECT != cRet.smartcard_ret) return cRet;
 
-    InitSCTStruct (&tSCT);
+  //Request data from smartcard
+  unsigned char getSerial[] = { 0x00, 0xB1, 0x00, 0x00, 0x00, 0x00, 0x04, 0x54, 0x02, 0x00, 0x00, 0x04, 0x00 };
+  cRet.smartcard_ret = send_data_no_response (getSerial, sizeof(getSerial));
+  cRet.execution_phase++;
+  cRet.len = tSCT.cAPDUAnswerLength;
+  if (APDU_ANSWER_COMMAND_CORRECT != cRet.smartcard_ret && APDU_EOF != cRet.smartcard_ret) return cRet;
 
-unsigned short cRet;
+  //Copy results to given buffer
+  const uint16_t SERIAL_OFFSET = 0x70;
+  const uint16_t SERIAL_LENGTH = 11;
+  if (buffer_length>SERIAL_LENGTH){
+    memset(out_serial_number, 0, buffer_length);
+    memcpy(out_serial_number, (void *) tSCT.cAPDU+SERIAL_OFFSET, min(buffer_length, SERIAL_LENGTH));
+  }
+  InitSCTStruct (&tSCT);
 
-unsigned char nReturnSize;
-
-    CcidSelectOpenPGPApp ();
-    cRet = CcidGetData (0x00, 0x4F, &nReturnSize);
-
-
-
-    return 0;
-
-
+  cRet.execution_phase++;
+  return cRet;
 }
 
 

@@ -77,7 +77,9 @@ extern uint64_t currentTime;
 
 extern uint64_t lastOATHBlinkTime;
 
+#ifdef DEVICE_NITROKEY_PRO
 extern __IO uint32_t cardSerial;
+#endif
 
 extern uint8_t blinkOATHLEDTimes;
 
