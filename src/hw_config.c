@@ -465,17 +465,18 @@ void Get_SerialNum (void)
 
     SerialString = CCID_StringSerial;
 
-
+    // Create USB descriptor's serial number using smartcard's one and prefix it with zeroes
+    // example: 000000000000000000005F11
     if (Device_Serial0 != 0)
     {
-        SerialString[48] = HexToAscii ((uint8_t) ((Device_Serial2 & 0xF0000000) >> 28));
-        SerialString[46] = HexToAscii ((uint8_t) ((Device_Serial2 & 0x0F000000) >> 24));
-        SerialString[44] = HexToAscii ((uint8_t) ((Device_Serial2 & 0x00F00000) >> 20));
-        SerialString[42] = HexToAscii ((uint8_t) ((Device_Serial2 & 0x000F0000) >> 16));
-        SerialString[40] = HexToAscii ((uint8_t) ((Device_Serial2 & 0x0000F000) >> 12));
-        SerialString[38] = HexToAscii ((uint8_t) ((Device_Serial2 & 0x00000F00) >> 8));
-        SerialString[36] = HexToAscii ((uint8_t) ((Device_Serial2 & 0x000000F0) >> 4));
-        SerialString[34] = HexToAscii ((uint8_t) ((Device_Serial2 & 0x0000000F) >> 0));
+        SerialString[34] = HexToAscii ((uint8_t) ((Device_Serial0 & 0xF0000000) >> 28));
+        SerialString[36] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x0F000000) >> 24));
+        SerialString[38] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x00F00000) >> 20));
+        SerialString[40] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x000F0000) >> 16));
+        SerialString[42] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x0000F000) >> 12));
+        SerialString[44] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x00000F00) >> 8));
+        SerialString[46] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x000000F0) >> 4));
+        SerialString[48] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x0000000F) >> 0));
 
         SerialString[32] = HexToAscii ((uint8_t) ((Device_Serial1 & 0xF0000000) >> 28));
         SerialString[30] = HexToAscii ((uint8_t) ((Device_Serial1 & 0x0F000000) >> 24));
@@ -486,14 +487,14 @@ void Get_SerialNum (void)
         SerialString[20] = HexToAscii ((uint8_t) ((Device_Serial1 & 0x000000F0) >> 4));
         SerialString[18] = HexToAscii ((uint8_t) ((Device_Serial1 & 0x0000000F) >> 0));
 
-        SerialString[2] = HexToAscii ((uint8_t) ((Device_Serial0 & 0xF0000000) >> 28));
-        SerialString[4] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x0F000000) >> 24));
-        SerialString[6] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x00F00000) >> 20));
-        SerialString[8] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x000F0000) >> 16));
-        SerialString[10] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x0000F000) >> 12));
-        SerialString[12] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x00000F00) >> 8));
-        SerialString[14] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x000000F0) >> 4));
-        SerialString[16] = HexToAscii ((uint8_t) ((Device_Serial0 & 0x0000000F) >> 0));
+        SerialString[2]  = HexToAscii ((uint8_t) ((Device_Serial2 & 0xF0000000) >> 28));
+        SerialString[4]  = HexToAscii ((uint8_t) ((Device_Serial2 & 0x0F000000) >> 24));
+        SerialString[6]  = HexToAscii ((uint8_t) ((Device_Serial2 & 0x00F00000) >> 20));
+        SerialString[8]  = HexToAscii ((uint8_t) ((Device_Serial2 & 0x000F0000) >> 16));
+        SerialString[10] = HexToAscii ((uint8_t) ((Device_Serial2 & 0x0000F000) >> 12));
+        SerialString[12] = HexToAscii ((uint8_t) ((Device_Serial2 & 0x00000F00) >> 8));
+        SerialString[14] = HexToAscii ((uint8_t) ((Device_Serial2 & 0x000000F0) >> 4));
+        SerialString[16] = HexToAscii ((uint8_t) ((Device_Serial2 & 0x0000000F) >> 0));
     }
 }
 
