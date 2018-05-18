@@ -32,6 +32,19 @@
 #define LED_ON_INTERVAL 2000
 #define LED_OFF_INTERVAL 500
 
+#define VERIFY_GREEN_LED_ON_INTERVAL 375
+#define VERIFY_GREEN_LED_OFF_INTERVAL 375
+#define VERIFY_RED_LED_ON_INTERVAL (VERIFY_GREEN_LED_ON_INTERVAL/2)
+#define VERIFY_RED_LED_OFF_INTERVAL (VERIFY_GREEN_LED_OFF_INTERVAL/2)
+
+typedef struct  {
+  uint64_t lastBlinkTime;
+  uint16_t ledOnInterval;
+  uint16_t ledOffInterval;
+  void (*ledSwitcher)(FunctionalState);
+  uint8_t timesLeft;
+} Blink;
+
 /* Exported functions ------------------------------------------------------- */
 void Set_System (void);
 
@@ -57,7 +70,11 @@ void SwitchSmartcardLED (FunctionalState NewState);
 
 void SwitchOATHLED (FunctionalState NewState);
 
+
+void ClearAllBlinking();
 void StartBlinkingOATHLED (uint8_t times);
+void VerifyBlinkError(uint8_t times);
+void VerifyBlinkCorrect(uint8_t times);
 
 void DisableFirmwareDownloadPort (void);
 
@@ -74,11 +91,11 @@ uint8_t ReadButton (void);
 /* External variables -------------------------------------------------------- */
 
 extern uint64_t currentTime;
-
-extern uint64_t lastOATHBlinkTime;
-
 extern __IO uint32_t cardSerial;
+extern Blink blinkOATH;
+extern Blink blinkVerifyError;
+extern Blink blinkVerifyCorrect;
+extern void Blink_init_all();
 
-extern uint8_t blinkOATHLEDTimes;
 
 #endif  /*__HW_CONFIG_H*/

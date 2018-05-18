@@ -44,7 +44,8 @@
 #define CMD_FACTORY_RESET                   0x13
 #define CMD_CHANGE_USER_PIN                 0x14
 #define CMD_CHANGE_ADMIN_PIN                0x15
-#define CMD_SEND_OTP_DATA                       0x17
+#define CMD_SEND_OTP_DATA                   0x17
+#define CMD_VERIFY_OTP_CODE                 0x18
 
 
 #define CMD_GET_PW_SAFE_SLOT_STATUS       0x60
@@ -177,6 +178,8 @@ uint8_t cmd_read_slot (uint8_t * report, uint8_t * output);
 
 uint8_t cmd_get_code (uint8_t * report, uint8_t * output);
 
+uint8_t cmd_verify_code(uint8_t *report, uint8_t *output);
+
 uint8_t cmd_write_config (uint8_t * report, uint8_t * output);
 
 uint8_t cmd_erase_slot (uint8_t * report, uint8_t * output);
@@ -271,3 +274,9 @@ typedef struct {
     uint8_t id; //multiple reports
     uint8_t data[30]; //data, does not need null termination
 } __packed cmd_send_OTP_data;
+
+
+typedef struct {
+  uint32_t otp_code_to_verify;
+} __packed cmd_query_verify_code;
+

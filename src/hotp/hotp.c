@@ -32,7 +32,8 @@ const int SECRET_LENGTH = SECRET_LENGTH_DEFINE;
 
 __I uint32_t hotp_slot_counters[NUMBER_OF_HOTP_SLOTS] = { SLOT1_COUNTER_ADDRESS,
     SLOT2_COUNTER_ADDRESS,
-    SLOT3_COUNTER_ADDRESS
+    SLOT3_COUNTER_ADDRESS,
+    SLOT4_COUNTER_ADDRESS,
 };
 
 uint8_t page_buffer[SLOT_PAGE_SIZE];
@@ -43,7 +44,7 @@ uint32_t get_HOTP_slot_offset(int slot_count){
 }
 
 uint32_t get_TOTP_slot_offset(int slot_count){
-    return SLOTS_PAGE1_ADDRESS + get_slot_offset(slot_count + 3);
+    return SLOTS_PAGE1_ADDRESS + get_slot_offset(slot_count + NUMBER_OF_HOTP_SLOTS);
 }
 /*
 78 per slot
@@ -414,6 +415,46 @@ FLASH_Status err = FLASH_COMPLETE;
     return err; // no error
 }
 
+int validate_code_from_hotp_slot(uint8_t slot_number, uint32_t code_to_verify) {
+  const int RET_GENERAL_ERROR = -1;
+  const int RET_CODE_NOT_VALID = -2;
+
+  uint8_t generated_hotp_code_length = 6;
+  FLASH_Status err;
+  uint32_t calculated_code;
+
+  if (slot_number >= NUMBER_OF_HOTP_SLOTS)
+    return RET_GENERAL_ERROR;
+
+  OTP_slot * hotp_slot = ((OTP_slot *) get_HOTP_slot_offset(slot_number));
+  if (hotp_slot->type == SLOT_TYPE_UNPROGRAMMED) // unprogrammed slot_number
+    return RET_GENERAL_ERROR;
+
+  if (hotp_slot->use_8_digits)
+    generated_hotp_code_length = 8;
+
+  const uint64_t counter = get_counter_value (hotp_slot_counters[slot_number]);
+
+  int counter_offset = 0;
+  const int calculate_ahead_values = 10;
+  for (counter_offset = 0; counter_offset < calculate_ahead_values; counter_offset++){
+    calculated_code = get_hotp_value (counter+counter_offset, hotp_slot->secret, SECRET_LENGTH, generated_hotp_code_length);
+    if (calculated_code == code_to_verify) break;
+  }
+
+  const bool code_found = counter_offset < calculate_ahead_values;
+  if(code_found){
+    //increment the counter for the lacking values, plus one to be ready for next validation
+    for (int i=0; i<counter_offset+1; i++){
+      err = (FLASH_Status) increment_counter_page (hotp_slot_counters[slot_number]);
+      if (err != FLASH_COMPLETE) return RET_GENERAL_ERROR;
+    }
+    return counter_offset;
+  }
+
+  return RET_CODE_NOT_VALID;
+}
+
 
 uint32_t get_code_from_hotp_slot (uint8_t slot)
 {
@@ -482,9 +523,7 @@ void erase_counter (uint8_t slot)
 
 void write_to_slot(OTP_slot *new_slot_data, uint32_t offset, uint16_t len)
 {
-   uint8_t page_buffer[SLOT_PAGE_SIZE];
-
-FLASH_Status err = FLASH_COMPLETE;
+  FLASH_Status err = FLASH_COMPLETE;
 
     // choose the proper slot page
   uint32_t current_slot_address;

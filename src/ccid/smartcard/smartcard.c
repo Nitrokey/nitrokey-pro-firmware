@@ -1369,7 +1369,7 @@ int CRD_SendCommand (unsigned char* pTransmitBuffer, unsigned int nCommandSize, 
         }
     }
 
-    SwitchSmartcardLED (DISABLE);
+    SwitchSmartcardLED (ENABLE);
 
 
 
@@ -1381,7 +1381,7 @@ int CRD_SendCommand (unsigned char* pTransmitBuffer, unsigned int nCommandSize, 
         if (-1 != nRecData)
         {
             nRecData = 33;
-            SwitchSmartcardLED (ENABLE);
+            SwitchSmartcardLED (DISABLE);
             return (nRecData);
         }
         // when INS 0x20 is send, after 4 byte the germalto card (only?) send
@@ -1451,7 +1451,7 @@ int CRD_SendCommand (unsigned char* pTransmitBuffer, unsigned int nCommandSize, 
         if ((1 == i) && (SC_GET_WRONG_STATUS == nStatus))   // Get Error code
         {
             *nReceivedAnswerSize = 2;
-            SwitchSmartcardLED (ENABLE);
+            SwitchSmartcardLED (DISABLE);
             return (nStatus);
         }
     }
@@ -1470,7 +1470,7 @@ int CRD_SendCommand (unsigned char* pTransmitBuffer, unsigned int nCommandSize, 
         *nReceivedAnswerSize = i;
     }
 
-    SwitchSmartcardLED (ENABLE);
+    SwitchSmartcardLED (DISABLE);
 
     if (0 == *nReceivedAnswerSize)
     {
@@ -1640,6 +1640,6 @@ void SmartCardInitInterface (void)
     Delay_noUSBCheck (40);
 
     /* Smartcard is ready to work */
-    SwitchSmartcardLED (ENABLE);
+    SwitchSmartcardLED (DISABLE);
 
 }

@@ -43,9 +43,9 @@
 /* Private variables --------------------------------------------------------- */
 
 /* Extern variables ---------------------------------------------------------- */
-uint8_t blinkOATHLEDTimes = 0;
-
-uint64_t lastOATHBlinkTime = 0;
+Blink blinkOATH;
+Blink blinkVerifyError;
+Blink blinkVerifyCorrect;
 
 /* Private function prototypes ----------------------------------------------- */
 void RCC_Config (void);
@@ -216,7 +216,7 @@ uint8_t ReadButton (void)
 void SwitchSmartcardLED (FunctionalState NewState)
 {
 
-    if (NewState == ENABLE)
+    if (NewState == DISABLE)
     {
         GPIO_ResetBits (SMARTCARD_LED_PIN_PORT, SMARTCARD_LED_PIN);
     }
@@ -247,11 +247,29 @@ void SwitchOATHLED (FunctionalState NewState)
 
 }
 
+void ClearAllBlinking(){
+    Blink_init_all();
+    SwitchOATHLED(DISABLE);
+    SwitchSmartcardLED(DISABLE);
+}
 
 void StartBlinkingOATHLED (uint8_t times)
 {
-    blinkOATHLEDTimes += times;
+    blinkOATH.timesLeft = times;
+}
 
+void VerifyBlinkError(uint8_t times)
+{
+    blinkVerifyError.timesLeft = times;
+}
+
+void VerifyBlinkCorrect(uint8_t times)
+{
+    blinkVerifyCorrect.timesLeft = times;
+}
+
+void init_blinking(){
+    Blink_init_all();
 }
 
 /*******************************************************************************
@@ -272,6 +290,7 @@ void Set_System (void)
     /* Disable firmware download port */
     DisableFirmwareDownloadPort ();
 
+    init_blinking();
     EnableSmartcardLED ();
     EnableOATHLED ();
 

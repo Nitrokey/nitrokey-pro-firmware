@@ -72,10 +72,10 @@ uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
   memset(output, 0, KEYBOARD_FEATURE_COUNT);
   output[OUTPUT_CMD_TYPE_OFFSET] = cmd_type;
 
-  output[OUTPUT_CMD_CRC_OFFSET] = calculated_crc32 & 0xFF;
-  output[OUTPUT_CMD_CRC_OFFSET + 1] = (calculated_crc32 >> 8) & 0xFF;
-  output[OUTPUT_CMD_CRC_OFFSET + 2] = (calculated_crc32 >> 16) & 0xFF;
-  output[OUTPUT_CMD_CRC_OFFSET + 3] = (calculated_crc32 >> 24) & 0xFF;
+  output[OUTPUT_CMD_CRC_OFFSET] = (uint8_t) (calculated_crc32 & 0xFF);
+  output[OUTPUT_CMD_CRC_OFFSET + 1] = (uint8_t) ((calculated_crc32 >> 8) & 0xFF);
+  output[OUTPUT_CMD_CRC_OFFSET + 2] = (uint8_t) ((calculated_crc32 >> 16) & 0xFF);
+  output[OUTPUT_CMD_CRC_OFFSET + 3] = (uint8_t) ((calculated_crc32 >> 24) & 0xFF);
 
   if (calculated_crc32 == received_crc32) {
 
@@ -132,6 +132,10 @@ uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
 
       case CMD_READ_SLOT:
         cmd_read_slot(report, output);
+        break;
+
+      case CMD_VERIFY_OTP_CODE:
+        cmd_verify_code(report, output);
         break;
 
       case CMD_GET_CODE: {
@@ -423,17 +427,47 @@ uint8_t cmd_read_slot(uint8_t *report, uint8_t *output) {
   return 0;
 }
 
+void wink_correct(bool correct){
+  ClearAllBlinking();
+
+  if (correct){
+    VerifyBlinkCorrect(10);
+  } else {
+    VerifyBlinkError(10);
+  }
+}
+
+uint8_t cmd_verify_code(uint8_t *report, uint8_t *output) {
+  const uint8_t HOTP_VERIFY_SLOT_NO = 3;
+  uint8_t slot_no = HOTP_VERIFY_SLOT_NO;
+  cmd_query_verify_code* input = (cmd_query_verify_code*) (report+1);
+  int result = 0;
+
+  slot_no = slot_no & 0x0F;
+  OTP_slot* otp_slot = (OTP_slot *) get_HOTP_slot_offset(slot_no);
+  bool is_programmed = (bool) (otp_slot->type != 0xFF);
+
+  if (!is_programmed) {
+    output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_SLOT_NOT_PROGRAMMED;
+    return 1;
+  }
+  result = validate_code_from_hotp_slot(slot_no, input->otp_code_to_verify);
+
+  bool code_correct = (bool) (result >= 0);
+  wink_correct(code_correct);
+  output[OUTPUT_CMD_RESULT_OFFSET] = (uint8_t) (code_correct ? 1 : 0);
+  output[OUTPUT_CMD_RESULT_OFFSET+1] = (uint8_t) result;
+
+  return 0;
+}
 
 uint8_t cmd_get_code(uint8_t *report, uint8_t *output) {
-
   uint64_t challenge = getu64(report + CMD_GC_CHALLENGE_OFFSET);
-
   uint32_t result = 0;
-
-
   uint8_t slot_no = report[CMD_GC_SLOT_NUMBER_OFFSET];
 
-  if (is_HOTP_slot_number(slot_no)) {   // HOTP slot
+  const bool is_HOTP_reserved = (slot_no & 0x0F) == NUMBER_OF_HOTP_SLOTS - 1; //last one is reserved
+  if (is_HOTP_slot_number(slot_no) && !is_HOTP_reserved) {   // HOTP slot
     slot_no = slot_no & 0x0F;
     OTP_slot* otp_slot = (OTP_slot *) get_HOTP_slot_offset(slot_no);
     bool is_programmed = otp_slot->type != 0xFF;
@@ -510,14 +544,15 @@ uint8_t cmd_erase_slot(uint8_t *report, uint8_t *output) {
 }
 
 uint8_t cmd_first_authenticate(uint8_t *report, uint8_t *output) {
-
   uint8_t res = 1;
+  uint8_t card_password[26]; //must be a C string
 
-  uint8_t card_password[26];
+  //invalidate current admin password
+  memset(temp_password, 0, sizeof(temp_password));
+  temp_admin_password_set = FALSE;
 
-  memset(card_password, 0, 26);
   memcpy(card_password, report + 1, 25);
-
+  card_password[sizeof(card_password)-1] = 0;
   res = cardAuthenticate(card_password);
   memset(card_password, 0, sizeof(card_password));
 
@@ -525,7 +560,7 @@ uint8_t cmd_first_authenticate(uint8_t *report, uint8_t *output) {
     memcpy(temp_password, report + 26, 25);
     temp_admin_password_set = TRUE;
     getAID();
-    return 0;
+    return 0;   //success
   } else {
     output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
     return 1;   // wrong card password
@@ -533,23 +568,24 @@ uint8_t cmd_first_authenticate(uint8_t *report, uint8_t *output) {
 }
 
 uint8_t cmd_user_authenticate(uint8_t *report, uint8_t *output) {
-
   uint8_t res = 1;
+  uint8_t user_password[26]; //must be a C string
 
-  uint8_t user_password[26];
+  //invalidate current user password
+  memset(temp_user_password, 0, sizeof(temp_user_password));
+  temp_user_password_set = FALSE;
 
-  memset(user_password, 0, 26);
   memcpy(user_password, report + 1, 25);
-
+  user_password[sizeof(user_password)-1] = 0;
   res = userAuthenticate(user_password);
   memset(user_password, 0, sizeof(user_password));
 
-  if (res == 0) {
+  if (res == 0) { //correct User PIN
     memcpy(temp_user_password, report + 26, 25);
     temp_user_password_set = TRUE;
     getAID();
-    return 0;
-  } else {
+    return 0;   //successfull authentication
+  } else {      //incorrect User PIN
     output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
     return 1;   // wrong card password
   }

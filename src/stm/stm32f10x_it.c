@@ -235,7 +235,7 @@ void SDIO_IRQHandler (void)
 // =============================================================================
 // TIM2 Interrupt Handler
 // =============================================================================
-
+uint8_t Blink_process(Blink *blink);
 
 void TIM2_IRQHandler (void)
 {
@@ -244,30 +244,49 @@ void TIM2_IRQHandler (void)
         TIM2->SR &= ~TIM_SR_UIF;    // clear UIF flag
         currentTime++;
 
-        if (blinkOATHLEDTimes > 0)
-        {
-            if (blinkOATHLEDTimes & 1)
-            {   // time to turn off the led
-                if (currentTime >= (lastOATHBlinkTime + LED_ON_INTERVAL))
-                {
-                    SwitchOATHLED (DISABLE);
-                    lastOATHBlinkTime = currentTime;
-                    blinkOATHLEDTimes--;
-                }
+        int blink_verify = 0;
+        blink_verify += Blink_process(&blinkVerifyError);
+        blink_verify += Blink_process(&blinkVerifyCorrect);
 
-            }
-            else
-            {
-                if (currentTime >= (lastOATHBlinkTime + LED_OFF_INTERVAL))
-                {
-                    SwitchOATHLED (ENABLE);
-                    lastOATHBlinkTime = currentTime;
-                    blinkOATHLEDTimes--;
-                }
-
-            }
-
-        }
+        if (blink_verify == 0)
+          Blink_process(&blinkOATH); //usual blinking with green LED
     }
+}
 
+
+uint8_t Blink_process(Blink *blink){
+  if (blink->timesLeft <= 0) {
+    return 0;
+  }
+  if (blink->timesLeft % 2 == 1) { // time to turn off the led
+    if (currentTime >= (blink->lastBlinkTime + blink->ledOnInterval)){
+      blink->ledSwitcher(DISABLE);
+      blink->lastBlinkTime = currentTime;
+      blink->timesLeft--;
+    }
+  }else{
+    if (currentTime >= (blink->lastBlinkTime + blink->ledOffInterval)){
+      blink->ledSwitcher(ENABLE);
+      blink->lastBlinkTime = currentTime;
+      blink->timesLeft--;
+    }
+  }
+  return blink->timesLeft;
+}
+
+void Blink_init(Blink* blink, int ledon, int ledoff, void (*ledSwitcher)(FunctionalState)) {
+  blink->lastBlinkTime = 0;
+  blink->timesLeft = 0;
+  blink->ledOnInterval = ledon;
+  blink->ledOffInterval = ledoff;
+  blink->ledSwitcher = ledSwitcher;
+}
+
+void Blink_init_all(){
+  Blink_init(&blinkOATH, LED_ON_INTERVAL, LED_OFF_INTERVAL, SwitchOATHLED);
+
+  Blink_init(&blinkVerifyError, VERIFY_RED_LED_ON_INTERVAL,
+             VERIFY_RED_LED_OFF_INTERVAL, SwitchSmartcardLED);
+  Blink_init(&blinkVerifyCorrect, VERIFY_GREEN_LED_ON_INTERVAL,
+             VERIFY_GREEN_LED_OFF_INTERVAL, SwitchOATHLED);
 }

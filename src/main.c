@@ -48,12 +48,9 @@ __IO uint8_t device_status = STATUS_READY;
 
 jmp_buf jmpRestartUSB;          // reentrypoint for USB device change
 
-void Test1(void);
-
-void test2(void);
-
 void sendHOTPCodeForSlot(uint8_t slot_number);
 
+#ifdef COMPILE_TEST
 /*******************************************************************************
 
   Test2	- For pin toggle
@@ -89,7 +86,7 @@ void Test1(void) {
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(GPIOB, &GPIO_InitStructure);
 }
-
+#endif
 
 /*******************************************************************************
 

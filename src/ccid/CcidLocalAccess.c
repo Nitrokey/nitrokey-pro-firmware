@@ -889,13 +889,12 @@ uint8_t getByteOfData (uint8_t x)
 
 uint8_t cardAuthenticate (uint8_t * password)
 {
+    unsigned short cRet;
     InitSCTStruct (&tSCT);
 
-unsigned short cRet;
-
     CcidSelectOpenPGPApp ();
-    cRet = CcidVerifyPin (3, password);
-
+    const int VERIFY_ADMIN_PIN = 3;
+    cRet = CcidVerifyPin (VERIFY_ADMIN_PIN, password);
 
     if (APDU_ANSWER_COMMAND_CORRECT != cRet)
     {
@@ -907,20 +906,19 @@ unsigned short cRet;
 
 uint8_t userAuthenticate (uint8_t * password)
 {
+    unsigned short cRet;
     InitSCTStruct (&tSCT);
 
-unsigned short cRet;
-
     CcidSelectOpenPGPApp ();
-    cRet = CcidVerifyPin (1, password);
-
+    const int VERIFY_USER_PIN = 1;
+    cRet = CcidVerifyPin (VERIFY_USER_PIN, password);
 
     if (APDU_ANSWER_COMMAND_CORRECT != cRet)
     {
-        return 1;
+        return 1; //incorrect
     }
 
-    return 0;
+    return 0; //correct
 }
 
 uint8_t factoryReset (uint8_t * password)

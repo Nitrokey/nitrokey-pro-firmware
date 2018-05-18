@@ -20,8 +20,9 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdbool.h>
 
-#define NUMBER_OF_HOTP_SLOTS 3
+#define NUMBER_OF_HOTP_SLOTS 4
 #define NUMBER_OF_TOTP_SLOTS 15
 
 // Flash memory pages:
@@ -31,6 +32,7 @@
 // 0x801F000 <- slot 1 counter
 // 0x801F400 <- slot 2 counter
 // 0x801F800 <- slot 3 counter
+// 0x8014000 <- slot 4 counter (attempt)
 // 0x801FC00 <- backup page
 
 
@@ -54,13 +56,24 @@
 #define SLOT_PAGE_SIZE 1000 // less than 2 actual page, so we can copy it to
                             // backup pages with additional info
 
+//Highest address for flashing is currently 0x0800c688 (less than 50 kB; GCC 4.9.2, size optimization)
+//Lets start data at 80kB+
+#define FLASH_MEMORY_BEGIN 0x8014000
+//Lowest region in use found in the firmware - PWS, src/inc/password_safe.h:42
+#define FLASH_MEMORY_LOWEST 0x801C000
+
+
 #define TIME_ADDRESS 0x801E400
 #define SLOTS_PAGE1_ADDRESS 0x801E800
 #define SLOTS_PAGE2_ADDRESS 0x801EC00
 #define SLOT1_COUNTER_ADDRESS 0x801F000
 #define SLOT2_COUNTER_ADDRESS 0x801F400
 #define SLOT3_COUNTER_ADDRESS 0x801F800
+#define SLOT4_COUNTER_ADDRESS FLASH_MEMORY_BEGIN
 #define BACKUP_PAGE_ADDRESS 0x801FC00
+
+//Flash size is 128kB, which defines as:
+#define FLASH_MEMORY_LIMIT 0x8020000
 
 #define BACKUP_ADDRESS_OFFSET 1000
 #define BACKUP_LENGTH_OFFSET 1004
@@ -72,12 +85,21 @@
 #define __packed __attribute__((__packed__))
 #define SECRET_LENGTH_DEFINE 40
 
+static const uint8_t SLOT_TYPE_UNPROGRAMMED = 0xFF;
+
 typedef struct {
-    uint8_t type; //'H' - HOTP, 'T' - TOTP, FF - not programmed
+    uint8_t type; //'H' - HOTP, 'T' - TOTP, 0xFF - not programmed
     uint8_t slot_number;
     uint8_t name[15];
     uint8_t secret[SECRET_LENGTH_DEFINE];
-    uint8_t config;
+    union {
+      uint8_t config;
+      struct {
+        bool use_8_digits   : 1;
+        bool use_enter      : 1;
+        bool use_tokenID    : 1;
+      };
+    };
     uint8_t token_id[13];
     uint64_t interval_or_counter;
 } __packed OTP_slot;
@@ -106,6 +128,7 @@ uint8_t set_time_value (uint32_t time);
 
 uint8_t set_counter_value (uint32_t addr, uint64_t counter);
 
+int validate_code_from_hotp_slot(uint8_t slot_number, uint32_t code_to_verify);
 uint32_t get_code_from_hotp_slot (uint8_t slot);
 
 uint8_t increment_counter_page (uint32_t addr);
