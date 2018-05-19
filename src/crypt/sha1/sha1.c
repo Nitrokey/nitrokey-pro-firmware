@@ -58,17 +58,17 @@ static const uint32_t change_endian32 (uint32_t x)
 
 
 /* three SHA-1 inner functions */
-uint32_t ch (uint32_t x, uint32_t y, uint32_t z)
+const uint32_t ch (uint32_t x, uint32_t y, uint32_t z)
 {
     return ((x & y) ^ ((~x) & z));
 }
 
-uint32_t maj (uint32_t x, uint32_t y, uint32_t z)
+const uint32_t maj (uint32_t x, uint32_t y, uint32_t z)
 {
     return ((x & y) ^ (x & z) ^ (y & z));
 }
 
-uint32_t parity (uint32_t x, uint32_t y, uint32_t z)
+const uint32_t parity (uint32_t x, uint32_t y, uint32_t z)
 {
     return ((x ^ y) ^ z);
 }
