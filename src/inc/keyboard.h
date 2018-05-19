@@ -103,7 +103,7 @@ void sendChar (uint8_t chr);
 
 void sendKeys (uint8_t * buffer);
 
-void sendString (char* string, uint8_t len);
+void sendString (uint8_t * string, uint8_t len);
 
 void sendNumber (uint32_t number);
 

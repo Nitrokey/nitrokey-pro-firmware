@@ -145,7 +145,7 @@ uint8_t i;
 
 }
 
-void sendString (char* string, uint8_t len)
+void sendString (uint8_t * string, uint8_t len)
 {
     uint8_t i;
 

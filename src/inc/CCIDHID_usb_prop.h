@@ -55,7 +55,7 @@ extern uint8_t HID_GetReport_Value_tmp[KEYBOARD_FEATURE_COUNT];
 #define USB_CCID_Storage_GetInterface              NOP_Process
 #define USB_CCID_Storage_SetInterface              NOP_Process
 #define USB_CCID_Storage_GetStatus                 NOP_Process
-#define USB_CCID_Storage_ClearFeature              NOP_Process  //
+#define USB_CCID_Storage_ClearFeature              NOP_Process
 #define USB_CCID_Storage_SetEndPointFeature        NOP_Process
 #define USB_CCID_Storage_SetDeviceFeature          NOP_Process
 // #define USB_CCID_Storage_SetDeviceAddress NOP_Process //
@@ -78,8 +78,6 @@ void USB_CCID_init (void);
 void USB_CCID_Reset (void);
 
 void USB_CCID_Storage_SetConfiguration (void);
-
-void USB_CCID_Storage_ClearFeature (void);
 
 void USB_CCID_Storage_SetDeviceAddress (void);
 
