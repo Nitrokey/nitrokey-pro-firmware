@@ -89,4 +89,71 @@ uint8_t testScAesKey (int nLen, unsigned char* pcKey);
 uint8_t testSendUserPW2 (unsigned char* pcPW);
 
 unsigned int CcidReset (void);
+
+
+
+#define CCID_TRANSFER_BUFFER_MAX    256
+
+#define CCID_TPDU_OVERHEAD          4
+#define CCID_TPDU_PROLOG            3
+#define CCID_TPDU_ANSWER_OVERHEAD   6
+
+
+#define CCID_TPDU_NAD           0
+#define CCID_TPDU_PCD           1
+#define CCID_TPDU_LENGTH        2
+#define CCID_TPDU_DATASTART     3
+
+#define CCID_TPDU_R_BLOCK_FLAG          0x80
+#define CCID_TPDU_R_BLOCK_SEQUENCE_FLAG 0x10
+#define CCID_TPDU_CHAINING_FLAG         0x20
+
+
+#define CCID_CLA  0
+#define CCID_INS  1
+#define CCID_P1   2
+#define CCID_P2   3
+#define CCID_LC   4
+#define CCID_DATA 5
+
+
+typedef struct
+{
+  unsigned char cAPDULength;
+  unsigned short cAPDUAnswerStatus;
+  unsigned char cAPDUAnswerLength;
+  unsigned char cTPDUSequence;
+  unsigned char cTPDULength;
+  unsigned char cAPDU[CCID_TRANSFER_BUFFER_MAX];
+  unsigned char cTPDU[CCID_TRANSFER_BUFFER_MAX + CCID_TPDU_OVERHEAD];
+} typeSmartcardTransfer;
+
+void InitSCTStruct (typeSmartcardTransfer * _tSCT);
+unsigned char GenerateCRC (unsigned char* pData, unsigned char cLength);
+void GenerateTPDU (typeSmartcardTransfer * _tSCT);
+void GenerateChainedTPDU (typeSmartcardTransfer * _tSCT);
+unsigned short SendTPDU (typeSmartcardTransfer * _tSCT);
+unsigned short SendAPDU (typeSmartcardTransfer * _tSCT);
+
+
+
+unsigned short CcidGetData (unsigned char cP1, unsigned char cP2, unsigned char* nRetSize);
+unsigned short CcidSelectOpenPGPApp (void);
+unsigned short CcidChangePin (unsigned char cPinNr, const char* szPin, const char* szNewPin);
+unsigned short CcidVerifyPin (unsigned char cPinNr, const char* szPin);
+unsigned short CcidUnblockPin (unsigned char* new_pin);
+unsigned short CcidDecipher (unsigned char* nRetSize);
+unsigned short CcidGetChallenge (int nReceiveLength, unsigned char* nReceiveData);
+unsigned short CcidPutAesKey (unsigned int cKeyLen, unsigned char* pcAES_Key);
+int CcidAesDecSub (int nSendLength, unsigned char* cSendData, int nReceiveLength, unsigned char* cReceiveData);
+int CcidAesDec (int nSendLength, unsigned char* cSendData, int nReceiveLength, unsigned char* cReceiveData);
+uint8_t factoryReset (uint8_t * password);
+
+
+
+
+
+
+
+
 #endif /* CCID_LOCAL_ACCESS */
