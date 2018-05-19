@@ -276,20 +276,26 @@ unsigned short CcidGetData (unsigned char cP1, unsigned char cP2, unsigned char*
 
 *******************************************************************************/
 
-unsigned short CcidChangePin (unsigned char cPinNr, const char* szPin, const char* szNewPin)
+unsigned short CcidChangePin (unsigned char cPinNr, const uint8_t * szPin, const uint8_t * szNewPin)
 {
     unsigned short cRet;
+    const uint8_t maximum_PIN_length = CCID_MAX_PIN_LENGTH;
+    const uint8_t pin_len_old = (const uint8_t) strnlen((const char *) szPin, maximum_PIN_length);
+    const uint8_t pin_len_new = (const uint8_t) strnlen((const char *) szNewPin, maximum_PIN_length);
 
-    tSCT.cAPDULength = strlen (szPin) + strlen (szNewPin);
+    const uint16_t total_pin_length = pin_len_old + pin_len_new;
+    if (total_pin_length>CCID_MAX_PIN_LENGTH) return 0xFFFF;
+
+    tSCT.cAPDULength = (uint8_t) total_pin_length;
 
     tSCT.cAPDU[CCID_CLA] = 0x00;
     tSCT.cAPDU[CCID_INS] = 0x24;
     tSCT.cAPDU[CCID_P1] = 0x00;
-    tSCT.cAPDU[CCID_P2] = 0x80 + cPinNr;
+    tSCT.cAPDU[CCID_P2] = (unsigned char) (0x80 + cPinNr);
     tSCT.cAPDU[CCID_LC] = tSCT.cAPDULength;
 
-    strcpy ((char *) &tSCT.cAPDU[CCID_DATA], szPin);
-    strcpy ((char *) &tSCT.cAPDU[CCID_DATA] + strlen (szPin), szNewPin);
+    strncpy ((char *) &tSCT.cAPDU[CCID_DATA], (const char *) szPin, pin_len_old);
+    strncpy ((char *) &tSCT.cAPDU[CCID_DATA] + pin_len_old, (const char *) szNewPin, pin_len_new);
 
     tSCT.cAPDULength += CCID_DATA;
 

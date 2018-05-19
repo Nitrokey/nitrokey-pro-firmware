@@ -138,7 +138,7 @@ unsigned short SendAPDU (typeSmartcardTransfer * _tSCT);
 
 unsigned short CcidGetData (unsigned char cP1, unsigned char cP2, unsigned char* nRetSize);
 unsigned short CcidSelectOpenPGPApp (void);
-unsigned short CcidChangePin (unsigned char cPinNr, const char* szPin, const char* szNewPin);
+unsigned short CcidChangePin (unsigned char cPinNr, const uint8_t* szPin, const uint8_t* szNewPin);
 unsigned short CcidVerifyPin (unsigned char cPinNr, const uint8_t* szPin);
 unsigned short CcidUnblockPin(uint8_t *new_pin);
 unsigned short CcidDecipher (unsigned char* nRetSize);
