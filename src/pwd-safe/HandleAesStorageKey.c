@@ -26,6 +26,7 @@
 
 // #include <stdio.h>
 #include <stdlib.h>
+#include <password_safe.h>
 #include "string.h"
 #include "CcidLocalAccess.h"
 #include "report_protocol.h"
@@ -500,6 +501,7 @@ u32* p_pu32;
 
 
 *******************************************************************************/
+#ifdef STORAGE
 u8 StartupCheck_u8 (void)
 {
 u8 CheckStatus_u8 = TRUE;
@@ -529,6 +531,7 @@ u8 CheckStatus_u8 = TRUE;
 
     return (FALSE);
 }
+#endif
 
 /*******************************************************************************
 
@@ -539,7 +542,7 @@ u8 CheckStatus_u8 = TRUE;
   16.08.13  RB              First review
 
 *******************************************************************************/
-
+#ifdef COMPILE_TESTS
 void HighLevelTests (unsigned char nParamsGet_u8, unsigned char CMD_u8, unsigned int Param_u32, unsigned char* String_pu8)
 {
     u8 Buffer_au8[32];
@@ -600,3 +603,4 @@ void HighLevelTests (unsigned char nParamsGet_u8, unsigned char CMD_u8, unsigned
             break;
     }
 }
+#endif

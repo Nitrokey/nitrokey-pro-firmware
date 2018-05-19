@@ -18,6 +18,7 @@
  * along with Nitrokey. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#pragma once
 
 /* Keyboard usage values, see usb.org's HID-usage-tables document, chapter 10 Keyboard/Keypad Page for more codes. */
 #define MOD_CONTROL_LEFT    (1<<0)
@@ -92,6 +93,9 @@
 #define KEY_RIGHT    79
 
 #define KEY_TAB      43
+
+#include <stddef.h>
+#include <stdint.h>
 
 extern volatile uint8_t numLockClicked;
 

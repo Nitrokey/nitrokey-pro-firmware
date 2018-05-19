@@ -43,5 +43,10 @@ void HighLevelTests (unsigned char nParamsGet_u8, unsigned char CMD_u8, unsigned
 
 u32 BuildNewAesMasterKey_u32 (u8 * AdminPW_pu8, u8 * MasterKey_pu8);
 
+u32 BuildNewAesStorageKey_u32 (u8 * MasterKey_pu8);
+u32 BuildNewXorPattern_u32 (void);
+u32 XorAesKey_u32 (u8 * AesKey_au8);
+
+
 
 #endif /* HANDLE_AES_STORAGE_KEY_H */

@@ -221,10 +221,12 @@ uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
       case CMD_PW_SAFE_INIT_KEY:
         cmd_getPasswordSafeInitKey(report, output);
         break;
+
+#ifdef PWS_SEND_DATA
       case CMD_PW_SAFE_SEND_DATA:
         cmd_getPasswordSafeSendData(report, output);
         break;
-
+#endif // PWS_SEND_DATA
 
       case CMD_LOCK_DEVICE:
         cmd_lockDevice(report, output);
@@ -243,7 +245,7 @@ uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
       case GET_PRO_DEBUG:
         cmd_getProDebug(report, output);
         break;
-#endif
+#endif // ADD_DEBUG_COMMANDS
 
       case CMD_CHANGE_USER_PIN:
         cmd_change_user_pin(report, output);
@@ -868,6 +870,7 @@ uint8_t cmd_getPasswordSafeInitKey(uint8_t *report, uint8_t *output) {
   return (0);
 }
 
+#ifdef PWS_SEND_DATA
 uint8_t cmd_getPasswordSafeSendData(uint8_t *report, uint8_t *output) {
   u32 Ret_u32;
 
@@ -880,6 +883,7 @@ uint8_t cmd_getPasswordSafeSendData(uint8_t *report, uint8_t *output) {
 
   return (0);
 }
+#endif // PWS_SEND_DATA
 
 uint8_t cmd_detectSmartCardAES(uint8_t *report, uint8_t *output) {
   unsigned short ret;
