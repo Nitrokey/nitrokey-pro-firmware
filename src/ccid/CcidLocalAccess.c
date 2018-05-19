@@ -1087,10 +1087,9 @@ unsigned int nRet;
         return (FALSE);
 }
 
-#ifdef COMPILE_TESTS
+//FIXME correct naming
 uint8_t testScAesKey (int nLen, unsigned char* pcKey)
 {
-    //function unused in NK Pro
 int nRet;
 
 unsigned char acBufferOut[32];
@@ -1110,6 +1109,7 @@ unsigned char acBufferOut[32];
         return (FALSE);
 }
 
+//FIXME correct naming
 uint8_t testSendUserPW2 (unsigned char* pcPW)
 {
     unsigned short nRet;
@@ -1126,4 +1126,3 @@ uint8_t testSendUserPW2 (unsigned char* pcPW)
     return (FALSE);
 }
 
-#endif //COMPILE_TESTS
