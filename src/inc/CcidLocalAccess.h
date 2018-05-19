@@ -90,8 +90,6 @@ uint8_t testSendUserPW2 (unsigned char* pcPW);
 
 unsigned int CcidReset (void);
 
-
-
 #define CCID_TRANSFER_BUFFER_MAX    256
 
 #define CCID_TPDU_OVERHEAD          4
@@ -108,13 +106,14 @@ unsigned int CcidReset (void);
 #define CCID_TPDU_R_BLOCK_SEQUENCE_FLAG 0x10
 #define CCID_TPDU_CHAINING_FLAG         0x20
 
-
 #define CCID_CLA  0
 #define CCID_INS  1
 #define CCID_P1   2
 #define CCID_P2   3
 #define CCID_LC   4
 #define CCID_DATA 5
+
+#define CCID_MAX_PIN_LENGTH (255u-CCID_DATA)
 
 
 typedef struct
@@ -140,8 +139,8 @@ unsigned short SendAPDU (typeSmartcardTransfer * _tSCT);
 unsigned short CcidGetData (unsigned char cP1, unsigned char cP2, unsigned char* nRetSize);
 unsigned short CcidSelectOpenPGPApp (void);
 unsigned short CcidChangePin (unsigned char cPinNr, const char* szPin, const char* szNewPin);
-unsigned short CcidVerifyPin (unsigned char cPinNr, const char* szPin);
-unsigned short CcidUnblockPin (unsigned char* new_pin);
+unsigned short CcidVerifyPin (unsigned char cPinNr, const uint8_t* szPin);
+unsigned short CcidUnblockPin(uint8_t *new_pin);
 unsigned short CcidDecipher (unsigned char* nRetSize);
 unsigned short CcidGetChallenge (int nReceiveLength, unsigned char* nReceiveData);
 unsigned short CcidPutAesKey (unsigned int cKeyLen, unsigned char* pcAES_Key);

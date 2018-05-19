@@ -304,11 +304,14 @@ unsigned short CcidChangePin (unsigned char cPinNr, const char* szPin, const cha
 
 *******************************************************************************/
 
-unsigned short CcidVerifyPin (unsigned char cPinNr, const char* szPin)
+unsigned short CcidVerifyPin (unsigned char cPinNr, const uint8_t * szPin)
 {
+    const uint8_t maximum_PIN_length = CCID_MAX_PIN_LENGTH;
+    const uint8_t pin_len = (const uint8_t) strnlen((const char *) szPin, maximum_PIN_length);
+
     unsigned short cRet;
 
-    tSCT.cAPDULength = strlen (szPin);
+    tSCT.cAPDULength = pin_len;
 
     tSCT.cAPDU[CCID_CLA] = 0x00;
     tSCT.cAPDU[CCID_INS] = 0x20;
@@ -316,7 +319,7 @@ unsigned short CcidVerifyPin (unsigned char cPinNr, const char* szPin)
     tSCT.cAPDU[CCID_P2] = 0x80 + cPinNr;
     tSCT.cAPDU[CCID_LC] = tSCT.cAPDULength;
 
-    strcpy ((char *) &tSCT.cAPDU[CCID_DATA], szPin);
+    strncpy ((char *) &tSCT.cAPDU[CCID_DATA], (const char *)szPin, pin_len);
 
     tSCT.cAPDULength += CCID_DATA;
 
@@ -332,11 +335,11 @@ unsigned short CcidVerifyPin (unsigned char cPinNr, const char* szPin)
 
 *******************************************************************************/
 
-unsigned short CcidUnblockPin (unsigned char* new_pin)
+unsigned short CcidUnblockPin(uint8_t *new_pin)
 {
+    const uint8_t maximum_PIN_length = CCID_MAX_PIN_LENGTH;
+    const uint8_t new_pin_len = (const uint8_t) strnlen((const char *) new_pin, maximum_PIN_length);
     unsigned short nRet;
-
-    int new_pin_len = strlen (new_pin);
 
     // Command
     tSCT.cAPDU[CCID_CLA] = 0x00;
@@ -346,9 +349,9 @@ unsigned short CcidUnblockPin (unsigned char* new_pin)
     tSCT.cAPDU[CCID_LC] = new_pin_len;
 
     // New password
-    strcpy ((char *) &tSCT.cAPDU[CCID_DATA], new_pin);
+    strncpy ((char *) &tSCT.cAPDU[CCID_DATA], (const char *) new_pin, new_pin_len);
 
-    tSCT.cAPDULength = CCID_DATA + new_pin_len;
+    tSCT.cAPDULength = (uint8_t) (CCID_DATA + new_pin_len);
 
     nRet = SendAPDU (&tSCT);
     return (nRet);
@@ -917,13 +920,13 @@ uint8_t slot_tmp[SLOT_SIZE];
   for (slot_no = 0; slot_no < NUMBER_OF_HOTP_SLOTS; slot_no++)    // HOTP
         // slots
     {
-        write_to_slot (slot_tmp, get_HOTP_slot_offset(slot_no), SLOT_SIZE);
+        write_to_slot ((OTP_slot *) slot_tmp, get_HOTP_slot_offset(slot_no), SLOT_SIZE);
         erase_counter (slot_no);
     }
     for (slot_no = 0; slot_no < NUMBER_OF_TOTP_SLOTS; slot_no++)    // TOTP
         // slots
     {
-        write_to_slot (slot_tmp, get_TOTP_slot_offset(slot_no), SLOT_SIZE);
+        write_to_slot ((OTP_slot *) slot_tmp, get_TOTP_slot_offset(slot_no), SLOT_SIZE);
     }
 
     // Default flash memory
