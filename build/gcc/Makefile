@@ -232,8 +232,9 @@ CFLAGS += -O$(OPT)
 CFLAGS += -Wall -Wcast-align -Wimplicit -Werror
 CFLAGS += -Wpointer-arith -Wswitch
 CFLAGS += -Wredundant-decls -Wreturn-type -Wshadow -Wunused
-CFLAGS += -Wa,-adhlns=$(subst $(suffix $<),.lst,$<) 
+CFLAGS += -Wa,-adhlns=$(subst $(suffix $<),.lst,$<)
 CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
+CFLAGS += -Wno-cast-qual
 
 # flags only for C
 CONLYFLAGS += -Wnested-externs 

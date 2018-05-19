@@ -1,6 +1,6 @@
 #include "stm32f10x.h"
+#include "memory_ops.h"
 #include "platform_config.h"
-
 
 uint16_t getu16 (uint8_t * array)
 {

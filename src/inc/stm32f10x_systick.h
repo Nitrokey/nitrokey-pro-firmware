@@ -53,7 +53,7 @@
 
 /* Exported macro ------------------------------------------------------------ */
 /* Exported functions ------------------------------------------------------- */
-void SysTick_CLKSourceConfig (u32 SysTick_CLKSource);
+//void SysTick_CLKSourceConfig (u32 SysTick_CLKSource);
 
 void SysTick_SetReload (u32 Reload);
 

@@ -96,6 +96,8 @@ extern Blink blinkOATH;
 extern Blink blinkVerifyError;
 extern Blink blinkVerifyCorrect;
 extern void Blink_init_all(void);
+void EnableTimer2 (void);
+void init_blinking(void);
 
 
 #endif  /*__HW_CONFIG_H*/
