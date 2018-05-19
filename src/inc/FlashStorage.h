@@ -128,5 +128,6 @@ u8 ReadAESStorageKeyToUserPage (u8 * data);
    u8 SetStickKeysNotInitatedToFlash (void); */
 
 u8 ClearStickKeysNotInitatedToFlash (void);
+u8 SetStickKeysNotInitatedToFlash (void);
 
 #endif /* FLASHSTORAGE_H_ */

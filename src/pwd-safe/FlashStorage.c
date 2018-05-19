@@ -644,6 +644,7 @@ u8 SetSdCardNotFilledWithRandomCharsToFlash (void)
 
     return (TRUE);
 }
+#endif
 
 /*******************************************************************************
 
@@ -687,6 +688,7 @@ u8 SetStickKeysNotInitatedToFlash (void)
   Date      Reviewer        Info
 
 *******************************************************************************/
+#ifdef STORAGE
 
 u8 ClearStickKeysNotInitatedToFlash (void)
 {

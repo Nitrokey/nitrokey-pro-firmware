@@ -501,7 +501,7 @@ u32* p_pu32;
 
 
 *******************************************************************************/
-#ifdef STORAGE
+//#ifdef STORAGE
 u8 StartupCheck_u8 (void)
 {
 u8 CheckStatus_u8 = TRUE;
@@ -531,7 +531,7 @@ u8 CheckStatus_u8 = TRUE;
 
     return (FALSE);
 }
-#endif
+//#endif
 
 /*******************************************************************************
 
