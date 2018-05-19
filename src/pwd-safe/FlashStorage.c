@@ -53,7 +53,7 @@ unsigned int debug_len = 0;
    133 Base for AES key hidden volume (32 byte) 134 - 137 ID of sd card (4 byte) 138 - 141 Last stored real timestamp (4 byte) 142 - 145 ID of sc
    card (4 byte) 146 - 177 XOR mask for sc tranfered keys (32 byte) 178 - 209 Password safe key (32 byte) 210 - Debug */
 
-
+#ifdef ADD_DEBUG_COMMANDS
 
 void WriteDebug (u8 * data, unsigned int length)
 {
@@ -80,6 +80,8 @@ void GetDebug (u8 * data, unsigned int* length)
     *length = debug_len;
     debug_len = 0;
 }
+
+#endif
 
 /*******************************************************************************
 

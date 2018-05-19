@@ -282,3 +282,7 @@ typedef struct {
 
 #include <stddef.h>
 size_t s_min(size_t a, size_t b);
+
+bool is_HOTP_slot_programmed(int slot_no);
+bool is_TOTP_slot_programmed(int slot_no);
+void wink_correct(bool correct);

@@ -238,9 +238,12 @@ uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
         cmd_newAesKey(report, output);
         break;
 
+#ifdef ADD_DEBUG_COMMANDS
+#warning "Debug commands handled"
       case GET_PRO_DEBUG:
         cmd_getProDebug(report, output);
         break;
+#endif
 
       case CMD_CHANGE_USER_PIN:
         cmd_change_user_pin(report, output);
@@ -902,6 +905,8 @@ uint8_t cmd_detectSmartCardAES(uint8_t *report, uint8_t *output) {
   return (0);
 }
 
+#include "password_safe.h"
+#include "HandleAesStorageKey.h"
 uint8_t cmd_newAesKey(uint8_t *report, uint8_t *output) {
   u32 ret;
 
@@ -925,7 +930,7 @@ uint8_t cmd_newAesKey(uint8_t *report, uint8_t *output) {
   return (0);
 }
 
-
+#ifdef ADD_DEBUG_COMMANDS
 uint8_t cmd_getProDebug(uint8_t *report, uint8_t *output) {
   unsigned char data[OUTPUT_CMD_RESULT_LENGTH];
 
@@ -937,7 +942,7 @@ uint8_t cmd_getProDebug(uint8_t *report, uint8_t *output) {
   memcpy(output + OUTPUT_CMD_RESULT_OFFSET, data, data_length);
   return (0);
 }
-
+#endif
 
 uint8_t cmd_lockDevice(uint8_t *report, uint8_t *output) {
   // Disable password safe
