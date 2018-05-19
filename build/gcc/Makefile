@@ -248,6 +248,9 @@ CONLYFLAGS += -Wstrict-prototypes
 CONLYFLAGS += -Wmissing-declarations
 endif
 
+CFLAGS += -Wno-cast-qual
+
+
 # flags only for C++ (arm-elf-g++)
 # CPPFLAGS = -fno-rtti -fno-exceptions
 CPPFLAGS = 
