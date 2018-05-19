@@ -311,6 +311,8 @@ unsigned char IFD_XfrCharT0 (unsigned char* pBlockBuffer, unsigned int* pBlockSi
     return (SLOT_NO_ERROR);
 }
 
+#define UNUSED(x) (void)(x)
+
 /************************************************************************/
 /* ROUTINE unsigned char IFD_XfrCharT1() */
 /* */
@@ -320,6 +322,8 @@ unsigned char IFD_XfrCharT0 (unsigned char* pBlockBuffer, unsigned int* pBlockSi
 
 unsigned char IFD_XfrCharT1 (unsigned char* pBlockBuffer, unsigned int* pBlockSize)
 {
+    UNUSED(pBlockBuffer);
+    UNUSED(pBlockSize);
     return 0xF6;
 }
 
@@ -332,6 +336,8 @@ unsigned char IFD_XfrCharT1 (unsigned char* pBlockBuffer, unsigned int* pBlockSi
 
 unsigned char IFD_XfrTpduT0 (unsigned char* pBlockBuffer, unsigned int* pBlockSize)
 {
+    UNUSED(pBlockBuffer);
+    UNUSED(pBlockSize);
     return 0xF6;
 }
 
@@ -344,6 +350,8 @@ unsigned char IFD_XfrTpduT0 (unsigned char* pBlockBuffer, unsigned int* pBlockSi
 
 unsigned char IFD_XfrTpduT1 (unsigned char* pBlockBuffer, unsigned int* pBlockSize)
 {
+    UNUSED(pBlockBuffer);
+    UNUSED(pBlockSize);
     return 0xF6;
 }
 

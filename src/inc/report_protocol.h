@@ -164,7 +164,7 @@
  */
 
 
-__IO extern uint8_t device_status;
+extern __IO uint8_t device_status;
 
 uint8_t parse_report (uint8_t * report, uint8_t * output);
 
