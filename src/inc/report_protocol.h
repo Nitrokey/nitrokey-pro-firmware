@@ -280,3 +280,5 @@ typedef struct {
   uint32_t otp_code_to_verify;
 } __packed cmd_query_verify_code;
 
+#include <stddef.h>
+size_t s_min(size_t a, size_t b);

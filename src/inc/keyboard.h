@@ -110,3 +110,5 @@ void sendNumber (uint32_t number);
 void sendNumberN (uint32_t number, uint8_t len);
 
 void sendEnter (void);
+
+void sendTab (void);

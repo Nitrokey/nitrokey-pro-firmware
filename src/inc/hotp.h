@@ -148,3 +148,5 @@ uint32_t get_code_from_totp_slot (uint8_t slot, uint64_t challenge);
 extern uint32_t get_HOTP_slot_offset(int slot_count);
 extern uint32_t get_TOTP_slot_offset(int slot_count);
 extern uint32_t get_slot_offset(int slot_count);
+
+uint32_t crc (uint32_t time);
