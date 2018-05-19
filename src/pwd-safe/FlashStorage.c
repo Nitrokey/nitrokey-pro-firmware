@@ -98,7 +98,7 @@ u8 WriteAESStorageKeyToUserPage (u8 * data)
     // flashc_memcpy(FLASHC_USER_PAGE,data,32,TRUE);
 unsigned char page_buffer[FLASH_PAGE_SIZE];
 
-    memcpy (page_buffer, FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
+    memcpy (page_buffer, (const void *) FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
     memcpy (page_buffer, data, 32);
 
     FLASH_Unlock ();
@@ -208,7 +208,7 @@ u8 WriteStickConfigurationToUserPage (void)
 
 uint8_t page_buffer[FLASH_PAGE_SIZE];
 
-    memcpy (page_buffer, FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
+    memcpy (page_buffer, (const void *) FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
     memcpy (page_buffer + 72, (u8 *) & StickConfiguration_st, 28);
 
     FLASH_Unlock ();
@@ -623,7 +623,7 @@ u8 InitStickConfigurationToUserPage_u8 (void)
   Date      Reviewer        Info
 
 *******************************************************************************/
-
+#ifdef STORAGE
 u8 SetSdCardNotFilledWithRandomCharsToFlash (void)
 {
     // If configuration not found then init it
@@ -644,7 +644,6 @@ u8 SetSdCardNotFilledWithRandomCharsToFlash (void)
 
     return (TRUE);
 }
-
 
 /*******************************************************************************
 
@@ -705,6 +704,7 @@ u8 ClearStickKeysNotInitatedToFlash (void)
 
     return (TRUE);
 }
+#endif
 
 /*******************************************************************************
 
@@ -831,7 +831,7 @@ u8 WriteXorPatternToFlash (u8 * XorPattern_pu8)
     // flashc_memcpy(FLASHC_USER_PAGE + 146,XorPattern_pu8,32,TRUE);
 unsigned char page_buffer[FLASH_PAGE_SIZE];
 
-    memcpy (page_buffer, FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
+    memcpy (page_buffer, (const void *) FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
     memcpy (page_buffer + 146, XorPattern_pu8, 32);
 
     FLASH_Unlock ();
@@ -887,7 +887,7 @@ u8 WritePasswordSafeKey (u8 * data)
 
 unsigned char page_buffer[FLASH_PAGE_SIZE];
 
-    memcpy (page_buffer, FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
+    memcpy (page_buffer, (const void *) FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
     memcpy (page_buffer + 178, data, 32);
 
     FLASH_Unlock ();
@@ -956,7 +956,7 @@ uint8_t page_buffer[FLASH_PAGE_SIZE];
             EraseStoreData_au8[i] = (u8) (rand () % 256);
         }
         // flashc_memcpy((void*)FLASHC_USER_PAGE,EraseStoreData_au8,256,TRUE);
-        memcpy (page_buffer, FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
+        memcpy (page_buffer, (const void *) FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
         memcpy (page_buffer, EraseStoreData_au8, 256);
         FLASH_Unlock ();
         FLASH_ErasePage (FLASHC_USER_PAGE);
