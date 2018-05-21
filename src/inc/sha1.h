@@ -107,6 +107,10 @@ void sha1_ctx2hash (void* dest, sha1_ctx_t * state);
  */
 void sha1 (void* dest, const void* msg, uint32_t length_b);
 
+//inner functions, added to silent compilation warning -Werror=missing-prototypes
+const uint32_t ch (uint32_t x, uint32_t y, uint32_t z);
+const uint32_t maj (uint32_t x, uint32_t y, uint32_t z);
+const uint32_t parity (uint32_t x, uint32_t y, uint32_t z);
 
 
 #endif /* SHA1_H_ */

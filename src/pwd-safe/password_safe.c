@@ -37,6 +37,7 @@
 // #include "stdio.h"
 #include <string.h>
 #include <stdlib.h>
+#include <keyboard.h>
 
 // #include "global.h"
 #include "delays.h"
@@ -829,7 +830,7 @@ u8 PWS_GetDecryptedPasswordSafeKey (u8 ** Key_pu8)
   Date      Reviewer        Info
 
 *******************************************************************************/
-
+#ifdef PWS_SEND_DATA
 u8 PWS_SendData (u8 Slot_u8, u8 Kind_u8)
 {
 u8 SendString_au8[40];
@@ -869,6 +870,7 @@ u32 Ret_u32;
 
     return (TRUE);
 }
+#endif // PWS_SEND_DATA
 
 /*******************************************************************************
 

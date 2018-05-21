@@ -69,28 +69,52 @@ void EP1_IN_Callback (void);
 
 void EP2_IN_Callback (void);
 
+#ifndef EP3_IN_Callback
 void EP3_IN_Callback (void);
+#endif
+
+void XEP3_IN_Callback (void);
 
 void EP4_IN_Callback (void);
 
+#ifndef EP5_IN_Callback
 void EP5_IN_Callback (void);
+#endif
 
+#ifndef EP6_IN_Callback
 void EP6_IN_Callback (void);
+#endif
 
+#ifndef EP7_IN_Callback
 void EP7_IN_Callback (void);
+#endif
 
+#ifndef EP1_OUT_Callback
 void EP1_OUT_Callback (void);
+#endif
 
+#ifndef EP2_OUT_Callback
 void EP2_OUT_Callback (void);
+#endif
 
+#ifndef EP3_OUT_Callback
 void EP3_OUT_Callback (void);
+#endif
 
+#ifndef EP4_OUT_Callback
 void EP4_OUT_Callback (void);
+#endif
 
+#ifndef EP5_OUT_Callback
 void EP5_OUT_Callback (void);
+#endif
 
+#ifndef EP6_OUT_Callback
 void EP6_OUT_Callback (void);
+#endif
 
+#ifndef EP7_OUT_Callback
 void EP7_OUT_Callback (void);
+#endif
 
 #endif /*__USB_ISTR_H*/

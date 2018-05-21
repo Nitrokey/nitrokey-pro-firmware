@@ -164,7 +164,7 @@
  */
 
 
-__IO extern uint8_t device_status;
+extern __IO uint8_t device_status;
 
 uint8_t parse_report (uint8_t * report, uint8_t * output);
 
@@ -280,3 +280,9 @@ typedef struct {
   uint32_t otp_code_to_verify;
 } __packed cmd_query_verify_code;
 
+#include <stddef.h>
+size_t s_min(size_t a, size_t b);
+
+bool is_HOTP_slot_programmed(int slot_no);
+bool is_TOTP_slot_programmed(int slot_no);
+void wink_correct(bool correct);

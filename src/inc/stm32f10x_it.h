@@ -54,4 +54,10 @@ void USB_LP_CAN1_RX0_IRQHandler (void);
 
 void SDIO_IRQHandler (void);
 
+void TIM2_IRQHandler (void);
+
+#include "hw_config.h"
+void Blink_init(Blink* blink, int ledon, int ledoff, void (*ledSwitcher)(FunctionalState));
+
+
 #endif /* __STM32F10x_IT_H */

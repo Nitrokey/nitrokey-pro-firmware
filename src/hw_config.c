@@ -441,7 +441,7 @@ char HexToAscii (uint8_t nHex)
 * Return         : None.
 *******************************************************************************/
 
-__IO uint32_t cardSerial = 0;;
+__IO uint32_t cardSerial = 0;
 
 void Get_SerialNum (void)
 {

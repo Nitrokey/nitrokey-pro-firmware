@@ -212,21 +212,21 @@ int i, flag = 0;
 
 uint32_t time = 0;
 
-    if (getu32 (TIME_ADDRESS) == 0xffffffff)
+    if (getu32 ((uint8_t *) TIME_ADDRESS) == 0xffffffff)
         return 0xffffffff;
 
     for (i = 1; i < 32; i++)
     {
-        if (getu32 (TIME_ADDRESS + TIME_OFFSET * i) == 0xffffffff)
+        if (getu32 ((uint8_t *) (TIME_ADDRESS + TIME_OFFSET * i)) == 0xffffffff)
         {
-            time = getu32 (TIME_ADDRESS + TIME_OFFSET * (i - 1));
+            time = getu32 ((uint8_t *) (TIME_ADDRESS + TIME_OFFSET * (i - 1)));
             flag = 1;
             break;
         }
     }
 
     if (!flag)
-        time = getu32 (TIME_ADDRESS + TIME_OFFSET * 31);
+        time = getu32 ((uint8_t *) (TIME_ADDRESS + TIME_OFFSET * 31));
 
     if (time != crc (time >> 8))
         return 0;
@@ -255,7 +255,7 @@ FLASH_Status err = FLASH_COMPLETE;
 
     for (i = 0; i < 32; i++)
     {
-        if (getu32 (TIME_ADDRESS + TIME_OFFSET * i) == 0xffffffff)
+        if (getu32 ((uint8_t *) (TIME_ADDRESS + TIME_OFFSET * i)) == 0xffffffff)
         {
             err = FLASH_ProgramWord (TIME_ADDRESS + TIME_OFFSET * i, (time) & 0xffffffff);
             if (err != FLASH_COMPLETE)

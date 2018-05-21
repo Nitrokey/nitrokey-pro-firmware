@@ -21,6 +21,7 @@
    to do : CRC check of receive TPDU data */
 
 
+#include <FlashStorage.h>
 #include "stm32f10x.h"
 #include "platform_config.h"
 #include "hw_config.h"
@@ -33,29 +34,6 @@
 
 #include "time.h"
 
-#define CCID_TRANSFER_BUFFER_MAX    256
-
-#define CCID_TPDU_OVERHEAD          4
-#define CCID_TPDU_PROLOG            3
-#define CCID_TPDU_ANSWER_OVERHEAD   6
-
-
-#define CCID_TPDU_NAD           0
-#define CCID_TPDU_PCD           1
-#define CCID_TPDU_LENGTH        2
-#define CCID_TPDU_DATASTART     3
-
-#define CCID_TPDU_R_BLOCK_FLAG          0x80
-#define CCID_TPDU_R_BLOCK_SEQUENCE_FLAG 0x10
-#define CCID_TPDU_CHAINING_FLAG         0x20
-
-
-#define CCID_CLA  0
-#define CCID_INS  1
-#define CCID_P1   2
-#define CCID_P2   3
-#define CCID_LC   4
-#define CCID_DATA 5
 
 /*******************************************************************************
 
@@ -64,16 +42,6 @@
 *******************************************************************************/
 
 
-typedef struct
-{
-    unsigned char cAPDULength;
-    unsigned short cAPDUAnswerStatus;
-    unsigned char cAPDUAnswerLength;
-    unsigned char cTPDUSequence;
-    unsigned char cTPDULength;
-    unsigned char cAPDU[CCID_TRANSFER_BUFFER_MAX];
-    unsigned char cTPDU[CCID_TRANSFER_BUFFER_MAX + CCID_TPDU_OVERHEAD];
-} typeSmartcardTransfer;
 
 static typeSmartcardTransfer tSCT;
 
@@ -83,12 +51,12 @@ static typeSmartcardTransfer tSCT;
 
 *******************************************************************************/
 
-void InitSCTStruct (typeSmartcardTransfer * tSCT)
+void InitSCTStruct (typeSmartcardTransfer * _tSCT)
 {
-    tSCT->cAPDULength = 0;
-    tSCT->cAPDUAnswerLength = 0;
-    tSCT->cAPDUAnswerStatus = 0;
-    tSCT->cTPDUSequence = 0;
+    _tSCT->cAPDULength = 0;
+    _tSCT->cAPDUAnswerLength = 0;
+    _tSCT->cAPDUAnswerStatus = 0;
+    _tSCT->cTPDUSequence = 0;
 }
 
 /*******************************************************************************
@@ -117,27 +85,27 @@ unsigned char GenerateCRC (unsigned char* pData, unsigned char cLength)
 
 *******************************************************************************/
 
-void GenerateTPDU (typeSmartcardTransfer * tSCT)
+void GenerateTPDU (typeSmartcardTransfer * _tSCT)
 {
-    tSCT->cTPDU[CCID_TPDU_NAD] = 0; // Node Address (NAD)
-    tSCT->cTPDU[CCID_TPDU_PCD] = (tSCT->cTPDUSequence & 1) << 6;    // Protocol
+    _tSCT->cTPDU[CCID_TPDU_NAD] = 0; // Node Address (NAD)
+    _tSCT->cTPDU[CCID_TPDU_PCD] = (_tSCT->cTPDUSequence & 1) << 6;    // Protocol
     // Control
     // Byte
-    tSCT->cTPDU[CCID_TPDU_LENGTH] = tSCT->cAPDULength;
+    _tSCT->cTPDU[CCID_TPDU_LENGTH] = _tSCT->cAPDULength;
 
-    tSCT->cTPDULength = tSCT->cAPDULength + CCID_TPDU_OVERHEAD; // the length
+    _tSCT->cTPDULength = _tSCT->cAPDULength + CCID_TPDU_OVERHEAD; // the length
     // of the
     // TPDU
-    tSCT->cTPDUSequence++;  // switch sequence
+    _tSCT->cTPDUSequence++;  // switch sequence
 
-    memcpy (&tSCT->cTPDU[CCID_TPDU_DATASTART], tSCT->cAPDU, tSCT->cAPDULength); // copy
+    memcpy (&_tSCT->cTPDU[CCID_TPDU_DATASTART], _tSCT->cAPDU, _tSCT->cAPDULength); // copy
     // APDU
     // data
 
-    tSCT->cTPDU[tSCT->cAPDULength + CCID_TPDU_OVERHEAD - 1] =   // set CRC at
+    _tSCT->cTPDU[_tSCT->cAPDULength + CCID_TPDU_OVERHEAD - 1] =   // set CRC at
         // end of
         // data
-        GenerateCRC ((unsigned char *) &tSCT->cTPDU, tSCT->cAPDULength + CCID_TPDU_PROLOG);
+        GenerateCRC ((unsigned char *) &_tSCT->cTPDU, _tSCT->cAPDULength + CCID_TPDU_PROLOG);
 }
 
 /*******************************************************************************
@@ -146,18 +114,18 @@ void GenerateTPDU (typeSmartcardTransfer * tSCT)
 
 *******************************************************************************/
 
-void GenerateChainedTPDU (typeSmartcardTransfer * tSCT)
+void GenerateChainedTPDU (typeSmartcardTransfer * _tSCT)
 {
-    tSCT->cTPDU[CCID_TPDU_NAD] = 0; // Node Address (NAD)
-    tSCT->cTPDU[CCID_TPDU_PCD] = ((tSCT->cTPDUSequence & 1) << 4) + CCID_TPDU_R_BLOCK_FLAG; // Protocol
+    _tSCT->cTPDU[CCID_TPDU_NAD] = 0; // Node Address (NAD)
+    _tSCT->cTPDU[CCID_TPDU_PCD] = ((_tSCT->cTPDUSequence & 1) << 4) + CCID_TPDU_R_BLOCK_FLAG; // Protocol
     // Control
     // Byte
-    tSCT->cTPDU[CCID_TPDU_LENGTH] = 0;
+    _tSCT->cTPDU[CCID_TPDU_LENGTH] = 0;
 
-    tSCT->cTPDULength = CCID_TPDU_OVERHEAD; // the length of the TPDU
-    tSCT->cTPDUSequence++;  // switch sequence
+    _tSCT->cTPDULength = CCID_TPDU_OVERHEAD; // the length of the TPDU
+    _tSCT->cTPDUSequence++;  // switch sequence
 
-    tSCT->cTPDU[CCID_TPDU_OVERHEAD - 1] = GenerateCRC ((unsigned char *) &tSCT->cTPDU, CCID_TPDU_PROLOG);
+    _tSCT->cTPDU[CCID_TPDU_OVERHEAD - 1] = GenerateCRC ((unsigned char *) &_tSCT->cTPDU, CCID_TPDU_PROLOG);
 }
 
 
@@ -168,49 +136,49 @@ void GenerateChainedTPDU (typeSmartcardTransfer * tSCT)
 
 *******************************************************************************/
 
-unsigned short SendTPDU (typeSmartcardTransfer * tSCT)
+unsigned short SendTPDU (typeSmartcardTransfer * _tSCT)
 {
 unsigned int nAnswerLength = 0;
 
 unsigned char nOverhead = 0;
 
     // Send TPDU to smartcard an receive answer
-    CRD_SendCommand ((unsigned char *) tSCT->cTPDU, tSCT->cTPDULength, CCID_TRANSFER_BUFFER_MAX, (unsigned int *) &nAnswerLength);
+    CRD_SendCommand ((unsigned char *) _tSCT->cTPDU, _tSCT->cTPDULength, CCID_TRANSFER_BUFFER_MAX, (unsigned int *) &nAnswerLength);
 
 
     if (CCID_TPDU_ANSWER_OVERHEAD > nAnswerLength)  // answer length
         // incorrect
     {
-        tSCT->cAPDUAnswerStatus = APDU_ANSWER_RECEIVE_INCORRECT;
-        return (tSCT->cAPDUAnswerStatus);
+        _tSCT->cAPDUAnswerStatus = APDU_ANSWER_RECEIVE_INCORRECT;
+        return (_tSCT->cAPDUAnswerStatus);
     }
 
-    if (0 != (tSCT->cTPDU[CCID_TPDU_PCD] & CCID_TPDU_CHAINING_FLAG))    // chained
+    if (0 != (_tSCT->cTPDU[CCID_TPDU_PCD] & CCID_TPDU_CHAINING_FLAG))    // chained
         // data
     {
         nOverhead = CCID_TPDU_ANSWER_OVERHEAD - 2;  // no status data
-        tSCT->cAPDUAnswerStatus = APDU_ANSWER_CHAINED_DATA;
+        _tSCT->cAPDUAnswerStatus = APDU_ANSWER_CHAINED_DATA;
     }
     else
     {
         nOverhead = CCID_TPDU_ANSWER_OVERHEAD;
-        tSCT->cAPDUAnswerStatus = tSCT->cTPDU[nAnswerLength - 3] << 8;  // Statusbyte
+        _tSCT->cAPDUAnswerStatus = _tSCT->cTPDU[nAnswerLength - 3] << 8;  // Statusbyte
         // SW1
-        tSCT->cAPDUAnswerStatus += tSCT->cTPDU[nAnswerLength - 2];  // Statusbyte
+        _tSCT->cAPDUAnswerStatus += _tSCT->cTPDU[nAnswerLength - 2];  // Statusbyte
         // SW2
     }
 
-    memcpy (&tSCT->cAPDU[tSCT->cAPDUAnswerLength], &tSCT->cTPDU[CCID_TPDU_DATASTART], nAnswerLength - nOverhead);   // add
+    memcpy (&_tSCT->cAPDU[_tSCT->cAPDUAnswerLength], &_tSCT->cTPDU[CCID_TPDU_DATASTART], nAnswerLength - nOverhead);   // add
     // new
     // data
     // to
     // receive
     // data
 
-    tSCT->cAPDUAnswerLength += nAnswerLength - nOverhead;   // add length of
+    _tSCT->cAPDUAnswerLength += nAnswerLength - nOverhead;   // add length of
     // recieved data
 
-    return (tSCT->cAPDUAnswerStatus);
+    return (_tSCT->cAPDUAnswerStatus);
 }
 
 
@@ -220,39 +188,39 @@ unsigned char nOverhead = 0;
 
 *******************************************************************************/
 
-unsigned short SendAPDU (typeSmartcardTransfer * tSCT)
+unsigned short SendAPDU (typeSmartcardTransfer * _tSCT)
 {
-    tSCT->cAPDUAnswerLength = 0;
+    _tSCT->cAPDUAnswerLength = 0;
 
-    GenerateTPDU (tSCT);
+    GenerateTPDU (_tSCT);
 
-    SendTPDU (tSCT);
+    SendTPDU (_tSCT);
 
-    if (APDU_ANSWER_RECEIVE_INCORRECT == tSCT->cAPDUAnswerStatus)   // return
+    if (APDU_ANSWER_RECEIVE_INCORRECT == _tSCT->cAPDUAnswerStatus)   // return
         // on
         // orror
         // ??
     {
-        return (tSCT->cAPDUAnswerStatus);
+        return (_tSCT->cAPDUAnswerStatus);
     }
 
     // Chained answer ?
-    while (0 != (tSCT->cTPDU[CCID_TPDU_PCD] & CCID_TPDU_CHAINING_FLAG))
+    while (0 != (_tSCT->cTPDU[CCID_TPDU_PCD] & CCID_TPDU_CHAINING_FLAG))
     {
-        GenerateChainedTPDU (tSCT);
-        SendTPDU (tSCT);
+        GenerateChainedTPDU (_tSCT);
+        SendTPDU (_tSCT);
 
-        if ((APDU_ANSWER_CHAINED_DATA != tSCT->cAPDUAnswerStatus) &&    // return
+        if ((APDU_ANSWER_CHAINED_DATA != _tSCT->cAPDUAnswerStatus) &&    // return
             // on
             // error
             // ??
-            (APDU_ANSWER_COMMAND_CORRECT != tSCT->cAPDUAnswerStatus))
+            (APDU_ANSWER_COMMAND_CORRECT != _tSCT->cAPDUAnswerStatus))
         {
-            return (tSCT->cAPDUAnswerStatus);
+            return (_tSCT->cAPDUAnswerStatus);
         }
     }
 
-    return (tSCT->cAPDUAnswerStatus);
+    return (_tSCT->cAPDUAnswerStatus);
 }
 
 /*******************************************************************************
@@ -308,20 +276,26 @@ unsigned short CcidGetData (unsigned char cP1, unsigned char cP2, unsigned char*
 
 *******************************************************************************/
 
-unsigned short CcidChangePin (unsigned char cPinNr, const char* szPin, const char* szNewPin)
+unsigned short CcidChangePin (unsigned char cPinNr, const uint8_t * szPin, const uint8_t * szNewPin)
 {
     unsigned short cRet;
+    const uint8_t maximum_PIN_length = CCID_MAX_PIN_LENGTH;
+    const uint8_t pin_len_old = (const uint8_t) strnlen((const char *) szPin, maximum_PIN_length);
+    const uint8_t pin_len_new = (const uint8_t) strnlen((const char *) szNewPin, maximum_PIN_length);
 
-    tSCT.cAPDULength = strlen (szPin) + strlen (szNewPin);
+    const uint16_t total_pin_length = pin_len_old + pin_len_new;
+    if (total_pin_length>CCID_MAX_PIN_LENGTH) return 0xFFFF;
+
+    tSCT.cAPDULength = (uint8_t) total_pin_length;
 
     tSCT.cAPDU[CCID_CLA] = 0x00;
     tSCT.cAPDU[CCID_INS] = 0x24;
     tSCT.cAPDU[CCID_P1] = 0x00;
-    tSCT.cAPDU[CCID_P2] = 0x80 + cPinNr;
+    tSCT.cAPDU[CCID_P2] = (unsigned char) (0x80 + cPinNr);
     tSCT.cAPDU[CCID_LC] = tSCT.cAPDULength;
 
-    strcpy ((char *) &tSCT.cAPDU[CCID_DATA], szPin);
-    strcpy ((char *) &tSCT.cAPDU[CCID_DATA] + strlen (szPin), szNewPin);
+    strncpy ((char *) &tSCT.cAPDU[CCID_DATA], (const char *) szPin, pin_len_old);
+    strncpy ((char *) &tSCT.cAPDU[CCID_DATA] + pin_len_old, (const char *) szNewPin, pin_len_new);
 
     tSCT.cAPDULength += CCID_DATA;
 
@@ -336,11 +310,14 @@ unsigned short CcidChangePin (unsigned char cPinNr, const char* szPin, const cha
 
 *******************************************************************************/
 
-unsigned short CcidVerifyPin (unsigned char cPinNr, const char* szPin)
+unsigned short CcidVerifyPin (unsigned char cPinNr, const uint8_t * szPin)
 {
+    const uint8_t maximum_PIN_length = CCID_MAX_PIN_LENGTH;
+    const uint8_t pin_len = (const uint8_t) strnlen((const char *) szPin, maximum_PIN_length);
+
     unsigned short cRet;
 
-    tSCT.cAPDULength = strlen (szPin);
+    tSCT.cAPDULength = pin_len;
 
     tSCT.cAPDU[CCID_CLA] = 0x00;
     tSCT.cAPDU[CCID_INS] = 0x20;
@@ -348,7 +325,7 @@ unsigned short CcidVerifyPin (unsigned char cPinNr, const char* szPin)
     tSCT.cAPDU[CCID_P2] = 0x80 + cPinNr;
     tSCT.cAPDU[CCID_LC] = tSCT.cAPDULength;
 
-    strcpy ((char *) &tSCT.cAPDU[CCID_DATA], szPin);
+    strncpy ((char *) &tSCT.cAPDU[CCID_DATA], (const char *)szPin, pin_len);
 
     tSCT.cAPDULength += CCID_DATA;
 
@@ -364,11 +341,11 @@ unsigned short CcidVerifyPin (unsigned char cPinNr, const char* szPin)
 
 *******************************************************************************/
 
-unsigned short CcidUnblockPin (unsigned char* new_pin)
+unsigned short CcidUnblockPin(uint8_t *new_pin)
 {
+    const uint8_t maximum_PIN_length = CCID_MAX_PIN_LENGTH;
+    const uint8_t new_pin_len = (const uint8_t) strnlen((const char *) new_pin, maximum_PIN_length);
     unsigned short nRet;
-
-    int new_pin_len = strlen (new_pin);
 
     // Command
     tSCT.cAPDU[CCID_CLA] = 0x00;
@@ -378,9 +355,9 @@ unsigned short CcidUnblockPin (unsigned char* new_pin)
     tSCT.cAPDU[CCID_LC] = new_pin_len;
 
     // New password
-    strcpy ((char *) &tSCT.cAPDU[CCID_DATA], new_pin);
+    strncpy ((char *) &tSCT.cAPDU[CCID_DATA], (const char *) new_pin, new_pin_len);
 
-    tSCT.cAPDULength = CCID_DATA + new_pin_len;
+    tSCT.cAPDULength = (uint8_t) (CCID_DATA + new_pin_len);
 
     nRet = SendAPDU (&tSCT);
     return (nRet);
@@ -667,6 +644,7 @@ u32 getRandomNumber (u32 Size_u32, u8 * Data_pu8)
 
 *******************************************************************************/
 
+#ifdef COMPILE_TESTS
 int AccessTestGPG (void)
 {
     unsigned short cRet;
@@ -822,6 +800,7 @@ void CcidLocalAccessTest (void)
     }
 
 }
+#endif //COMPILE_TESTS
 
 /*
  * Needs Admin Authentication before called
@@ -947,13 +926,13 @@ uint8_t slot_tmp[SLOT_SIZE];
   for (slot_no = 0; slot_no < NUMBER_OF_HOTP_SLOTS; slot_no++)    // HOTP
         // slots
     {
-        write_to_slot (slot_tmp, get_HOTP_slot_offset(slot_no), SLOT_SIZE);
+        write_to_slot ((OTP_slot *) slot_tmp, get_HOTP_slot_offset(slot_no), SLOT_SIZE);
         erase_counter (slot_no);
     }
     for (slot_no = 0; slot_no < NUMBER_OF_TOTP_SLOTS; slot_no++)    // TOTP
         // slots
     {
-        write_to_slot (slot_tmp, get_TOTP_slot_offset(slot_no), SLOT_SIZE);
+        write_to_slot ((OTP_slot *) slot_tmp, get_TOTP_slot_offset(slot_no), SLOT_SIZE);
     }
 
     // Default flash memory
@@ -1108,9 +1087,9 @@ unsigned int nRet;
         return (FALSE);
 }
 
+//FIXME correct naming
 uint8_t testScAesKey (int nLen, unsigned char* pcKey)
 {
-    //function unused in NK Pro
 int nRet;
 
 unsigned char acBufferOut[32];
@@ -1130,6 +1109,7 @@ unsigned char acBufferOut[32];
         return (FALSE);
 }
 
+//FIXME correct naming
 uint8_t testSendUserPW2 (unsigned char* pcPW)
 {
     unsigned short nRet;
@@ -1145,3 +1125,4 @@ uint8_t testSendUserPW2 (unsigned char* pcPW)
 
     return (FALSE);
 }
+

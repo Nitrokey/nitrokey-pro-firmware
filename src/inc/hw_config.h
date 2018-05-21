@@ -71,7 +71,7 @@ void SwitchSmartcardLED (FunctionalState NewState);
 void SwitchOATHLED (FunctionalState NewState);
 
 
-void ClearAllBlinking();
+void ClearAllBlinking(void);
 void StartBlinkingOATHLED (uint8_t times);
 void VerifyBlinkError(uint8_t times);
 void VerifyBlinkCorrect(uint8_t times);
@@ -95,7 +95,9 @@ extern __IO uint32_t cardSerial;
 extern Blink blinkOATH;
 extern Blink blinkVerifyError;
 extern Blink blinkVerifyCorrect;
-extern void Blink_init_all();
+extern void Blink_init_all(void);
+void EnableTimer2 (void);
+void init_blinking(void);
 
 
 #endif  /*__HW_CONFIG_H*/

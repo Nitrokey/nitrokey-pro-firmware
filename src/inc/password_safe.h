@@ -174,4 +174,11 @@ u8 PWS_GetDecryptedPasswordSafeKey (u8 ** Key_pu8);
 
 u8 PWS_SendData (u8 Slot_u8, u8 Kind_u8);
 
+u32 BuildPasswordSafeKey_u32 (void);
+
+u8 PWS_WriteSlot (u8 Slot_u8, typePasswordSafeSlot_st * Slot_st);
+u8 PWS_ReadSlot (u8 Slot_u8, typePasswordSafeSlot_st * Slot_st);
+
+
+
 #endif /* PASSWORD_SAFE_H_ */

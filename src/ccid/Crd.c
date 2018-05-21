@@ -199,6 +199,7 @@ unsigned char CRD_GetClockStatus (void)
     return (CRD_CLOCKRUNNING);
 }
 
+#define UNUSED(x) (void)(x)
 /****************************************************************/
 /* ROUTINE unsigned char CRD_SetClock(void) */
 /* return Error Code : */
@@ -206,6 +207,7 @@ unsigned char CRD_GetClockStatus (void)
 /****************************************************************/
 unsigned char CRD_SetClock (unsigned char ClockState)
 {
+    UNUSED(ClockState);
     if (CRD_GetSlotStatus () != CRD_PRESENTACTIVE)
     {
         return SLOTERROR_ICC_MUTE;
@@ -221,6 +223,8 @@ unsigned char CRD_SetClock (unsigned char ClockState)
 /****************************************************************/
 unsigned char CRD_SetEtu (unsigned int Etu, unsigned char Comp)
 {
+    UNUSED(Comp);
+
     if ((Etu < 12) || (Etu > 2048))
         return 0xFF;
 
@@ -247,6 +251,7 @@ unsigned char CRD_SetEtu (unsigned int Etu, unsigned char Comp)
 /****************************************************************/
 void CRD_SetGuardTime (unsigned int GuardTime)
 {
+    UNUSED(GuardTime);
 }
 
 /****************************************************************/
@@ -256,6 +261,7 @@ void CRD_SetGuardTime (unsigned int GuardTime)
 /****************************************************************/
 void CRD_SetWaitingTime (unsigned long WaitingTime)
 {
+    UNUSED(WaitingTime);
 }
 
 /****************************************************************/
