@@ -3,12 +3,12 @@ Nitrokey Pro firmware [![Build Status](https://travis-ci.org/Nitrokey/nitrokey-p
 
 * [Building](#building)
 * [Flashing](#flashing)
- * [STM32flash and DFU Mode](#stm32flash-and-dfu-mode)
-  * [Requirements](#requirements)
-  * [Actual Flashing](#actual-flashing)
- * [Versaloon](#versaloon)
+  * [STM32flash and DFU Mode](#stm32flash-and-dfu-mode)
+    * [Requirements](#requirements)
+    * [Actual Flashing](#actual-flashing)
+  * [Versaloon](#versaloon)
 
-#Building
+# Building
 
 make \[VID=0x20a0\] \[PID=0x4108\] firmware
 
@@ -18,7 +18,7 @@ Parameters:
 
 # Flashing
 
-The microprocessor can be flashed with two different approaches:
+The microprocessor can be flashed in two different ways:
 * DFU is a simple protocol via serial port which allows programming but no debugging. On the Nitrokey hardware we expose the appropriate pins over the USB connector but it's not USB! Details are described in the next chapter.
 * SWD is a STM-specific protocol and similar to JTAG allowing programming and debugging. Working adapters are Versaloon or any of the ST-Link V2 (clones). Under Linux you could give a patched OpenOCD a try but in the past it has been very troublesome. This approach requires to solder wires to the contact pads or to use an adapter with pogo pins and some kind of mounting (recommended).
 
@@ -32,6 +32,7 @@ The microprocessor can be flashed with two different approaches:
 
 Your adapter should consist of a USB socket which four pins are connected to your serial/TTL connector. The pinout is as follows.
 
+```
 Nitrokey USB Plug <-> Serial/TTL adapter
 
 Pin 1, VCC <-> VCC
@@ -51,6 +52,7 @@ This diagram represents the pinout of the USB socket which you are going to sold
      #   #   #   #    
 
      1   2   3   4
+```
 
 The following picture shows the adapter/USB-to-TTL connection.
 ![USB-to-TTL adapter and USB socket](adapter.jpg?raw=true)
@@ -77,13 +79,13 @@ Cannot handle device "/dev/ttyUSB0"
 Failed to open port: /dev/ttyUSB0
 ```
 
-If this did succeed we have to disable the read protection by typing
+Now we have to disable the read protection first by typing
 
 ```
 sudo stm32flash -k /dev/ttyUSB0 # read unprotecting
 ```
 
-You may need to reconnect the device. Now proceed with actual flashing:
+You may need to reconnect the device, before you can proceed. Do not forget to bridge the holes again. Now we do the actual flashing:
 
 ```
 sudo stm32flash -w nitrokey-pro-firmware.hex /dev/ttyUSB0
