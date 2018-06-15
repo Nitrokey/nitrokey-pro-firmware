@@ -42,7 +42,7 @@ typedef struct  {
   uint16_t ledOnInterval;
   uint16_t ledOffInterval;
   void (*ledSwitcher)(FunctionalState);
-  uint8_t timesLeft;
+  uint16_t timesLeft;
 } Blink;
 
 /* Exported functions ------------------------------------------------------- */
@@ -72,9 +72,9 @@ void SwitchOATHLED (FunctionalState NewState);
 
 
 void ClearAllBlinking(void);
-void StartBlinkingOATHLED (uint8_t times);
-void VerifyBlinkError(uint8_t times);
-void VerifyBlinkCorrect(uint8_t times);
+void StartBlinkingOATHLED(uint16_t times);
+void VerifyBlinkError(uint16_t times);
+void VerifyBlinkCorrect(uint16_t times);
 
 void DisableFirmwareDownloadPort (void);
 

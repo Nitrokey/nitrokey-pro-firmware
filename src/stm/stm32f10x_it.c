@@ -235,7 +235,7 @@ void SDIO_IRQHandler (void)
 // =============================================================================
 // TIM2 Interrupt Handler
 // =============================================================================
-uint8_t Blink_process(Blink *blink);
+uint16_t Blink_process(Blink *blink);
 
 void TIM2_IRQHandler (void)
 {
@@ -254,7 +254,7 @@ void TIM2_IRQHandler (void)
 }
 
 
-uint8_t Blink_process(Blink *blink){
+uint16_t Blink_process(Blink *blink){
   if (blink->timesLeft <= 0) {
     return 0;
   }
