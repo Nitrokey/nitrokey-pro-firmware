@@ -438,7 +438,7 @@ void wink_correct(bool correct){
   if (correct){
     VerifyBlinkCorrect(20);
   } else {
-    VerifyBlinkError(1000);
+    VerifyBlinkError(10000);
   }
 }
 
