@@ -73,8 +73,8 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
     0x00,   /* bAlternateSetting */
     0x01,   /* bNumEndpoints = 1 */
     0x03,   /* bInterfaceClass: HID */
-    0x01,   /* bInterfaceSubClass : 1=BOOT, 0=no boot */
-    0x01,   /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+    0x00,   /* bInterfaceSubClass : 1=BOOT, 0=no boot */
+    0x00,   /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
     0,  /* iInterface: Index of string descriptor */
       /******************** Descriptor of Keyboard HID ********************/
     0x09,   /* bLength: HID Descriptor size */
