@@ -41,7 +41,7 @@ const uint8_t CCID_DeviceDescriptor[CCID_SIZ_DEVICE_DESC] = {
     // WBVAL(0x3437), /* 0x3437 = idProduct germalto usb-sl reader - for
     // testing */
 
-    WBVAL (0x0100), /* bcdDevice version 1.00 */
+    WBVAL (0x0101), /* bcdDevice version 1.01 */
 
     1,  /* index of string Manufacturer */
     2,  /* index of string descriptor of product */
@@ -73,8 +73,8 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
     0x00,   /* bAlternateSetting */
     0x01,   /* bNumEndpoints = 1 */
     0x03,   /* bInterfaceClass: HID */
-    0x01,   /* bInterfaceSubClass : 1=BOOT, 0=no boot */
-    0x01,   /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+    0x00,   /* bInterfaceSubClass : 1=BOOT, 0=no boot */
+    0x00,   /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
     0,  /* iInterface: Index of string descriptor */
       /******************** Descriptor of Keyboard HID ********************/
     0x09,   /* bLength: HID Descriptor size */
@@ -188,45 +188,30 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
 
 
 const uint8_t Keyboard_ReportDescriptor[KEYBOARD_SIZ_REPORT_DESC] = {
-    0x05, 0x01, // USAGE_PAGE (Generic Desktop)
-    0x09, 0x06, // USAGE (Keyboard)
-    0xa1, 0x01, // COLLECTION (Application)
-    // 0x85, 0x01, // REPORT_ID (1)
-    0x05, 0x07, // USAGE_PAGE (Keyboard)
-    0x19, 0xe0, // USAGE_MINIMUM (Keyboard LeftControl)
-    0x29, 0xe7, // USAGE_MAXIMUM (Keyboard Right GUI)
-    0x15, 0x00, // LOGICAL_MINIMUM (0)
-    0x25, 0x01, // LOGICAL_MAXIMUM (1)
-    0x75, 0x01, // REPORT_SIZE (1)
-    0x95, 0x08, // REPORT_COUNT (8)
-    0x81, 0x02, // INPUT (Data,Var,Abs)
-    0x95, 0x01, // REPORT_COUNT (1)
-    0x75, 0x08, // REPORT_SIZE (8)
-    0x81, 0x03, // INPUT (Cnst,Var,Abs)
-    0x95, 0x05, // REPORT_COUNT (5)
-    0x75, 0x01, // REPORT_SIZE (1)
-    0x05, 0x08, // USAGE_PAGE (LEDs)
-    0x19, 0x01, // USAGE_MINIMUM (Num Lock)
-    0x29, 0x05, // USAGE_MAXIMUM (Kana)
-    0x91, 0x02, // OUTPUT (Data,Var,Abs)
-    0x95, 0x01, // REPORT_COUNT (1)
-    0x75, 0x03, // REPORT_SIZE (3)
-    0x91, 0x03, // OUTPUT (Cnst,Var,Abs)
-    0x95, 0x06, // REPORT_COUNT (6)
-    0x75, 0x08, // REPORT_SIZE (8)
-    0x15, 0x00, // LOGICAL_MINIMUM (0)
-    0x25, 0x65, // LOGICAL_MAXIMUM (101)
-    0x05, 0x07, // USAGE_PAGE (Keyboard)
-    0x19, 0x00, // USAGE_MINIMUM (Reserved (no event indicated))
-    0x29, 0x65, // USAGE_MAXIMUM (Keyboard Application)
-    0x81, 0x00, // INPUT (Data,Ary,Abs)
-    0x09, 0x03, // USAGE (Keyboard ErrorUndefine)
-    0x75, 0x08, // REPORT_SIZE (8)
-    0x95, KEYBOARD_FEATURE_COUNT,   // REPORT_COUNT (64)
-    0xB1, 0x02, // FEATURE (Data,Var,Abs)
+    0x06, 0x00, 0xff,	// USAGE_PAGE (Vendor-Defined)
+    0x09, 0x01,			// USAGE (Vendor)
+    0xa1, 0x01,			// COLLECTION (Application)
 
-    0xc0,   // END_COLLECTION
+        0x09, 0x01,			//   USAGE (Input Report Data) !!! 0x0920
+        0x15, 0x00,         //   LOGICAL_MINIMUM (0)
+        0x26, 0xff, 0x00,   //   LOGICAL_MAXIMUM (255)
+        0x75, 0x08,         //   REPORT_SIZE (8)
+        0x95, 0x40,         //   REPORT_COUNT (64)
 
+        0x81, 0x02,         //   INPUT (Data,Var,Abs)
+        0x09, 0x02,         //   USAGE(Output Report Data) !!! 0x0921
+        0x15, 0x00,         //   LOGICAL_MINIMUM (0)
+        0x26, 0xff, 0x00,   //   LOGICAL_MAXIMUM (255)
+        0x75, 0x08,         //   REPORT_SIZE (8)
+        0x95, 0x40,         //   REPORT_COUNT (64)
+
+        0x91, 0x02, 		//   OUTPUT (Data,Var,Abs)
+        0x09, 0x02, 		//   USAGE (Keyboard ErrorUndefine)
+        0x75, 0x08, 		//   REPORT_SIZE (8)
+        0x95, KEYBOARD_FEATURE_COUNT,   // REPORT_COUNT (64)
+        0xB1, 0x02, 		//   FEATURE (Data,Var,Abs) */
+
+    0xc0,   			// END_COLLECTION
 };
 
 /*****************************************************************************/
