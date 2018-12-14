@@ -24,7 +24,7 @@ https://github.com/snowcap-electronics/OpenOCD-SWD
 or this one which is configured for automake 1.14:
 https://github.com/ggkitsas/OpenOCD-SWD
 
-**Note: From hardware version v2.0 (04/04/2018) onwards, using the MCU's DFU bootloader is no longer possible**
+**Note: From hardware version 2 (04/04/2018) onwards, using the MCU's DFU bootloader is no longer possible**
 #### STM
 1. When using the MCU's bootloader use STM Boot Loader Demonstrator or [stm32flash](http://sourceforge.net/p/stm32flash/wiki/Home/) under Linux.
 2. Read-protect the flash
