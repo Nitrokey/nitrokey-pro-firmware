@@ -3,10 +3,10 @@ Nitrokey Pro firmware [![Build Status](https://travis-ci.org/Nitrokey/nitrokey-p
 
 * [Building](#building)
 * [Flashing](#flashing)
+  * [Versaloon](#versaloon-and-st-link-v2)
   * [STM32flash and DFU Mode](#stm32flash-and-dfu-mode)
     * [Requirements](#requirements)
     * [Actual Flashing](#actual-flashing)
-  * [Versaloon](#versaloon)
 
 # Building
 
@@ -24,7 +24,23 @@ The microprocessor can be flashed in **one** of the following ways, depending on
 
 **Note: From hardware version 2 (04/04/2018) onwards, using the MCU's DFU bootloader is no longer possible**
 
+## Versaloon and ST-Link V2
+1. export OPENOCD_BIN=\<path-to-openocd-bin-folder\> && ./flash_versaloon.sh
+   or edit the script directly to contain OPENOCD_BIN=\<path-to-openocd-bin-folder\>
+2. make flash-vesaloon
+
+(TODO: For now it has a bug. Run it once, then kill it with Ctrl-C, then re-run it and it should flash the image)
+
+A proper OpenOCD (patched for SWD) seems to be this one:
+https://github.com/snowcap-electronics/OpenOCD-SWD
+
+or this one which is configured for automake 1.14:
+https://github.com/ggkitsas/OpenOCD-SWD
+
 ## STM32flash and DFU Mode
+
+Please note, that this approach only works for older Nitrokey Pro device, not Nitrokey Pro 2.
+
 ### Requirements
 
 * Download the .hex file you want to flash e.g. look at the [releases section](https://github.com/Nitrokey/nitrokey-pro-firmware/releases) or build it yourself (see above).
@@ -98,17 +114,4 @@ Enabling the read/write protection again:
 ```
 sudo stm32flash -j /dev/ttyUSB0 # read protection
 ```
-
-## Versaloon and ST-Link V2
-1. export OPENOCD_BIN=\<path-to-openocd-bin-folder\> && ./flash_versaloon.sh
-   or edit the script directly to contain OPENOCD_BIN=\<path-to-openocd-bin-folder\>
-2. make flash-vesaloon
-
-(TODO: For now it has a bug. Run it once, then kill it with Ctrl-C, then re-run it and it should flash the image)
-
-A proper OpenOCD (patched for SWD) seems to be this one:
-https://github.com/snowcap-electronics/OpenOCD-SWD
-
-or this one which is configured for automake 1.14:
-https://github.com/ggkitsas/OpenOCD-SWD
 
