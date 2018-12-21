@@ -253,17 +253,17 @@ void ClearAllBlinking(){
     SwitchSmartcardLED(DISABLE);
 }
 
-void StartBlinkingOATHLED (uint8_t times)
+void StartBlinkingOATHLED(uint16_t times)
 {
     blinkOATH.timesLeft = times;
 }
 
-void VerifyBlinkError(uint8_t times)
+void VerifyBlinkError(uint16_t times)
 {
     blinkVerifyError.timesLeft = times;
 }
 
-void VerifyBlinkCorrect(uint8_t times)
+void VerifyBlinkCorrect(uint16_t times)
 {
     blinkVerifyCorrect.timesLeft = times;
 }

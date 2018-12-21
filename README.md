@@ -18,9 +18,11 @@ Parameters:
 
 # Flashing
 
-The microprocessor can be flashed in two different ways:
+The microprocessor can be flashed in **one** of the following ways, depending on your hardware version:
 * DFU is a simple protocol via serial port which allows programming but no debugging. On the Nitrokey hardware we expose the appropriate pins over the USB connector but it's not USB! Details are described in the next chapter.
 * SWD is a STM-specific protocol and similar to JTAG allowing programming and debugging. Working adapters are Versaloon or any of the ST-Link V2 (clones). Under Linux you could give a patched OpenOCD a try but in the past it has been very troublesome. This approach requires to solder wires to the contact pads or to use an adapter with pogo pins and some kind of mounting (recommended).
+
+**Note: From hardware version 2 (04/04/2018) onwards, using the MCU's DFU bootloader is no longer possible**
 
 ## STM32flash and DFU Mode
 ### Requirements
@@ -97,7 +99,7 @@ Enabling the read/write protection again:
 sudo stm32flash -j /dev/ttyUSB0 # read protection
 ```
 
-## Versaloon
+## Versaloon and ST-Link V2
 1. export OPENOCD_BIN=\<path-to-openocd-bin-folder\> && ./flash_versaloon.sh
    or edit the script directly to contain OPENOCD_BIN=\<path-to-openocd-bin-folder\>
 2. make flash-vesaloon
@@ -109,3 +111,4 @@ https://github.com/snowcap-electronics/OpenOCD-SWD
 
 or this one which is configured for automake 1.14:
 https://github.com/ggkitsas/OpenOCD-SWD
+
