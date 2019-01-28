@@ -4,9 +4,11 @@ Nitrokey Pro firmware [![Build Status](https://travis-ci.org/Nitrokey/nitrokey-p
 * [Building](#building)
 * [Flashing](#flashing)
   * [Versaloon](#versaloon-and-st-link-v2)
-  * [STM32flash and DFU Mode](#stm32flash-and-dfu-mode)
     * [Requirements](#requirements)
-    * [Actual Flashing](#actual-flashing)
+    * [Flashing](#flashing)
+  * [STM32flash and DFU Mode](#stm32flash-and-dfu-mode)
+    * [Requirements](#dfu-requirements)
+    * [Flashing](#flashing-via-dfu)
 
 # Building
 
@@ -18,13 +20,45 @@ Parameters:
 
 # Flashing
 
-The microprocessor can be flashed in **one** of the following ways, depending on your hardware version:
-* DFU is a simple protocol via serial port which allows programming but no debugging. On the Nitrokey hardware we expose the appropriate pins over the USB connector but it's not USB! Details are described in the next chapter.
+The microprocessor can be flashed in one of the following ways, depending on your hardware version:
 * SWD is a STM-specific protocol and similar to JTAG allowing programming and debugging. Working adapters are Versaloon or any of the ST-Link V2 (clones). Under Linux you could give a patched OpenOCD a try but in the past it has been very troublesome. This approach requires to solder wires to the contact pads or to use an adapter with pogo pins and some kind of mounting (recommended).
+* DFU is a simple protocol via serial port which allows programming but no debugging. On the Nitrokey hardware we expose the appropriate pins over the USB connector but it's not USB! Details are described in the next chapter.
 
-**Note: From hardware version 2 (04/04/2018) onwards, using the MCU's DFU bootloader is no longer possible**
+|Note|
+|-----|
+|From hardware version 2 (04/04/2018) onwards, using the MCU's DFU bootloader is no longer possible|
 
 ## Versaloon and ST-Link V2
+
+### Requirements
+
+* Download the .hex file you want to flash e.g. look at the [releases section](https://github.com/Nitrokey/nitrokey-pro-firmware/releases) or build it yourself (see above).
+* You may use a [ST-Link V2 programmer](https://www.ebay.com/sch/i.html?_odkw=st-link&_osacat=0&_from=R40&_trksid=p2045573.m570.l1313.TR0.TRC0.H0.Xst-link+v2&_nkw=st-link+v2&_sacat=0) or a Versaloon adapter.
+
+The following picture shows the pin pads of the Nitrokey. The red rectangular is only available in
+newer versions and easier to use as the pads are much bigger. The blue rectangular is used in older
+and newer devices.
+
+![SWD pins of newer Nitrokey Pro device](adapter_v2.jpg?raw=true)
+
+The SWD pins for the red rectangular is as follows:
+
+```
+  5v  o
+IO  o   o D- (USB, not used for flashing!)
+Clk o   o D+ (USB, not used for flashing!)
+ GND  o
+```
+
+The SWD pins for the blue rectangular is as follows:
+
+```
+  o    o    o   o
+SWIO SWCLK GND VCC
+```
+
+### Flashing
+
 1. export OPENOCD_BIN=\<path-to-openocd-bin-folder\> && ./flash_versaloon.sh
    or edit the script directly to contain OPENOCD_BIN=\<path-to-openocd-bin-folder\>
 2. make flash-vesaloon
@@ -39,9 +73,9 @@ https://github.com/ggkitsas/OpenOCD-SWD
 
 ## STM32flash and DFU Mode
 
-Please note, that this approach only works for older Nitrokey Pro device, not Nitrokey Pro 2.
+Please note, that this approach only works for older Nitrokey Pro device, not Nitrokey Pro 2 (all devices purchased before 04/04/2018).
 
-### Requirements
+### DFU Requirements
 
 * Download the .hex file you want to flash e.g. look at the [releases section](https://github.com/Nitrokey/nitrokey-pro-firmware/releases) or build it yourself (see above).
 * You may use [STM32 Flash Loader Demonstrator](http://www.st.com/content/st_com/en/products/development-tools/software-development-tools/stm32-software-development-tools/stm32-programmers/flasher-stm32.html) (Windows only) or the open source command line tool [stm32flash](http://stm32flash.sourceforge.net). *Note: the terminal commands below are based on the command line tool.*
@@ -79,7 +113,7 @@ To flash the firmware you need to bridge the two contact holes and only then con
 
 ![Nitrokey bridged with a jumper](connected_jumper.jpg?raw=true)
 
-### Actual Flashing 
+### Flashing via DFU
 
 While the jumper is plugged in, connect the Nitrokey to the USB-serial adapter on your computer. The jumper is only required during the first moment of connection and can be removed afterwards.
 
