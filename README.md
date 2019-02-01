@@ -56,8 +56,13 @@ The SWD pins for the red rectangular is as follows:
 The SWD pins for the blue rectangular is as follows:
 
 ```
-  o    o    o   o
-SWIO SWCLK GND VCC
+_________________________
+ D   x    o    o         |________
+VCC GND SWCLK SWIO       |        |
+                         |        |
+                         |        |
+                         |________|
+_________________________|
 ```
 
 For SWD programming, connect the SWDIO, SWDCLK and GND pads to the respective pins of you ST-Link programmer. The device should be powered externally through USB or a 5V power supply during programming.
