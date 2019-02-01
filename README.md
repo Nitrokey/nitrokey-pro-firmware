@@ -1,6 +1,10 @@
 Nitrokey Pro firmware [![Build Status](https://travis-ci.org/Nitrokey/nitrokey-pro-firmware.svg?branch=master)](https://travis-ci.org/Nitrokey/nitrokey-pro-firmware)  [![Code Health](https://landscape.io/github/Nitrokey/nitrokey-pro-firmware/master/landscape.svg?style=flat)](https://landscape.io/github/Nitrokey/nitrokey-pro-firmware/master) [![Coverity Scan Build](https://scan.coverity.com/projects/4745/badge.svg)](https://scan.coverity.com/projects/4745)
 =====================
 
+The following information is about the firmware of the Nitrokey Pro. For information about the hardware
+please have a look at the [Nitrokey Pro hardware
+repo](https://github.com/Nitrokey/nitrokey-pro-hardware).
+
 * [Building](#building)
 * [Flashing](#flashing)
   * [Versaloon](#versaloon-and-st-link-v2)
@@ -20,6 +24,10 @@ Parameters:
 
 # Flashing
 
+|Note|
+|-----|
+|Any user data present on the device will be erased when flashing it. A backup is essential to prevent data loss.|
+
 The microprocessor can be flashed in one of the following ways, depending on your hardware version:
 * SWD is a STM-specific protocol and similar to JTAG allowing programming and debugging. Working adapters are Versaloon or any of the ST-Link V2 (clones). Under Linux you could give a patched OpenOCD a try but in the past it has been very troublesome. This approach requires to solder wires to the contact pads or to use an adapter with pogo pins and some kind of mounting (recommended).
 * DFU is a simple protocol via serial port which allows programming but no debugging. On the Nitrokey hardware we expose the appropriate pins over the USB connector but it's not USB! Details are described in the next chapter.
@@ -36,19 +44,14 @@ The microprocessor can be flashed in one of the following ways, depending on you
 * You may use a [ST-Link V2 programmer](https://www.ebay.com/sch/i.html?_odkw=st-link&_osacat=0&_from=R40&_trksid=p2045573.m570.l1313.TR0.TRC0.H0.Xst-link+v2&_nkw=st-link+v2&_sacat=0) or a Versaloon adapter.
 
 The following picture shows the pin pads of the Nitrokey. The red rectangular is only available in
-newer versions and easier to use as the pads are much bigger. The blue rectangular is used in older
+newer versions and easier to use as the pads are much bigger. The blue rectangular is present in older
 and newer devices.
 
 ![SWD pins of newer Nitrokey Pro device](adapter_v2.jpg?raw=true)
 
 The SWD pins for the red rectangular is as follows:
 
-```
-  5v  o
-IO  o   o D- (USB, not used for flashing!)
-Clk o   o D+ (USB, not used for flashing!)
- GND  o
-```
+![NK Pro v2.0 Programming Connector Layout](conn_layout.png)
 
 The SWD pins for the blue rectangular is as follows:
 
@@ -56,6 +59,8 @@ The SWD pins for the blue rectangular is as follows:
   o    o    o   o
 SWIO SWCLK GND VCC
 ```
+
+For SWD programming, connect the SWDIO, SWDCLK and GND pads to the respective pins of you ST-Link programmer. The device should be powered externally through USB or a 5V power supply during programming.
 
 ### Flashing
 
