@@ -47,11 +47,11 @@ The following picture shows the pin pads of the Nitrokey. The red rectangular is
 newer versions and easier to use as the pads are much bigger. The blue rectangular is present in older
 and newer devices.
 
-![SWD pins of newer Nitrokey Pro device](adapter_v2.jpg?raw=true)
+![SWD pins of newer Nitrokey Pro device](images/adapter_v2.jpg?raw=true)
 
 The SWD pins for the red rectangular is as follows:
 
-![NK Pro v2.0 Programming Connector Layout](conn_layout.png)
+![NK Pro v2.0 Programming Connector Layout](images/conn_layout.png)
 
 The SWD pins for the blue rectangular is as follows:
 
@@ -117,11 +117,11 @@ This diagram represents the pinout of the USB socket which you are going to sold
 ```
 
 The following picture shows the adapter/USB-to-TTL connection.
-![USB-to-TTL adapter and USB socket](adapter.jpg?raw=true)
+![USB-to-TTL adapter and USB socket](images/adapter.jpg?raw=true)
 
 To flash the firmware you need to bridge the two contact holes and only then connect (and power) the PCB to your adapter. The bridge triggers the hardware to boot into DFU mode. You can use a jumper with 2.0 mm pitch or just prepare/solder a wire. The following picture shows a bridge for the Nitrokey.
 
-![Nitrokey bridged with a jumper](connected_jumper.jpg?raw=true)
+![Nitrokey bridged with a jumper](images/connected_jumper.jpg?raw=true)
 
 ### Flashing via DFU
 
