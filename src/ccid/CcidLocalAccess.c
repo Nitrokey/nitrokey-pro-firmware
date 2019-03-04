@@ -34,7 +34,7 @@
 
 #include "time.h"
 
-#define CCID_TRANSFER_BUFFER_MAX    256
+#define CCID_TRANSFER_BUFFER_MAX    512
 
 #define CCID_TPDU_OVERHEAD          4
 #define CCID_TPDU_PROLOG            3
@@ -69,7 +69,7 @@ typedef struct
 {
     unsigned char cAPDULength;
     unsigned short cAPDUAnswerStatus;
-    unsigned char cAPDUAnswerLength;
+    unsigned short cAPDUAnswerLength;
     unsigned char cTPDUSequence;
     unsigned char cTPDULength;
     unsigned char cAPDU[CCID_TRANSFER_BUFFER_MAX];
@@ -942,7 +942,7 @@ retCode getSerialNumber (uint8_t * out_serial_number, const uint16_t buffer_leng
 
   parse_tlv_out_buf = out_serial_number;
   parse_tlv_out_len = buffer_length;
-  parse_tlv(tSCT.cAPDU+3, tSCT.cAPDU+cRet.len-3, tag_callback);
+  parse_tlv(tSCT.cAPDU, tSCT.cAPDU+cRet.len, tag_callback);
 
   InitSCTStruct (&tSCT);
 
