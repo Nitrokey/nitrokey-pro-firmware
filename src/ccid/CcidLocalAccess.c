@@ -31,6 +31,7 @@
 #include "CCID_Ifd_protocol.h"
 #include "CcidLocalAccess.h"
 #include "hotp.h"
+#include "parse_tlv.h"
 
 #include "time.h"
 
@@ -866,6 +867,19 @@ uint16_t send_data_no_response(uint8_t *data, uint8_t data_length){
   return cRet;
 }
 
+
+static uint8_t * parse_tlv_out_buf = NULL;
+static uint16_t parse_tlv_out_len = 0;
+
+int tag_callback(TLV *tlv, uint16_t depth){
+    if (tlv->tag[0] == 0x5F && tlv->tag[1] == 0x20){
+        tlv->length = min(tlv->length, 0x10);
+        memcpy(parse_tlv_out_buf, tlv->value, min(parse_tlv_out_len, tlv->length));
+        return 1;
+    }
+    return 0;
+}
+
 /**
  * Get smart card's serial number and copy it to out_serial_number.
  * @param out_serial_number buffer to place the data, result is in ASCII
@@ -896,13 +910,10 @@ retCode getSerialNumber (uint8_t * out_serial_number, const uint16_t buffer_leng
   cRet.len = tSCT.cAPDUAnswerLength;
   if (APDU_ANSWER_COMMAND_CORRECT != cRet.smartcard_ret && APDU_EOF != cRet.smartcard_ret) return cRet;
 
-  //Copy results to given buffer
-  const uint16_t SERIAL_OFFSET = 0x70;
-  const uint16_t SERIAL_LENGTH = 11;
-  if (buffer_length>SERIAL_LENGTH){
-    memset(out_serial_number, 0, buffer_length);
-    memcpy(out_serial_number, (void *) tSCT.cAPDU+SERIAL_OFFSET, min(buffer_length, SERIAL_LENGTH));
-  }
+  parse_tlv_out_buf = out_serial_number;
+  parse_tlv_out_len = buffer_length;
+  parse_tlv(tSCT.cAPDU+3, tSCT.cAPDU+cRet.len-3, tag_callback);
+
   InitSCTStruct (&tSCT);
 
   cRet.execution_phase++;
