@@ -35,6 +35,29 @@
 
 #include "time.h"
 
+#define CCID_TRANSFER_BUFFER_MAX    512
+
+#define CCID_TPDU_OVERHEAD          4
+#define CCID_TPDU_PROLOG            3
+#define CCID_TPDU_ANSWER_OVERHEAD   6
+
+
+#define CCID_TPDU_NAD           0
+#define CCID_TPDU_PCD           1
+#define CCID_TPDU_LENGTH        2
+#define CCID_TPDU_DATASTART     3
+
+#define CCID_TPDU_R_BLOCK_FLAG          0x80
+#define CCID_TPDU_R_BLOCK_SEQUENCE_FLAG 0x10
+#define CCID_TPDU_CHAINING_FLAG         0x20
+
+
+#define CCID_CLA  0
+#define CCID_INS  1
+#define CCID_P1   2
+#define CCID_P2   3
+#define CCID_LC   4
+#define CCID_DATA 5
 
 /*******************************************************************************
 
@@ -43,6 +66,16 @@
 *******************************************************************************/
 
 
+typedef struct
+{
+    unsigned char cAPDULength;
+    unsigned short cAPDUAnswerStatus;
+    unsigned short cAPDUAnswerLength;
+    unsigned char cTPDUSequence;
+    unsigned char cTPDULength;
+    unsigned char cAPDU[CCID_TRANSFER_BUFFER_MAX];
+    unsigned char cTPDU[CCID_TRANSFER_BUFFER_MAX + CCID_TPDU_OVERHEAD];
+} typeSmartcardTransfer;
 
 static typeSmartcardTransfer tSCT;
 
@@ -912,7 +945,7 @@ retCode getSerialNumber (uint8_t * out_serial_number, const uint16_t buffer_leng
 
   parse_tlv_out_buf = out_serial_number;
   parse_tlv_out_len = buffer_length;
-  parse_tlv(tSCT.cAPDU+3, tSCT.cAPDU+cRet.len-3, tag_callback);
+  parse_tlv(tSCT.cAPDU, tSCT.cAPDU+cRet.len, tag_callback);
 
   InitSCTStruct (&tSCT);
 
