@@ -4,7 +4,7 @@
 # by Martin Thomas, Kaiserslautern, Germany 
 # <eversmith@heizung-thomas.de>
 #
-# based on the WinAVR makefile written by Eric B. Weddington, Jörg Wunsch, et al.
+# based on the WinAVR makefile written by Eric B. Weddington, Jï¿½rg Wunsch, et al.
 # Released to the Public Domain
 # Please read the make user manual!
 #
@@ -80,6 +80,7 @@ SRC = 		../../src/main.c                                         \
 			../../src/ccid/Crd.c                                         \
 			../../src/ccid/Ifd_ccid.c                                         \
 			../../src/ccid/CcidLocalAccess.c                                         \
+			../../src/ccid/parse_tlv.c                                         \
 			../../src/ccid/smartcard/smartcard.c                                         \
 			../../src/ccid/CCIDHID_USB/CCIDHID_usb_prop.c                                         \
 			../../src/ccid/CCIDHID_USB/CCIDHID_usb_desc.c                                         \
