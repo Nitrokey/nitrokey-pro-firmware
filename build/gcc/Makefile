@@ -71,6 +71,7 @@ TARGET = nitrokey-hsm-firmware
 # List C source files here. (C dependencies are automatically generated.)
 # use file-extension c for "c-only"-files
 SRC = 		../../src/main.c                                         \
+			../../src/debug.c                                         \
 			../../src/hw_config.c                                         \
 			../../src/test_code.c                                         \
 			../../src/utils/delays.c	\

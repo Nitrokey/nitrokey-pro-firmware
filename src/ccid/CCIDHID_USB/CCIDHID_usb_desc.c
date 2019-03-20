@@ -59,7 +59,7 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
     0x09,   /* bLength ConfigDescriptor */
     0x02,   /* bDescriptorType */
     CCID_SIZ_CONFIG_DESC,  0x00, /* uint16_t wTotalLength */
-    0x01,   /* bNumInterfaces */
+    0x02,   /* bNumInterfaces */
     0x01,   /* bConfigurationValue */
     0x00,   /* iConfiguration CCID = 6 ???? */
     USB_CONFIG_BUS_POWERED, /* bmAttributes */
@@ -149,7 +149,25 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
     0x00,   // wMaxPacketSize (MSB)
     0x00,   // bInterval: ignored
 
+    // Interface 1 descriptor (Interface 1 = Debug interface)
+    0x09,   /* bLength */
+    0x04,   /* bDescriptorType */
+    0x01,   /* bInterfaceNumber */
+    0x00,   /* bAlternateSetting */
+    0x01,   /* bNumEndpoints = 1 */
+    0xFF,   /* bInterfaceClass = Vendor specific */
+    0x00,   /* bInterfaceSubClass */
+    0x00,   /* bInterfaceProtocol */
+    0x00,   /* iInterface Index of string descriptor */
 
+    // Endpoint 5 descriptor (Interrupt IN for debug)
+    0x07,   /* bLength */
+    0x05,   // bDescriptorType: Endpoint descriptor type
+    0x85,   // bEndpointAddress: Endpoint 5 IN
+    0x03,   // bmAttributes: Interrupt endpoint
+    0x20,   // wMaxPacketSize(LSB): 32 byte
+    0x00,   // wMaxPacketSize (MSB)
+    0x18,   // bInterval: Polling Interval (24 ms = 0x18)
 };
 
 
