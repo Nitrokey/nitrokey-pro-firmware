@@ -230,6 +230,9 @@ uint8_t cmd_unblock_pin (uint8_t * report, uint8_t * output);
 
 uint8_t cmd_getProDebug (uint8_t * report, uint8_t * output);
 
+uint8_t cmd_enableFirmwareUpdate(void);
+
+
 // START - OTP Test Routine --------------------------------
 /*
    uint8_t cmd_test_counter(uint8_t *report,uint8_t *output); uint8_t cmd_test_time(uint8_t *report,uint8_t *output); */

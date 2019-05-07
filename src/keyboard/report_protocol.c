@@ -37,6 +37,10 @@
 #include "time.h"
 #include "password_safe.h"
 
+#include "stm32f10x_bkp.h"
+#include "stm32f10x_pwr.h"
+
+
 uint8_t temp_password[25];
 uint8_t temp_user_password[25];
 bool temp_admin_password_set = FALSE;
@@ -230,6 +234,9 @@ uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
 
       case CMD_LOCK_DEVICE:
         cmd_lockDevice(report, output);
+
+        /* TODO: Add extra command for this*/
+        cmd_enableFirmwareUpdate();
         break;
 
       case CMD_DETECT_SC_AES:
@@ -952,4 +959,19 @@ uint8_t cmd_lockDevice(uint8_t *report, uint8_t *output) {
   // Disable password safe
   PWS_DisableKey();
   return 0;
+}
+
+uint8_t cmd_enableFirmwareUpdate() {
+    /* Boot loader magic number*/
+    const uint32_t CMD_BOOT = 0x544F4F42UL;
+
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);
+    PWR_BackupAccessCmd(ENABLE);
+    /* Write bootloader magic number to Backup registers*/
+    BKP_WriteBackupRegister(BKP_DR1, (uint16_t) (CMD_BOOT & 0x0000FFFFUL));
+    BKP_WriteBackupRegister(BKP_DR2, (uint16_t) ((CMD_BOOT & 0xFFFF0000UL) >> 16));
+
+    NVIC_SystemReset();
+
+    return 0;
 }
