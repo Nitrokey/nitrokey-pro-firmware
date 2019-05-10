@@ -159,5 +159,5 @@ Enabling the read/write protection again:
 sudo stm32flash -j /dev/ttyUSB0 # read protection
 ```
 
-**Windows user** should try `COM3` instead of `/dev/ttyUSB0` and need to type all command without
+**Windows user** should try `COM3` instead of `/dev/ttyUSB0` and need to type all commands without
 `sudo`.
