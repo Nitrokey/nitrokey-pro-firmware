@@ -120,6 +120,8 @@ SRC = 		../../src/main.c                                         \
 			../../src/crypt/aes/aes.c                                         \
 			../../src/crypt/sha1/sha1.c                                         \
 			../../src/crypt/sha1/hmac-sha1.c                                         \
+			../../src/crypt/sha4/sha4.c                                         \
+			../../src/crypt/pbkdf2/pbkdf2.c                                         \
 			../../src/hotp/hotp.c                                         \
 			../../src/keyboard/keyboard.c                                         \
 			../../src/keyboard/report_protocol.c                                         \

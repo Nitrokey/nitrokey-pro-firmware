@@ -31,6 +31,8 @@
 #include "FlashStorage.h"
 #include "password_safe.h"
 #include "hotp.h"
+#include "CcidLocalAccess.h"
+#include "pbkdf2.h"
 
 typeStick20Configuration_st StickConfiguration_st;
 
@@ -60,7 +62,9 @@ unsigned int debug_len = 0;
    142 - 145  ID of sc card (4 byte) 
    146 - 177  XOR mask for sc tranfered keys (32 byte) 
    178 - 209  Password safe key (32 byte) 
-   210 -      Debug */
+   210 - 242  PBKDF2 Firmware Update password hash (32 byte)
+   242 - 251  Firmware Update password Hash salt (10 byte)
+   252 -      Debug */
 
 #ifdef ADD_DEBUG_COMMANDS
 
@@ -69,7 +73,7 @@ void WriteDebug (u8 * data, unsigned int length)
     unsigned char page_buffer[FLASH_PAGE_SIZE];
 
     memcpy (page_buffer, FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
-    memcpy (page_buffer + 210, data, length);
+    memcpy (page_buffer + 252, data, length);
 
     debug_len += length;
 
@@ -85,12 +89,16 @@ void GetDebug (u8 * data, unsigned int* length)
     unsigned char page_buffer[FLASH_PAGE_SIZE];
 
     memcpy (page_buffer, FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
-    memcpy (data, page_buffer + 210, debug_len);
+    memcpy (data, page_buffer + 252, debug_len);
     *length = debug_len;
     debug_len = 0;
 }
 
 #endif
+
+#define AES_KEYSIZE_256_BIT     32  // 32 * 8 = 256
+#define UPDATE_PIN_MAX_SIZE     20
+#define UPDATE_PIN_SALT_SIZE    10
 
 /*******************************************************************************
 
@@ -252,6 +260,9 @@ u8 InitStickConfigurationToUserPage_u8 (void)
     StickConfiguration_st.StickKeysNotInitiated_u8 = TRUE;
 
     WriteStickConfigurationToUserPage ();
+
+    StoreNewUpdatePinHashInFlash ((u8 *) "12345678", 8);
+
     return (TRUE);
 }
 
@@ -467,9 +478,6 @@ u8 ReadPasswordSafeKey (u8 * data)
 
   Writes the PBKDF2 hashed Firmware update password to Flash memory
 
-  Byte
-  Len = 32 Byte
-
   Changes
   Date      Author          Info
   17.05.19  ET              Merge over from NK Storage
@@ -499,9 +507,6 @@ u8 WriteUpdatePinHashToFlash (u8 * PIN_Hash_pu8)
 
   Reads the PBKDF2 hashed Firmware update password from Flash memory
 
-  Byte
-  Len = 32 Byte
-
   Changes
   Date      Author          Info
   17.05.19  ET              Merge over from NK Storage
@@ -522,9 +527,6 @@ u8 ReadUpdatePinHashFromFlash (u8 * PIN_Hash_pu8)
   WriteUpdatePinSaltToFlash
 
   Writes the salt used for PBKDF2 key derivation to Flash memory
-
-  Byte
-  Len = 32 Byte
 
   Changes
   Date      Author          Info
@@ -555,9 +557,6 @@ u8 WriteUpdatePinSaltToFlash (u8 * PIN_pu8)
 
   Reads the salt used for PBKDF2 key derivation from Flash memory
 
-  Byte
-  Len = 32 Byte
-
   Changes
   Date      Author          Info
   17.05.19  ET              Merge over from NK Storage
@@ -570,6 +569,100 @@ u8 WriteUpdatePinSaltToFlash (u8 * PIN_pu8)
 u8 ReadUpdatePinSaltFromFlash (u8 * PIN_pu8)
 {
     memcpy (PIN_pu8, (void *) (FLASHC_USER_PAGE + 242), 10);
+    return (TRUE);
+}
+
+/*******************************************************************************
+
+  CheckUpdatePin
+
+  Compare the supplied Update Pin with the Update Pin stored in Flash
+
+  Changes
+  Date      Author          Info
+  17.05.19  ET              Merge over from NK Storage
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+u8 CheckUpdatePin (u8 * Password_pu8, u32 PasswordLen_u32)
+{
+    u8 i;
+    u8 UpdateSaltInit;
+    u8 output_au8[64];
+    u8 UpdatePinSalt_u8[UPDATE_PIN_SALT_SIZE];
+    u8 UpdatePinHash_u8[AES_KEYSIZE_256_BIT];
+
+    ReadUpdatePinSaltFromFlash (UpdatePinSalt_u8);
+
+    // Check if PIN is uninitialized after flashing
+    UpdateSaltInit = FALSE;
+    for (i=0;i<UPDATE_PIN_SALT_SIZE;i++)
+    {
+      if (0xFF != UpdatePinSalt_u8[i])
+      {
+        UpdateSaltInit = TRUE;
+      }
+    }
+    if (FALSE == UpdateSaltInit)
+    {
+        // Initialize Update Pin with default value
+        StoreNewUpdatePinHashInFlash ((u8 *) "12345678", 8);
+        ReadUpdatePinSaltFromFlash (UpdatePinSalt_u8);
+    }
+
+    if (UPDATE_PIN_MAX_SIZE < PasswordLen_u32)
+    {
+        return (FALSE);
+    }
+
+    pbkdf2 (output_au8, Password_pu8, PasswordLen_u32, UpdatePinSalt_u8, UPDATE_PIN_SALT_SIZE);
+    ReadUpdatePinHashFromFlash (UpdatePinHash_u8);
+
+    if (0 != memcmp (UpdatePinHash_u8, output_au8, AES_KEYSIZE_256_BIT))
+    {
+        return (FALSE);
+    }
+
+    DelayMs (100);
+    return (TRUE);
+}
+
+/*******************************************************************************
+
+  StoreNewUpdatePinHashInFlash
+
+  Change Firmware Update password stored in Flash
+
+  Changes
+  Date      Author          Info
+  17.05.19  ET              Merge over from NK Storage
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+u8 StoreNewUpdatePinHashInFlash (u8 * Password_pu8, u32 PasswordLen_u32)
+{
+    u8 output_au8[64];
+    u8 UpdatePinSalt_u8[UPDATE_PIN_SALT_SIZE];
+
+    if (UPDATE_PIN_MAX_SIZE < PasswordLen_u32)
+    {
+        return (FALSE);
+    }
+
+    // Generate new salt
+    getRandomNumber (UPDATE_PIN_SALT_SIZE, UpdatePinSalt_u8);
+
+    WriteUpdatePinSaltToFlash (UpdatePinSalt_u8);
+
+    pbkdf2 (output_au8, Password_pu8, PasswordLen_u32, UpdatePinSalt_u8, UPDATE_PIN_SALT_SIZE);
+    WriteUpdatePinHashToFlash (output_au8);
+
     return (TRUE);
 }
 
