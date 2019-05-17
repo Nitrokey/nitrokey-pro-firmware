@@ -463,6 +463,118 @@ u8 ReadPasswordSafeKey (u8 * data)
 
 /*******************************************************************************
 
+  WriteUpdatePinHashToFlash
+
+  Writes the PBKDF2 hashed Firmware update password to Flash memory
+
+  Byte
+  Len = 32 Byte
+
+  Changes
+  Date      Author          Info
+  17.05.19  ET              Merge over from NK Storage
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+u8 WriteUpdatePinHashToFlash (u8 * PIN_Hash_pu8)
+{
+    unsigned char page_buffer[FLASH_PAGE_SIZE];
+
+    memcpy (page_buffer, (const void *) FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
+    memcpy (page_buffer + 210, PIN_Hash_pu8, 32);
+
+    FLASH_Unlock ();
+    FLASH_ErasePage (FLASHC_USER_PAGE);
+    write_data_to_flash (page_buffer, FLASH_PAGE_SIZE, FLASHC_USER_PAGE);
+    FLASH_Lock ();
+    return (TRUE);
+}
+
+/*******************************************************************************
+
+  ReadUpdatePinHashFromFlash
+
+  Reads the PBKDF2 hashed Firmware update password from Flash memory
+
+  Byte
+  Len = 32 Byte
+
+  Changes
+  Date      Author          Info
+  17.05.19  ET              Merge over from NK Storage
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+u8 ReadUpdatePinHashFromFlash (u8 * PIN_Hash_pu8)
+{
+    memcpy (PIN_Hash_pu8, (void *) (FLASHC_USER_PAGE + 210), 32);
+    return (TRUE);
+}
+
+/*******************************************************************************
+
+  WriteUpdatePinSaltToFlash
+
+  Writes the salt used for PBKDF2 key derivation to Flash memory
+
+  Byte
+  Len = 32 Byte
+
+  Changes
+  Date      Author          Info
+  17.05.19  ET              Merge over from NK Storage
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+u8 WriteUpdatePinSaltToFlash (u8 * PIN_pu8)
+{
+    unsigned char page_buffer[FLASH_PAGE_SIZE];
+
+    memcpy (page_buffer, (const void *) FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
+    memcpy (page_buffer + 242, PIN_pu8, 10);
+
+    FLASH_Unlock ();
+    FLASH_ErasePage (FLASHC_USER_PAGE);
+    write_data_to_flash (page_buffer, FLASH_PAGE_SIZE, FLASHC_USER_PAGE);
+    FLASH_Lock ();
+    return (TRUE);
+}
+
+/*******************************************************************************
+
+  ReadUpdatePinSaltFromFlash
+
+  Reads the salt used for PBKDF2 key derivation from Flash memory
+
+  Byte
+  Len = 32 Byte
+
+  Changes
+  Date      Author          Info
+  17.05.19  ET              Merge over from NK Storage
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+u8 ReadUpdatePinSaltFromFlash (u8 * PIN_pu8)
+{
+    memcpy (PIN_pu8, (void *) (FLASHC_USER_PAGE + 242), 10);
+    return (TRUE);
+}
+
+/*******************************************************************************
+
   EraseLocalFlashKeyValues_u32
 
   Changes

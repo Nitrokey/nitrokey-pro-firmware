@@ -97,6 +97,11 @@ u8 WritePasswordSafeKey (u8 * data);
 u8 ReadPasswordSafeKey (u8 * data);
 u8 ReadAESStorageKeyToUserPage (u8 * data);
 
+u8 WriteUpdatePinHashToFlash (u8 * PIN_Hash_pu8);
+u8 ReadUpdatePinHashFromFlash (u8 * PIN_Hash_pu8);
+u8 WriteUpdatePinSaltToFlash (u8 * PIN_pu8);
+u8 ReadUpdatePinSaltFromFlash (u8 * PIN_pu8);
+
 u8 ClearStickKeysNotInitatedToFlash (void);
 u8 SetStickKeysNotInitatedToFlash (void);
 
