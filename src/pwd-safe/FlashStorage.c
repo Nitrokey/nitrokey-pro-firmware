@@ -64,7 +64,8 @@ unsigned int debug_len = 0;
    178 - 209  Password safe key (32 byte) 
    210 - 242  PBKDF2 Firmware Update password hash (32 byte)
    242 - 251  Firmware Update password Hash salt (10 byte)
-   252 -      Debug */
+   252 - 255  Bootloader boot flag
+   256 -      Debug */
 
 #ifdef ADD_DEBUG_COMMANDS
 
@@ -663,6 +664,63 @@ u8 StoreNewUpdatePinHashInFlash (u8 * Password_pu8, u32 PasswordLen_u32)
     pbkdf2 (output_au8, Password_pu8, PasswordLen_u32, UpdatePinSalt_u8, UPDATE_PIN_SALT_SIZE);
     WriteUpdatePinHashToFlash (output_au8);
 
+    return (TRUE);
+}
+
+/*******************************************************************************
+
+  WriteBootloaderFlagToFlash
+
+  Writes the Flag for bootloader invocation to flash memory
+
+  Changes
+  Date      Author          Info
+  21.05.19  ET              Add function
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+u8 WriteBootloaderFlagToFlash (void)
+{
+    unsigned char page_buffer[FLASH_PAGE_SIZE];
+    const u32 BOOTLOADER_TOKEN = 0x424F4F54; // "BOOT" in Hex
+
+    memcpy (page_buffer, (const void *) FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
+    memcpy (page_buffer + 252, (u8*) &BOOTLOADER_TOKEN, 4);
+
+    FLASH_Unlock ();
+    FLASH_ErasePage (FLASHC_USER_PAGE);
+    write_data_to_flash (page_buffer, FLASH_PAGE_SIZE, FLASHC_USER_PAGE);
+    FLASH_Lock ();
+    return (TRUE);
+}
+
+/*******************************************************************************
+
+  EraseBootloaderFlagFromFlash
+
+  Erases bootloader flag to boot straight into firmware
+
+  Changes
+  Date      Author          Info
+  21.05.19  ET              Add function
+
+*******************************************************************************/
+
+u8 EraseBootloaderFlagFromFlash (void)
+{
+    unsigned char page_buffer[FLASH_PAGE_SIZE];
+    const u32 EMPTY_TOKEN = 0xFFFFFFFF;
+
+    memcpy (page_buffer, (const void *) FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
+    memcpy (page_buffer + 252, (u8*) &EMPTY_TOKEN, 4);
+
+    FLASH_Unlock ();
+    FLASH_ErasePage (FLASHC_USER_PAGE);
+    write_data_to_flash (page_buffer, FLASH_PAGE_SIZE, FLASHC_USER_PAGE);
+    FLASH_Lock ();
     return (TRUE);
 }
 

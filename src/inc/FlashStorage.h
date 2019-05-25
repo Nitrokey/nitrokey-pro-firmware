@@ -105,6 +105,10 @@ u8 ReadUpdatePinSaltFromFlash (u8 * PIN_pu8);
 u8 CheckUpdatePin (u8 * Password_pu8, u32 PasswordLen_u32);
 u8 StoreNewUpdatePinHashInFlash (u8 * Password_pu8, u32 PasswordLen_u32);
 
+u8 WriteBootloaderFlagToFlash (void);
+u8 EraseBootloaderFlagFromFlash (void);
+
+
 u8 ClearStickKeysNotInitatedToFlash (void);
 u8 SetStickKeysNotInitatedToFlash (void);
 
