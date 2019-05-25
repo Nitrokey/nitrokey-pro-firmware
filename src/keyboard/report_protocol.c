@@ -36,6 +36,8 @@
 #include "CcidLocalAccess.h"
 #include "time.h"
 #include "password_safe.h"
+#include "FlashStorage.h"
+
 
 #include "stm32f10x_bkp.h"
 #include "stm32f10x_pwr.h"
@@ -234,9 +236,6 @@ uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
 
       case CMD_LOCK_DEVICE:
         cmd_lockDevice(report, output);
-
-        /* TODO: Add extra command for this*/
-        cmd_enableFirmwareUpdate();
         break;
 
       case CMD_DETECT_SC_AES:
@@ -246,6 +245,9 @@ uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
       case CMD_NEW_AES_KEY:
         cmd_newAesKey(report, output);
         break;
+
+      case CMD_FIRMWARE_UPDATE:
+        cmd_enableFirmwareUpdate(report, output);
 
 #ifdef ADD_DEBUG_COMMANDS
 #warning "Debug commands handled"
@@ -961,7 +963,15 @@ uint8_t cmd_lockDevice(uint8_t *report, uint8_t *output) {
   return 0;
 }
 
-uint8_t cmd_enableFirmwareUpdate() {
+uint8_t cmd_enableFirmwareUpdate(uint8_t *report, uint8_t *output) {
+    
+    uint8_t ret = CheckUpdatePin (&report[1], strlen ((char*)&report[1]));
+    if (FALSE == ret) {
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
+        return 0;
+    }
+
+    // TODO: This could be done through persistent memory as well...
     /* Boot loader magic number*/
     const uint32_t CMD_BOOT = 0x544F4F42UL;
 
