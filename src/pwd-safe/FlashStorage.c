@@ -598,6 +598,10 @@ u8 CheckUpdatePin (u8 * Password_pu8, u32 PasswordLen_u32)
 
     ReadUpdatePinSaltFromFlash (UpdatePinSalt_u8);
 
+    /* TODO: Return false if PW is <8 Bytes (count trailing zeroes from right)*/
+
+    /* TODO: Run check on 20 Bytes always*/
+
     // Check if PIN is uninitialized after flashing
     UpdateSaltInit = FALSE;
     for (i=0;i<UPDATE_PIN_SALT_SIZE;i++)
@@ -627,6 +631,7 @@ u8 CheckUpdatePin (u8 * Password_pu8, u32 PasswordLen_u32)
         return (FALSE);
     }
 
+    /* TODO: Clear PBKDF output*/
     DelayMs (100);
     return (TRUE);
 }
