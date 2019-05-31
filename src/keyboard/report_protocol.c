@@ -991,20 +991,20 @@ uint8_t cmd_changeFirmwarePassword(uint8_t *report, uint8_t *output) {
     const uint8_t MAX_PASSWORD_LEN = 20;
 
     /* FIXME: Dont use strlen*/
-    uint8_t len = strlen ((char*)&HID_String_au8[1]);
+    uint8_t len = strlen ((char*)&report[1]);
     if(len > MAX_PASSWORD_LEN) {
         len = MAX_PASSWORD_LEN;
     }
 
-    if (TRUE == CheckUpdatePin (&HID_String_au8[1], len))
+    if (TRUE == CheckUpdatePin (&report[1], len))
     {
         /* FIXME: Dont use strlen*/
-        len = strlen ((char*)&HID_String_au8[22]);
+        len = strlen ((char*)&report[22]);
         if(len > MAX_PASSWORD_LEN) {
             len = MAX_PASSWORD_LEN;
         }
 
-        if (TRUE == StoreNewUpdatePinHashInFlash (&HID_String_au8[22], len))    // Start of new PW
+        if (TRUE == StoreNewUpdatePinHashInFlash (&report[22], len))    // Start of new PW
         {
             /* PIN change sucessful*/
             output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
