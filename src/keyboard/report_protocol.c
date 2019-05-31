@@ -1020,4 +1020,6 @@ uint8_t cmd_changeFirmwarePassword(uint8_t *report, uint8_t *output) {
         /* Incorrect password*/
         output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
     }
+
+    return 0;
 }
