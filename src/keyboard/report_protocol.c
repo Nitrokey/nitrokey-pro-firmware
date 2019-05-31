@@ -248,6 +248,11 @@ uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
 
       case CMD_FIRMWARE_UPDATE:
         cmd_enableFirmwareUpdate(report, output);
+        break;
+
+      case CMD_CHANGE_FIRMWARE_PASSWORD:
+        cmd_changeFirmwarePassword(report, output);
+        break;
 
 #ifdef ADD_DEBUG_COMMANDS
 #warning "Debug commands handled"
