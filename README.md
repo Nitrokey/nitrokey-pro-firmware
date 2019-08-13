@@ -5,12 +5,13 @@ The following information is about the firmware of the Nitrokey Pro. For informa
 please have a look at the [Nitrokey Pro hardware
 repo](https://github.com/Nitrokey/nitrokey-pro-hardware).
 
+* [Overview](#Overview)
 * [Building](#building)
 * [Flashing](#flashing)
-  * [Versaloon](#versaloon-and-st-link-v2)
+  * [SWD](#SWD)
     * [Requirements](#requirements)
     * [Flashing](#flashing)
-  * [STM32flash and DFU Mode](#stm32flash-and-dfu-mode)
+  * [DFU](#DFU)
     * [Requirements](#dfu-requirements)
     * [Flashing](#flashing-via-dfu)
 
@@ -23,6 +24,7 @@ To develop the firmware of the Nitrokey Pro/Start/HSM you would need:
 If you use it with original Nitrokey hardware, you would need to cut it to Micro-SIM size. This can be done by using a special SIM card cutter or even with a scissor.
 If you use a development board, you may solder the OpenPGP Card to the board directly by using some wires or you get yourself a smart card jack which you solder to the dev board instead.
 * To compile the firmware we recommend [ARM's official GNU tools].
+
 [Kernel Concepts]: http://shop.kernelconcepts.de/
 [Nucleo-F103RB]: https://www.st.com/en/evaluation-tools/nucleo-f103rb.html
 [ARM's official GNU tools]: https://launchpad.net/gcc-arm-embedded/
@@ -30,7 +32,7 @@ If you use a development board, you may solder the OpenPGP Card to the board dir
 
 # Building
 
-make \[VID=0x20a0\] \[PID=0x4108\] firmware
+`make [VID=0x20a0] [PID=0x4108] firmware`
 
 Parameters:
 * VID: Define Vendor ID
@@ -42,50 +44,40 @@ Parameters:
 |-----|
 |Any user data present on the device will be erased when flashing it. A backup is essential to prevent data loss.|
 
-The microprocessor can be flashed in one of the following ways, depending on your hardware version:
-* SWD is a STM-specific protocol and similar to JTAG allowing programming and debugging. Working adapters are Versaloon or any of the ST-Link V2 (clones). Under Linux you could give a patched OpenOCD a try but in the past it has been very troublesome. This approach requires to solder wires to the contact pads or to use an adapter with pogo pins and some kind of mounting (recommended).
-* DFU is a simple protocol via serial port which allows programming but no debugging. On the Nitrokey hardware we expose the appropriate pins over the USB connector but it's not USB! Details are described in the next chapter.
+The microcontroller can be flashed in one of the following ways, depending on your hardware version:
+* **all hardware versions:** [SWD](#SWD) is a STM-specific protocol and similar to JTAG allowing programming and debugging. Working adapters are Versaloon or any of the ST-Link V2 (clones). Under Linux you could give a patched OpenOCD a try but in the past it has been very troublesome. This approach requires to solder wires to the contact pads or to use an adapter with pogo pins and some kind of mounting (recommended).
+* **purchased before 04/04/2018:** [DFU](#DFU) is a simple protocol via serial port which allows programming but no debugging. On older Nitrokey versions, the appropriate pins are exposed over the USB connector (though it not is *not* USB).
 
-|Note|
-|-----|
-|From hardware version 2 (04/04/2018) onwards, using the MCU's DFU bootloader is no longer possible|
-
-## Versaloon and ST-Link V2
+## SWD
 
 ### Requirements
 
 * Download the .hex file you want to flash e.g. look at the [releases section](https://github.com/Nitrokey/nitrokey-pro-firmware/releases) or build it yourself (see above).
-* You may use a [ST-Link V2 programmer](https://www.ebay.com/sch/i.html?_odkw=st-link&_osacat=0&_from=R40&_trksid=p2045573.m570.l1313.TR0.TRC0.H0.Xst-link+v2&_nkw=st-link+v2&_sacat=0) or a Versaloon adapter.
+* Any SWD compatible programmer for ST microcontrollers. They come as part of ST's line of [Discovery] and [Nucleo] boards or can be bought seperately from [ST] as well as as [clones] for around $2 on eBay, Amazon or AliExpress (search for "ST-Link v2")
 
-The following picture shows the pin pads of the Nitrokey. The red rectangular is only available in
-newer versions and easier to use as the pads are much bigger. The blue rectangular is present in older
+[Discovery]: https://www.st.com/en/evaluation-tools/stm32-discovery-kits.html
+[Nucleo]: https://www.st.com/en/evaluation-tools/stm32-nucleo-boards.html
+[ST]: https://www.st.com/en/development-tools/st-link-v2.html
+[clones]: http://www.ebay.com/sch/i.html?_from=R40&_trksid=p2050601.m570.l1313.TR0.TRC0.H0.Xstlink+v2.TRS0&_nkw=stlink+v2&_sacat=0
+
+The following picture shows the pin pads of the Nitrokey. The red rectangle is only available in
+newer versions and easier to use as the pads are much bigger. The blue rectangle is present in older
 and newer devices.
 
 ![SWD pins of newer Nitrokey Pro device](images/adapter_v2.jpg?raw=true)
 
-The SWD pins for the red rectangular is as follows:
+The SWD pins are as follows:
 
 ![NK Pro v2.0 Programming Connector Layout](images/conn_layout.png)
 
-The SWD pins for the blue rectangular is as follows:
 
-```
-_________________________
- D   x    o    o         |________
-VCC GND SWCLK SWIO       |        |
-                         |        |
-                         |        |
-                         |________|
-_________________________|
-```
-
-For SWD programming, connect the SWDIO, SWDCLK and GND pads to the respective pins of you ST-Link programmer. The device should be powered externally through USB or a 5V power supply during programming.
+For SWD programming, connect the SWDIO, SWDCLK and GND pads to the respective pins of your ST-Link programmer. The device should be powered externally through USB or a 5V power supply during programming.
 
 ### Flashing
 
-1. export OPENOCD_BIN=\<path-to-openocd-bin-folder\> && ./flash_versaloon.sh
-   or edit the script directly to contain OPENOCD_BIN=\<path-to-openocd-bin-folder\>
-2. make flash-vesaloon
+1. `export OPENOCD_BIN=\<path-to-openocd-bin-folder\> && ./flash_versaloon.sh`
+   or edit the script directly to contain `OPENOCD_BIN=\<path-to-openocd-bin-folder\>`
+2. `make flash-vesaloon`
 
 (TODO: For now it has a bug. Run it once, then kill it with Ctrl-C, then re-run it and it should flash the image)
 
@@ -95,7 +87,7 @@ https://github.com/snowcap-electronics/OpenOCD-SWD
 or this one which is configured for automake 1.14:
 https://github.com/ggkitsas/OpenOCD-SWD
 
-## STM32flash and DFU Mode
+## DFU
 
 Please note, that this approach only works for older Nitrokey Pro device, not Nitrokey Pro 2 (all devices purchased before 04/04/2018).
 

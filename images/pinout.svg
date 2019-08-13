@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.4 5da689c313, 2019-01-14"
+   sodipodi:docname="pinout.svg"
+   inkscape:export-filename="/home/nitrokey/nitrokey/nitrokey-pro-firmware/images/conn_layout.png"
+   inkscape:export-xdpi="240"
+   inkscape:export-ydpi="240">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.8"
+     inkscape:cx="276.01597"
+     inkscape:cy="838.7709"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:snap-center="true"
+     inkscape:object-nodes="false"
+     inkscape:snap-nodes="true"
+     inkscape:snap-others="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1015"
+     inkscape:window-x="1080"
+     inkscape:window-y="612"
+     inkscape:window-maximized="1"
+     inkscape:object-paths="false"
+     inkscape:snap-object-midpoints="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3799"
+       units="mm"
+       spacingx="5"
+       spacingy="5" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#cccccc;stroke:#999999;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect4612"
+       width="25"
+       height="40"
+       x="125"
+       y="52" />
+    <path
+       inkscape:connector-curvature="0"
+       d="m 137.2925,60.177495 -1.55318,2.689514 h 1.10796 v 13.74686 l -2.82792,-2.676668 c -0.18259,-0.227796 -0.31068,-0.525842 -0.31777,-0.832436 0,-1.240293 -4.1e-4,-1.976836 -8e-4,-2.247954 0.52358,-0.183773 0.9015,-0.677417 0.9015,-1.264268 0,-0.742401 -0.60243,-1.344889 -1.34511,-1.344889 -0.74299,0 -1.34521,0.602436 -1.34521,1.344889 0,0.586851 0.37771,1.080495 0.90086,1.264268 l -4.1e-4,2.221617 c 0,0.602113 0.33035,1.233037 0.71763,1.634607 -0.0115,-0.01097 -0.0238,-0.02236 2e-4,6.09e-4 0.01,0.0085 3.00003,2.839856 3.00003,2.839856 0.18233,0.22731 0.3096,0.525196 0.31691,0.831576 v 1.555102 c -1.02733,0.206134 -1.80134,1.113336 -1.80134,2.201569 0,1.240724 1.00573,2.24645 2.24608,2.24645 1.24072,0 2.2465,-1.005726 2.2465,-2.24645 0,-1.088448 -0.77465,-1.99565 -1.80285,-2.201782 v -1.527858 c 0,-0.0039 2.1e-4,-0.0078 0,-0.01183 v -3.379345 c 0.008,-0.305789 0.13524,-0.603298 0.31777,-0.830393 0,0 2.99025,-2.830719 2.99993,-2.839478 0.024,-0.02268 0.0115,-0.0114 2e-4,-2.04e-4 0.38722,-0.401571 0.71736,-1.032764 0.71736,-1.634984 l -4.1e-4,-2.14099 h 0.90177 v -2.690207 h -2.69003 v 2.690215 h 0.90059 c 0,0 -8e-4,0.563896 -8e-4,2.167221 -0.007,0.306647 -0.13497,0.605016 -0.31756,0.832704 l -2.82846,2.677279 V 62.867009 h 1.10973 z"
+       id="path1334"
+       style="fill:#ffffff;stroke-width:0.05375052" />
+    <rect
+       style="fill:#ffffff;stroke:#808080;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect4610"
+       width="95"
+       height="50"
+       x="30"
+       y="47" />
+    <circle
+       style="fill:#b3b3b3;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none"
+       id="path4700"
+       cx="100"
+       cy="57"
+       r="2.5" />
+    <circle
+       style="fill:#b3b3b3;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none"
+       id="path4700-3"
+       cx="95"
+       cy="67"
+       r="2.5" />
+    <circle
+       style="fill:#b3b3b3;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none"
+       id="path4700-6"
+       cx="105"
+       cy="67"
+       r="2.5" />
+    <circle
+       style="fill:#b3b3b3;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none"
+       id="path4700-3-7"
+       cx="95"
+       cy="77"
+       r="2.5" />
+    <circle
+       style="fill:#b3b3b3;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none"
+       id="path4700-6-5"
+       cx="105"
+       cy="77"
+       r="2.5" />
+    <circle
+       style="fill:#b3b3b3;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none"
+       id="path4700-35"
+       cx="100"
+       cy="87"
+       r="2.5" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="89.066238"
+       y="58.183369"
+       id="text4767"><tspan
+         sodipodi:role="line"
+         id="tspan4765"
+         x="89.066238"
+         y="58.183369"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777767px;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans Bold';stroke-width:0.26458332">GND</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777778px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;"
+       x="104.31509"
+       y="88.43087"
+       id="text4767-6"><tspan
+         sodipodi:role="line"
+         id="tspan4765-2"
+         x="104.31509"
+         y="88.43087"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777778px;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans Bold';stroke-width:0.26458332;">+5V</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="79.461395"
+       y="68.46685"
+       id="text4767-9"><tspan
+         sodipodi:role="line"
+         id="tspan4765-1"
+         x="79.461395"
+         y="68.46685"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777767px;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans Bold';stroke-width:0.26458332">USB D+</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="79.461395"
+       y="78.46685"
+       id="text4767-9-2"><tspan
+         sodipodi:role="line"
+         id="tspan4765-1-7"
+         x="79.461395"
+         y="78.46685"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777767px;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans Bold';stroke-width:0.26458332">USB D-</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="109.70818"
+       y="68.46685"
+       id="text4767-9-0"><tspan
+         sodipodi:role="line"
+         id="tspan4765-1-9"
+         x="109.70818"
+         y="68.46685"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777767px;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans Bold';stroke-width:0.26458332">SWDCLK</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="109.70818"
+       y="78.46685"
+       id="text4767-9-2-3"><tspan
+         sodipodi:role="line"
+         id="tspan4765-1-7-6"
+         x="109.70818"
+         y="78.46685"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777767px;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans Bold';stroke-width:0.26458332">SWDIO</tspan></text>
+    <rect
+       style="fill:#b3b3b3;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect4847"
+       width="5"
+       height="5"
+       x="37.5"
+       y="49.5" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="57.032635"
+       y="-48.87212"
+       id="text4767-61"
+       transform="rotate(90)"><tspan
+         sodipodi:role="line"
+         id="tspan4765-8"
+         x="57.032635"
+         y="-48.87212"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777767px;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans Bold';stroke-width:0.26458332">GND</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="56.994843"
+       y="-38.902107"
+       id="text4767-6-7"
+       transform="rotate(90)"><tspan
+         sodipodi:role="line"
+         id="tspan4765-2-9"
+         x="56.994843"
+         y="-38.902107"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777767px;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans Bold';stroke-width:0.26458332">VDD</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="57.089081"
+       y="-58.76944"
+       id="text4767-9-0-2"
+       transform="rotate(90)"
+       inkscape:transform-center-x="-5.000001"
+       inkscape:transform-center-y="-4.9999998"><tspan
+         sodipodi:role="line"
+         id="tspan4765-1-9-0"
+         x="57.089081"
+         y="-58.76944"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777767px;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans Bold';stroke-width:0.26458332">SWDCLK</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="57.240021"
+       y="-69.061111"
+       id="text4767-9-2-3-2"
+       transform="rotate(90)"
+       inkscape:transform-center-x="-1.0008856e-06"><tspan
+         sodipodi:role="line"
+         id="tspan4765-1-7-6-3"
+         x="57.240021"
+         y="-69.061111"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777767px;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans Bold';stroke-width:0.26458332">SWDIO</tspan></text>
+    <rect
+       style="fill:none;stroke:#0000ff;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect4954"
+       width="40"
+       height="30.000002"
+       x="35.377975"
+       y="48.039436" />
+    <rect
+       style="fill:none;stroke:#ff0000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect4954-7"
+       width="46.236603"
+       height="43.418159"
+       x="77.703125"
+       y="50.282738" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';letter-spacing:0px;word-spacing:0px;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="29.70015"
+       y="101.43304"
+       id="text4992"><tspan
+         sodipodi:role="line"
+         id="tspan4990"
+         x="29.70015"
+         y="101.43304"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777767px;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans Bold';fill:#808080;stroke-width:0.26458332">Top View</tspan></text>
+    <circle
+       style="fill:#b3b3b3;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none"
+       id="path4700-5"
+       cx="50"
+       cy="52"
+       r="2.5" />
+    <circle
+       style="fill:#b3b3b3;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none"
+       id="path4700-5-9"
+       cx="60"
+       cy="52"
+       r="2.5" />
+    <circle
+       style="fill:#b3b3b3;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none"
+       id="path4700-5-9-2"
+       cx="70"
+       cy="52"
+       r="2.5" />
+  </g>
+</svg>
