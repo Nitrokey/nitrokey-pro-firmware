@@ -1,0 +1,2 @@
+Firmware side work is done in wip-bootloader_pro.
+Check libnitrokey (for execution), and dapboot (for actual bootloader) projects.
