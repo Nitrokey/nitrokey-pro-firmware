@@ -64,7 +64,7 @@ unsigned int debug_len = 0;
    178 - 209  Password safe key (32 byte) 
    210 - 242  PBKDF2 Firmware Update password hash (32 byte)
    242 - 251  Firmware Update password Hash salt (10 byte)
-   252 - 255  Bootloader boot flag
+   252 - 255  Bootloader boot flag (4 bytes)
    256 -      Debug */
 
 #ifdef ADD_DEBUG_COMMANDS
@@ -599,8 +599,6 @@ u8 CheckUpdatePin (u8 * Password_pu8, u32 PasswordLen_u32)
     ReadUpdatePinSaltFromFlash (UpdatePinSalt_u8);
 
     /* TODO: Return false if PW is <8 Bytes (count trailing zeroes from right)*/
-
-    /* TODO: Run check on 20 Bytes always*/
 
     // Check if PIN is uninitialized after flashing
     UpdateSaltInit = FALSE;
