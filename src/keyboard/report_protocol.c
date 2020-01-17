@@ -968,12 +968,30 @@ uint8_t cmd_lockDevice(uint8_t *report, uint8_t *output) {
   return 0;
 }
 
+
+const uint8_t MAX_PASSWORD_LEN = 20;
+const uint8_t MIN_PASSWORD_LEN = 8;
+
+typedef struct {
+  uint8_t _command_type; // 0
+  uint8_t current_password[20]; //1-21
+} Enable_firmware_password_t;
+
 uint8_t cmd_enableFirmwareUpdate(uint8_t *report, uint8_t *output) {
-    
-    uint8_t ret = CheckUpdatePin (&report[1], strlen ((char*)&report[1]));
+
+    Enable_firmware_password_t * input = (Enable_firmware_password_t*)(report);
+    const uint8_t len_current = strnlen ((char*)input->current_password, MAX_PASSWORD_LEN);
+
+    if (len_current > MAX_PASSWORD_LEN || len_current < MIN_PASSWORD_LEN) {
+      /* Incorrect password length */
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
+      return 2;
+    }
+
+    uint8_t ret = CheckUpdatePin (input->current_password, len_current);
     if (FALSE == ret) {
         output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
-        return 0;
+        return 1;
     }
 
     // TODO: This could be done through persistent memory as well...
@@ -999,9 +1017,6 @@ typedef struct {
 } Change_firmware_password_t;
 
 uint8_t cmd_changeFirmwarePassword(uint8_t *report, uint8_t *output) {
-
-    const uint8_t MAX_PASSWORD_LEN = 20;
-    const uint8_t MIN_PASSWORD_LEN = 8;
 
     Change_firmware_password_t * input = (Change_firmware_password_t*)(report);
 
