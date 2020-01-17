@@ -1021,7 +1021,7 @@ uint8_t cmd_changeFirmwarePassword(uint8_t *report, uint8_t *output) {
 
       if (TRUE == StoreNewUpdatePinHashInFlash (input->new_password, len_new))    // Start of new PW
         {
-            /* PIN change sucessful*/
+            /* PIN change successful */
             output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
         }
         else
