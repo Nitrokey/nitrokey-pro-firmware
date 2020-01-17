@@ -1001,6 +1001,7 @@ typedef struct {
 uint8_t cmd_changeFirmwarePassword(uint8_t *report, uint8_t *output) {
 
     const uint8_t MAX_PASSWORD_LEN = 20;
+    const uint8_t MIN_PASSWORD_LEN = 8;
 
     Change_firmware_password_t * input = (Change_firmware_password_t*)(report);
 
@@ -1012,7 +1013,13 @@ uint8_t cmd_changeFirmwarePassword(uint8_t *report, uint8_t *output) {
         /* FIXME: Dont use strlen*/
       const uint8_t len_new = strnlen ((char*)input->new_password, MAX_PASSWORD_LEN);
 
-        if (TRUE == StoreNewUpdatePinHashInFlash (input->new_password, len_new))    // Start of new PW
+      if(len_new > MAX_PASSWORD_LEN || len_new < MIN_PASSWORD_LEN){
+        /* Incorrect Password Length*/
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
+        return 1;
+      }
+
+      if (TRUE == StoreNewUpdatePinHashInFlash (input->new_password, len_new))    // Start of new PW
         {
             /* PIN change sucessful*/
             output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
