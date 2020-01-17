@@ -1007,34 +1007,28 @@ uint8_t cmd_changeFirmwarePassword(uint8_t *report, uint8_t *output) {
 
     /* FIXME: Dont use strlen; ideally count zeroes from the back to allow binary passwords */
     const uint8_t len_current = strnlen ((char*)input->current_password, MAX_PASSWORD_LEN);
-
-  if (TRUE == CheckUpdatePin (input->current_password, len_current))
-    {
-        /* FIXME: Dont use strlen*/
-      const uint8_t len_new = strnlen ((char*)input->new_password, MAX_PASSWORD_LEN);
-
-      if(len_new > MAX_PASSWORD_LEN || len_new < MIN_PASSWORD_LEN){
-        /* Incorrect Password Length*/
-        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
-        return 1;
-      }
-
-      if (TRUE == StoreNewUpdatePinHashInFlash (input->new_password, len_new))    // Start of new PW
-        {
-            /* PIN change successful */
-            output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
-        }
-        else
-        {
-            /* Incorrect Password Length*/
-            output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
-        }
-    }
-    else
-    {
-        /* Incorrect password*/
-        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
+    if (!(TRUE == CheckUpdatePin(input->current_password, len_current))) {
+      /* Incorrect current password */
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
+      return 1;
     }
 
-    return 0;
+    const uint8_t len_new = strnlen((char *) input->new_password, MAX_PASSWORD_LEN);
+    if (len_new > MAX_PASSWORD_LEN || len_new < MIN_PASSWORD_LEN) {
+      /* Incorrect new password length */
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
+      return 2;
+    }
+
+    if (TRUE == StoreNewUpdatePinHashInFlash(input->new_password, len_new))
+    {
+      /* PIN change successful */
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
+    } else {
+      /* Incorrect Password Length or other failure */
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
+      return 3;
+    }
+
+  return 0;
 }
