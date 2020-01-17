@@ -991,25 +991,28 @@ uint8_t cmd_enableFirmwareUpdate(uint8_t *report, uint8_t *output) {
     return 0;
 }
 
+
+typedef struct {
+  uint8_t _command_type; // 0
+  uint8_t current_password[20]; //1-21
+  uint8_t new_password[20]; // 22-42
+} Change_firmware_password_t;
+
 uint8_t cmd_changeFirmwarePassword(uint8_t *report, uint8_t *output) {
 
     const uint8_t MAX_PASSWORD_LEN = 20;
 
-    /* FIXME: Dont use strlen*/
-    uint8_t len = strlen ((char*)&report[1]);
-    if(len > MAX_PASSWORD_LEN) {
-        len = MAX_PASSWORD_LEN;
-    }
+    Change_firmware_password_t * input = (Change_firmware_password_t*)(report);
 
-    if (TRUE == CheckUpdatePin (&report[1], len))
+    /* FIXME: Dont use strlen; ideally count zeroes from the back to allow binary passwords */
+    const uint8_t len_current = strnlen ((char*)input->current_password, MAX_PASSWORD_LEN);
+
+  if (TRUE == CheckUpdatePin (input->current_password, len_current))
     {
         /* FIXME: Dont use strlen*/
-        len = strlen ((char*)&report[22]);
-        if(len > MAX_PASSWORD_LEN) {
-            len = MAX_PASSWORD_LEN;
-        }
+      const uint8_t len_new = strnlen ((char*)input->new_password, MAX_PASSWORD_LEN);
 
-        if (TRUE == StoreNewUpdatePinHashInFlash (&report[22], len))    // Start of new PW
+        if (TRUE == StoreNewUpdatePinHashInFlash (input->new_password, len_new))    // Start of new PW
         {
             /* PIN change sucessful*/
             output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
