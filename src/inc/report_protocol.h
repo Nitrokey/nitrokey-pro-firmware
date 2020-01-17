@@ -21,7 +21,7 @@
 #pragma once
 #include "hotp.h"
 
-#define FIRMWARE_VERSION (0x0A)
+#define FIRMWARE_VERSION (0x0B)
 
 #define CMD_GET_STATUS                      0x00
 #define CMD_WRITE_TO_SLOT                   0x01
