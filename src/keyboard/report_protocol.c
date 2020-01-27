@@ -969,8 +969,8 @@ uint8_t cmd_lockDevice(uint8_t *report, uint8_t *output) {
 }
 
 
-const uint8_t MAX_PASSWORD_LEN = 20;
-const uint8_t MIN_PASSWORD_LEN = 8;
+const uint8_t MAX_PASSWORD_LEN = UPDATE_PIN_MAX_SIZE;
+const uint8_t MIN_PASSWORD_LEN = UPDATE_PIN_MIN_SIZE;
 
 typedef struct {
   uint8_t _command_type; // 0

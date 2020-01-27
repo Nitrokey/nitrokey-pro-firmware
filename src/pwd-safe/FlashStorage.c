@@ -98,8 +98,6 @@ void GetDebug (u8 * data, unsigned int* length)
 #endif
 
 #define AES_KEYSIZE_256_BIT     32  // 32 * 8 = 256
-#define UPDATE_PIN_MIN_SIZE     8
-#define UPDATE_PIN_MAX_SIZE     20
 #define UPDATE_PIN_SALT_SIZE    10
 
 /*******************************************************************************

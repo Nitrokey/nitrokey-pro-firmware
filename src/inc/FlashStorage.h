@@ -43,6 +43,8 @@ u32 EraseLocalFlashKeyValues_u32 (void);
   Structure is also send to GUI
 
 ***************************************************************************************/
+#define UPDATE_PIN_MIN_SIZE     8
+#define UPDATE_PIN_MAX_SIZE     20
 
 #define MAGIC_NUMBER_STICK20_CONFIG     0x1810  // Change when
                                                 // typeStick20Configuration_st
