@@ -629,7 +629,7 @@ u8 CheckUpdatePin (u8 * Password_pu8, u32 PasswordLen_u32)
         return (FALSE);
     }
 
-    /* TODO: Clear PBKDF output*/
+    memset(output_au8, 0, sizeof(output_au8));
     DelayMs (100);
     return (TRUE);
 }
