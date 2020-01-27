@@ -980,6 +980,7 @@ typedef struct {
 uint8_t cmd_enableFirmwareUpdate(uint8_t *report, uint8_t *output) {
 
     Enable_firmware_password_t * input = (Enable_firmware_password_t*)(report);
+    /* FIXME: Dont use strnlen  replace with counting zeroes from the back to allow binary passwords */
     const uint8_t len_current = strnlen ((char*)input->current_password, MAX_PASSWORD_LEN);
 
     if (len_current > MAX_PASSWORD_LEN || len_current < MIN_PASSWORD_LEN) {
@@ -1020,7 +1021,7 @@ uint8_t cmd_changeFirmwarePassword(uint8_t *report, uint8_t *output) {
 
     Change_firmware_password_t * input = (Change_firmware_password_t*)(report);
 
-    /* FIXME: Dont use strlen; ideally count zeroes from the back to allow binary passwords */
+    /* FIXME: Dont use strnlen  replace with counting zeroes from the back to allow binary passwords */
     const uint8_t len_current = strnlen ((char*)input->current_password, MAX_PASSWORD_LEN);
     if (!(TRUE == CheckUpdatePin(input->current_password, len_current))) {
       /* Incorrect current password */
@@ -1028,6 +1029,7 @@ uint8_t cmd_changeFirmwarePassword(uint8_t *report, uint8_t *output) {
       return 1;
     }
 
+    /* FIXME: Dont use strnlen  replace with counting zeroes from the back to allow binary passwords */
     const uint8_t len_new = strnlen((char *) input->new_password, MAX_PASSWORD_LEN);
     if (len_new > MAX_PASSWORD_LEN || len_new < MIN_PASSWORD_LEN) {
       /* Incorrect new password length */
