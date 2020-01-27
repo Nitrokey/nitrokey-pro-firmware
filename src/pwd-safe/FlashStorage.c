@@ -624,6 +624,7 @@ u8 CheckUpdatePin (u8 * Password_pu8, u32 PasswordLen_u32)
 
     if (0 != memcmp (UpdatePinHash_u8, output_au8, AES_KEYSIZE_256_BIT))
     {
+        DelayMs (100);
         return (FALSE);
     }
 
