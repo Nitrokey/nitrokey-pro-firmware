@@ -98,6 +98,7 @@ void GetDebug (u8 * data, unsigned int* length)
 #endif
 
 #define AES_KEYSIZE_256_BIT     32  // 32 * 8 = 256
+#define UPDATE_PIN_MIN_SIZE     8
 #define UPDATE_PIN_MAX_SIZE     20
 #define UPDATE_PIN_SALT_SIZE    10
 
@@ -596,9 +597,13 @@ u8 CheckUpdatePin (u8 * Password_pu8, u32 PasswordLen_u32)
     u8 UpdatePinSalt_u8[UPDATE_PIN_SALT_SIZE];
     u8 UpdatePinHash_u8[AES_KEYSIZE_256_BIT];
 
+    if (PasswordLen_u32 > UPDATE_PIN_MAX_SIZE || PasswordLen_u32 < UPDATE_PIN_MIN_SIZE)
+    {
+      return (FALSE);
+    }
+
     ReadUpdatePinSaltFromFlash (UpdatePinSalt_u8);
 
-    /* TODO: Return false if PW is <8 Bytes (count trailing zeroes from right)*/
 
     // Check if PIN is uninitialized after flashing
     UpdateSaltInit = FALSE;
@@ -614,11 +619,6 @@ u8 CheckUpdatePin (u8 * Password_pu8, u32 PasswordLen_u32)
         // Initialize Update Pin with default value
         StoreNewUpdatePinHashInFlash ((u8 *) "12345678", 8);
         ReadUpdatePinSaltFromFlash (UpdatePinSalt_u8);
-    }
-
-    if (UPDATE_PIN_MAX_SIZE < PasswordLen_u32)
-    {
-        return (FALSE);
     }
 
     pbkdf2 (output_au8, Password_pu8, PasswordLen_u32, UpdatePinSalt_u8, UPDATE_PIN_SALT_SIZE);
