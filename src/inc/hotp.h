@@ -25,7 +25,7 @@
 #define NUMBER_OF_HOTP_SLOTS 4
 #define NUMBER_OF_TOTP_SLOTS 15
 
-// Flash memory pages:
+// Flash memory pages (initial values):
 // 0x801E400 <- time page
 // 0x801E800 <- slots page 1
 // 0x801EC00 <- slots page 2
@@ -34,7 +34,7 @@
 // 0x801F800 <- slot 3 counter
 // 0x8014000 <- slot 4 counter (attempt)
 // 0x801FC00 <- backup page
-
+// Current addresses moved to memory_layout.h
 
 /*
    slot structure: 1b 0x01 if slot is used (programmed) 15b slot name 20b secret 1b configuration flags: MSB [x|x|x|x|x|send token id|send enter

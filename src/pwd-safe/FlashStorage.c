@@ -49,7 +49,7 @@ unsigned int debug_len = 0;
 
 /*
 
-   Userpage layout PAGE: 0x801DC00
+   Userpage layout PAGE: FLASHC_USER_PAGE / 0x801DC00
 
    Byte 
    0 - 31     AES Storage key 
