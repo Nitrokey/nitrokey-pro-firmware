@@ -45,7 +45,7 @@ typeStick20Configuration_st StickConfiguration_st;
 
 unsigned int debug_len = 0;
 
-#define FLASHC_USER_PAGE 0x801dc00
+#include "memory_layout.h"
 
 /*
 

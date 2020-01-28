@@ -56,27 +56,8 @@
 #define SLOT_PAGE_SIZE 1000 // less than 2 actual page, so we can copy it to
                             // backup pages with additional info
 
-#define GET_FLASH_KB_ADDRESS(x)   (1024*(x)+0x8000000)
 
-// With bootloader firmware is reaching 80th kB of flash memory.
-// Lets start data at 100kB+, so the firmware could grow
-#define FLASH_MEMORY_BEGIN        GET_FLASH_KB_ADDRESS(100)
-//Lowest region in use found in the firmware - PWS, src/inc/password_safe.h:42
-#define FLASH_MEMORY_LOWEST       GET_FLASH_KB_ADDRESS(112)
-
-
-#define TIME_ADDRESS              GET_FLASH_KB_ADDRESS(121)
-#define SLOTS_PAGE1_ADDRESS       GET_FLASH_KB_ADDRESS(122)
-#define SLOTS_PAGE2_ADDRESS       GET_FLASH_KB_ADDRESS(123)
-#define SLOT1_COUNTER_ADDRESS     GET_FLASH_KB_ADDRESS(124)
-#define SLOT2_COUNTER_ADDRESS     GET_FLASH_KB_ADDRESS(125)
-#define SLOT3_COUNTER_ADDRESS     GET_FLASH_KB_ADDRESS(126)
-#define SLOT4_COUNTER_ADDRESS     FLASH_MEMORY_BEGIN
-#define BACKUP_PAGE_ADDRESS       GET_FLASH_KB_ADDRESS(127)
-
-//Flash size is 128kB, which defines as:
-//#define FLASH_MEMORY_LIMIT      GET_FLASH_KB_ADDRESS(128)
-#define FLASH_MEMORY_LIMIT 0x8020000
+#include "memory_layout.h"
 
 #define BACKUP_ADDRESS_OFFSET 1000
 #define BACKUP_LENGTH_OFFSET 1004
