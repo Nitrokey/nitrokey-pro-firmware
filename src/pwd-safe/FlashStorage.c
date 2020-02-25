@@ -47,8 +47,8 @@ unsigned int debug_len = 0;
 
 #include "memory_layout.h"
 
+// FIXME move this to struct, do not use offsets by hand
 /*
-
    Userpage layout PAGE: FLASHC_USER_PAGE / 0x801DC00
 
    Byte 

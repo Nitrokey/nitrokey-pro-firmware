@@ -995,7 +995,6 @@ uint8_t cmd_enableFirmwareUpdate(uint8_t *report, uint8_t *output) {
         return 1;
     }
 
-  // TODO: This could be done through persistent memory as well...
     /* Boot loader magic number*/
     const uint32_t CMD_BOOT = 0x544F4F42UL;
 
