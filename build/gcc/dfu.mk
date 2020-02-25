@@ -12,6 +12,8 @@ flash-bootloader: $(BOOTLOADER)
 
 %.bin: %.elf
 	arm-none-eabi-objcopy -O binary $< $@ 
+	date
+	ls -lh $<
 
 .PHONY: flash-dfu
 flash-dfu: $(FIRMWAREBIN)
