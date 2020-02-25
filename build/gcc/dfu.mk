@@ -8,13 +8,13 @@ FIRMWAREBIN=nitrokey-pro-firmware.bin
 flash-bootloader: $(BOOTLOADER)
 	STM32_Programmer_CLI -c port=SWD -halt  --readunprotect
 	STM32_Programmer_CLI -c port=swd -e all -w $< 0x8000000 -v -rst
+	ls -lh $<
 
 %.bin: %.elf
 	arm-none-eabi-objcopy -O binary $< $@ 
 
 .PHONY: flash-dfu
 flash-dfu: $(FIRMWAREBIN)
-	sleep 1
 	sudo dfu-util -D $<
 
 .PHONY: flash-full
@@ -46,3 +46,7 @@ flash-full-single: $(SINGLE_FW)
 .PHONY: activate-bootloader
 activate-bootloader:
 	cd ~/work/libnitrokey/unittest && pytest test_pro_bootloader.py  -k test_bootloader_run_pro_real -svx --run-skipped
+
+.PHONY: reset
+reset:
+	STM32_Programmer_CLI -c port=swd -rst
