@@ -30,27 +30,11 @@
 
 u8 WriteAESStorageKeyToUserPage (u8 * data);
 
-// u8 ReadAESStorageKeyToUserPage (u8 *data);
-// u8 WriteMatrixColumsUserPWToUserPage (u8 *data);
-// u8 ReadMatrixColumsUserPWFromUserPage (u8 *data);
-// u8 WriteMatrixColumsAdminPWFromUserPage (u8 *data);
-// u8 ReadMatrixColumsAdminPWFromUserPage (u8 *data);
 u8 WriteStickConfigurationToUserPage (void);
 
 u8 ReadStickConfigurationFromUserPage (void);
 
 u8 InitStickConfigurationToUserPage_u8 (void);
-
-// u8 WriteHiddenVolumeSlotKey (u8 *data);
-// u8 ReadHiddenVolumeSlotsKey (u8 *data);
-
-// u8 ReadMatrixColumsUserPWFromUserPage (u8 *data);
-
-
-// u8 Read_ReadWriteStatusUncryptedVolume_u8 (void);
-// u8 Write_ReadWriteStatusUncryptedVolume_u8 (u8 NewStatus_u8);
-// u8 WriteDatetime (u32 Datetime_u32);
-// u8 ReadDatetime (u32 *Datetime_u32);
 
 u32 EraseLocalFlashKeyValues_u32 (void);
 
@@ -59,6 +43,8 @@ u32 EraseLocalFlashKeyValues_u32 (void);
   Structure is also send to GUI
 
 ***************************************************************************************/
+#define UPDATE_PIN_MIN_SIZE     8
+#define UPDATE_PIN_MAX_SIZE     20
 
 #define MAGIC_NUMBER_STICK20_CONFIG     0x1810  // Change when
                                                 // typeStick20Configuration_st
@@ -105,14 +91,7 @@ typedef struct
 
 extern typeStick20Configuration_st StickConfiguration_st;
 
-/*
-   u8 ReadStickConfigurationFromUserPage (void); void SendStickStatusToHID (typeStick20Configuration_st *Status_st);
-
-   u8 WriteSdId (u32 *SdId_u32); u8 ReadSdId (u32 *SdId_u32);
-
-   u8 WriteScId (u32 *ScId_u32); u8 ReadScId (u32 *ScId_u32); */
 u8 WriteXorPatternToFlash (u8 * XorPattern_pu8);
-
 u8 ReadXorPatternFromFlash (u8 * XorPattern_pu8);
 
 u8 WritePasswordSafeKey (u8 * data);
@@ -120,12 +99,17 @@ u8 WritePasswordSafeKey (u8 * data);
 u8 ReadPasswordSafeKey (u8 * data);
 u8 ReadAESStorageKeyToUserPage (u8 * data);
 
+u8 WriteUpdatePinHashToFlash (u8 * PIN_Hash_pu8);
+u8 ReadUpdatePinHashFromFlash (u8 * PIN_Hash_pu8);
+u8 WriteUpdatePinSaltToFlash (u8 * PIN_pu8);
+u8 ReadUpdatePinSaltFromFlash (u8 * PIN_pu8);
 
-/*
-   u8 WriteNewSdCardFoundToFlash (u32 *SdId_u32); u8 SetSdCardFilledWithRandomsToFlash (void); u8 ClearNewSdCardFoundToFlash (void); u8
-   SetSdCardNotFilledWithRandomCharsToFlash (void); u8 SetSdCardFilledWithRandomCharsToFlash (void); u8 CheckForNewFirmwareVersion (void);
+u8 CheckUpdatePin (u8 * Password_pu8, u32 PasswordLen_u32);
+u8 StoreNewUpdatePinHashInFlash (u8 * Password_pu8, u32 PasswordLen_u32);
 
-   u8 SetStickKeysNotInitatedToFlash (void); */
+u8 WriteBootloaderFlagToFlash (void);
+u8 EraseBootloaderFlagFromFlash (void);
+
 
 u8 ClearStickKeysNotInitatedToFlash (void);
 u8 SetStickKeysNotInitatedToFlash (void);

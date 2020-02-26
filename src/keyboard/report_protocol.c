@@ -36,6 +36,12 @@
 #include "CcidLocalAccess.h"
 #include "time.h"
 #include "password_safe.h"
+#include "FlashStorage.h"
+
+
+#include "stm32f10x_bkp.h"
+#include "stm32f10x_pwr.h"
+
 
 uint8_t temp_password[25];
 uint8_t temp_user_password[25];
@@ -238,6 +244,14 @@ uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
 
       case CMD_NEW_AES_KEY:
         cmd_newAesKey(report, output);
+        break;
+
+      case CMD_FIRMWARE_UPDATE:
+        cmd_enableFirmwareUpdate(report, output);
+        break;
+
+      case CMD_CHANGE_FIRMWARE_PASSWORD:
+        cmd_changeFirmwarePassword(report, output);
         break;
 
 #ifdef ADD_DEBUG_COMMANDS
@@ -951,5 +965,86 @@ uint8_t cmd_getProDebug(uint8_t *report, uint8_t *output) {
 uint8_t cmd_lockDevice(uint8_t *report, uint8_t *output) {
   // Disable password safe
   PWS_DisableKey();
+  return 0;
+}
+
+
+const uint8_t MAX_PASSWORD_LEN = UPDATE_PIN_MAX_SIZE;
+const uint8_t MIN_PASSWORD_LEN = UPDATE_PIN_MIN_SIZE;
+
+typedef struct {
+  uint8_t _command_type; // 0
+  uint8_t current_password[20]; //1-21
+} Enable_firmware_password_t;
+
+uint8_t cmd_enableFirmwareUpdate(uint8_t *report, uint8_t *output) {
+
+    Enable_firmware_password_t * input = (Enable_firmware_password_t*)(report);
+    /* FIXME: Dont use strnlen  replace with counting zeroes from the back to allow binary passwords */
+    const uint8_t len_current = strnlen ((char*)input->current_password, MAX_PASSWORD_LEN);
+
+    if (len_current > MAX_PASSWORD_LEN || len_current < MIN_PASSWORD_LEN) {
+      /* Incorrect password length */
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
+      return 2;
+    }
+
+    uint8_t ret = CheckUpdatePin (input->current_password, len_current);
+    if (FALSE == ret) {
+        output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
+        return 1;
+    }
+
+    /* Boot loader magic number*/
+    const uint32_t CMD_BOOT = 0x544F4F42UL;
+
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);
+    PWR_BackupAccessCmd(ENABLE);
+    /* Write bootloader magic number to Backup registers*/
+    BKP_WriteBackupRegister(BKP_DR1, (uint16_t) (CMD_BOOT & 0x0000FFFFUL));
+    BKP_WriteBackupRegister(BKP_DR2, (uint16_t) ((CMD_BOOT & 0xFFFF0000UL) >> 16));
+
+    NVIC_SystemReset();
+
+    return 0;
+}
+
+
+typedef struct {
+  uint8_t _command_type; // 0
+  uint8_t current_password[20]; //1-21
+  uint8_t new_password[20]; // 22-42
+} Change_firmware_password_t;
+
+uint8_t cmd_changeFirmwarePassword(uint8_t *report, uint8_t *output) {
+
+    Change_firmware_password_t * input = (Change_firmware_password_t*)(report);
+
+    /* FIXME: Dont use strnlen  replace with counting zeroes from the back to allow binary passwords */
+    const uint8_t len_current = strnlen ((char*)input->current_password, MAX_PASSWORD_LEN);
+    if (!(TRUE == CheckUpdatePin(input->current_password, len_current))) {
+      /* Incorrect current password */
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
+      return 1;
+    }
+
+    /* FIXME: Dont use strnlen  replace with counting zeroes from the back to allow binary passwords */
+    const uint8_t len_new = strnlen((char *) input->new_password, MAX_PASSWORD_LEN);
+    if (len_new > MAX_PASSWORD_LEN || len_new < MIN_PASSWORD_LEN) {
+      /* Incorrect new password length */
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
+      return 2;
+    }
+
+    if (TRUE == StoreNewUpdatePinHashInFlash(input->new_password, len_new))
+    {
+      /* PIN change successful */
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_OK;
+    } else {
+      /* Incorrect Password Length or other failure */
+      output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
+      return 3;
+    }
+
   return 0;
 }

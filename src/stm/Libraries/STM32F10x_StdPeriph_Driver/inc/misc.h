@@ -62,7 +62,7 @@ typedef struct
   */
 
 #define NVIC_VectTab_RAM             ((uint32_t)0x20000000)
-#define NVIC_VectTab_FLASH           ((uint32_t)0x08000000)
+#define NVIC_VectTab_FLASH           ((uint32_t)0x08002000)
 #define IS_NVIC_VECTTAB(VECTTAB) (((VECTTAB) == NVIC_VectTab_RAM) || \
                                   ((VECTTAB) == NVIC_VectTab_FLASH))
 /**

@@ -31,6 +31,8 @@
 #include "FlashStorage.h"
 #include "password_safe.h"
 #include "hotp.h"
+#include "CcidLocalAccess.h"
+#include "pbkdf2.h"
 
 typeStick20Configuration_st StickConfiguration_st;
 
@@ -43,15 +45,26 @@ typeStick20Configuration_st StickConfiguration_st;
 
 unsigned int debug_len = 0;
 
-#define FLASHC_USER_PAGE 0x801dc00
+#include "memory_layout.h"
 
+// FIXME move this to struct, do not use offsets by hand
 /*
+   Userpage layout PAGE: FLASHC_USER_PAGE / 0x801DC00
 
-   Userpage layout PAGE: 0x801DC00
-
-   Byte 0 - 31 AES Storage key 32 - 51 Matrix columns for user password 52 - 71 Matrix columns for admin password 72 - 101 Stick Configuration 102 -
-   133 Base for AES key hidden volume (32 byte) 134 - 137 ID of sd card (4 byte) 138 - 141 Last stored real timestamp (4 byte) 142 - 145 ID of sc
-   card (4 byte) 146 - 177 XOR mask for sc tranfered keys (32 byte) 178 - 209 Password safe key (32 byte) 210 - Debug */
+   Byte 
+   0 - 31     AES Storage key 
+   32 - 51    Matrix columns for user password 
+   52 - 71    Matrix columns for admin password 
+   72 - 101   Stick Configuration 
+   102 - 133  Base for AES key hidden volume (32 byte) 
+   134 - 137  ID of sd card (4 byte) 
+   138 - 141  Last stored real timestamp (4 byte)
+   142 - 145  ID of sc card (4 byte) 
+   146 - 177  XOR mask for sc tranfered keys (32 byte) 
+   178 - 209  Password safe key (32 byte) 
+   210 - 242  PBKDF2 Firmware Update password hash (32 byte)
+   242 - 251  Firmware Update password Hash salt (10 byte)
+   256 -      Debug */
 
 #ifdef ADD_DEBUG_COMMANDS
 
@@ -60,7 +73,7 @@ void WriteDebug (u8 * data, unsigned int length)
     unsigned char page_buffer[FLASH_PAGE_SIZE];
 
     memcpy (page_buffer, FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
-    memcpy (page_buffer + 210, data, length);
+    memcpy (page_buffer + 252, data, length);
 
     debug_len += length;
 
@@ -76,12 +89,15 @@ void GetDebug (u8 * data, unsigned int* length)
     unsigned char page_buffer[FLASH_PAGE_SIZE];
 
     memcpy (page_buffer, FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
-    memcpy (data, page_buffer + 210, debug_len);
+    memcpy (data, page_buffer + 252, debug_len);
     *length = debug_len;
     debug_len = 0;
 }
 
 #endif
+
+#define AES_KEYSIZE_256_BIT     32  // 32 * 8 = 256
+#define UPDATE_PIN_SALT_SIZE    10
 
 /*******************************************************************************
 
@@ -125,63 +141,6 @@ u8 ReadAESStorageKeyToUserPage (u8 * data)
     return (TRUE);
 }
 
-
-/*******************************************************************************
-
-  WriteMatrixColumsUserPWToUserPage
-
-  Reviews
-  Date      Reviewer        Info
-  16.08.13  RB              First review
-
-*******************************************************************************/
-/*
-
-   u8 WriteMatrixColumsUserPWToUserPage (u8 *data) { flashc_memcpy(FLASHC_USER_PAGE + 32,data,20,TRUE); return (TRUE); }
-
- */
-/*******************************************************************************
-
-  ReadMatrixColumsUserPWFromUserPage
-
-  Reviews
-  Date      Reviewer        Info
-  16.08.13  RB              First review
-
-*******************************************************************************/
-/*
-
-   u8 ReadMatrixColumsUserPWFromUserPage (u8 *data) { memcpy (data,(void*)(FLASHC_USER_PAGE + 32),20); return (TRUE); }
-
- */
-/*******************************************************************************
-
-  WriteMatrixColumsAdminPWFromUserPage
-
-  Reviews
-  Date      Reviewer        Info
-  16.08.13  RB              First review
-
-*******************************************************************************/
-/*
-
-   u8 WriteMatrixColumsAdminPWFromUserPage (u8 *data) { flashc_memcpy(FLASHC_USER_PAGE + 52,data,20,TRUE); return (TRUE); }
-
- */
-/*******************************************************************************
-
-  ReadMatrixColumsAdminPWFromUserPage
-
-  Reviews
-  Date      Reviewer        Info
-  16.08.13  RB              First review
-
-*******************************************************************************/
-/*
-
-   u8 ReadMatrixColumsAdminPWFromUserPage (u8 *data) { memcpy (data,(void*)(FLASHC_USER_PAGE + 52),20); return (TRUE); }
-
- */
 /*******************************************************************************
 
   WriteStickConfigurationToUserPage
@@ -300,314 +259,12 @@ u8 InitStickConfigurationToUserPage_u8 (void)
     StickConfiguration_st.StickKeysNotInitiated_u8 = TRUE;
 
     WriteStickConfigurationToUserPage ();
+
+    StoreNewUpdatePinHashInFlash ((u8 *) "12345678", 8);
+
     return (TRUE);
 }
 
-/*******************************************************************************
-
-  WriteHiddenVolumeSlotKey
-
-  Stores the encrypted hidden volume slot key
-
-  Byte
-  Len = 32 Byte
-
-  Changes
-  Date      Author          Info
-  14.04.14  RB              Renaming
-
-  Reviews
-  Date      Reviewer        Info
-  16.08.13  RB              First review
-
-*******************************************************************************/
-/*
-
-   u8 WriteHiddenVolumeSlotKey (u8 *data) { flashc_memcpy((void*)(FLASHC_USER_PAGE + 102),data,32,TRUE); return (TRUE); }
-
- */
-/*******************************************************************************
-
-  ReadHiddenVolumeSlotsKey
-
-  Read the encrypted hidden volume slot key
-
-  Changes
-  Date      Author          Info
-  14.04.14  RB              Renaming
-
-
-  Reviews
-  Date      Reviewer        Info
-  16.08.13  RB              First review
-
-*******************************************************************************/
-/*
-
-   u8 ReadHiddenVolumeSlotsKey (u8 *data) { memcpy (data,(void*)(FLASHC_USER_PAGE + 102),32); return (TRUE); }
-
-
-
-
- */
-/*******************************************************************************
-
-  SendStickStatusToHID
-
-  Changes
-  Date      Author          Info
-  08.02.14  RB              Implementation of sending volume status
-
-  Reviews
-  Date      Reviewer        Info
-  16.08.13  RB              First review
-
-*******************************************************************************/
-/*
-
-   void SendStickStatusToHID (typeStick20Configuration_st *Status_st) { // If configuration not found then init it if (FALSE ==
-   ReadStickConfigurationFromUserPage ()) { InitStickConfigurationToUserPage_u8 (); }
-
-   memcpy (Status_st,&StickConfiguration_st,sizeof (typeStick20Configuration_st)); // Not the retry counter and sc serial no
-
-   // Set the actual volume status Status_st->VolumeActiceFlag_u8 = 0;
-
-   if (TRUE == GetSdUncryptedCardEnableState ()) { Status_st->VolumeActiceFlag_u8 |= (1 << SD_UNCRYPTED_VOLUME_BIT_PLACE); }
-
-   // Only 1 cypted volume could be active if (TRUE == GetSdEncryptedCardEnableState ()) { if (TRUE == GetSdEncryptedHiddenState ()) {
-   Status_st->VolumeActiceFlag_u8 |= (1 << SD_HIDDEN_VOLUME_BIT_PLACE); } else { Status_st->VolumeActiceFlag_u8 |= (1 <<
-   SD_CRYPTED_VOLUME_BIT_PLACE); } }
-
-   ReadSdId (&Status_st->ActiveSD_CardID_u32);
-
-   Status_st->FirmwareLocked_u8 = FALSE; if (TRUE == flashc_is_security_bit_active()) { Status_st->FirmwareLocked_u8 = TRUE; } }
-
- */
-/*******************************************************************************
-
-  GetStickStatusFromHID
-
-  Reviews
-  Date      Reviewer        Info
-  16.08.13  RB              First review
-
-*******************************************************************************/
-/*
-
-                                                                                                                                                                                                                                                                                                                 void GetStickStatusFromHID (typeStick20Configuration_st *Status_st) { *//*
-                                                                                                                                                                                                                                                                                                                 HID_Stick20AccessStatus_st->MatrixPasswordUserActiv_u8
-                                                                                                                                                                                                                                                                                                                 = FALSE;
-                                                                                                                                                                                                                                                                                                                 HID_Stick20AccexPassworixPassworixPasswordAdminActiv_u8
-                                                                                                                                                                                                                                                                                                                 = FALSE;
-                                                                                                                                                                                                                                                                                                                 HID_Stick20AccesasswordvPasswordvPasswordStatus_u8 =
-                                                                                                                                                                                                                                                                                                                 FALSE; HID_Stick20AccessStatus_st->VolumeStatus_u8 =
-                                                                                                                                                                                                                                                                                                                 FALSE;
-
-                                                                                                                                                                           sd_mmc_mci_read_capacity_0(&HID_Stick20AccessStatus_st->SD_BlockSize_u32); *//*
-                                                                                                                                                                           }
-
-                                                                                                                                                                         */
-/*******************************************************************************
-
-  Read_ReadWriteStatusUncryptedVolume_u8
-
-  Changes
-  Date      Author          Info
-  03.02.14  RB              Function created
-
-  Reviews
-  Date      Reviewer        Info
-
-*******************************************************************************/
-/*
-
-   u8 Read_ReadWriteStatusUncryptedVolume_u8 (void) { // If configuration not found then init it if (FALSE == ReadStickConfigurationFromUserPage ())
-   { InitStickConfigurationToUserPage_u8 (); } return (StickConfiguration_st.ReadWriteFlagUncryptedVolume_u8); }
-
- */
-/*******************************************************************************
-
-  Write_ReadWriteStatusUncryptedVolume_u8
-
-  Changes
-  Date      Author          Info
-  03.02.14  RB              Function created
-
-  Reviews
-  Date      Reviewer        Info
-
-*******************************************************************************/
-/*
-
-   u8 Write_ReadWriteStatusUncryptedVolume_u8 (u8 NewStatus_u8) { // If configuration not found then init it if (FALSE ==
-   ReadStickConfigurationFromUserPage ()) { InitStickConfigurationToUserPage_u8 (); }
-
-   StickConfiguration_st.ReadWriteFlagUncryptedVolume_u8 = NewStatus_u8;
-
-   WriteStickConfigurationToUserPage ();
-
-   return (TRUE); }
-
- */
-/*******************************************************************************
-
-  WriteSdId
-
-  Changes
-  Date      Author          Info
-  08.02.14  RB              Implementation of save SD id in CPU flash
-
-  Reviews
-  Date      Reviewer        Info
-
-*******************************************************************************/
-/*
-
-   u8 WriteSdId (u32 *SdId_u32) { flashc_memcpy(FLASHC_USER_PAGE + 134,SdId_u32,4,TRUE);
-
-   StickConfiguration_st.ActiveSD_CardID_u32 = *SdId_u32; return (TRUE); }
-
- */
-/*******************************************************************************
-
-  ReadSdId
-
-  Changes
-  Date      Author          Info
-  08.02.14  RB              Implementation of save SD id in CPU flash
-
-  Reviews
-  Date      Reviewer        Info
-
-*******************************************************************************/
-/*
-
-   u8 ReadSdId (u32 *SdId_u32) { memcpy (SdId_u32,(void*)(FLASHC_USER_PAGE + 134),4);
-
-   StickConfiguration_st.ActiveSD_CardID_u32 = *SdId_u32; return (TRUE); }
-
-
-
- */
-/*******************************************************************************
-
-  WriteNewSdCardFoundToFlash
-
-  NewSDCardFound_u8
-  Bit 0 = 0   New SD card found
-  Bit 0 = 1   Previous SD card found
-
-
-  SDFillWithRandomChars_u8
-  Bit 0 = 0   SD card is *** not *** filled with random chars
-  Bit 0 = 1   SD card is filled with random chars
-
-  Changes
-  Date      Author          Info
-  08.02.14  RB              Implementation of save new SD card found
-
-  Reviews
-  Date      Reviewer        Info
-
-*******************************************************************************/
-/*
-
-   u8 WriteNewSdCardFoundToFlash (u32 *SdId_u32) { // If configuration not found then init it if (FALSE == ReadStickConfigurationFromUserPage ()) {
-   InitStickConfigurationToUserPage_u8 (); }
-
-   // CI_LocalPrintf ("*** New SD card found *** Serial number 0x%08x\r\n",*SdId_u32);
-
-   WriteSdId (SdId_u32);
-
-   StickConfiguration_st.NewSDCardFound_u8 |= 0x01; // Bit 0 = new card found // StickConfiguration_st.NewSDCardFound_u8 += 2; // add change counter
-   +1
-
-   StickConfiguration_st.SDFillWithRandomChars_u8 &= 0xFE; // Clear the "card with random chars filled" bit
-
-   WriteStickConfigurationToUserPage ();
-
-   return (TRUE); }
-
- */
-/*******************************************************************************
-
-  SetSdCardFilledWithRandomsToFlash
-
-  Changes
-  Date      Author          Info
-  10.02.14  RB              Implementation: New SD card found
-
-  Reviews
-  Date      Reviewer        Info
-
-*******************************************************************************/
-/*
-
-   u8 SetSdCardFilledWithRandomsToFlash (void) { // If configuration not found then init it if (FALSE == ReadStickConfigurationFromUserPage ()) {
-   InitStickConfigurationToUserPage_u8 (); }
-
-   // CI_LocalPrintf ("SD is filled with random chars\r\n");
-
-   StickConfiguration_st.SDFillWithRandomChars_u8 |= 0x01; // Set the "SD card filled with randoms" bit //
-   StickConfiguration_st.SDFillWithRandomChars_u8 += 2; // add counter +1
-
-   WriteStickConfigurationToUserPage ();
-
-   return (TRUE); }
-
- */
-/*******************************************************************************
-
-  ClearNewSdCardFoundToFlash
-
-  Changes
-  Date      Author          Info
-  08.02.14  RB              Implementation of clear new SD card found
-
-  Reviews
-  Date      Reviewer        Info
-
-*******************************************************************************/
-/*
-
-   u8 ClearNewSdCardFoundToFlash (void) { // If configuration not found then init it if (FALSE == ReadStickConfigurationFromUserPage ()) {
-   InitStickConfigurationToUserPage_u8 (); }
-
-   // CI_LocalPrintf ("Clear new SD card found\r\n");
-
-   StickConfiguration_st.NewSDCardFound_u8 &= 0xFE; // Clear the "new SD card found" bit
-
-   WriteStickConfigurationToUserPage ();
-
-   return (TRUE); }
-
- */
-/*******************************************************************************
-
-  SetSdCardFilledWithRandomCharsToFlash
-
-  Changes
-  Date      Author          Info
-  06.05.14  RB              Implementation of clear new SD card found
-
-  Reviews
-  Date      Reviewer        Info
-
-*******************************************************************************/
-/*
-
-   u8 SetSdCardFilledWithRandomCharsToFlash (void) { // If configuration not found then init it if (FALSE == ReadStickConfigurationFromUserPage ()) {
-   InitStickConfigurationToUserPage_u8 (); }
-
-   // CI_LocalPrintf ("Set new SD card filled with random chars\r\n");
-
-   StickConfiguration_st.SDFillWithRandomChars_u8 |= 0x01; // Set the "SD card filled with randoms" bit
-
-   WriteStickConfigurationToUserPage ();
-
-   return (TRUE); }
-
- */
 /*******************************************************************************
 
   SetSdCardNotFilledWithRandomCharsToFlash
@@ -708,113 +365,6 @@ u8 ClearStickKeysNotInitatedToFlash (void)
 }
 #endif
 
-/*******************************************************************************
-
-  CheckForNewFirmwareVersion
-
-  Changes
-  Date      Author          Info
-  05.07.14  RB              Implementation
-
-  Reviews
-  Date      Reviewer        Info
-
-*******************************************************************************/
-/*
-
-   u8 CheckForNewFirmwareVersion (void) { static u8 UpdateFlag_u8 = FALSE; u8 update_u8;
-
-   if (TRUE == UpdateFlag_u8) { return (TRUE); }
-
-   UpdateFlag_u8 = TRUE; // Run only once
-
-   // If configuration not found then init it if (FALSE == ReadStickConfigurationFromUserPage ()) { InitStickConfigurationToUserPage_u8 (); }
-
-   update_u8 = FALSE; if (VERSION_MAJOR != StickConfiguration_st.VersionInfo_au8[0]) { update_u8 = TRUE; }
-
-   if (VERSION_MINOR != StickConfiguration_st.VersionInfo_au8[1]) { update_u8 = TRUE; } */
-/*
-   StickConfiguration_st.VersionInfo_au8[2] = 0; // Build number not used StickConfiguration_st.VersionInfo_au8[3] = 0; // Build number not used */
-/*
-   if (TRUE == update_u8) { WriteStickConfigurationToUserPage (); }
-
-   return (TRUE); }
-
- */
-/*******************************************************************************
-
-  WriteDatetime
-
-  Changes
-  Date      Author          Info
-  08.02.14  RB              Implementation of save datetime in flash
-
-  Reviews
-  Date      Reviewer        Info
-
-*******************************************************************************/
-/*
-
-   u8 WriteDatetime (u32 Datetime_u32) { flashc_memcpy(FLASHC_USER_PAGE + 138,&Datetime_u32,4,TRUE); return (TRUE); }
-
- */
-/*******************************************************************************
-
-  ReadDatetime
-
-  Changes
-  Date      Author          Info
-  08.02.14  RB              Implementation of read datetime in flash
-
-  Reviews
-  Date      Reviewer        Info
-
-*******************************************************************************/
-/*
-
-   u8 ReadDatetime (u32 *Datetime_u32) { memcpy (Datetime_u32,(void*)(FLASHC_USER_PAGE + 138),4); return (TRUE); }
-
-
- */
-/*******************************************************************************
-
-  WriteScId
-
-  Changes
-  Date      Author          Info
-  20.05.14  RB              Implementation of save SC id in CPU flash
-
-  Reviews
-  Date      Reviewer        Info
-
-*******************************************************************************/
-/*
-
-   u8 WriteScId (u32 *ScId_u32) { flashc_memcpy(FLASHC_USER_PAGE + 142,ScId_u32,4,TRUE);
-
-   StickConfiguration_st.ActiveSmartCardID_u32 = *ScId_u32; return (TRUE); }
-
- */
-/*******************************************************************************
-
-  ReadSdId
-
-  Changes
-  Date      Author          Info
-  20.05.14  RB              Implementation of save SC id in CPU flash
-
-  Reviews
-  Date      Reviewer        Info
-
-*******************************************************************************/
-/*
-
-   u8 ReadScId (u32 *ScId_u32) { memcpy (ScId_u32,(void*)(FLASHC_USER_PAGE + 142),4);
-
-   StickConfiguration_st.ActiveSmartCardID_u32 = *ScId_u32; return (TRUE); }
-
-
- */
 /*******************************************************************************
 
   WriteXorPatternToFlash
@@ -918,6 +468,203 @@ unsigned char page_buffer[FLASH_PAGE_SIZE];
 u8 ReadPasswordSafeKey (u8 * data)
 {
     memcpy (data, (void *) (FLASHC_USER_PAGE + 178), 32);
+    return (TRUE);
+}
+
+/*******************************************************************************
+
+  WriteUpdatePinHashToFlash
+
+  Writes the PBKDF2 hashed Firmware update password to Flash memory
+
+  Changes
+  Date      Author          Info
+  17.05.19  ET              Merge over from NK Storage
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+u8 WriteUpdatePinHashToFlash (u8 * PIN_Hash_pu8)
+{
+    unsigned char page_buffer[FLASH_PAGE_SIZE];
+
+    memcpy (page_buffer, (const void *) FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
+    memcpy (page_buffer + 210, PIN_Hash_pu8, 32);
+
+    FLASH_Unlock ();
+    FLASH_ErasePage (FLASHC_USER_PAGE);
+    write_data_to_flash (page_buffer, FLASH_PAGE_SIZE, FLASHC_USER_PAGE);
+    FLASH_Lock ();
+    return (TRUE);
+}
+
+/*******************************************************************************
+
+  ReadUpdatePinHashFromFlash
+
+  Reads the PBKDF2 hashed Firmware update password from Flash memory
+
+  Changes
+  Date      Author          Info
+  17.05.19  ET              Merge over from NK Storage
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+u8 ReadUpdatePinHashFromFlash (u8 * PIN_Hash_pu8)
+{
+    memcpy (PIN_Hash_pu8, (void *) (FLASHC_USER_PAGE + 210), 32);
+    return (TRUE);
+}
+
+/*******************************************************************************
+
+  WriteUpdatePinSaltToFlash
+
+  Writes the salt used for PBKDF2 key derivation to Flash memory
+
+  Changes
+  Date      Author          Info
+  17.05.19  ET              Merge over from NK Storage
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+u8 WriteUpdatePinSaltToFlash (u8 * PIN_pu8)
+{
+    unsigned char page_buffer[FLASH_PAGE_SIZE];
+
+    memcpy (page_buffer, (const void *) FLASHC_USER_PAGE, FLASH_PAGE_SIZE);
+    memcpy (page_buffer + 242, PIN_pu8, 10);
+
+    FLASH_Unlock ();
+    FLASH_ErasePage (FLASHC_USER_PAGE);
+    write_data_to_flash (page_buffer, FLASH_PAGE_SIZE, FLASHC_USER_PAGE);
+    FLASH_Lock ();
+    return (TRUE);
+}
+
+/*******************************************************************************
+
+  ReadUpdatePinSaltFromFlash
+
+  Reads the salt used for PBKDF2 key derivation from Flash memory
+
+  Changes
+  Date      Author          Info
+  17.05.19  ET              Merge over from NK Storage
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+u8 ReadUpdatePinSaltFromFlash (u8 * PIN_pu8)
+{
+    memcpy (PIN_pu8, (void *) (FLASHC_USER_PAGE + 242), 10);
+    return (TRUE);
+}
+
+/*******************************************************************************
+
+  CheckUpdatePin
+
+  Compare the supplied Update Pin with the Update Pin stored in Flash
+
+  Changes
+  Date      Author          Info
+  17.05.19  ET              Merge over from NK Storage
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+u8 CheckUpdatePin (u8 * Password_pu8, u32 PasswordLen_u32)
+{
+    u8 i;
+    u8 UpdateSaltInit;
+    u8 output_au8[64];
+    u8 UpdatePinSalt_u8[UPDATE_PIN_SALT_SIZE];
+    u8 UpdatePinHash_u8[AES_KEYSIZE_256_BIT];
+
+    if (PasswordLen_u32 > UPDATE_PIN_MAX_SIZE || PasswordLen_u32 < UPDATE_PIN_MIN_SIZE)
+    {
+      return (FALSE);
+    }
+
+    ReadUpdatePinSaltFromFlash (UpdatePinSalt_u8);
+
+
+    // Check if PIN is uninitialized after flashing
+    UpdateSaltInit = FALSE;
+    for (i=0;i<UPDATE_PIN_SALT_SIZE;i++)
+    {
+      if (0xFF != UpdatePinSalt_u8[i])
+      {
+        UpdateSaltInit = TRUE;
+      }
+    }
+    if (FALSE == UpdateSaltInit)
+    {
+        // Initialize Update Pin with default value
+        StoreNewUpdatePinHashInFlash ((u8 *) "12345678", 8);
+        ReadUpdatePinSaltFromFlash (UpdatePinSalt_u8);
+    }
+
+    pbkdf2 (output_au8, Password_pu8, PasswordLen_u32, UpdatePinSalt_u8, UPDATE_PIN_SALT_SIZE);
+    ReadUpdatePinHashFromFlash (UpdatePinHash_u8);
+
+    if (0 != memcmp (UpdatePinHash_u8, output_au8, AES_KEYSIZE_256_BIT))
+    {
+        DelayMs (100);
+        return (FALSE);
+    }
+
+    memset(output_au8, 0, sizeof(output_au8));
+    DelayMs (100);
+    return (TRUE);
+}
+
+/*******************************************************************************
+
+  StoreNewUpdatePinHashInFlash
+
+  Change Firmware Update password stored in Flash
+
+  Changes
+  Date      Author          Info
+  17.05.19  ET              Merge over from NK Storage
+
+  Reviews
+  Date      Reviewer        Info
+
+*******************************************************************************/
+
+u8 StoreNewUpdatePinHashInFlash (u8 * Password_pu8, u32 PasswordLen_u32)
+{
+    u8 output_au8[64];
+    u8 UpdatePinSalt_u8[UPDATE_PIN_SALT_SIZE];
+
+    if (UPDATE_PIN_MAX_SIZE < PasswordLen_u32)
+    {
+        return (FALSE);
+    }
+
+    // Generate new salt
+    getRandomNumber (UPDATE_PIN_SALT_SIZE, UpdatePinSalt_u8);
+
+    WriteUpdatePinSaltToFlash (UpdatePinSalt_u8);
+
+    pbkdf2 (output_au8, Password_pu8, PasswordLen_u32, UpdatePinSalt_u8, UPDATE_PIN_SALT_SIZE);
+    WriteUpdatePinHashToFlash (output_au8);
+
     return (TRUE);
 }
 

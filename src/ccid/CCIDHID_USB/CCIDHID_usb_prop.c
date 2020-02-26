@@ -37,8 +37,6 @@
 #include "keyboard.h"
 #include "report_protocol.h"
 
-#define KEY_STORE_ADDRESS 0x801FC00
-
 /* Private typedef ----------------------------------------------------------- */
 /* Private define ------------------------------------------------------------ */
 #define HID_INTERFACE_NO    0   // interface number

@@ -25,7 +25,7 @@
 #define NUMBER_OF_HOTP_SLOTS 4
 #define NUMBER_OF_TOTP_SLOTS 15
 
-// Flash memory pages:
+// Flash memory pages (initial values):
 // 0x801E400 <- time page
 // 0x801E800 <- slots page 1
 // 0x801EC00 <- slots page 2
@@ -34,7 +34,7 @@
 // 0x801F800 <- slot 3 counter
 // 0x8014000 <- slot 4 counter (attempt)
 // 0x801FC00 <- backup page
-
+// Current addresses moved to memory_layout.h
 
 /*
    slot structure: 1b 0x01 if slot is used (programmed) 15b slot name 20b secret 1b configuration flags: MSB [x|x|x|x|x|send token id|send enter
@@ -56,24 +56,8 @@
 #define SLOT_PAGE_SIZE 1000 // less than 2 actual page, so we can copy it to
                             // backup pages with additional info
 
-//Highest address for flashing is currently 0x0800c688 (less than 50 kB; GCC 4.9.2, size optimization)
-//Lets start data at 80kB+
-#define FLASH_MEMORY_BEGIN 0x8014000
-//Lowest region in use found in the firmware - PWS, src/inc/password_safe.h:42
-#define FLASH_MEMORY_LOWEST 0x801C000
 
-
-#define TIME_ADDRESS 0x801E400
-#define SLOTS_PAGE1_ADDRESS 0x801E800
-#define SLOTS_PAGE2_ADDRESS 0x801EC00
-#define SLOT1_COUNTER_ADDRESS 0x801F000
-#define SLOT2_COUNTER_ADDRESS 0x801F400
-#define SLOT3_COUNTER_ADDRESS 0x801F800
-#define SLOT4_COUNTER_ADDRESS FLASH_MEMORY_BEGIN
-#define BACKUP_PAGE_ADDRESS 0x801FC00
-
-//Flash size is 128kB, which defines as:
-#define FLASH_MEMORY_LIMIT 0x8020000
+#include "memory_layout.h"
 
 #define BACKUP_ADDRESS_OFFSET 1000
 #define BACKUP_LENGTH_OFFSET 1004
