@@ -1,6 +1,7 @@
 #!/usr/bin/env -S make 
 
-BOOTLOADER=../../../dapboot/build/dapboot-nkpro.bin
+WORKSPACE=~/work
+BOOTLOADER=$(WORKSPACE)/dapboot/build/dapboot-nkpro.bin
 FIRMWARE=nitrokey-pro-firmware.elf 
 FIRMWAREBIN=nitrokey-pro-firmware.bin 
 
@@ -47,7 +48,7 @@ flash-full-single: $(SINGLE_FW)
 
 .PHONY: activate-bootloader
 activate-bootloader:
-	cd ~/work/libnitrokey/unittest && pytest test_pro_bootloader.py  -k test_bootloader_run_pro_real -svx --run-skipped
+	cd $(WORKSPACE)/libnitrokey/unittest && pytest test_pro_bootloader.py  -k test_bootloader_run_pro_real -svx --run-skipped
 
 .PHONY: reset
 reset:
