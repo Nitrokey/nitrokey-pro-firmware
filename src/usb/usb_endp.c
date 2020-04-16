@@ -25,7 +25,7 @@
 #include "usb_istr.h"
 
 #include "platform_config.h"
-#include "CCID_usb.h"
+#include "CCIDHID_usb.h"
 
 /* Private typedef ----------------------------------------------------------- */
 /* Private define ------------------------------------------------------------ */

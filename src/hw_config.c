@@ -29,10 +29,8 @@
 #include "usb_desc.h"
 #include "usb_pwr.h"
 
-#include "CCID_usb.h"
-#include "CCID_usb_prop.h"
+#include "CCIDHID_usb.h"
 #include "CCIDHID_usb_desc.h"
-//#include "CCID_usb_desc.h"
 #include "RAMDISK_usb_desc.h"
 
 #include "CcidLocalAccess.h"

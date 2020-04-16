@@ -22,7 +22,7 @@
 
 /* Includes ------------------------------------------------------------------ */
 #include "usb_lib.h"
-#include "CCIDHID_usb_conf.h"
+#include "usb_conf.h"
 #include "CCIDHID_usb_desc.h"
 #include "usb_pwr.h"
 #include "usb_bot.h"
@@ -65,7 +65,7 @@ uint8_t message[KEYBOARD_FEATURE_COUNT];
 DEVICE_INFO CCID_Device_Info;
 
 DEVICE CCID_Device_Table = {
-    CCID_EP_NUM,
+    EP_NUM,
     1
 };
 
@@ -185,26 +185,26 @@ void USB_CCID_Reset (void)
     SetEPType (ENDP0, EP_CONTROL);
 
     SetEPTxStatus (ENDP0, EP_TX_NAK);
-    SetEPRxAddr (ENDP0, CCID_ENDP0_RXADDR);
+    SetEPRxAddr (ENDP0, ENDP0_RXADDR);
     SetEPRxCount (ENDP0, Device_Property->MaxPacketSize);
-    SetEPTxAddr (ENDP0, CCID_ENDP0_TXADDR);
+    SetEPTxAddr (ENDP0, ENDP0_TXADDR);
     Clear_Status_Out (ENDP0);
     SetEPRxValid (ENDP0);
 
     /* Initialize Endpoint 1 */
     SetEPType (ENDP1, EP_INTERRUPT);
-    SetEPTxAddr (ENDP1, CCID_ENDP1_TXADDR);
+    SetEPTxAddr (ENDP1, ENDP1_TXADDR);
     SetEPTxStatus (ENDP1, EP_TX_NAK);
     SetEPRxStatus (ENDP1, EP_RX_DIS);
 
     /* Initialize Endpoint 2 */
     SetEPType (ENDP2, EP_BULK);
 
-    SetEPRxAddr (ENDP2, CCID_ENDP2_RXADDR);
+    SetEPRxAddr (ENDP2, ENDP2_RXADDR);
     SetEPRxCount (ENDP2, Device_Property->MaxPacketSize);
     SetEPRxStatus (ENDP2, EP_RX_VALID);
 
-    SetEPTxAddr (ENDP2, CCID_ENDP2_TXADDR);
+    SetEPTxAddr (ENDP2, ENDP2_TXADDR);
     SetEPTxCount (ENDP2, Device_Property->MaxPacketSize);
     SetEPTxStatus (ENDP2, EP_TX_VALID);
 

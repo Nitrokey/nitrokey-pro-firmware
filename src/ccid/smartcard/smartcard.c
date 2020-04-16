@@ -26,7 +26,7 @@
 #include "platform_config.h"
 #include "smartcard.h"
 #include "CCID_Global.h"
-#include "CCID_usb.h"
+#include "CCIDHID_usb.h"
 #include "hw_config.h"
 
 /* Private typedef ----------------------------------------------------------- */

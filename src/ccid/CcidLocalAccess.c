@@ -25,7 +25,6 @@
 #include "stm32f10x.h"
 #include "platform_config.h"
 #include "hw_config.h"
-#include "CCID_usb.h"
 #include "string.h"
 #include "smartcard.h"
 #include "CCID_Ifd_protocol.h"
