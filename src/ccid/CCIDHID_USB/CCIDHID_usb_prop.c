@@ -247,7 +247,6 @@ void USB_CCID_Storage_SetConfiguration (void)
         ClearDTOG_TX (ENDP1);
         ClearDTOG_RX (ENDP2);
         ClearDTOG_TX (ENDP2);
-        // ClearDTOG_TX(ENDP3);
         ClearDTOG_TX (ENDP4);
         Bot_State = BOT_IDLE;   /* set the Bot state machine to the IDLE state */
     }

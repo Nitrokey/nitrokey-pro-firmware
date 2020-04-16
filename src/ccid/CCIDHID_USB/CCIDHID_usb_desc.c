@@ -55,7 +55,8 @@ const uint8_t CCID_DeviceDescriptor[CCID_SIZ_DEVICE_DESC] = {
 #define USB_CONFIG_REMOTE_WAKEUP               0x20
 
 const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
-    /* Configuration 1 */
+
+    // Configuration 1 Descriptor
     0x09,   /* bLength ConfigDescriptor */
     0x02,   /* bDescriptorType */
     CCID_SIZ_CONFIG_DESC,
@@ -66,7 +67,7 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
     USB_CONFIG_BUS_POWERED, /* bmAttributes */
     100 / 2,    /* MaxPower 200 mA */
 
-    // Interface 1 descriptor (Interface 1 = HID Keyboard)
+    // Interface 0 descriptor (Generic HID)
     0x09,   /* bLength */
     USB_INTERFACE_DESCRIPTOR_TYPE,  /* bDescriptorType */
     0x00,   /* bInterfaceNumber */
@@ -76,7 +77,8 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
     0x00,   /* bInterfaceSubClass : 1=BOOT, 0=no boot */
     0x00,   /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
     0,  /* iInterface: Index of string descriptor */
-      /******************** Descriptor of Keyboard HID ********************/
+
+    // Generic HID Descriptor
     0x09,   /* bLength: HID Descriptor size */
     HID_DESCRIPTOR_TYPE,    /* bDescriptorType: HID */
     0x10,   /* bcdHID: HID Class Spec release number */
@@ -87,19 +89,16 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
     KEYBOARD_SIZ_REPORT_DESC,   /* wItemLength: Total length of Report descriptor */
     0x00,
 
-    // Endpoint 1 descriptor (Interrupt in SCR)
+    // Endpoint 4 descriptor (Interrupt in)
     0x07,   /* bLength */
     0x05,   // bDescriptorType: Endpoint descriptor type
-    0x84,   // bEndpointAddress: Endpoint 1 IN
+    0x84,   // bEndpointAddress: Endpoint 4 IN
     0x03,   // bmAttributes: Interrupt endpoint
     0x08,   // wMaxPacketSize(LSB): 8 char max (0x0008)
     0x00,   // wMaxPacketSize (MSB)
     0x0A,
-    /* Terminator */
-    // 0 /* bLength */
 
-
-    // Interface 0 descriptor (Interface 0 = Smart Card Reader)
+    // Interface 1 descriptor (Smart Card Reader)
     0x09,   /* bLength */
     0x04,   /* bDescriptorType */
     0x01,   /* bInterfaceNumber */
@@ -153,16 +152,15 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
     0x00,   /* bPINSupport : no PIN verif and modif */
     0x01,   /* bMaxCCIDBusySlots */
 
-    // Endpoint 4 descriptor (Interrupt in SCR)
+    // Endpoint 1 descriptor (Interrupt in SCR)
     0x07,   /* bLength */
     0x05,   // bDescriptorType: Endpoint descriptor type
-    0x81,   // bEndpointAddress: Endpoint 4 IN
+    0x81,   // bEndpointAddress: Endpoint 1 IN
     0x03,   // bmAttributes: Interrupt endpoint
     0x40,   // 0x08, zur sicherheit 0x40 // wMaxPacketSize(LSB): 8 char max
     // (0x0008)
     0x00,   // wMaxPacketSize (MSB)
     0x18,   // bInterval: Polling Interval (24 ms = 0x18)
-
 
     // Endpoint 2 descriptor (Bulk out SCR)
     0x07,   /* bLength */
@@ -173,17 +171,14 @@ const uint8_t CCID_ConfigDescriptor[CCID_SIZ_CONFIG_DESC] = {
     0x00,   // wMaxPacketSize (MSB)
     0x00,   // bInterval: ignored
 
-    // Endpoint 3 descriptor (Bulk in SCR)
+    // Endpoint 2 descriptor (Bulk in SCR)
     0x07,   /* bLength */
     0x05,   // bDescriptorType: Endpoint descriptor type
     0x82,   // RB to avoid doublebuffering ? 0x82,// bEndpointAddress:
-    // Endpoint 2 IN
     0x02,   // bmAttributes: Bulk endpoint
     0x40,   // wMaxPacketSize(LSB): 64 char max (0x0040)
     0x00,   // wMaxPacketSize (MSB)
     0x00,   // bInterval: ignored
-
-
 };
 
 

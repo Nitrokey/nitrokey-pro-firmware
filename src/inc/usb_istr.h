@@ -73,8 +73,6 @@ void EP2_IN_Callback (void);
 void EP3_IN_Callback (void);
 #endif
 
-void XEP3_IN_Callback (void);
-
 void EP4_IN_Callback (void);
 
 #ifndef EP5_IN_Callback

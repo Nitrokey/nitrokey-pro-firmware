@@ -79,20 +79,6 @@ void EP2_IN_Callback (void)
 
 }
 
-/*******************************************************************************
-* Function Name  : EP3_IN_Callback.
-* Description    : EP3 IN Callback Routine.
-* Input          : None.
-* Output         : None.
-* Return         : None.
-*******************************************************************************/
-void XEP3_IN_Callback (void)
-{
-    /* Set the transfer complete token to inform upper layer that the current transfer has been complete */
-    PrevXferComplete = 1;
-    // SwitchSmartcardLED(DISABLE);
-}
-
 void EP4_IN_Callback (void)
 {
     /* Set the transfer complete token to inform upper layer that the current transfer has been complete */
