@@ -210,7 +210,7 @@ void USB_CCID_Reset (void)
 
     /* Initialize Endpoint 4 */
     SetEPType (ENDP4, EP_INTERRUPT);
-    SetEPTxAddr (ENDP4, ENDP4_TXADDR);
+    SetEPTxAddr (ENDP4, CCID_ENDP4_TXADDR);
     // SetEPTxCount(ENDP4, 8);
     SetEPRxStatus (ENDP4, EP_RX_DIS);
     SetEPTxStatus (ENDP4, EP_TX_NAK);
