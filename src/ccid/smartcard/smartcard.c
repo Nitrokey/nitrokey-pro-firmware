@@ -1304,6 +1304,8 @@ static ErrorStatus USART_ByteReceive (u8 * Data, u32 TimeOut)
 {
 u32 Counter = 0;
 
+    SwitchOATHLED(ENABLE);
+
     while ((USART_GetFlagStatus (USART1, USART_FLAG_RXNE) == RESET) && (Counter != TimeOut))
     {
         Counter++;
@@ -1312,10 +1314,12 @@ u32 Counter = 0;
     if (Counter != TimeOut)
     {
         *Data = (u8) USART_ReceiveData (USART1);
+        SwitchOATHLED(DISABLE);
         return SUCCESS;
     }
     else
     {
+        SwitchOATHLED(DISABLE);
         return ERROR;
     }
 }
