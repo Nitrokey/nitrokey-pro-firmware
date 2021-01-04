@@ -36,3 +36,11 @@ https://github.com/ggkitsas/OpenOCD-SWD
 2. Read-protect the flash
 
 `sudo stm32flash -w crypto.hex -v /dev/ttyUSB0`
+
+
+#### GDB
+```text
+# gdb command for debugging docker build
+set substitute-path ../../src ./src/
+```
+
