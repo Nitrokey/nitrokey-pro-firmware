@@ -235,6 +235,15 @@ void SwitchSmartcardLED (FunctionalState NewState)
 
 *******************************************************************************/
 
+void XorOATHLED ()
+{
+    static int state = 0;
+    static FunctionalState lastState = DISABLE;
+    if (state++ % 100 == 0) {
+        SwitchOATHLED(lastState==DISABLE ? ENABLE : DISABLE);
+    }
+}
+
 void SwitchOATHLED (FunctionalState NewState)
 {
 

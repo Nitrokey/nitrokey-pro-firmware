@@ -1308,6 +1308,7 @@ u32 Counter = 0;
 
     while ((USART_GetFlagStatus (USART1, USART_FLAG_RXNE) == RESET) && (Counter != TimeOut))
     {
+        XorOATHLED();
         Counter++;
     }
 
