@@ -14,5 +14,3 @@ build/gcc/nitrokey-pro-firmware.sym
 build/gcc/nitrokey-pro-firmware.hex
 build/gcc/nitrokey-pro-firmware.lss
 build/gcc/nitrokey-pro-firmware.map
-build/gcc/nitrokey-pro-firmware.hex
-build/gcc/nitrokey-pro-firmware.sym
