@@ -454,6 +454,7 @@ void Get_SerialNum (void)
   const retCode results = getSerialNumber(buf, serial_buf_size);
 
   if (results.smartcard_ret != APDU_EOF) {
+      // debug: copy results structure to the buf, to be used as a serial
       *((uint32_t *) buf) = *((uint32_t *) &results);
       for (int i = 0; i < serial_buf_size; i++) {
           *((uint16_t *) CCID_StringSerial + i+1) = (uint8_t) HexToAscii2(buf[i/2], i%2);

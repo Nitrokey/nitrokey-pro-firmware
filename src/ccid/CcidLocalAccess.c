@@ -150,9 +150,7 @@ void GenerateTPDU (typeSmartcardTransfer * tSCT)
 void GenerateChainedTPDU (typeSmartcardTransfer * tSCT)
 {
     tSCT->cTPDU[CCID_TPDU_NAD] = 0; // Node Address (NAD)
-    tSCT->cTPDU[CCID_TPDU_PCD] = ((tSCT->cTPDUSequence & 1) << 4) + CCID_TPDU_R_BLOCK_FLAG; // Protocol
-    // Control
-    // Byte
+    tSCT->cTPDU[CCID_TPDU_PCD] = ((tSCT->cTPDUSequence & 1) << 4) + CCID_TPDU_R_BLOCK_FLAG; // Protocol Control Byte
     tSCT->cTPDU[CCID_TPDU_LENGTH] = 0;
 
     tSCT->cTPDULength = CCID_TPDU_OVERHEAD; // the length of the TPDU
@@ -179,15 +177,13 @@ unsigned char nOverhead = 0;
     CRD_SendCommand ((unsigned char *) tSCT->cTPDU, tSCT->cTPDULength, CCID_TRANSFER_BUFFER_MAX, (unsigned int *) &nAnswerLength);
 
 
-    if (CCID_TPDU_ANSWER_OVERHEAD > nAnswerLength)  // answer length
-        // incorrect
+    if (CCID_TPDU_ANSWER_OVERHEAD > nAnswerLength)  // answer length incorrect
     {
         tSCT->cAPDUAnswerStatus = APDU_ANSWER_RECEIVE_INCORRECT;
         return (tSCT->cAPDUAnswerStatus);
     }
 
-    if (0 != (tSCT->cTPDU[CCID_TPDU_PCD] & CCID_TPDU_CHAINING_FLAG))    // chained
-        // data
+    if (0 != (tSCT->cTPDU[CCID_TPDU_PCD] & CCID_TPDU_CHAINING_FLAG))    // chained data
     {
         nOverhead = CCID_TPDU_ANSWER_OVERHEAD - 2;  // no status data
         tSCT->cAPDUAnswerStatus = APDU_ANSWER_CHAINED_DATA;
@@ -195,21 +191,13 @@ unsigned char nOverhead = 0;
     else
     {
         nOverhead = CCID_TPDU_ANSWER_OVERHEAD;
-        tSCT->cAPDUAnswerStatus = tSCT->cTPDU[nAnswerLength - 3] << 8;  // Statusbyte
-        // SW1
-        tSCT->cAPDUAnswerStatus += tSCT->cTPDU[nAnswerLength - 2];  // Statusbyte
-        // SW2
+        tSCT->cAPDUAnswerStatus = tSCT->cTPDU[nAnswerLength - 3] << 8;  // Statusbyte SW1
+        tSCT->cAPDUAnswerStatus += tSCT->cTPDU[nAnswerLength - 2];  // Statusbyte SW2
     }
 
-    memcpy (&tSCT->cAPDU[tSCT->cAPDUAnswerLength], &tSCT->cTPDU[CCID_TPDU_DATASTART], nAnswerLength - nOverhead);   // add
-    // new
-    // data
-    // to
-    // receive
-    // data
+    memcpy (&tSCT->cAPDU[tSCT->cAPDUAnswerLength], &tSCT->cTPDU[CCID_TPDU_DATASTART], nAnswerLength - nOverhead);   // add new data to receive data
 
-    tSCT->cAPDUAnswerLength += nAnswerLength - nOverhead;   // add length of
-    // recieved data
+    tSCT->cAPDUAnswerLength += nAnswerLength - nOverhead;   // add length of recieved data
 
     return (tSCT->cAPDUAnswerStatus);
 }
