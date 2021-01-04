@@ -55,6 +55,7 @@ char HexToAscii (uint8_t nHex);
 
 void SwitchSmartcardLED (FunctionalState NewState);
 
+void XorOATHLED ();
 void SwitchOATHLED (FunctionalState NewState);
 
 void StartBlinkingOATHLED (uint8_t times);
