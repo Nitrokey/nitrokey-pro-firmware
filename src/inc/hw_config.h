@@ -74,7 +74,7 @@ uint8_t ReadButton (void);
 
 /* External variables -------------------------------------------------------- */
 
-extern uint64_t currentTime;
+extern volatile uint64_t currentTime;
 
 extern uint64_t lastOATHBlinkTime;
 

@@ -1302,17 +1302,16 @@ static void SC_DeInit (void)
 
 static ErrorStatus USART_ByteReceive (u8 * Data, u32 TimeOut)
 {
-u32 Counter = 0;
-
+    u32 test_until = currentTime + TimeOut;
     SwitchOATHLED(ENABLE);
 
-    while ((USART_GetFlagStatus (USART1, USART_FLAG_RXNE) == RESET) && (Counter != TimeOut))
+    while ((USART_GetFlagStatus (USART1, USART_FLAG_RXNE) == RESET) && (currentTime < test_until))
     {
         XorOATHLED();
-        Counter++;
     }
 
-    if (Counter != TimeOut)
+    const bool time_out_reached = currentTime >= test_until;
+    if (!time_out_reached)
     {
         *Data = (u8) USART_ReceiveData (USART1);
         SwitchOATHLED(DISABLE);

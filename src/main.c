@@ -42,7 +42,7 @@ int nGlobalStickState = STICK_STATE_SMARTCARD;
 
 int nFlagSendSMCardInserted = TRUE;
 
-uint64_t currentTime = 0;
+volatile uint64_t currentTime = 0;
 
 __IO uint8_t device_status = STATUS_READY;
 
