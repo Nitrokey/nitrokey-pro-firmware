@@ -1466,11 +1466,7 @@ int CRD_SendCommand (unsigned char* pTransmitBuffer, unsigned int nCommandSize, 
                     break;
                 }
                 // Get Error state
-                if (((pTransmitBuffer[i] & (u8) 0xF0) == 0x60)) // ||
-                    // TransansmitBuffer[i]
-                    // &
-                    // ()0xF0F0)
-                    // == 0x90))
+                if (((pTransmitBuffer[i] & (u8) 0xF0) == 0x60)) // || TransansmitBuffer[i] & ()0xF0F0) == 0x90))
                 {
                     nStatus = SC_GET_WRONG_STATUS;
                 }
