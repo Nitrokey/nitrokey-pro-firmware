@@ -179,7 +179,7 @@ OPT = 0
 # Native formats for AVR-GCC's -g are stabs [default], or dwarf-2.
 # AVR (extended) COFF requires stabs, plus an avr-objcopy run.
 #DEBUG = stabs
-DEBUG = 3
+DEBUG = dwarf-2
 
 
 # List any extra directories to look for include files here.
@@ -230,6 +230,7 @@ CFLAGS = -g$(DEBUG)
 CFLAGS += $(CDEFS) $(CINCS)
 CFLAGS += -O$(OPT)
 CFLAGS += -Wall -Wcast-align -Wimplicit 
+CFLAGS += -Wl,--print-memory-usage
 CFLAGS += -Wpointer-arith -Wswitch
 CFLAGS += -Wredundant-decls -Wreturn-type -Wshadow -Wunused
 CFLAGS += -Wa,-adhlns=$(subst $(suffix $<),.lst,$<) 
