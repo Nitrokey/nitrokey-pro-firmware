@@ -1440,7 +1440,7 @@ int CRD_SendCommand (unsigned char* pTransmitBuffer, unsigned int nCommandSize, 
     //
     for (i = 0; i < ICC_MESSAGE_BUFFER_MAX_LENGTH - USB_MESSAGE_HEADER_SIZE; i++)  // max buffer size (had to be checked)
     {
-        if (0 == i && currentTime > 5*1000)
+        if (0 == i && currentTime > 20*1000)
         {
             nDelayTime = SC_Receive_TimeoutLong;
         }
