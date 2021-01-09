@@ -15,8 +15,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="172e5237-de6e-4281-abad-7bcb2dfd1848" name="Default Changelist" comment="fixup! Use timeout in seconds instead of iterations counter">
-      <change beforePath="$PROJECT_DIR$/build/gcc/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/build/gcc/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/debug.py" beforeDir="false" afterPath="$PROJECT_DIR$/debug.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,14 +115,6 @@
     <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="docker build make" type="com.jetbrains.cidr.embedded.openocd.conf.type" factoryName="com.jetbrains.cidr.embedded.openocd.conf.factory" nameIsGenerated="true" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nitrokey_pro_firmware" TARGET_NAME="docker build make" CONFIG_NAME="docker build make" version="1" RUN_PATH="$PROJECT_DIR$/build/gcc/nitrokey-hsm-firmware.elf">
-      <openocd version="1" gdb-port="3333" telnet-port="4444" board-config="$PROJECT_DIR$/stm32f1.cfg" reset-type="INIT" download-type="UPDATED_ONLY">
-        <debugger kind="GDB" isBundled="true" />
-      </openocd>
-      <method v="2">
-        <option name="CLION.COMPOUND.BUILD" enabled="true" />
       </method>
     </configuration>
     <list>
