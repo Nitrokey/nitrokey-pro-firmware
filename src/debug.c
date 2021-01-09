@@ -15,6 +15,7 @@ __IO uint8_t DebugTransferComplete;
 void Debug(uint8_t *buffer, size_t length) {
 #ifdef DBG
     if (!INITIALIZED) return;
+    uint32_t cnt = 0xFF;
   // Split buffer into transfers of length 32 or less, which are
   // sent to the host individually.
   while (length != 0) {
@@ -28,7 +29,7 @@ void Debug(uint8_t *buffer, size_t length) {
     SetEPTxCount(ENDP5, messageLength);
     SetEPTxStatus(ENDP5, EP_TX_VALID);
     // Wait for content to arrive at host
-    while (DebugTransferComplete == 0)
+    while (DebugTransferComplete == 0 && cnt-->1)
       ;
     // Move forward in buffer
     length -= messageLength;

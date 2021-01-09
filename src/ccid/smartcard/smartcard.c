@@ -704,6 +704,7 @@ u32 Counter = 0;
 
 
     USART_SendData (USART1, uData);
+    Debugf(">> send USART data %x", uData);
 
     while (USART_GetFlagStatus (USART1, USART_FLAG_TC) == RESET)
     {
@@ -1306,6 +1307,8 @@ static ErrorStatus USART_ByteReceive (u8 * Data, u32 TimeOut)
 {
 u32 Counter = 0;
 
+    Debugf("<< USART wait");
+
     while ((USART_GetFlagStatus (USART1, USART_FLAG_RXNE) == RESET) && (Counter != TimeOut))
     {
         XorOATHLED();
@@ -1315,11 +1318,13 @@ u32 Counter = 0;
     if (Counter != TimeOut)
     {
         *Data = (u8) USART_ReceiveData (USART1);
+        Debugf("<< USART data %x", *Data);
         SwitchOATHLED(DISABLE);
         return SUCCESS;
     }
     else
     {
+        Debugf("<< USART timeout");
         SwitchOATHLED(DISABLE);
         return ERROR;
     }
@@ -1379,8 +1384,7 @@ int CRD_SendCommand (unsigned char* pTransmitBuffer, unsigned int nCommandSize, 
 {
     int i;
 
-    Debugf(__PRETTY_FUNCTION__);
-    Debugf("\n");
+//    Debugf(__PRETTY_FUNCTION__);
 
 #ifdef GERMALTO_CARD
     int i1;
