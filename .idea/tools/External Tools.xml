@@ -1,0 +1,16 @@
+<toolSet name="External Tools">
+  <tool name="sudo make" description="docker build" showInMainMenu="false" showInEditor="false" showInProject="false" showInSearchPopup="false" disabled="false" useConsole="true" showConsoleOnStdOut="false" showConsoleOnStdErr="false" synchronizeAfterRun="true">
+    <exec>
+      <option name="COMMAND" value="make" />
+      <option name="PARAMETERS" value="-f docker.mk build" />
+      <option name="WORKING_DIRECTORY" value="$USER_HOME$/work/nitrokey-pro-firmware" />
+    </exec>
+  </tool>
+  <tool name="make clean" description="docker build clean" showInMainMenu="false" showInEditor="false" showInProject="false" showInSearchPopup="false" disabled="false" useConsole="true" showConsoleOnStdOut="false" showConsoleOnStdErr="false" synchronizeAfterRun="true">
+    <exec>
+      <option name="COMMAND" value="make" />
+      <option name="PARAMETERS" value="-f docker.mk clean" />
+      <option name="WORKING_DIRECTORY" value="$USER_HOME$/work/nitrokey-pro-firmware" />
+    </exec>
+  </tool>
+</toolSet>

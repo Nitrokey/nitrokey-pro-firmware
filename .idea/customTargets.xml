@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CLionExternalBuildManager">
+    <target id="45d01c38-53f4-44f9-894f-d0e64f9ebd8d" name="docker build make" defaultType="TOOL">
+      <configuration id="52d51d4f-9e24-4016-8ae6-866f23232957" name="docker build make">
+        <build type="TOOL">
+          <tool actionId="Tool_External Tools_sudo make" />
+        </build>
+        <clean type="TOOL">
+          <tool actionId="Tool_External Tools_make clean" />
+        </clean>
+      </configuration>
+    </target>
+  </component>
+</project>
