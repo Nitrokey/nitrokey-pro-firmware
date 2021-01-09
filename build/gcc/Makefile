@@ -204,9 +204,13 @@ EXTRA_LIBDIRS =
 # gnu99 - c99 plus GCC extensions
 CSTANDARD = -std=gnu99
 
+# change docker build path to local for the debugging
+PREFIX=-fdebug-prefix-map=../../src=./src/
+
 GIT_VERSION = $(shell cat GIT_VERSION)
 # Place -D or -U options for C here
 CDEFS =  -D$(RUN_MODE) -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD -DUSE_STM3210E_EVAL -DGLOBAL_VID=$(VID) -DGLOBAL_PID=$(PID) -DPRODUCT_NAME_STRING_VERSION=\"$(GIT_VERSION)\" -DDBG
+CDEFS+=$(PREFIX)
 #CDEFS =  -D$(RUN_MODE) -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD -DUSE_BOARD_STICK_V12
 # Place -I options here
 CINCS =
