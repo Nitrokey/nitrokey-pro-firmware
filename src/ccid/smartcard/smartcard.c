@@ -1452,7 +1452,7 @@ int CRD_SendCommand (unsigned char* pTransmitBuffer, unsigned int nCommandSize, 
         nDelayTime = SC_Receive_Timeout;
         if (0 == i)
         {
-//            nDelayTime = SC_Receive_Timeout * 10000L;   // Long long wait for first byte, allow card to work
+            nDelayTime = SC_Receive_Timeout * 10000L;   // Long long wait for first byte, allow card to work
         }
 
         if ((USART_ByteReceive (&pTransmitBuffer[i], nDelayTime)) != SUCCESS)
