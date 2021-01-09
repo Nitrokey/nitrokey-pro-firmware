@@ -10,22 +10,20 @@ import time
 # to prevent timeouts in other applications.
 
 while True:
-	# TODO: Other device types
-	dev = usb.core.find(idVendor=0x20a0, idProduct=0x4230)
-	if dev is None:
-    		time.sleep(0.01)
-    		continue
-	dev.set_configuration()
-	print "DEVICE ATTACHED, LOGGING:"
-	while True:
-		try:
-			bytes = dev.read(0x85, 32)
-			sys.stdout.write(bytes.tostring())
-			sys.stdout.flush()
-		except usb.core.USBError as e:
-			if e[0] == 110:
-				continue
-			print "COMMUNICATION ERROR:"
-			print e
-			break
-
+    # TODO: Other device types
+    dev = usb.core.find(idVendor=0x20a0, idProduct=0x4230)
+    if dev is None:
+        time.sleep(0.1)
+        continue
+    dev.set_configuration()
+    print("DEVICE ATTACHED, LOGGING:")
+    while True:
+        try:
+            bytes = dev.read(0x85, 32)
+            sys.stdout.write(bytes.tostring())
+            sys.stdout.flush()
+        except usb.core.USBError as e:
+            print("COMMUNICATION ERROR:")
+            print(e)
+            time.sleep(0.1)
+            break
