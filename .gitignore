@@ -8,9 +8,12 @@ build-*-Debug
 !/.gitignore
 *.orig
 *tags
+*.hex*
+*.elf
+*.map
+*.lss
+*.sym
+*.bin
 
-build/gcc/nitrokey-pro-firmware.elf
-build/gcc/nitrokey-pro-firmware.sym
-build/gcc/nitrokey-pro-firmware.hex
-build/gcc/nitrokey-pro-firmware.lss
-build/gcc/nitrokey-pro-firmware.map
+cmake-build-*
+build/gcc/sha256sum.txt*
