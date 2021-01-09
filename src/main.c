@@ -103,6 +103,7 @@ void Test1 (void)
 
 *******************************************************************************/
 
+volatile bool INITIALIZED = FALSE;
 
 int main (void)
 {
@@ -126,6 +127,8 @@ int main (void)
     USB_Start ();
 
     StartupCheck_u8 ();
+
+    INITIALIZED = TRUE;
 
     /* Endless loop after USB startup */
     Debugf("Entering loop after USB startup\n");

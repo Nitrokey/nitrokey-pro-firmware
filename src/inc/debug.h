@@ -2,6 +2,9 @@
 #define DEBUG_H
 #include <stddef.h>
 
+extern volatile bool INITIALIZED;
+
+
 // Uncomment the following line to enable debugging.
 // If debugging is enabled, the host must listen to
 // interrupt transfers on endpoint 5.

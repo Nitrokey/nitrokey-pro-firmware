@@ -14,6 +14,7 @@ __IO uint8_t DebugTransferComplete;
 
 void Debug(uint8_t *buffer, size_t length) {
 #ifdef DBG
+    if (!INITIALIZED) return;
   // Split buffer into transfers of length 32 or less, which are
   // sent to the host individually.
   while (length != 0) {
@@ -37,7 +38,8 @@ void Debug(uint8_t *buffer, size_t length) {
 }
 
 void Debugf(const char *format, ...) {
-#ifdef DBG
+#ifdef DBG \
+    if (!INITIALIZED) return;
   char buffer[512];
   va_list args;
   va_start(args, format);

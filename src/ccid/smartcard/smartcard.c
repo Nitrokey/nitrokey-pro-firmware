@@ -29,6 +29,8 @@
 #include "CCID_usb.h"
 #include "hw_config.h"
 
+#include "debug.h"
+
 /* Private typedef ----------------------------------------------------------- */
 /* Private define ------------------------------------------------------------ */
 /* Private macro ------------------------------------------------------------- */
@@ -1376,6 +1378,9 @@ int WaitForATR (void)
 int CRD_SendCommand (unsigned char* pTransmitBuffer, unsigned int nCommandSize, unsigned int nExpectedAnswerSize, unsigned int* nReceivedAnswerSize)
 {
     int i;
+
+    Debugf(__PRETTY_FUNCTION__);
+    Debugf("\n");
 
 #ifdef GERMALTO_CARD
     int i1;

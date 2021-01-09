@@ -13,17 +13,31 @@ while True:
     # TODO: Other device types
     dev = usb.core.find(idVendor=0x20a0, idProduct=0x4230)
     if dev is None:
-        time.sleep(0.1)
+        print("c",end='', flush=True)
+        time.sleep(0.2)
         continue
+
+
+    c = 1
+    for config in dev:
+        print (f"config {c}")
+        print ('Interfaces {config.bNumInterfaces}')
+        for i in range(config.bNumInterfaces):
+            if dev.is_kernel_driver_active(i):
+                dev.detach_kernel_driver(i)
+            print (i)
+        c+=1
+
     dev.set_configuration()
     print("DEVICE ATTACHED, LOGGING:")
     while True:
         try:
-            bytes = dev.read(0x85, 32)
-            sys.stdout.write(bytes.tostring())
+            b = dev.read(0x85, 32)
+            sys.stdout.write(str(bytes(b)))
             sys.stdout.flush()
         except usb.core.USBError as e:
-            print("COMMUNICATION ERROR:")
-            print(e)
-            time.sleep(0.1)
-            break
+            if "Operation timed out" in str(e) or "Resource busy" in str(e):
+                time.sleep(0.1)
+                continue
+            # print(f"COMMUNICATION ERROR: {e}")
+            print('e',end='', flush=True)
