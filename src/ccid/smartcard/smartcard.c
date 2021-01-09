@@ -1313,10 +1313,12 @@ u32 Counter = 0;
     if (Counter != TimeOut)
     {
         *Data = (u8) USART_ReceiveData (USART1);
+        SwitchOATHLED(DISABLE);
         return SUCCESS;
     }
     else
     {
+        SwitchOATHLED(DISABLE);
         return ERROR;
     }
 }

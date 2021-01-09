@@ -239,7 +239,7 @@ void XorOATHLED ()
 {
     static int state = 0;
     static FunctionalState lastState = DISABLE;
-    if (state++ % 100 == 0) {
+    if (state++ % 1000 == 0) {
         SwitchOATHLED(lastState==DISABLE ? ENABLE : DISABLE);
     }
 }
