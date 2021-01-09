@@ -1446,20 +1446,13 @@ int CRD_SendCommand (unsigned char* pTransmitBuffer, unsigned int nCommandSize, 
 
     /* Get answer */
     //
-    for (i = 0; i < ICC_MESSAGE_BUFFER_MAX_LENGTH - USB_MESSAGE_HEADER_SIZE; i++)   // max
-        // buffer
-        // size
-        // (had
-        // to
-        // be
+    for (i = 0; i < ICC_MESSAGE_BUFFER_MAX_LENGTH - USB_MESSAGE_HEADER_SIZE; i++)   // max buffer size (had to be
         // checked)
     {
         nDelayTime = SC_Receive_Timeout;
         if (0 == i)
         {
-            nDelayTime = SC_Receive_Timeout * 10000L;   // Long long wait for
-            // first byte, allow
-            // card to work
+//            nDelayTime = SC_Receive_Timeout * 10000L;   // Long long wait for first byte, allow card to work
         }
 
         if ((USART_ByteReceive (&pTransmitBuffer[i], nDelayTime)) != SUCCESS)
