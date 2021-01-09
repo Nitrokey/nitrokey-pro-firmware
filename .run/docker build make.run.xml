@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="docker build make" type="com.jetbrains.cidr.embedded.openocd.conf.type" factoryName="com.jetbrains.cidr.embedded.openocd.conf.factory" nameIsGenerated="true" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nitrokey_pro_firmware" TARGET_NAME="docker build make" CONFIG_NAME="docker build make" version="1" RUN_PATH="$PROJECT_DIR$/build/gcc/nitrokey-hsm-firmware.elf">
+    <openocd version="1" gdb-port="3333" telnet-port="4444" board-config="$PROJECT_DIR$/stm32f1.cfg" reset-type="INIT" download-type="UPDATED_ONLY">
+      <debugger kind="GDB" isBundled="true" />
+    </openocd>
+    <method v="2">
+      <option name="CLION.COMPOUND.BUILD" enabled="true" />
+    </method>
+  </configuration>
+</component>
