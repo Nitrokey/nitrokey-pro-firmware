@@ -33,7 +33,7 @@
 #define SETUP_LENGTH       20
 #define HIST_LENGTH        20
 #define LCmax              20
-#define SC_Receive_Timeout 0x8000   /* Direction to reader */
+#define SC_Receive_Timeout (0x8000/4)   /* Direction to reader */
 
 
 /* Smartcard Inteface GPIO pins */
