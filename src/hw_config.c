@@ -455,6 +455,12 @@ __IO uint32_t cardSerial = 0;
 
 #include "string.h"
 
+void Get_Name(void){
+    for (int i = 0; i < sizeof(PRODUCT_NAME_STRING) && i*2+2 < CCID_SIZ_STRING_PRODUCT; i++) {
+        CCID_StringProduct[i*2+2] = PRODUCT_NAME_STRING[i];
+    }
+}
+
 void Get_SerialNum (void)
 {
 #ifndef DEVICE_NITROKEY_PRO

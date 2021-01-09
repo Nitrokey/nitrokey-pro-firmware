@@ -34,10 +34,15 @@
 // #define CCID_SIZ_CONFIG_DESC (1*0x09 + 3*0x09 +0x36 + 4*0x07)
 // #define CCID_SIZ_CONFIG_DESC (3*0x09 +2*0x36 + 6*0x07)
 
+#ifndef PRODUCT_NAME_STRING_VERSION
+#define PRODUCT_NAME_STRING_VERSION     ""
+#endif
+#define PRODUCT_NAME_STRING_NAME        "Nitrokey HSM"
+#define PRODUCT_NAME_STRING             (PRODUCT_NAME_STRING_NAME " " PRODUCT_NAME_STRING_VERSION)
 
 #define CCID_SIZ_STRING_LANGID            4
 #define CCID_SIZ_STRING_VENDOR            (38+14)
-#define CCID_SIZ_STRING_PRODUCT           36
+#define CCID_SIZ_STRING_PRODUCT           50
 #define CCID_SIZ_STRING_SERIAL            50
 #define CCID_SIZ_STRING_INTERFACE         16
 
@@ -78,7 +83,7 @@ extern const uint8_t CCID_StringLangID[CCID_SIZ_STRING_LANGID];
 
 extern const uint8_t CCID_StringVendor[CCID_SIZ_STRING_VENDOR];
 
-extern const uint8_t CCID_StringProduct[CCID_SIZ_STRING_PRODUCT];
+extern uint8_t CCID_StringProduct[CCID_SIZ_STRING_PRODUCT];
 
 extern uint8_t CCID_StringSerial[CCID_SIZ_STRING_SERIAL];
 

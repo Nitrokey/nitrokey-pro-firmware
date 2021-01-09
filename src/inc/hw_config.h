@@ -48,6 +48,7 @@ void USB_Cable_Config (FunctionalState NewState);
 void USB_Disconnect_Config (void);
 
 void Get_SerialNum (void);
+void Get_Name(void);
 
 void MAL_Config (void);
 

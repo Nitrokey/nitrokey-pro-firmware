@@ -50,7 +50,7 @@ extern const uint8_t CCID_StringLangID[CCID_SIZ_STRING_LANGID];
 
 extern const uint8_t CCID_StringVendor[CCID_SIZ_STRING_VENDOR];
 
-extern const uint8_t CCID_StringProduct[CCID_SIZ_STRING_PRODUCT];
+extern uint8_t CCID_StringProduct[CCID_SIZ_STRING_PRODUCT];
 
 extern uint8_t CCID_StringSerial[CCID_SIZ_STRING_SERIAL];
 
