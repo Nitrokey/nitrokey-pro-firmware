@@ -134,6 +134,7 @@ int main (void)
     Debugf("Entering loop after USB startup\n");
     while (1)
     {
+#ifdef DEVICE_NITROKEY_PRO
         if (device_status == STATUS_RECEIVED_REPORT)
         {
             device_status = STATUS_BUSY;
@@ -241,6 +242,7 @@ int main (void)
 
 
         }
+#endif
 
         CCID_CheckUsbCommunication ();
         if (TRUE == nFlagSendSMCardInserted)
