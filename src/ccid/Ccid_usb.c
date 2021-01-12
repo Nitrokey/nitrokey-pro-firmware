@@ -33,6 +33,8 @@
 #include "mass_mal.h"
 #include "CCID_SlotErrorCode.h"
 
+#include "debug.h"
+
 extern __IO uint32_t Block_Read_count;
 
 extern __IO uint32_t Block_offset;
@@ -459,6 +461,7 @@ void CCID_DispatchMessage (void)
 
     if (bBulkOutCompleteFlag)
     {
+        Debugf("CCID command 0x%X", UsbMessageBuffer[OFFSET_BMESSAGETYPE]);
         switch (UsbMessageBuffer[OFFSET_BMESSAGETYPE])
         {
 

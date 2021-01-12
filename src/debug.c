@@ -29,7 +29,7 @@ void Debug(uint8_t *buffer, size_t length) {
     SetEPTxCount(ENDP5, messageLength);
     SetEPTxStatus(ENDP5, EP_TX_VALID);
     // Wait for content to arrive at host
-    while (DebugTransferComplete == 0 && cnt-->1)
+    while (DebugTransferComplete == 0)
       ;
     // Move forward in buffer
     length -= messageLength;
@@ -39,7 +39,7 @@ void Debug(uint8_t *buffer, size_t length) {
 }
 
 void Debugf(const char *format, ...) {
-#ifdef DBG \
+#ifdef DBG
     if (!INITIALIZED) return;
   char buffer[512];
   va_list args;

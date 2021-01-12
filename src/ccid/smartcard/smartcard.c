@@ -1328,6 +1328,8 @@ u32 Counter = 0;
         SwitchOATHLED(DISABLE);
         return ERROR;
     }
+
+    Debugf("<< USART abnormal exit");
 }
 
 /*******************************************************************************
