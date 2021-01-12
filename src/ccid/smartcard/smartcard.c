@@ -1313,6 +1313,9 @@ u32 Counter = 0;
     {
         XorOATHLED();
         Counter++;
+        if (Counter > 0xFFFF && Counter % 100 == 0) {
+            CCID_CheckUsbCommunication ();
+        }
     }
 
     if (Counter != TimeOut)
