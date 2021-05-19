@@ -181,7 +181,7 @@ static void NVIC_Configuration (void)
     NVIC_Init (&NVIC_InitStructure);
 
     /* Enable the USART1 Interrupt */
-    NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQChannel;
+    NVIC_InitStructure.NVIC_IRQChannel = SMARTCARD_USART_IRQChannel;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
     NVIC_Init (&NVIC_InitStructure);
 }
@@ -203,10 +203,21 @@ void GPIO_Configuration_Smartcard (void)
     // already done
 
     /* Configure SMARTCARD_POWER_PINs as output push-pull */
-    GPIO_InitStructure.GPIO_Pin = SMARTCARD_POWER_PIN_1 | SMARTCARD_POWER_PIN_2;
+    GPIO_InitStructure.GPIO_Pin = SMARTCARD_POWER_PIN_1;
+    if (SMARTCARD_POWER_PORT == SMARTCARD_POWER_PORT_2) {
+        GPIO_InitStructure.GPIO_Pin = SMARTCARD_POWER_PIN_1 | SMARTCARD_POWER_PIN_2;
+    }
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init (SMARTCARD_POWER_PORT, &GPIO_InitStructure);
+
+    if (SMARTCARD_POWER_PORT != SMARTCARD_POWER_PORT_2) {
+        /* Configure SMARTCARD_POWER_PINs as output push-pull */
+        GPIO_InitStructure.GPIO_Pin = SMARTCARD_POWER_PIN_2;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+        GPIO_Init(SMARTCARD_POWER_PORT_2, &GPIO_InitStructure);
+    }
 
 }
 
