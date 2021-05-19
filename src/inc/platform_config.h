@@ -67,7 +67,6 @@
 #define SMARTCARD_USART_IRQChannel          USART1_IRQChannel
 #define SMARTCARD_USART_RCC_APB2Periph      RCC_APB1Periph_USART3
 #define SMARTCARD_USART_AFIO_MAPR_REMAP     AFIO_MAPR_USART3_REMAP
-#define RCC_APB2PeriphResetCmd              RCC_APB1PeriphResetCmd
 // move power port2 to PD2
 #define SMARTCARD_POWER_PORT_2              GPIOD
 #define SMARTCARD_POWER_PIN_2            	GPIO_Pin_2
