@@ -66,11 +66,6 @@
                                                         // smartcard.h too
 
 
-// for disabling download firmware pins, used parallel to usb
-#define FIRMWARE_DL_PERIPH							 	RCC_APB2Periph_GPIOC
-#define FIRMWARE_DL_PIN_PORT							GPIOC
-#define FIRMWARE_DL_PIN_1									GPIO_Pin_1
-#define FIRMWARE_DL_PIN_2									GPIO_Pin_2
 
 // port for possible smartcard LED
 

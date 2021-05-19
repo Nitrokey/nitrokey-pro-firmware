@@ -54,27 +54,6 @@ void RCC_Config (void);
 
 /*******************************************************************************
 
-  DisableFirmwareDownloadPort
-
-*******************************************************************************/
-
-void DisableFirmwareDownloadPort (void)
-{
-    GPIO_InitTypeDef GPIO_InitStructure;
-
-    // enable port clock
-    RCC_APB2PeriphClockCmd (FIRMWARE_DL_PERIPH, ENABLE);
-
-    // set pin modes
-    GPIO_InitStructure.GPIO_Pin = SMARTCARD_POWER_PIN_1 | SMARTCARD_POWER_PIN_2;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init (FIRMWARE_DL_PIN_PORT, &GPIO_InitStructure);
-
-}
-
-/*******************************************************************************
-
   DisableSmartcardLED
 
 	not installed
@@ -286,9 +265,6 @@ void Set_System (void)
 
     /* Enable and GPIOD clock */
     USB_Disconnect_Config ();
-
-    /* Disable firmware download port */
-    DisableFirmwareDownloadPort ();
 
     init_blinking();
     EnableSmartcardLED ();
