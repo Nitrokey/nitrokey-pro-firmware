@@ -106,3 +106,36 @@ extern int nGlobalStickState;
 /* Exported functions ------------------------------------------------------- */
 
 #endif /* __PLATFORM_CONFIG_H */
+
+/**
+ *
+ * new hardware:
+ * use USART3 instead of USART1
+ * move PB10 -> data pin
+ * PB12 -> clock pin
+*/
+/**
+ * Set ALL of these to input
+ * (verify default setting of the pins - current assumption: set to default on reset)
+ *
+ * shorted to ground:
+ * C15
+ * B7
+ *
+ * shorted to power:
+ * C0
+ * C7
+ * C8
+ *
+ * shorted to BOOT:
+ * C5
+ * B9
+ *
+ * connected to smart card data pin:
+ * B13
+ */
+/**
+ * Check the hardware revision with the following:
+ * 1. set B7 to input-pull up
+ * 2. check if its high - low -> new hardware, high -> old hardware
+ */
