@@ -1052,9 +1052,9 @@ void SC_Init (void)
     RCC_APB2PeriphClockCmd (RCC_APB2Periph_RESET, ENABLE);
 
     /* Enable USART1 clock */
-    RCC_APB2PeriphClockCmd (RCC_APB2Periph_USART1, ENABLE);
+    RCC_APB2PeriphClockCmd (SMARTCARD_USART_RCC_APB2Periph, ENABLE);
     RCC_APB2PeriphClockCmd (RCC_APB2Periph_AFIO, ENABLE);
-    GPIO_PinRemapConfig (AFIO_MAPR_USART1_REMAP, ENABLE);
+    GPIO_PinRemapConfig (SMARTCARD_USART_AFIO_MAPR_REMAP, ENABLE);
 
     /* Configure USART1 CK(PB.12) as alternate function push-pull */
 
@@ -1231,7 +1231,7 @@ static void SC_DeInit (void)
     RCC_APB2PeriphClockCmd (RCC_APB2Periph_RESET, DISABLE);
 
     /* Disable USART1 clock */
-    RCC_APB2PeriphClockCmd (RCC_APB2Periph_USART1, DISABLE);
+    RCC_APB2PeriphClockCmd (SMARTCARD_USART_RCC_APB2Periph, DISABLE);
     /*
        Delay (5); */
 
