@@ -54,9 +54,6 @@
 #define GPIO_RESET               GPIOB
 #define RCC_APB2Periph_RESET     RCC_APB2Periph_GPIOB
 
-#define SC_PortSource            	 GPIO_PortSourceGPIOB
-#define SC_PinSource_1             GPIO_PinSource4
-#define SC_PinSource_2             GPIO_PinSource5
 
 #define SC_EXTI                  EXTI_Line7
 #define SC_EXTI_IRQ              EXTI9_5_IRQChannel

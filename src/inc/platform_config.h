@@ -58,18 +58,21 @@
 // smartcard power supply
 #define SMARTCARD_POWER_PORT              GPIOB // change SC_PortSource in
                                                 // smartcard.h too
-#define SMARTCARD_POWER_PIN_1            	GPIO_Pin_4  // change
-                                                        // SC_PinSource in
-                                                        // smartcard.h too
-#define SMARTCARD_POWER_PIN_2            	GPIO_Pin_5  // change
-                                                        // SC_PinSource in
-                                                        // smartcard.h too
+#define SMARTCARD_POWER_PIN_1            	GPIO_Pin_4
 
 
+// for the new hardware
+// move from USART1 to USART3
+#define SMARTCARD_USART                     USART3
+#define SMARTCARD_USART_IRQChannel          USART1_IRQChannel
+#define SMARTCARD_USART_RCC_APB2Periph      RCC_APB1Periph_USART3
+#define SMARTCARD_USART_AFIO_MAPR_REMAP     AFIO_MAPR_USART3_REMAP
+#define RCC_APB2PeriphResetCmd              RCC_APB1PeriphResetCmd
+// move power port2 to PD2
+#define SMARTCARD_POWER_PORT_2              GPIOD
+#define SMARTCARD_POWER_PIN_2            	GPIO_Pin_2
 
 // port for possible smartcard LED
-
-
 #define SMARTCARD_LED_PERIPH						RCC_APB2Periph_GPIOA
 #define SMARTCARD_LED_PIN_PORT						GPIOA
 #define SMARTCARD_LED_PIN						GPIO_Pin_7
