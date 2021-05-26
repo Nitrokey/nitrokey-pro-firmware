@@ -55,10 +55,6 @@
 #define RCC_APB2Periph_GPIO_DISCONNECT    RCC_APB2Periph_GPIOA
 
 
-// smartcard power supply
-#define SMARTCARD_POWER_PORT              GPIOB // change SC_PortSource in smartcard.h too
-#define SMARTCARD_POWER_PIN_1            	GPIO_Pin_4
-
 /* Smartcard Inteface GPIO pins */
 //Table 50. Vector table for STM32F100xx device, Doc ID16188 Rev 5, 8.1.2 Interrupt and exception vectors
 #define EXTI9_5_IRQChannel           ((unsigned char)0x17)  /* External Line [9:5] Ipterrupts */
@@ -66,11 +62,7 @@
 #define USART1_IRQChannel            ((unsigned char)0x25)  /* USART1 global Interrupt */
 #define USART3_IRQChannel            ((unsigned char)0x27)  /* USART3 global Interrupt */
 
-#define SC_RESET                 GPIO_Pin_3 /* GPIOB Pin 0 */
-#define GPIO_RESET               GPIOB
 #define RCC_APB2Periph_RESET     RCC_APB2Periph_GPIOB
-
-//#define SC_EXTI                  EXTI_Line7
 
 // Old hardware pins
 // SCCLK PA8
@@ -95,14 +87,17 @@
 // USART1 APB2 (old)
 // USART3 APB1 (new)
 
-// USART3, APB1, GPIOB, PB10-12
+// USART3/APB1, GPIOB+GPIOD/APB2, data: PB10-12, power: PB4 PD2
 
 #define SMARTCARD_USART                     USART3
 #define SMARTCARD_USART_Periph              RCC_APB1Periph_USART3
 #define SMARTCARD_USART_Periph_RESET        RCC_APB2Periph_GPIOB
 #define SMARTCARD_USART_AFIO_MAPR_REMAP     AFIO_MAPR_USART3_REMAP
 #define SMARTCARD_USART_AFIO                RCC_APB2Periph_AFIO
+// smartcard power supply
 // move power port2 to PD2
+#define SMARTCARD_POWER_PORT                GPIOB
+#define SMARTCARD_POWER_PIN_1            	GPIO_Pin_4
 #define SMARTCARD_POWER_PORT_2              GPIOD
 #define SMARTCARD_POWER_PIN_2            	GPIO_Pin_2
 
@@ -112,9 +107,9 @@
 #define SMARTCARD_SCCLK_MODE                GPIO_Mode_AF_PP
 // SCSDA PB6  SCRST PB3
 #define SMARTCARD_USART_IRQChannel          USART1_IRQChannel
-#define SC_EXTI_IRQ              EXTI9_5_IRQChannel
+#define SC_EXTI_IRQ                         EXTI9_5_IRQChannel
 #else
-#define SC_EXTI_IRQ              EXTI15_10_IRQChannel
+#define SC_EXTI_IRQ                         EXTI15_10_IRQChannel
 #define SMARTCARD_USART_IRQChannel          USART3_IRQChannel
 //* PB12 -> clock pin
 #define SMARTCARD_SCCLK_PORT                GPIOB
