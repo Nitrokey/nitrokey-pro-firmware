@@ -136,3 +136,10 @@ extern int nGlobalStickState;
  * 1. set B7 to input-pull up
  * 2. check if its high - low -> new hardware, high -> old hardware
  */
+
+/**
+* 5.1 Avoid floating unused pinDo not leave unused pin floating. Connect it either to ground or to supply on the PCB, or use PU / PD. Noise on non-connected input pin is a source of extra consumption by making the input buffer switch randomly.If the application is sensitive to ESD, prefer a connection to ground or define the pin as PP output and drive it to low.
+ * AN4899GPIO hardware guideline DocID029601 Rev 123/31
+ *
+ * 6.1 Configure unused GPIO input as analog input GPIO always have an input channel, which can be either digital or analog.If it is not necessary to read the GPIO data, prefer the configuration as analog input. This saves the consumption of the input Schmitt trigger.
+*/
