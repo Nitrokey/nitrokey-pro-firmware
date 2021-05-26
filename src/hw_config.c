@@ -561,6 +561,7 @@ void RCC_Config (void)
 
 }
 enum Hardware detect_hardware(void) {
+    // FIXME implement
     return HW_BGA;
 }
 
