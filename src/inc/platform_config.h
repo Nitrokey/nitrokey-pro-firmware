@@ -56,9 +56,19 @@
 
 
 // smartcard power supply
-#define SMARTCARD_POWER_PORT              GPIOB // change SC_PortSource in
-                                                // smartcard.h too
+#define SMARTCARD_POWER_PORT              GPIOB // change SC_PortSource in smartcard.h too
 #define SMARTCARD_POWER_PIN_1            	GPIO_Pin_4
+
+/* Smartcard Inteface GPIO pins */
+#define EXTI9_5_IRQChannel           ((unsigned char)0x17)  /* External Line [9:5] Ipterrupts */
+#define USART1_IRQChannel            ((unsigned char)0x25)  /* USART3 global Interrupt */
+
+#define SC_RESET                 GPIO_Pin_3 /* GPIOB Pin 0 */
+#define GPIO_RESET               GPIOB
+#define RCC_APB2Periph_RESET     RCC_APB2Periph_GPIOB
+
+#define SC_EXTI                  EXTI_Line7
+#define SC_EXTI_IRQ              EXTI9_5_IRQChannel
 
 
 // for the new hardware
