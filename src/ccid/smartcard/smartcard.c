@@ -1050,7 +1050,9 @@ void SC_Init (void)
 
     /* Enable GPIO_3_5V, GPIORESET and GPIO_CMDVCC clocks */
     RCC_APB2PeriphClockCmd (SMARTCARD_USART_Periph_POWER_1, ENABLE);
-    RCC_APB2PeriphClockCmd (SMARTCARD_USART_Periph_POWER_2, ENABLE);
+    if (SMARTCARD_USART_Periph_POWER_1 != SMARTCARD_USART_Periph_POWER_2) {
+        RCC_APB2PeriphClockCmd (SMARTCARD_USART_Periph_POWER_2, ENABLE);
+    }
 
     /* Enable USART clock */
     RCC_APB2PeriphClockCmd (SMARTCARD_USART_Periph, ENABLE);
