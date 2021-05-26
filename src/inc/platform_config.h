@@ -70,9 +70,7 @@
 #define GPIO_RESET               GPIOB
 #define RCC_APB2Periph_RESET     RCC_APB2Periph_GPIOB
 
-#define SC_EXTI                  EXTI_Line7
-//#define SC_EXTI_IRQ              EXTI9_5_IRQChannel
-#define SC_EXTI_IRQ              EXTI15_10_IRQChannel
+//#define SC_EXTI                  EXTI_Line7
 
 // Old hardware pins
 // SCCLK PA8
@@ -114,7 +112,9 @@
 #define SMARTCARD_SCCLK_MODE                GPIO_Mode_AF_PP
 // SCSDA PB6  SCRST PB3
 #define SMARTCARD_USART_IRQChannel          USART1_IRQChannel
+#define SC_EXTI_IRQ              EXTI9_5_IRQChannel
 #else
+#define SC_EXTI_IRQ              EXTI15_10_IRQChannel
 #define SMARTCARD_USART_IRQChannel          USART3_IRQChannel
 //* PB12 -> clock pin
 #define SMARTCARD_SCCLK_PORT                GPIOB
