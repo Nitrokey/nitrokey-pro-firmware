@@ -73,6 +73,15 @@
 
 // for the new hardware
 // move from USART1 to USART3
+// USART3 no remap, 7.3.5 USART alternate function remapping, Doc ID16188 Rev 5
+// USART3_TX PB10
+// USART3_RX PB11
+// USART3_CK PB12
+
+// correct DMA to use USART3, both DMA1 controller, channels:
+// USART1_TX 4 USART1_RX 5 (old)
+// USART3_TX 2 USART3_RX 3 (new)
+
 #define SMARTCARD_USART                     USART3
 #define SMARTCARD_USART_IRQChannel          USART1_IRQChannel
 #define SMARTCARD_USART_RCC_APB2Periph      RCC_APB1Periph_USART3
