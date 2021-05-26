@@ -1556,11 +1556,15 @@ char RestartSmartcard (void)
 
 void SmartCardInitInterface (void)
 {
+    SwitchSmartcardLED (ENABLE);
     initSCHardware ();
 
-
+    int i = 0;
+    bool enabled = TRUE;
     while (FALSE == WaitForATR ())
     {
+        enabled = i++%4==0 ? !enabled : enabled;
+        SwitchOATHLED(enabled);
         Delay_noUSBCheck (1);
     }
 

@@ -283,6 +283,7 @@ void Set_System (void)
     init_blinking();
     EnableSmartcardLED ();
     EnableOATHLED ();
+    StartBlinkingOATHLED(50);
 
     /* Enable CRC calculator */
     RCC_AHBPeriphClockCmd (RCC_AHBPeriph_CRC, ENABLE);
