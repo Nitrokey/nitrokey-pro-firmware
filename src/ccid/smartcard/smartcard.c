@@ -1031,6 +1031,7 @@ u32 i = 0, flag = 0, buf = 0, protocol = 0;
     return (u8) protocol;
 }
 
+#include "platform_config.h"
 void hard_delay(int);
 
 /*******************************************************************************
