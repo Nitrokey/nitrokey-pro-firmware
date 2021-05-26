@@ -212,6 +212,7 @@ void GPIO_Configuration_Smartcard (void)
     GPIO_Init (SMARTCARD_POWER_PORT, &GPIO_InitStructure);
 
     if (SMARTCARD_POWER_PORT != SMARTCARD_POWER_PORT_2) {
+        RCC_APB2PeriphClockCmd(SMARTCARD_USART_Periph_POWER_2, ENABLE);
         /* Configure SMARTCARD_POWER_PINs as output push-pull */
         GPIO_InitStructure.GPIO_Pin = SMARTCARD_POWER_PIN_2;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;

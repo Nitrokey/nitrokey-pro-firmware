@@ -93,6 +93,8 @@
 #define SMARTCARD_USART                     USART3
 #define SMARTCARD_USART_Periph              RCC_APB1Periph_USART3
 #define SMARTCARD_USART_Periph_RESET        RCC_APB2Periph_GPIOB
+#define SMARTCARD_USART_Periph_POWER_1      RCC_APB2Periph_GPIOB
+#define SMARTCARD_USART_Periph_POWER_2      RCC_APB2Periph_GPIOD
 #define SMARTCARD_USART_AFIO_MAPR_REMAP     AFIO_MAPR_USART3_REMAP
 #define SMARTCARD_USART_AFIO                RCC_APB2Periph_AFIO
 // smartcard power supply
