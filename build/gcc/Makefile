@@ -295,6 +295,7 @@ LDFLAGS += -lrdimon
 LDFLAGS += $(CPLUSPLUS_LIB)
 LDFLAGS += $(patsubst %,-L%,$(EXTRA_LIBDIRS))
 LDFLAGS += $(patsubst %,-l%,$(EXTRA_LIBS))
+LDFLAGS += -Wl,--print-memory-usage
 
 # Set Linker-Script Depending On Selected Memory and Controller
 LDFLAGS +=-Tstm32.ld
