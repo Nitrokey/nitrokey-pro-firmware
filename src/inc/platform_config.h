@@ -60,7 +60,9 @@
 #define SMARTCARD_POWER_PIN_1            	GPIO_Pin_4
 
 /* Smartcard Inteface GPIO pins */
+//Table 50. Vector table for STM32F100xx device, Doc ID16188 Rev 5, 8.1.2 Interrupt and exception vectors
 #define EXTI9_5_IRQChannel           ((unsigned char)0x17)  /* External Line [9:5] Ipterrupts */
+#define EXTI15_10_IRQChannel           ((unsigned char)0x28)  /* EXTI Line[15:10] Ipterrupts */
 #define USART1_IRQChannel            ((unsigned char)0x25)  /* USART1 global Interrupt */
 #define USART3_IRQChannel            ((unsigned char)0x27)  /* USART3 global Interrupt */
 
@@ -69,7 +71,8 @@
 #define RCC_APB2Periph_RESET     RCC_APB2Periph_GPIOB
 
 #define SC_EXTI                  EXTI_Line7
-#define SC_EXTI_IRQ              EXTI9_5_IRQChannel
+//#define SC_EXTI_IRQ              EXTI9_5_IRQChannel
+#define SC_EXTI_IRQ              EXTI15_10_IRQChannel
 
 // Old hardware pins
 // SCCLK PA8
