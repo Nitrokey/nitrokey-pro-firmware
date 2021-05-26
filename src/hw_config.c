@@ -276,9 +276,9 @@ void Set_System (void)
     /* Enable and GPIOD clock */
     USB_Disconnect_Config ();
 
-    if (detect_hardware() == HW_BGA) {
-        init_BGA_hardware();
-    }
+//    if (detect_hardware() == HW_BGA) {
+//        init_BGA_hardware();
+//    }
 
     init_blinking();
     EnableSmartcardLED ();
