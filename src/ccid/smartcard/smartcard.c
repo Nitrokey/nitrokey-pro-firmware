@@ -1031,6 +1031,8 @@ u32 i = 0, flag = 0, buf = 0, protocol = 0;
     return (u8) protocol;
 }
 
+void hard_delay(int);
+
 /*******************************************************************************
 * Function Name  : SC_Init
 * Description    : Initializes all peripheral used for Smartcard interface.
@@ -1132,47 +1134,19 @@ void SC_Init (void)
     SC_PowerCmd (DISABLE);
 
     // Hard wait
-    {
-    unsigned int i;
+    // FIXME check if it is really required, as it was optimized out in Os and still working anyway
+    hard_delay(7);
+}
 
-        for (i = 0; i < 50000; i++);
+void hard_delay(const int times){
+    int j;
+    for (j = 0; j < times; j++){
+        unsigned int i;
+        for (i = 0; i < 50000; i++){
+            __asm__ __volatile__("");
+        }
     };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
- /**/}
+}
 
 /*******************************************************************************
 * Function Name  : SC_DeInit
@@ -1189,38 +1163,9 @@ static void SC_DeInit (void)
     SC_PowerCmd (DISABLE);
     /* Delay (5); */
     // Hard wait
-    {
-    unsigned int i;
+    hard_delay(6);
 
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-
-    /* Deinitializes the USART1 */
+    /* Deinitializes the USART */
     USART_DeInit (SMARTCARD_USART);
 
     /* Deinitializes the GPIO_RESET */
@@ -1235,37 +1180,7 @@ static void SC_DeInit (void)
        Delay (5); */
 
     // Hard wait
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-
+    hard_delay(6);
 }
 
 
