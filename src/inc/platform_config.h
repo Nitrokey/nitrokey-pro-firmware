@@ -43,6 +43,7 @@
 	activate the 4 Bit DMA SD card interface
 
 ******************************************************************************/
+// FIXME check and remove if not needed (SD card communication?)
 #define USB_4BIT_SD_CARD_INTERFACE  // only RC CPU !!!!
 
 
@@ -123,7 +124,7 @@
 #define SMARTCARD_SCRST_PORT                GPIOB
 #define SMARTCARD_SCRST_PIN                 GPIO_Pin_11
 #define SMARTCARD_SCRST_MODE                GPIO_Mode_Out_PP
-#endif
+#endif // OLD_HARDWARE
 
 // port for possible smartcard LED
 #define SMARTCARD_LED_PERIPH						RCC_APB2Periph_GPIOA
