@@ -61,7 +61,8 @@
 
 /* Smartcard Inteface GPIO pins */
 #define EXTI9_5_IRQChannel           ((unsigned char)0x17)  /* External Line [9:5] Ipterrupts */
-#define USART1_IRQChannel            ((unsigned char)0x25)  /* USART3 global Interrupt */
+#define USART1_IRQChannel            ((unsigned char)0x25)  /* USART1 global Interrupt */
+#define USART3_IRQChannel            ((unsigned char)0x27)  /* USART3 global Interrupt */
 
 #define SC_RESET                 GPIO_Pin_3 /* GPIOB Pin 0 */
 #define GPIO_RESET               GPIOB
@@ -82,13 +83,42 @@
 // USART1_TX 4 USART1_RX 5 (old)
 // USART3_TX 2 USART3_RX 3 (new)
 
+// ports
+// USART1 APB2 (old)
+// USART3 APB1 (new)
+
+// USART3, APB1, GPIOB, PB10-12
+
 #define SMARTCARD_USART                     USART3
-#define SMARTCARD_USART_IRQChannel          USART1_IRQChannel
-#define SMARTCARD_USART_RCC_APB2Periph      RCC_APB1Periph_USART3
+#define SMARTCARD_USART_Periph              RCC_APB1Periph_USART3
+#define SMARTCARD_USART_Periph_RESET        RCC_APB2Periph_GPIOB
 #define SMARTCARD_USART_AFIO_MAPR_REMAP     AFIO_MAPR_USART3_REMAP
+#define SMARTCARD_USART_AFIO                RCC_APB2Periph_AFIO
 // move power port2 to PD2
 #define SMARTCARD_POWER_PORT_2              GPIOD
 #define SMARTCARD_POWER_PIN_2            	GPIO_Pin_2
+
+#ifdef OLD_HARDWARE
+#define SMARTCARD_SCCLK_PORT                GPIOA
+#define SMARTCARD_SCCLK_PIN                 GPIO_Pin_8
+#define SMARTCARD_SCCLK_MODE                GPIO_Mode_AF_PP
+// SCSDA PB6  SCRST PB3
+#define SMARTCARD_USART_IRQChannel          USART1_IRQChannel
+#else
+#define SMARTCARD_USART_IRQChannel          USART3_IRQChannel
+//* PB12 -> clock pin
+#define SMARTCARD_SCCLK_PORT                GPIOB
+#define SMARTCARD_SCCLK_PIN                 GPIO_Pin_12
+#define SMARTCARD_SCCLK_MODE                GPIO_Mode_AF_PP
+//* move PB10 -> data pin
+#define SMARTCARD_SCSDA_PORT                GPIOB
+#define SMARTCARD_SCSDA_PIN                 GPIO_Pin_10
+#define SMARTCARD_SCSDA_MODE                GPIO_Mode_AF_OD
+//* move PB10 -> reset
+#define SMARTCARD_SCRST_PORT                GPIOB
+#define SMARTCARD_SCRST_PIN                 GPIO_Pin_11
+#define SMARTCARD_SCRST_MODE                GPIO_Mode_Out_PP
+#endif
 
 // port for possible smartcard LED
 #define SMARTCARD_LED_PERIPH						RCC_APB2Periph_GPIOA

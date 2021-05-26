@@ -427,7 +427,7 @@ void SC_PowerCmd (FunctionalState NewState)
 *******************************************************************************/
 void SC_Reset (BitAction ResetState)
 {
-    GPIO_WriteBit (GPIO_RESET, SC_RESET, ResetState);
+    GPIO_WriteBit (SMARTCARD_SCRST_PORT, SMARTCARD_SCRST_PIN, ResetState);
 }
 
 /*******************************************************************************
@@ -1041,45 +1041,44 @@ u32 i = 0, flag = 0, buf = 0, protocol = 0;
 void SC_Init (void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
-
     USART_InitTypeDef USART_InitStructure;
-
     USART_ClockInitTypeDef USART_ClockInitStructure;
-
     static int nStartFlag = TRUE;
 
     /* Enable GPIO_3_5V, GPIORESET and GPIO_CMDVCC clocks */
-    RCC_APB2PeriphClockCmd (RCC_APB2Periph_RESET, ENABLE);
+    RCC_APB2PeriphClockCmd (SMARTCARD_USART_Periph_RESET, ENABLE);
 
-    /* Enable USART1 clock */
-    RCC_APB2PeriphClockCmd (SMARTCARD_USART_RCC_APB2Periph, ENABLE);
-    RCC_APB2PeriphClockCmd (RCC_APB2Periph_AFIO, ENABLE);
+    /* Enable USART clock */
+    RCC_APB2PeriphClockCmd (SMARTCARD_USART_Periph, ENABLE);
+    RCC_APB2PeriphClockCmd (SMARTCARD_USART_AFIO, ENABLE);
     GPIO_PinRemapConfig (SMARTCARD_USART_AFIO_MAPR_REMAP, ENABLE);
 
-    /* Configure USART1 CK(PB.12) as alternate function push-pull */
 
     if (TRUE == nStartFlag)
     {
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+        // SCCLK
+        /* Configure USART CK as alternate function push-pull */
+        GPIO_InitStructure.GPIO_Pin = SMARTCARD_SCCLK_PIN;
+        GPIO_InitStructure.GPIO_Mode = SMARTCARD_SCCLK_MODE;
         GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-        GPIO_Init (GPIOA, &GPIO_InitStructure);
+        GPIO_Init (SMARTCARD_SCCLK_PORT, &GPIO_InitStructure);
 
-        /* Configure USART1 Tx (PB.10) as alternate function open-drain */
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
+        // SCSDA
+        /* Configure USART Tx as alternate function open-drain */
+        GPIO_InitStructure.GPIO_Pin = SMARTCARD_SCSDA_PIN;
+        GPIO_InitStructure.GPIO_Mode = SMARTCARD_SCSDA_MODE;
+        GPIO_Init (SMARTCARD_SCSDA_PORT, &GPIO_InitStructure);
 
-        GPIO_Init (GPIOB, &GPIO_InitStructure);
-
+        // TODO check if this is optional
         /* Disable JTAG to be able to use PB3 */
         GPIO_PinRemapConfig (GPIO_Remap_SWJ_NoJTRST, ENABLE);
         GPIO_PinRemapConfig (GPIO_Remap_SWJ_JTAGDisable, ENABLE);
 
         /* Configure Smartcard Reset */
-        GPIO_InitStructure.GPIO_Pin = SC_RESET;
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-        GPIO_Init (GPIO_RESET, &GPIO_InitStructure);
-
+        // SCRST
+        GPIO_InitStructure.GPIO_Pin = SMARTCARD_SCRST_PIN;
+        GPIO_InitStructure.GPIO_Mode = SMARTCARD_SCRST_MODE;
+        GPIO_Init (SMARTCARD_SCRST_PORT, &GPIO_InitStructure);
 
         /* Configure Smartcard CMDVCC */
         GPIO_Configuration_Smartcard ();
