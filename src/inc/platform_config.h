@@ -95,7 +95,6 @@
 #define SMARTCARD_USART_Periph_RESET        RCC_APB2Periph_GPIOB
 #define SMARTCARD_USART_Periph_POWER_1      RCC_APB2Periph_GPIOB
 #define SMARTCARD_USART_Periph_POWER_2      RCC_APB2Periph_GPIOD
-#define SMARTCARD_USART_AFIO_MAPR_REMAP     AFIO_MAPR_USART3_REMAP
 #define SMARTCARD_USART_AFIO                RCC_APB2Periph_AFIO
 // smartcard power supply
 // move power port2 to PD2
@@ -111,6 +110,7 @@
 // SCSDA PB6  SCRST PB3
 #define SMARTCARD_USART_IRQChannel          USART1_IRQChannel
 #define SC_EXTI_IRQ                         EXTI9_5_IRQChannel
+#define SMARTCARD_USART_AFIO_MAPR_REMAP     AFIO_MAPR_USART1_REMAP
 #else
 #define SC_EXTI_IRQ                         EXTI15_10_IRQChannel
 #define SMARTCARD_USART_IRQChannel          USART3_IRQChannel
