@@ -180,7 +180,7 @@ static void NVIC_Configuration (void)
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init (&NVIC_InitStructure);
 
-    /* Enable the USART1 Interrupt */
+    /* Enable the USART Interrupt */
     NVIC_InitStructure.NVIC_IRQChannel = SMARTCARD_USART_IRQChannel;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
     NVIC_Init (&NVIC_InitStructure);

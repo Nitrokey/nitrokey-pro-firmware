@@ -71,6 +71,13 @@
 #define SC_EXTI                  EXTI_Line7
 #define SC_EXTI_IRQ              EXTI9_5_IRQChannel
 
+// Old hardware pins
+// SCCLK PA8
+// SCSDA PB6
+/* Disable JTAG to be able to use PB3 */
+// SCRST PB3
+// SCVCC PB4 PB5
+
 
 // for the new hardware
 // move from USART1 to USART3
