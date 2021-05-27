@@ -111,7 +111,7 @@ int main(void) {
   /* Setup before USB startup */
 
   check_backups();
-  SmartCardInitInterface();
+//  SmartCardInitInterface();
 
   USB_Start();
 
@@ -144,10 +144,10 @@ int main(void) {
     }
 
     CCID_CheckUsbCommunication();
-    if (TRUE == nFlagSendSMCardInserted) {
-      CCID_SendCardDetect(); // Send card detect to host
-      nFlagSendSMCardInserted = FALSE;
-    }
+//    if (TRUE == nFlagSendSMCardInserted) {
+//      CCID_SendCardDetect(); // Send card detect to host
+//      nFlagSendSMCardInserted = FALSE;
+//    }
 
   }
 }
