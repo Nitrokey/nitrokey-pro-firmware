@@ -120,11 +120,11 @@
 #define SMARTCARD_SCCLK_MODE                GPIO_Mode_AF_PP
 //* move PB10 -> data pin
 #define SMARTCARD_SCSDA_PORT                GPIOB
-#define SMARTCARD_SCSDA_PIN                 GPIO_Pin_10
+#define SMARTCARD_SCSDA_PIN                 GPIO_Pin_11
 #define SMARTCARD_SCSDA_MODE                GPIO_Mode_AF_OD
 //* move PB11 -> reset
 #define SMARTCARD_SCRST_PORT                GPIOB
-#define SMARTCARD_SCRST_PIN                 GPIO_Pin_11
+#define SMARTCARD_SCRST_PIN                 GPIO_Pin_3
 #define SMARTCARD_SCRST_MODE                GPIO_Mode_Out_PP
 #endif // OLD_HARDWARE
 
