@@ -19,7 +19,7 @@ repo](https://github.com/Nitrokey/nitrokey-pro-hardware).
 Nitrokey Pro, Start and HSM use the same hardware but different firmwares and different smart cards. The microprocessor being used is a STM32F103R8T6. The firmware is written in C, the desktop software Nitrokey App is written in C/C++.
 
 To develop the firmware of the Nitrokey Pro/Start/HSM you would need:
-* An original Nitrokey Pro/Start/HSM or better a development board such as the [Nucleo-F103RB]. Alternatively, get any other development board equipped with a STM32F103TB and 128KB flash. On request you can get a Nitrokey for development purposes from us.
+* An original Nitrokey Pro/Start/HSM or better a development board such as the [Nucleo-F103RB] or the [Olimex STM32-H103]. Alternatively, get any other development board equipped with a STM32F103TB and 128KB flash. On request you can get a Nitrokey for development purposes from us.
 * An OpenPGP Card 2.1 available at [Kernel Concepts] or on request from us. (Of course, this is not necessary for Nitrokey Start which doesn't contain a smart card.)
 If you use it with original Nitrokey hardware, you would need to cut it to Micro-SIM size. This can be done by using a special SIM card cutter or even with a scissor.
 If you use a development board, you may solder the OpenPGP Card to the board directly by using some wires or you get yourself a smart card jack which you solder to the dev board instead.
@@ -27,6 +27,7 @@ If you use a development board, you may solder the OpenPGP Card to the board dir
 
 [Kernel Concepts]: http://shop.kernelconcepts.de/
 [Nucleo-F103RB]: https://www.st.com/en/evaluation-tools/nucleo-f103rb.html
+[Olimex STM32-H103]: https://www.olimex.com/Products/ARM/ST/STM32-H103/
 [ARM's official GNU tools]: https://launchpad.net/gcc-arm-embedded/
 
 
