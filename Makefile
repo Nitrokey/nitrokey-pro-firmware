@@ -49,3 +49,11 @@ release: firmware
 	cp $(BUILD_DIR)/nitrokey-pro-firmware.elf $(BUILD_DIR)/nitrokey-pro-firmware.hex . && \
 	find . -name *.elf -type f -printf "%f" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512; md5sum -b {} > {}.md5' && \
     find . -name *.hex -type f -printf "%f" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512; md5sum -b {} > {}.md5'
+
+.PHONY: gdbserver
+gdbserver:
+	openocd -f interface/stlink-v2.cfg  -f target/stm32f1x.cfg
+
+.PHONY: ocdtelnet
+ocdtelnet:
+	telnet localhost 4444
