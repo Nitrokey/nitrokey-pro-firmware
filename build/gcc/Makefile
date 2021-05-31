@@ -35,7 +35,7 @@
 # Cmd interface paramenters
 VID?=0x20a0
 PID?=0x4108
-
+BUILD_DEBUG=0
 
 ###########################################
 # THUMB, RAM_RUN and Remapping currently
@@ -174,8 +174,13 @@ FORMAT = ihex
 # Optimization level, can be [0, 1, 2, 3, s]. 
 # 0 = turn off optimization. s = optimize for size.
 # (Note: 3 is not always the best optimization level. See avr-libc FAQ.)
-#OPT = 2
+
+ifeq ($(BUILD_DEBUG), 1)
+$(warning "Running development build")
 OPT = 0
+else
+OPT = 2
+endif
 
 # Debugging format.
 # Native formats for AVR-GCC's -g are stabs [default], or dwarf-2.
@@ -299,7 +304,10 @@ LDFLAGS += $(CPLUSPLUS_LIB)
 LDFLAGS += $(patsubst %,-L%,$(EXTRA_LIBDIRS))
 LDFLAGS += $(patsubst %,-l%,$(EXTRA_LIBS))
 LDFLAGS += -Wl,--print-memory-usage
+
+ifeq ($(BUILD_DEBUG), 1)
 LDFLAGS += -Wl,--gc-sections
+endif
 
 # Set Linker-Script Depending On Selected Memory and Controller
 LDFLAGS +=-Tstm32.ld
@@ -309,6 +317,11 @@ LDFLAGS +=-Tstm32.ld
 #LDFLAGS +=-T$(SUBMDL)-ROM.ld
 #endif
 
+ifeq ($(BUILD_DEBUG), 1)
+LDFLAGS +=-TSTM32_SEC_FLASH-debug.ld
+else
+LDFLAGS +=-TSTM32_SEC_FLASH.ld
+endif
 
 # ---------------------------------------------------------------------------
 # Flash-Programming support using lpc21isp by Martin Maurer 

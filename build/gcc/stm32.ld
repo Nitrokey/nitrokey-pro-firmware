@@ -27,4 +27,5 @@ _estack = 0x20005000;
 
 /* include the section management sub-script */
 /* (either "STM32_SEC_FLASH.ld" or "STM32_SEC_RAM.ld") */
-INCLUDE "./STM32_SEC_FLASH.ld"
+/* Inclusion set up in the Makefile due to additional changes required for the development firmware */
+/* INCLUDE "./STM32_SEC_FLASH.ld" */

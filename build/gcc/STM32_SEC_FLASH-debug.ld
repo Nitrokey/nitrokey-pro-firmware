@@ -46,6 +46,12 @@ SECTIONS
    	 _sidata = _etext;
     } >FLASH
     
+    /DISCARD/ :
+    {
+        *(.ARM.exidx*)
+        *(.gnu.linkonce.armexidx.*)
+    }
+
     /* This is the initialized data section
     The program executes knowing that the data is in the RAM
     but the loader puts the initial values in the FLASH (inidata).
