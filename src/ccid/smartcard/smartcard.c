@@ -1557,15 +1557,11 @@ char RestartSmartcard (void)
 
 void SmartCardInitInterface (void)
 {
-    SwitchSmartcardLED (ENABLE);
+    VerifyBlinkError(9999);
     initSCHardware ();
 
-    int i = 0;
-    bool enabled = TRUE;
     while (FALSE == WaitForATR ())
     {
-        enabled = i++%4==0 ? !enabled : enabled;
-        SwitchOATHLED(enabled);
         Delay_noUSBCheck (1);
     }
 
@@ -1576,6 +1572,5 @@ void SmartCardInitInterface (void)
     Delay_noUSBCheck (40);
 
     /* Smartcard is ready to work */
-    SwitchSmartcardLED (DISABLE);
-
+    ClearAllBlinking();
 }
