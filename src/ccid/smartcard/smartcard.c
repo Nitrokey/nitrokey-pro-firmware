@@ -1057,9 +1057,10 @@ void SC_Init (void)
     /* Enable USART clock */
     RCC_APB1PeriphClockCmd (SMARTCARD_USART_Periph, ENABLE);
     RCC_APB2PeriphClockCmd (SMARTCARD_USART_AFIO, ENABLE);
-#ifdef OLD_HARDWARE
-    GPIO_PinRemapConfig (SMARTCARD_USART_AFIO_MAPR_REMAP, ENABLE);
-#endif
+    GPIO_PinRemapConfig (AFIO_MAPR_USART3_REMAP, AFIO_MAPR_USART3_REMAP_NOREMAP);
+//#ifdef OLD_HARDWARE
+//    GPIO_PinRemapConfig (SMARTCARD_USART_AFIO_MAPR_REMAP, ENABLE);
+//#endif
 
 
     if (TRUE == nStartFlag)
