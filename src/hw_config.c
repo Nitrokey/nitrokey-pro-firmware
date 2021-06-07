@@ -334,7 +334,7 @@ void init_BGA_hardware(void) {
         // enable port clock
         GPIO_InitTypeDef GPIO_InitStructure;
         RCC_APB2PeriphClockCmd (get_peripheral_for_port(pins_to_input[i].port), ENABLE);
-        GPIO_InitStructure.GPIO_Pin = pins_to_input->pin;
+        GPIO_InitStructure.GPIO_Pin = pins_to_input[i].pin;
 //        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN; // TODO use analog to decrease power consumption
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
         GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
