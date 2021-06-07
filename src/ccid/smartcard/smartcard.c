@@ -120,10 +120,10 @@ static void RCC_Configuration (void)
         RCC_HCLKConfig (RCC_SYSCLK_Div1);
 
         /* PCLK2 = HCLK/2 */
-        RCC_PCLK2Config (RCC_HCLK_Div2);
+        RCC_PCLK2Config (SMARTCARD_PCLK2_DIV);
 
         /* PCLK1 = HCLK */
-        RCC_PCLK1Config (RCC_HCLK_Div1);
+        RCC_PCLK1Config (SMARTCARD_PCLK1_DIV);
 
         /* PLLCLK = 8MHz * 9 = 72 MHz */
         RCC_PLLConfig (RCC_PLLSource_HSE_Div1, RCC_PLLMul_6);   // RB
@@ -460,7 +460,7 @@ USART_InitTypeDef USART_InitStructure;
     /* Reconfigure the USART Baud Rate ------------------------------------------- */
     RCC_GetClocksFreq (&RCC_ClocksStatus);
 
-    apbclock = RCC_ClocksStatus.PCLK1_Frequency;
+    apbclock = SMARTCARD_PCLK_STATUS_FREQ;
     apbclock /= ((SMARTCARD_USART->GTPR & (u16) 0x00FF) * 2);
 
     workingbaudrate = apbclock * D_Table[(cBaudrateIndex & (u8) 0x0F)];
@@ -502,7 +502,7 @@ void SC_PTSConfig (void)
     /* Reconfigure the USART Baud Rate ------------------------------------------- */
     RCC_GetClocksFreq (&RCC_ClocksStatus);
 
-    apbclock = RCC_ClocksStatus.PCLK1_Frequency;
+    apbclock = SMARTCARD_PCLK_STATUS_FREQ;
     apbclock /= ((SMARTCARD_USART->GTPR & (u16) 0x00FF) * 2);
     /* Enable the DMA Receive (Set DMAR bit only) to enable interrupt generation in case of a framing error FE */
     USART_DMACmd (SMARTCARD_USART, USART_DMAReq_Rx, ENABLE);
@@ -1055,13 +1055,9 @@ void SC_Init (void)
     }
 
     /* Enable USART clock */
-    RCC_APB1PeriphClockCmd (SMARTCARD_USART_Periph, ENABLE);
+    SMARTCARD_USART_ClockCmd (SMARTCARD_USART_Periph, ENABLE);
     RCC_APB2PeriphClockCmd (SMARTCARD_USART_AFIO, ENABLE);
-    GPIO_PinRemapConfig (AFIO_MAPR_USART3_REMAP, AFIO_MAPR_USART3_REMAP_NOREMAP);
-//#ifdef OLD_HARDWARE
-//    GPIO_PinRemapConfig (SMARTCARD_USART_AFIO_MAPR_REMAP, ENABLE);
-//#endif
-
+    GPIO_PinRemapConfig (SMARTCARD_USART_REMAP, SMARTCARD_USART_REMAP_VALUE);
 
     if (TRUE == nStartFlag)
     {
@@ -1183,7 +1179,7 @@ static void SC_DeInit (void)
 //    RCC_APB2PeriphClockCmd (RCC_APB2Periph_RESET, DISABLE);
 
     /* Disable USART clock */
-    RCC_APB2PeriphClockCmd (SMARTCARD_USART_Periph, DISABLE);
+    SMARTCARD_USART_ClockCmd (SMARTCARD_USART_Periph, DISABLE);
     /*
        Delay (5); */
 

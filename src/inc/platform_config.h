@@ -88,14 +88,20 @@
 // USART1 APB2 (old)
 // USART3 APB1 (new)
 
+// clocks
+// USART1 CLK2
+// USART3 CLK1
+
 // USART3/APB1, GPIOB+GPIOD/APB2, data: PB10-12, power: PB4 PD2
 
 #define SMARTCARD_USART                     USART3
+#define SMARTCARD_USART_ClockCmd            RCC_APB1PeriphClockCmd
 #define SMARTCARD_USART_Periph              RCC_APB1Periph_USART3
-#define SMARTCARD_USART_Periph_RESET        RCC_APB2Periph_GPIOB
 #define SMARTCARD_USART_Periph_POWER_1      RCC_APB2Periph_GPIOB
 #define SMARTCARD_USART_Periph_POWER_2      RCC_APB2Periph_GPIOD
 #define SMARTCARD_USART_AFIO                RCC_APB2Periph_AFIO
+#define SMARTCARD_USART_REMAP               AFIO_MAPR_USART3_REMAP
+#define SMARTCARD_USART_REMAP_VALUE         AFIO_MAPR_USART3_REMAP_NOREMAP
 // smartcard power supply
 // move power port2 to PD2
 #define SMARTCARD_POWER_PORT                GPIOB
@@ -103,7 +109,15 @@
 #define SMARTCARD_POWER_PORT_2              GPIOD
 #define SMARTCARD_POWER_PIN_2            	GPIO_Pin_2
 
+#define SMARTCARD_PCLK_STATUS_FREQ          RCC_ClocksStatus.PCLK1_Frequency
+#define SMARTCARD_PCLK1_DIV                 RCC_HCLK_Div1
+#define SMARTCARD_PCLK2_DIV                 RCC_HCLK_Div2
+
 #ifdef OLD_HARDWARE
+#define SMARTCARD_PCLK_STATUS_FREQ          RCC_ClocksStatus.PCLK2_Frequency
+#define SMARTCARD_PCLK1_DIV                 RCC_HCLK_Div2
+#define SMARTCARD_PCLK2_DIV                 RCC_HCLK_Div1
+
 #define SMARTCARD_SCCLK_PORT                GPIOA
 #define SMARTCARD_SCCLK_PIN                 GPIO_Pin_8
 #define SMARTCARD_SCCLK_MODE                GPIO_Mode_AF_PP
