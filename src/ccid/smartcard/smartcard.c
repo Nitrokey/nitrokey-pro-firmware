@@ -120,10 +120,10 @@ static void RCC_Configuration (void)
         RCC_HCLKConfig (RCC_SYSCLK_Div1);
 
         /* PCLK2 = HCLK */
-        RCC_PCLK2Config (RCC_HCLK_Div1);
+        RCC_PCLK2Config (RCC_HCLK_Div2);
 
         /* PCLK1 = HCLK/2 */
-        RCC_PCLK1Config (RCC_HCLK_Div2);
+        RCC_PCLK1Config (RCC_HCLK_Div1);
 
         /* PLLCLK = 8MHz * 9 = 72 MHz */
         RCC_PLLConfig (RCC_PLLSource_HSE_Div1, RCC_PLLMul_6);   // RB
@@ -460,7 +460,7 @@ USART_InitTypeDef USART_InitStructure;
     /* Reconfigure the USART Baud Rate ------------------------------------------- */
     RCC_GetClocksFreq (&RCC_ClocksStatus);
 
-    apbclock = RCC_ClocksStatus.PCLK2_Frequency;
+    apbclock = RCC_ClocksStatus.PCLK1_Frequency;
     apbclock /= ((SMARTCARD_USART->GTPR & (u16) 0x00FF) * 2);
 
     workingbaudrate = apbclock * D_Table[(cBaudrateIndex & (u8) 0x0F)];
@@ -502,7 +502,7 @@ void SC_PTSConfig (void)
     /* Reconfigure the USART Baud Rate ------------------------------------------- */
     RCC_GetClocksFreq (&RCC_ClocksStatus);
 
-    apbclock = RCC_ClocksStatus.PCLK2_Frequency;
+    apbclock = RCC_ClocksStatus.PCLK1_Frequency;
     apbclock /= ((SMARTCARD_USART->GTPR & (u16) 0x00FF) * 2);
     /* Enable the DMA Receive (Set DMAR bit only) to enable interrupt generation in case of a framing error FE */
     USART_DMACmd (SMARTCARD_USART, USART_DMAReq_Rx, ENABLE);
