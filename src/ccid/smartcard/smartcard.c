@@ -1558,7 +1558,9 @@ char RestartSmartcard (void)
 
 void SmartCardInitInterface (void)
 {
+#ifdef DEBUG_BOOT_LEDS
     VerifyBlinkError(9999);
+#endif
     initSCHardware ();
 
     while (FALSE == WaitForATR ())
@@ -1573,5 +1575,7 @@ void SmartCardInitInterface (void)
     Delay_noUSBCheck (40);
 
     /* Smartcard is ready to work */
+#ifdef DEBUG_BOOT_LEDS
     ClearAllBlinking();
+#endif
 }

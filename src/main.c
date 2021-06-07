@@ -113,15 +113,21 @@ int main(void) {
   check_backups();
   SmartCardInitInterface();
 
+#ifdef DEBUG_BOOT_LEDS
   SwitchSmartcardLED(ENABLE);
   SwitchOATHLED(ENABLE);
-  USB_Start();
+#endif
+    USB_Start();
+#ifdef DEBUG_BOOT_LEDS
   SwitchSmartcardLED(DISABLE);
   SwitchOATHLED(DISABLE);
+#endif
 
   StartupCheck_u8();
 
+#ifdef DEBUG_BOOT_LEDS
   VerifyBlinkCorrect(9999);
+#endif
 
   /* Endless loop after USB startup */
   while (1) {
