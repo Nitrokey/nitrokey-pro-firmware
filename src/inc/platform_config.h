@@ -92,7 +92,13 @@
 
 // USART3/APB1, GPIOB+GPIOD/APB2, data: PB10-12, power: PB4 PD2
 
-#ifdef OLD_HARDWARE
+#ifndef HW_REV
+#define HW_REV  4
+#endif
+
+#if HW_REV <= 3
+#pragma message "Selecting hardware revision 3"
+
 #define SMARTCARD_USART                     USART1
 #define SMARTCARD_USART_ClockCmd            RCC_APB2PeriphClockCmd
 #define SMARTCARD_USART_Periph              RCC_APB2Periph_USART1
@@ -134,7 +140,8 @@
 #define OATH_LED_PIN						GPIO_Pin_0
 
 
-#else  // !OLD_HARDWARE
+#elif HW_REV == 4
+#pragma message "Selecting hardware revision 4"
 #define SMARTCARD_USART                     USART3
 #define SMARTCARD_USART_ClockCmd            RCC_APB1PeriphClockCmd
 #define SMARTCARD_USART_Periph              RCC_APB1Periph_USART3
@@ -180,7 +187,9 @@
 #define OATH_LED_PIN_PORT						GPIOA
 #define OATH_LED_PIN							GPIO_Pin_7
 
-#endif // OLD_HARDWARE
+#else
+#error "Invalid hardware revision selected"
+#endif // HW_REV
 
 
 #endif /* USE_STM3210B_EVAL */
