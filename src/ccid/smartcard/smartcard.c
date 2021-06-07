@@ -119,10 +119,10 @@ static void RCC_Configuration (void)
         /* HCLK = SYSCLK */
         RCC_HCLKConfig (RCC_SYSCLK_Div1);
 
-        /* PCLK2 = HCLK */
+        /* PCLK2 = HCLK/2 */
         RCC_PCLK2Config (RCC_HCLK_Div2);
 
-        /* PCLK1 = HCLK/2 */
+        /* PCLK1 = HCLK */
         RCC_PCLK1Config (RCC_HCLK_Div1);
 
         /* PLLCLK = 8MHz * 9 = 72 MHz */
