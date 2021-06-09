@@ -129,6 +129,7 @@ int main(void) {
   VerifyBlinkCorrect(9999);
 #endif
 
+    device_status = STATUS_READY;
   /* Endless loop after USB startup */
   while (1) {
     if (device_status == STATUS_RECEIVED_REPORT) {
