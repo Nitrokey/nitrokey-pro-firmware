@@ -92,6 +92,8 @@
 
 // USART3/APB1, GPIOB+GPIOD/APB2, data: PB10-12, power: PB4 PD2
 
+#define DEBUG_BOOT_LEDS
+
 #ifndef HW_REV
 #define HW_REV  4
 #endif
