@@ -57,3 +57,13 @@ gdbserver:
 .PHONY: ocdtelnet
 ocdtelnet:
 	telnet localhost 4444
+
+.PHONY: devloop
+devloop: | clean
+	$(MAKE) firmware -j12 BUILD_DEBUG=1
+	-# killall telnet
+	- killall openocd
+	cd build/gcc && $(MAKE) -f dfu.mk flash-full-single
+	$(MAKE) gdbserver > /dev/null &
+	sleep 1
+	$(MAKE) ocdtelnet
