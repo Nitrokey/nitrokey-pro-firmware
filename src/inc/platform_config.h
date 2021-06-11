@@ -163,8 +163,8 @@
 
 
 #define SMARTCARD_PCLK_STATUS_FREQ          RCC_ClocksStatus.PCLK1_Frequency
-#define SMARTCARD_PCLK1_DIV                 RCC_HCLK_Div1
-#define SMARTCARD_PCLK2_DIV                 RCC_HCLK_Div2
+#define SMARTCARD_PCLK1_DIV                 RCC_HCLK_Div2
+#define SMARTCARD_PCLK2_DIV                 RCC_HCLK_Div1
 
 #define SC_EXTI_IRQ                         EXTI15_10_IRQChannel
 #define SMARTCARD_USART_IRQChannel          USART3_IRQChannel

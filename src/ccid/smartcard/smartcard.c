@@ -1094,7 +1094,11 @@ void SC_Init (void)
        and CTS signals) - Tx and Rx enabled - USART Clock enabled */
 
     /* USART Clock set to 3.6 MHz (PCLK1 (36 MHZ) / 10) */
-    USART_SetPrescaler (SMARTCARD_USART, 0x0a);  // RB0x05
+    // 5 bits - 2-64 (values 1-32)
+    // CLK2 36 -> 36/20 = 1.8 (originally for USART1)
+    // CLK1 72 -> 72/40 = 1.8 (to maintain same ratio)
+    // CLK1 72 -> 72/10 = 7.2 (working)
+    USART_SetPrescaler (SMARTCARD_USART, 24/2);
 
     /* USART Guard Time set to 16 Bit */
     USART_SetGuardTime (SMARTCARD_USART, 1); // RB 16
@@ -1106,7 +1110,8 @@ void SC_Init (void)
     USART_ClockInit (SMARTCARD_USART, &USART_ClockInitStructure);
 
     // 3,6e6 / 372 ~= 9677
-    USART_InitStructure.USART_BaudRate = 9677;
+    // 3e6 / 372 ~= 8064
+    USART_InitStructure.USART_BaudRate = 8064;
     USART_InitStructure.USART_WordLength = USART_WordLength_9b;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_Parity = USART_Parity_Even;
