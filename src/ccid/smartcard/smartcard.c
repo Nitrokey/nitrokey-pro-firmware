@@ -1105,7 +1105,7 @@ void SC_Init (void)
     USART_ClockInitStructure.USART_LastBit = USART_LastBit_Enable;
     USART_ClockInit (SMARTCARD_USART, &USART_ClockInitStructure);
 
-
+    // 3,6e6 / 372 ~= 9677
     USART_InitStructure.USART_BaudRate = 9677;
     USART_InitStructure.USART_WordLength = USART_WordLength_9b;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
