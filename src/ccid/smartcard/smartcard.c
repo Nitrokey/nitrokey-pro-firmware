@@ -446,7 +446,7 @@ void SC_ParityErrorHandler (void)
     }
 }
 
-
+#if 0
 void SC_SetHwParams (u8 cBaudrateIndex, u8 cConversion, u8 Guardtime, u8 Waitingtime)
 {
 RCC_ClocksTypeDef RCC_ClocksStatus;
@@ -479,6 +479,7 @@ USART_InitTypeDef USART_InitStructure;
 
 
 }
+#endif
 
 /*******************************************************************************
 * Function Name  : SC_PTSConfig
