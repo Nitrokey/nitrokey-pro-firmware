@@ -259,6 +259,9 @@ endif
 
 CFLAGS += -Wno-cast-qual
 CFLAGS += -fdata-sections -ffunction-sections
+ifeq ($(BUILD_DEBUG), 1)
+CFLAGS += -fstack-protector-all
+endif
 #CFLAGS += -funwind-tables
 #CFLAGS += -fno-unwind-tables -fno-exceptions
 
