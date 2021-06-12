@@ -158,8 +158,6 @@ static void RCC_Configuration (void)
 *******************************************************************************/
 static void NVIC_Configuration (void)
 {
-    NVIC_InitTypeDef NVIC_InitStructure;
-
 #ifdef  VECT_TAB_RAM
     /* Set the Vector Table base location at 0x20000000 */
     NVIC_SetVectorTable (NVIC_VectTab_RAM, 0x0);
@@ -173,7 +171,8 @@ static void NVIC_Configuration (void)
 
     /* Clear the SC_EXTI_IRQ Pending Bit */
     // NVIC_ClearIRQChannelPendingBit(SC_EXTI_IRQ);
-
+#ifdef NOT_USED
+    NVIC_InitTypeDef NVIC_InitStructure;
     NVIC_InitStructure.NVIC_IRQChannel = SC_EXTI_IRQ;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
@@ -184,6 +183,7 @@ static void NVIC_Configuration (void)
     NVIC_InitStructure.NVIC_IRQChannel = SMARTCARD_USART_IRQChannel;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
     NVIC_Init (&NVIC_InitStructure);
+#endif
 }
 
 /*******************************************************************************
