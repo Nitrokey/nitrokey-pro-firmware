@@ -1101,11 +1101,8 @@ void SC_Init (void)
 
     /* USART Clock set to 3.6 MHz (PCLK1 (36 MHZ) / 10) */
     // 5 bits - 2-64 (values 1-32)
-    // CLK2 36 -> 36/20 = 1.8 (originally for USART1)
-    // CLK1 72 -> 72/40 = 1.8 (to maintain same ratio)
-    // CLK1 72 -> 72/10 = 7.2 (working)
-    // CLK1 72 -> 72/24 = 3 (not working)
-    // CLK1 72 -> 72/20 = 3.6 (not working)
+    // USART1 CLK2 72  -> 72/20 = 3.6
+    // USART3 CLK1 36  -> 36/10 = 3.6
     USART_SetPrescaler (SMARTCARD_USART, 10/2);
 
     /* USART Guard Time set to 16 Bit */
