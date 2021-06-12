@@ -487,8 +487,9 @@ USART_InitTypeDef USART_InitStructure;
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void SC_PTSConfig (void)
+int SC_PTSConfig (void)
 {
+//    return TRUE;
     RCC_ClocksTypeDef RCC_ClocksStatus;
 
     u32 workingbaudrate = 0, apbclock = 0;
@@ -647,9 +648,13 @@ void SC_PTSConfig (void)
                 USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
                 USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
                 USART_Init (SMARTCARD_USART, &USART_InitStructure);
+                USART_SetGuardTime (SMARTCARD_USART, 16); // RB 16
+
+                return TRUE;
             }
         }
     }
+    return FALSE;
 }
 
 /*******************************************************************************
@@ -1098,7 +1103,9 @@ void SC_Init (void)
     // CLK2 36 -> 36/20 = 1.8 (originally for USART1)
     // CLK1 72 -> 72/40 = 1.8 (to maintain same ratio)
     // CLK1 72 -> 72/10 = 7.2 (working)
-    USART_SetPrescaler (SMARTCARD_USART, 24/2);
+    // CLK1 72 -> 72/24 = 3 (not working)
+    // CLK1 72 -> 72/20 = 3.6 (not working)
+    USART_SetPrescaler (SMARTCARD_USART, 10/2);
 
     /* USART Guard Time set to 16 Bit */
     USART_SetGuardTime (SMARTCARD_USART, 1); // RB 16
@@ -1111,7 +1118,7 @@ void SC_Init (void)
 
     // 3,6e6 / 372 ~= 9677
     // 3e6 / 372 ~= 8064
-    USART_InitStructure.USART_BaudRate = 8064;
+    USART_InitStructure.USART_BaudRate = 9677;
     USART_InitStructure.USART_WordLength = USART_WordLength_9b;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_Parity = USART_Parity_Even;

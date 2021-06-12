@@ -149,7 +149,7 @@ void SC_Reset (BitAction ResetState);
 
 void SC_ParityErrorHandler (void);
 
-void SC_PTSConfig (void);
+int SC_PTSConfig (void);
 
 void SmartCardInitInterface (void);
 
