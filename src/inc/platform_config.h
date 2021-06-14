@@ -198,6 +198,13 @@
 
 #endif /* USE_STM3210B_EVAL */
 
+// for disabling download firmware pins, used parallel to usb
+#define FIRMWARE_DL_PERIPH                                 RCC_APB2Periph_GPIOC
+#define FIRMWARE_DL_PIN_PORT                            GPIOC
+#define FIRMWARE_DL_PIN_1                                    GPIO_Pin_1
+#define FIRMWARE_DL_PIN_2                                    GPIO_Pin_2
+
+
 #define BUTTON_PERIPH						RCC_APB2Periph_GPIOA
 #define BUTTON_PIN_PORT						GPIOA
 #define BUTTON_PIN						GPIO_Pin_0
