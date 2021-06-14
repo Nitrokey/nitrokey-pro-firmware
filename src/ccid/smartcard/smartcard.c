@@ -171,7 +171,7 @@ static void NVIC_Configuration (void)
 
     /* Clear the SC_EXTI_IRQ Pending Bit */
     // NVIC_ClearIRQChannelPendingBit(SC_EXTI_IRQ);
-#ifdef NOT_USED
+#if HW_REV==3
     NVIC_InitTypeDef NVIC_InitStructure;
     NVIC_InitStructure.NVIC_IRQChannel = SC_EXTI_IRQ;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
