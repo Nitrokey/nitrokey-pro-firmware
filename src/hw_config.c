@@ -309,7 +309,7 @@ void Set_System (void)
     EnableTimer2 ();
 
     /* Enable button */
-//    EnableButton ();
+    EnableButton ();
 
     /* MAL configuration */
     CCID_Init ();   // set CCID default values
