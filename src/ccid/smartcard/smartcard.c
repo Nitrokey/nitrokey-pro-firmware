@@ -1152,7 +1152,6 @@ void SC_Init (void)
 }
 
 void hard_delay(const int times){
-    return;
     int j;
     for (j = 0; j < times; j++){
         unsigned int i;
