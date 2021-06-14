@@ -188,6 +188,8 @@
 #define SMARTCARD_SCRST_PORT                GPIOB
 #define SMARTCARD_SCRST_PIN                 GPIO_Pin_3
 #define SMARTCARD_SCRST_MODE                GPIO_Mode_Out_PP
+#define SMARTCARD_SCRST_PERI                RCC_APB2Periph_GPIOB
+
 
 // port for possible smartcard LED
 #define SMARTCARD_LED_PERIPH				RCC_APB2Periph_GPIOA
