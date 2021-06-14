@@ -258,9 +258,13 @@ CONLYFLAGS += -Wmissing-declarations
 endif
 
 CFLAGS += -Wno-cast-qual
-CFLAGS += -fdata-sections -ffunction-sections
+# extra diagnostic
+#CFLAGS += -Wconversion -fno-common -Wdouble-promotion -Wshadow -Wpadded
+#CFLAGS += -fstack-usage & -Wstack-usage=
 ifeq ($(BUILD_DEBUG), 1)
-CFLAGS += -fstack-protector-all
+#CFLAGS += -fdata-sections # makes CCID not working
+CFLAGS += -ffunction-sections
+#CFLAGS += -fstack-protector-all
 endif
 #CFLAGS += -funwind-tables
 #CFLAGS += -fno-unwind-tables -fno-exceptions
@@ -307,6 +311,7 @@ LDFLAGS += $(CPLUSPLUS_LIB)
 LDFLAGS += $(patsubst %,-L%,$(EXTRA_LIBDIRS))
 LDFLAGS += $(patsubst %,-l%,$(EXTRA_LIBS))
 LDFLAGS += -Wl,--print-memory-usage
+LDFLAGS += -Wl,--print-gc-sections
 
 ifeq ($(BUILD_DEBUG), 1)
 LDFLAGS += -Wl,--gc-sections
