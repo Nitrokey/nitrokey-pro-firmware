@@ -129,6 +129,7 @@
 #define SMARTCARD_SCRST_PORT                GPIOB
 #define SMARTCARD_SCRST_PIN                 GPIO_Pin_3
 #define SMARTCARD_SCRST_MODE                GPIO_Mode_Out_PP
+#define SMARTCARD_PRESCALER                 20/2
 
 #define SMARTCARD_USART_IRQChannel          USART1_IRQChannel
 #define SC_EXTI_IRQ                         EXTI9_5_IRQChannel
@@ -144,6 +145,7 @@
 
 #elif HW_REV == 4
 #pragma message "Selecting hardware revision 4"
+#define SMARTCARD_PRESCALER                 10/2
 #define SMARTCARD_USART                     USART3
 #define SMARTCARD_USART_ClockCmd            RCC_APB1PeriphClockCmd
 #define SMARTCARD_USART_Periph              RCC_APB1Periph_USART3

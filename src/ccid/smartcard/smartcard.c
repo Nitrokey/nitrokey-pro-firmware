@@ -1103,7 +1103,7 @@ void SC_Init (void)
     // 5 bits - 2-64 (values 1-32)
     // USART1 CLK2 72  -> 72/20 = 3.6
     // USART3 CLK1 36  -> 36/10 = 3.6
-    USART_SetPrescaler (SMARTCARD_USART, 10/2);
+    USART_SetPrescaler (SMARTCARD_USART, SMARTCARD_PRESCALER);
 
     /* USART Guard Time set to 16 Bit */
     USART_SetGuardTime (SMARTCARD_USART, 1); // RB 16
