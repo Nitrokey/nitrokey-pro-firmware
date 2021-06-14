@@ -101,6 +101,8 @@
 #if HW_REV <= 3
 #pragma message "Selecting hardware revision 3"
 
+#define DISABLE_FW_PORT 1
+#define ENABLE_BUTTON 1
 #define SMARTCARD_USART                     USART1
 #define SMARTCARD_USART_ClockCmd            RCC_APB2PeriphClockCmd
 #define SMARTCARD_USART_Periph              RCC_APB2Periph_USART1
@@ -146,6 +148,9 @@
 
 #elif HW_REV == 4
 #pragma message "Selecting hardware revision 4"
+#define DISABLE_FW_PORT 0
+#define ENABLE_BUTTON 0
+
 #define SMARTCARD_PRESCALER                 10/2
 #define SMARTCARD_USART                     USART3
 #define SMARTCARD_USART_ClockCmd            RCC_APB1PeriphClockCmd

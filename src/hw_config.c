@@ -55,7 +55,7 @@ void RCC_Config (void);
 /* Private functions --------------------------------------------------------- */
 void DisableFirmwareDownloadPort (void);
 
-
+#if DISABLE_FW_PORT == 1
 void DisableFirmwareDownloadPort (void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
@@ -68,7 +68,7 @@ void DisableFirmwareDownloadPort (void)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init (FIRMWARE_DL_PIN_PORT, &GPIO_InitStructure);
 }
-
+#endif
 
 enum Hardware {
     HW_UNKNOWN,
@@ -146,7 +146,7 @@ void EnableOATHLED (void)
   EnableButton
 
 *******************************************************************************/
-
+#if ENABLE_BUTTON == 1
 void EnableButton (void)
 {
 
@@ -160,7 +160,7 @@ void EnableButton (void)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init (BUTTON_PIN_PORT, &GPIO_InitStructure);
 }
-
+#endif
 /*******************************************************************************
 
   EnableTimer2
@@ -296,7 +296,9 @@ void Set_System (void)
 //        init_BGA_hardware();
 //    }
 
+#if DISABLE_FW_PORT == 1
     DisableFirmwareDownloadPort ();
+#endif
 
     init_blinking();
     EnableSmartcardLED ();
@@ -308,8 +310,10 @@ void Set_System (void)
     /* Enable Timer 2 */
     EnableTimer2 ();
 
+#if ENABLE_BUTTON == 1
     /* Enable button */
     EnableButton ();
+#endif
 
     /* MAL configuration */
     CCID_Init ();   // set CCID default values
