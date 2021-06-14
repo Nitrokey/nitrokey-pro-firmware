@@ -1185,7 +1185,7 @@ static void SC_DeInit (void)
     // GPIO_DeInit(GPIO_RESET);
 
     /* Disable GPIO_3_5V, GPIO_RESET and GPIO_CMDVCC clocks */
-//    RCC_APB2PeriphClockCmd (RCC_APB2Periph_RESET, DISABLE);
+    RCC_APB2PeriphClockCmd (SMARTCARD_SCRST_PERI, DISABLE);
 
     /* Disable USART clock */
     SMARTCARD_USART_ClockCmd (SMARTCARD_USART_Periph, DISABLE);

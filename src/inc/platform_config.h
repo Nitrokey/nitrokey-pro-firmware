@@ -128,6 +128,7 @@
 #define SMARTCARD_SCSDA_MODE                GPIO_Mode_AF_OD
 #define SMARTCARD_SCRST_PORT                GPIOB
 #define SMARTCARD_SCRST_PIN                 GPIO_Pin_3
+#define SMARTCARD_SCRST_PERI                 RCC_APB2Periph_GPIOB
 #define SMARTCARD_SCRST_MODE                GPIO_Mode_Out_PP
 #define SMARTCARD_PRESCALER                 20/2
 
