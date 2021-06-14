@@ -67,3 +67,9 @@ devloop: | clean
 	$(MAKE) gdbserver > /dev/null &
 	sleep 1
 	$(MAKE) ocdtelnet
+
+.PHONY: devloop-release
+devloop-release: | clean
+	$(MAKE) firmware -j12
+	- killall openocd
+	cd build/gcc && $(MAKE) -f dfu.mk flash-full-single
