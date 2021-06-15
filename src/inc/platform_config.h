@@ -162,7 +162,7 @@
 
 #define DISABLE_FW_PORT 0
 #define ENABLE_BUTTON 0
-#define NVIC_IRQ 0
+#define NVIC_IRQ 1
 
 #define SMARTCARD_PRESCALER                 10/2
 #define SMARTCARD_USART                     USART3
