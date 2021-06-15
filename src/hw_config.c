@@ -63,8 +63,7 @@ void DisableFirmwareDownloadPort (void)
     RCC_APB2PeriphClockCmd (FIRMWARE_DL_PERIPH, ENABLE);
 
     // set pin modes
-    // FIXME set proper pin names -> FIRMWARE_DL_PIN_1 FIRMWARE_DL_PIN_2
-    GPIO_InitStructure.GPIO_Pin = SMARTCARD_POWER_PIN_1 | SMARTCARD_POWER_PIN_2;
+    GPIO_InitStructure.GPIO_Pin = FIRMWARE_DL_PIN_1 | FIRMWARE_DL_PIN_2;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init (FIRMWARE_DL_PIN_PORT, &GPIO_InitStructure);

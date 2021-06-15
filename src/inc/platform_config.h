@@ -153,8 +153,8 @@
 // for disabling download firmware pins, used parallel to usb
 #define FIRMWARE_DL_PERIPH                  RCC_APB2Periph_GPIOC
 #define FIRMWARE_DL_PIN_PORT                GPIOC
-#define FIRMWARE_DL_PIN_1                   GPIO_Pin_1
-#define FIRMWARE_DL_PIN_2                   GPIO_Pin_2
+#define FIRMWARE_DL_PIN_1                   GPIO_Pin_4
+#define FIRMWARE_DL_PIN_2                   GPIO_Pin_5
 
 
 #elif HW_REV == 4
@@ -163,6 +163,11 @@
 #define DISABLE_FW_PORT 0
 #define ENABLE_BUTTON 0
 #define NVIC_IRQ 1
+
+#define FIRMWARE_DL_PERIPH                  RCC_APB2Periph_GPIOC
+#define FIRMWARE_DL_PIN_PORT                GPIOC
+#define FIRMWARE_DL_PIN_1                   GPIO_Pin_4
+#define FIRMWARE_DL_PIN_2                   GPIO_Pin_5
 
 #define SMARTCARD_PRESCALER                 10/2
 #define SMARTCARD_USART                     USART3
