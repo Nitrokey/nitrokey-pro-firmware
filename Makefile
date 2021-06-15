@@ -44,11 +44,12 @@ deps:
 	sudo apt-get install ${DEPS}
 
 release: firmware
-	mkdir -p release && \
-	cd release && \
-	cp $(BUILD_DIR)/nitrokey-pro-firmware.elf $(BUILD_DIR)/nitrokey-pro-firmware.hex . && \
-	find . -name *.elf -type f -printf "%f" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512; md5sum -b {} > {}.md5' && \
-    find . -name *.hex -type f -printf "%f" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512; md5sum -b {} > {}.md5'
+	mkdir -p release
+	-rm -r release/*.*
+	cp $(shell readlink -f $(BUILD_DIR)/last.hex) $(shell readlink -f $(BUILD_DIR)/last.buildinfo) release/
+	cd build/gcc && $(MAKE) -f dfu.mk flash-full-single
+	cd release && find . -name *.hex -type f -printf "%f" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512'
+	ls release
 
 .PHONY: gdbserver
 gdbserver:

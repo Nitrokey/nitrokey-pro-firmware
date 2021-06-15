@@ -543,6 +543,7 @@ $(TARGET).buildinfo:
 	@echo CPPOBJARM=$(CPPOBJARM) >> $@
 	@echo LDFLAGS=$(LDFLAGS) >> $@
 	@echo "Writing build information to $@"
+	ln -sf $@ last.buildinfo
 
 # Compile: create object files from C source files. ARM/Thumb
 # Use CFLAGS_OUR_SRC flags only for our source code (all except located in Libraries dir)
