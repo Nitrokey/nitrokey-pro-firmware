@@ -103,7 +103,7 @@
 
 #define DISABLE_FW_PORT 1
 #define ENABLE_BUTTON 1
-#define NVIC_IRQ 0
+#define NVIC_IRQ 1
 
 #define SMARTCARD_USART                     USART1
 #define SMARTCARD_USART_ClockCmd            RCC_APB2PeriphClockCmd
@@ -162,7 +162,7 @@
 
 #define DISABLE_FW_PORT 0
 #define ENABLE_BUTTON 0
-#define NVIC_IRQ 1
+#define NVIC_IRQ 0
 
 #define FIRMWARE_DL_PERIPH                  RCC_APB2Periph_GPIOC
 #define FIRMWARE_DL_PIN_PORT                GPIOC
