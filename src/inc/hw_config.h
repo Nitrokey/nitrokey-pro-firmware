@@ -76,6 +76,8 @@ void StartBlinkingOATHLED(uint16_t times);
 void VerifyBlinkError(uint16_t times);
 void VerifyBlinkCorrect(uint16_t times);
 
+void DisableFirmwareDownloadPort (void);
+
 void DisableSmartcardLED (void);
 
 void EnableSmartcardLED (void);

@@ -53,7 +53,6 @@ Blink blinkVerifyCorrect;
 void RCC_Config (void);
 
 /* Private functions --------------------------------------------------------- */
-void DisableFirmwareDownloadPort (void);
 
 #if DISABLE_FW_PORT == 1
 void DisableFirmwareDownloadPort (void)
