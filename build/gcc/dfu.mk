@@ -2,8 +2,8 @@
 
 WORKSPACE=~/work
 BOOTLOADER=$(WORKSPACE)/dapboot/build/dapboot-nkpro.bin
-FIRMWARE=nitrokey-pro-firmware.elf 
-FIRMWAREBIN=nitrokey-pro-firmware.bin 
+FIRMWARE=last.elf
+FIRMWAREBIN=last.bin
 
 .PHONY: flash-bootloader
 flash-bootloader: $(BOOTLOADER)

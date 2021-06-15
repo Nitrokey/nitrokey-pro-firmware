@@ -489,12 +489,14 @@ endif
 	@echo
 	@echo $(MSG_FLASH) $@
 	$(OBJCOPY) -O $(FORMAT) $< $@
+	ln -sf $@ last.hex
 	
 # Create final output file (.bin) from ELF output file.
 %.bin: %.elf
 	@echo
 	@echo $(MSG_FLASH) $@
 	$(OBJCOPY) -O $(FORMAT) $< $@
+	ln -sf $@ last.bin
 
 
 # Create extended listing file from ELF output file.
@@ -503,6 +505,7 @@ endif
 	@echo
 	@echo $(MSG_EXTENDED_LISTING) $@
 	$(OBJDUMP) -h -S -C $< > $@
+	ln -sf $@ last.lss
 
 
 # Create a symbol table from ELF output file.
@@ -510,6 +513,7 @@ endif
 	@echo
 	@echo $(MSG_SYMBOL_TABLE) $@
 	$(NM) -n $< > $@
+	ln -sf $@ last.sym
 
 
 # Link: create ELF output file from object files.
@@ -519,6 +523,8 @@ endif
 	@echo
 	@echo $(MSG_LINKING) $@
 	$(CC) $(THUMB) $(ALL_CFLAGS) $(AOBJARM) $(AOBJ) $(COBJARM) $(COBJ) $(CPPOBJ) $(CPPOBJARM) --output $@ $(LDFLAGS)
+	ln -sf $@ last.elf
+
 #	$(CPP) $(THUMB) $(ALL_CFLAGS) $(AOBJARM) $(AOBJ) $(COBJARM) $(COBJ) $(CPPOBJ) $(CPPOBJARM) --output $@ $(LDFLAGS)
 
 $(TARGET).buildinfo:
