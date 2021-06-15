@@ -434,7 +434,7 @@ $(error "$(MSG_FORMATERROR) $(FORMAT)")
 endif
 endif
 
-elf: $(TARGET).elf
+elf: $(TARGET).elf $(TARGET).buildinfo
 lss: $(TARGET).lss 
 sym: $(TARGET).sym
 
@@ -520,6 +520,23 @@ endif
 	$(CC) $(THUMB) $(ALL_CFLAGS) $(AOBJARM) $(AOBJ) $(COBJARM) $(COBJ) $(CPPOBJ) $(CPPOBJARM) --output $@ $(LDFLAGS)
 #	$(CPP) $(THUMB) $(ALL_CFLAGS) $(AOBJARM) $(AOBJ) $(COBJARM) $(COBJ) $(CPPOBJ) $(CPPOBJARM) --output $@ $(LDFLAGS)
 
+$(TARGET).buildinfo:
+	date > $@
+	$(CC) --version >> $@
+	-git describe --long >> $@
+	-git describe --long --all >> $@
+	@echo CC=$(CC) >> $@
+	@echo THUMB=$(THUMB) >> $@
+	@echo ALL_CFLAGS=$(ALL_CFLAGS) >> $@
+	@echo AOBJARM=$(AOBJARM) >> $@
+	@echo AOBJ=$(AOBJ) >> $@
+	@echo COBJARM=$(COBJARM) >> $@
+	@echo COBJ=$(COBJ) >> $@
+	@echo CPPOBJ=$(CPPOBJ) >> $@
+	@echo CPPOBJARM=$(CPPOBJARM) >> $@
+	@echo LDFLAGS=$(LDFLAGS) >> $@
+	@echo "Writing build information to $@"
+
 # Compile: create object files from C source files. ARM/Thumb
 # Use CFLAGS_OUR_SRC flags only for our source code (all except located in Libraries dir)
 $(COBJ) : %.o : %.c
@@ -576,7 +593,7 @@ clean_list :
 	$(REMOVE) $(TARGET).hex
 	$(REMOVE) $(TARGET).bin
 	$(REMOVE) $(TARGET).obj
-	$(REMOVE) $(TARGET).elf
+	$(REMOVE) $(TARGET).elf $(TARGET).buildinfo
 	$(REMOVE) $(TARGET).map
 	$(REMOVE) $(TARGET).obj
 	$(REMOVE) $(TARGET).a90
