@@ -132,7 +132,7 @@
 #define SMARTCARD_SCSDA_MODE                GPIO_Mode_AF_OD
 #define SMARTCARD_SCRST_PORT                GPIOB
 #define SMARTCARD_SCRST_PIN                 GPIO_Pin_3
-#define SMARTCARD_SCRST_PERI                 RCC_APB2Periph_GPIOB
+#define SMARTCARD_SCRST_PERI                RCC_APB2Periph_GPIOB
 #define SMARTCARD_SCRST_MODE                GPIO_Mode_Out_PP
 #define SMARTCARD_PRESCALER                 20/2
 
@@ -146,6 +146,15 @@
 #define OATH_LED_PERIPH						RCC_APB2Periph_GPIOB
 #define OATH_LED_PIN_PORT					GPIOB
 #define OATH_LED_PIN						GPIO_Pin_0
+
+#define BUTTON_PERIPH						RCC_APB2Periph_GPIOA
+#define BUTTON_PIN_PORT						GPIOA
+#define BUTTON_PIN						    GPIO_Pin_0
+// for disabling download firmware pins, used parallel to usb
+#define FIRMWARE_DL_PERIPH                  RCC_APB2Periph_GPIOC
+#define FIRMWARE_DL_PIN_PORT                GPIOC
+#define FIRMWARE_DL_PIN_1                   GPIO_Pin_1
+#define FIRMWARE_DL_PIN_2                   GPIO_Pin_2
 
 
 #elif HW_REV == 4
@@ -210,16 +219,6 @@
 
 #endif /* USE_STM3210B_EVAL */
 
-// for disabling download firmware pins, used parallel to usb
-#define FIRMWARE_DL_PERIPH                                 RCC_APB2Periph_GPIOC
-#define FIRMWARE_DL_PIN_PORT                            GPIOC
-#define FIRMWARE_DL_PIN_1                                    GPIO_Pin_1
-#define FIRMWARE_DL_PIN_2                                    GPIO_Pin_2
-
-
-#define BUTTON_PERIPH						RCC_APB2Periph_GPIOA
-#define BUTTON_PIN_PORT						GPIOA
-#define BUTTON_PIN						GPIO_Pin_0
 
 
 /**** Definitions for global stickstate ****/

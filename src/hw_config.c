@@ -207,10 +207,12 @@ void EnableTimer2 (void)
 
 *******************************************************************************/
 
+#if ENABLE_BUTTON == 1
 uint8_t ReadButton (void)
 {
     return GPIO_ReadInputDataBit (BUTTON_PIN_PORT, BUTTON_PIN);
 }
+#endif
 
 /*******************************************************************************
 
