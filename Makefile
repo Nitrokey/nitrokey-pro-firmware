@@ -58,9 +58,10 @@ gdbserver:
 ocdtelnet:
 	telnet localhost 4444
 
+HW_REV?=4
 .PHONY: devloop
 devloop: | clean
-	$(MAKE) firmware -j12 BUILD_DEBUG=1
+	$(MAKE) firmware -j12 BUILD_DEBUG=1 HW_REV=$(HW_REV)
 	-# killall telnet
 	- killall openocd
 	cd build/gcc && $(MAKE) -f dfu.mk flash-full-single
@@ -70,6 +71,6 @@ devloop: | clean
 
 .PHONY: devloop-release
 devloop-release: | clean
-	$(MAKE) firmware -j12
+	$(MAKE) firmware -j12 HW_REV=$(HW_REV)
 	- killall openocd
 	cd build/gcc && $(MAKE) -f dfu.mk flash-full-single

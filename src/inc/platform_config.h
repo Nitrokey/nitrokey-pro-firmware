@@ -95,7 +95,7 @@
 #define DEBUG_BOOT_LEDS
 
 #ifndef HW_REV
-#define HW_REV  4
+#error "HW_REV not specified"
 #endif
 
 #if HW_REV <= 3
