@@ -245,15 +245,15 @@ extern int nGlobalStickState;
 
 /**
  *
- * new hardware:
+ * Hardware rev4 (BGA):
  * use USART3 instead of USART1
  * move PB10 -> data pin
  * PB12 -> clock pin
-*/
-/**
+ *
  * Set ALL of these to input
  * (verify default setting of the pins - current assumption: set to default on reset)
  *
+ * Current state:
  * shorted to ground:
  * C15
  * B7
@@ -269,8 +269,7 @@ extern int nGlobalStickState;
  *
  * connected to smart card data pin:
  * B13
- */
-/**
+ *
  * Check the hardware revision with the following:
  * 1. set B7 to input-pull up
  * 2. check if its high - low -> new hardware, high -> old hardware
