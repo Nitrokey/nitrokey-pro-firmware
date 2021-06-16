@@ -74,8 +74,8 @@ void DisableFirmwareDownloadPort (void)
 
 enum Hardware {
     HW_UNKNOWN = 0,
-    HW_NON_BGA_REV3 = 3,
-    HW_BGA_REV4 = 4
+    HW_NON_BGA_REV3 = NK_HW_REV3_ID,
+    HW_BGA_REV4 = NK_HW_REV4_ID
 };
 enum Hardware detect_hardware(void);
 /*******************************************************************************
@@ -301,7 +301,7 @@ void reset_to_bootloader(void) {
 
 void exec_bootloader_if_wrong_hardware(void){
     const enum Hardware hardware = detect_hardware();
-    const bool execute_bootloader = HW_REV != hardware;
+    const bool execute_bootloader = NK_HW_REV_ID != hardware;
 
     if (execute_bootloader) {
         reset_to_bootloader();

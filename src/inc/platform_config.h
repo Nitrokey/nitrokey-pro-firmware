@@ -98,8 +98,13 @@
 #error "HW_REV not specified"
 #endif
 
+#define NK_HW_REV3_ID   (0xA5)
+#define NK_HW_REV4_ID   (0x5A)
+
 #if HW_REV <= 3
 #pragma message "Selecting hardware revision 3"
+
+#define NK_HW_REV_ID    NK_HW_REV3_ID
 
 #define DISABLE_FW_PORT 1
 #define ENABLE_BUTTON 1
@@ -159,6 +164,8 @@
 
 #elif HW_REV == 4
 #pragma message "Selecting hardware revision 4"
+
+#define NK_HW_REV_ID    NK_HW_REV4_ID
 
 #define DISABLE_FW_PORT 0
 #define ENABLE_BUTTON 0
