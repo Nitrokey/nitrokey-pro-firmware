@@ -22,6 +22,8 @@
 /* Includes ------------------------------------------------------------------ */
 #include <stm32f10x_gpio.h>
 #include <stm32f10x_rcc.h>
+#include <stm32f10x_pwr.h>
+#include <stm32f10x_bkp.h>
 #include "stm32f10x_it.h"
 #include "stm32f10x_systick.h"
 #include "hw_config.h"
@@ -71,13 +73,11 @@ void DisableFirmwareDownloadPort (void)
 #endif
 
 enum Hardware {
-    HW_UNKNOWN,
-    HW_BGA,
-    HW_NON_BGA
+    HW_UNKNOWN = 0,
+    HW_NON_BGA_REV3 = 3,
+    HW_BGA_REV4 = 4
 };
 enum Hardware detect_hardware(void);
-void init_BGA_hardware(void);
-uint32_t get_peripheral_for_port(GPIO_TypeDef *port);
 /*******************************************************************************
 
   DisableSmartcardLED
@@ -279,12 +279,34 @@ void init_blinking(){
     Blink_init_all();
 }
 
+void reset_to_bootloader(void) {
+    /* Boot loader magic number*/
+    const uint32_t CMD_BOOT = 0x544F4F42UL;
+
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);
+    PWR_BackupAccessCmd(ENABLE);
+    /* Write bootloader magic number to Backup registers*/
+    BKP_WriteBackupRegister(BKP_DR1, (uint16_t) (CMD_BOOT & 0x0000FFFFUL));
+    BKP_WriteBackupRegister(BKP_DR2, (uint16_t) ((CMD_BOOT & 0xFFFF0000UL) >> 16));
+
+    NVIC_SystemReset();
+}
+
 /*******************************************************************************
 * Function Name  : Set_System
 * Description    : Configures Main system clocks & power
 * Input          : None.
 * Return         : None.
 *******************************************************************************/
+
+void exec_bootloader_if_wrong_hardware(void){
+    const enum Hardware hardware = detect_hardware();
+    const bool execute_bootloader = HW_REV != hardware;
+
+    if (execute_bootloader) {
+        reset_to_bootloader();
+    }
+}
 
 void Set_System (void)
 {
@@ -293,10 +315,6 @@ void Set_System (void)
 
     /* Enable and GPIOD clock */
     USB_Disconnect_Config ();
-
-//    if (detect_hardware() == HW_BGA) {
-//        init_BGA_hardware();
-//    }
 
 #if DISABLE_FW_PORT == 1
     DisableFirmwareDownloadPort ();
@@ -544,9 +562,34 @@ void RCC_Config (void)
     SystemInit ();
 
 }
+
+enum Hardware g_current_hardware = HW_UNKNOWN;
+
 enum Hardware detect_hardware(void) {
-    // FIXME implement
-    return HW_BGA;
+    /*
+    * Check the hardware revision with the following:
+    * 1. set B7 to input-pull up
+    * 2. check if its high - low -> new hardware, high -> old hardware
+    */
+
+    if (g_current_hardware != HW_UNKNOWN) {
+        return g_current_hardware;
+    }
+
+    RCC_APB2PeriphClockCmd (RCC_APB2Periph_GPIOB, ENABLE);
+//    GPIO_InitTypeDef GPIO_InitStructure;
+//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//    GPIO_Init (GPIOB, &GPIO_InitStructure);
+
+    const uint8_t state = GPIO_ReadInputDataBit (GPIOB, GPIO_Pin_7);
+    if (state == 0) {
+        g_current_hardware = HW_BGA_REV4;
+    } else{
+        g_current_hardware = HW_NON_BGA_REV3;
+    }
+    return g_current_hardware;
 }
 
 /*******************************************************************************

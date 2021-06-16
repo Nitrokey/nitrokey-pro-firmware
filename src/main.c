@@ -97,6 +97,9 @@ void Test1(void) {
 
 int main(void) {
 
+  // Check if the right firmware is used first
+  exec_bootloader_if_wrong_hardware();
+
   USB_SetDeviceConfiguration(STICK_STATE_SMARTCARD);
 
   setjmp (jmpRestartUSB); // entrypoint for the changed USB device

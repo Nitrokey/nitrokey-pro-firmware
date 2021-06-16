@@ -19,6 +19,7 @@
  */
 
 
+#include <stm32f10x_rcc.h>
 #include "stm32f10x.h"
 #include "platform_config.h"
 #include "stm32f10x_crc.h"
@@ -994,17 +995,7 @@ uint8_t cmd_enableFirmwareUpdate(uint8_t *report, uint8_t *output) {
         output[OUTPUT_CMD_STATUS_OFFSET] = CMD_STATUS_WRONG_PASSWORD;
         return 1;
     }
-
-    /* Boot loader magic number*/
-    const uint32_t CMD_BOOT = 0x544F4F42UL;
-
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);
-    PWR_BackupAccessCmd(ENABLE);
-    /* Write bootloader magic number to Backup registers*/
-    BKP_WriteBackupRegister(BKP_DR1, (uint16_t) (CMD_BOOT & 0x0000FFFFUL));
-    BKP_WriteBackupRegister(BKP_DR2, (uint16_t) ((CMD_BOOT & 0xFFFF0000UL) >> 16));
-
-    NVIC_SystemReset();
+    reset_to_bootloader();
 
     return 0;
 }
