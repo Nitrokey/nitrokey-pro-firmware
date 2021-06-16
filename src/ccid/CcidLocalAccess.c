@@ -66,16 +66,9 @@
 *******************************************************************************/
 
 
-typedef struct
-{
-    unsigned char cAPDULength;
-    unsigned short cAPDUAnswerStatus;
-    unsigned short cAPDUAnswerLength;
-    unsigned char cTPDUSequence;
-    unsigned char cTPDULength;
-    unsigned char cAPDU[CCID_TRANSFER_BUFFER_MAX];
-    unsigned char cTPDU[CCID_TRANSFER_BUFFER_MAX + CCID_TPDU_OVERHEAD];
-} typeSmartcardTransfer;
+uint32_t min(const uint32_t a, const uint32_t b);
+uint16_t send_data_no_response(uint8_t *data, uint8_t data_length);
+int tag_callback(TLV *tlv, uint16_t depth);
 
 static typeSmartcardTransfer tSCT;
 
@@ -231,7 +224,7 @@ unsigned short SendAPDU (typeSmartcardTransfer * _tSCT)
     SendTPDU (_tSCT);
 
     if (APDU_ANSWER_RECEIVE_INCORRECT == _tSCT->cAPDUAnswerStatus
-        && APDU_EOF != tSCT->cAPDUAnswerStatus)
+        && APDU_EOF != _tSCT->cAPDUAnswerStatus)
     {
         return (_tSCT->cAPDUAnswerStatus);
     }

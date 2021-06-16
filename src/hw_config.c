@@ -487,6 +487,7 @@ typedef struct {
   uint8_t right:4;
 } hexbyte;
 
+
 char HexToAscii2 (uint8_t nHex, uint8_t byte_part)
 {
   if (byte_part==1)

@@ -101,6 +101,7 @@ extern Blink blinkVerifyCorrect;
 extern void Blink_init_all(void);
 void EnableTimer2 (void);
 void init_blinking(void);
+char HexToAscii2 (uint8_t nHex, uint8_t byte_part);
 
 
 #endif  /*__HW_CONFIG_H*/
