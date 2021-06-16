@@ -96,6 +96,8 @@ extern Blink blinkVerifyCorrect;
 extern void Blink_init_all(void);
 void EnableTimer2 (void);
 void init_blinking(void);
+void reset_to_bootloader(void);
+void exec_bootloader_if_wrong_hardware(void);
 
 
 #endif  /*__HW_CONFIG_H*/

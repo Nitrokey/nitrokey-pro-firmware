@@ -133,6 +133,7 @@ SRC = 		../../src/main.c                                         \
 			../../src/pwd-safe/FlashStorage.c	\
 			../../src/pwd-safe/HandleAesStorageKey.c	\
 			../../src/pwd-safe/password_safe.c	\
+			../../src/hw_config_rev4.c	\
 
 			
 # List C source files here which must be compiled in ARM-Mode.
