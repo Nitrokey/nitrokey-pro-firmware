@@ -98,7 +98,7 @@ uint8_t testSendUserPW2 (unsigned char* pcPW);
 
 unsigned int CcidReset (void);
 
-#define CCID_TRANSFER_BUFFER_MAX    256
+#define CCID_TRANSFER_BUFFER_MAX    512
 
 #define CCID_TPDU_OVERHEAD          4
 #define CCID_TPDU_PROLOG            3
@@ -126,13 +126,13 @@ unsigned int CcidReset (void);
 
 typedef struct
 {
-  unsigned char cAPDULength;
-  unsigned short cAPDUAnswerStatus;
-  unsigned char cAPDUAnswerLength;
-  unsigned char cTPDUSequence;
-  unsigned char cTPDULength;
-  unsigned char cAPDU[CCID_TRANSFER_BUFFER_MAX];
-  unsigned char cTPDU[CCID_TRANSFER_BUFFER_MAX + CCID_TPDU_OVERHEAD];
+    unsigned char cAPDULength;
+    unsigned short cAPDUAnswerStatus;
+    unsigned short cAPDUAnswerLength;
+    unsigned char cTPDUSequence;
+    unsigned char cTPDULength;
+    unsigned char cAPDU[CCID_TRANSFER_BUFFER_MAX];
+    unsigned char cTPDU[CCID_TRANSFER_BUFFER_MAX + CCID_TPDU_OVERHEAD];
 } typeSmartcardTransfer;
 
 void InitSCTStruct (typeSmartcardTransfer * _tSCT);
