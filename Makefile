@@ -52,7 +52,7 @@ release: | clean
 	$(MAKE) firmware -j12 HW_REV=$(HW_REV)
 	cd build/gcc && $(MAKE) -f dfu.mk firmware.hex
 	cd build/gcc && $(MAKE) -f dfu.mk all.hex
-	cp $(shell readlink -f $(BUILD_DIR)/last.hex) $(shell readlink -f $(BUILD_DIR)/last_update.hex) $(shell readlink -f $(BUILD_DIR)/last.buildinfo) release/
+	cp `readlink -f $(BUILD_DIR)/last.hex` `readlink -f $(BUILD_DIR)/last_update.hex` `readlink -f $(BUILD_DIR)/last.buildinfo` release/
 	cd release && find . -name "*.hex" -type f -printf "%f\0" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512'
 	ls -lh release
 
