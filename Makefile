@@ -7,6 +7,8 @@ DEPS=gcc-arm-none-eabi
 
 .PHONY: firmware flash-versaloon clean release
 
+HW_REV?=4
+
 firmware:
 	cd $(BUILD_DIR) && \
 	$(MAKE) && \
@@ -43,13 +45,16 @@ clean:
 deps:
 	sudo apt-get install ${DEPS}
 
-release: firmware
+.PHONY: release
+release: | clean
 	mkdir -p release
 	-rm -r release/*.*
-	cp $(shell readlink -f $(BUILD_DIR)/last.hex) $(shell readlink -f $(BUILD_DIR)/last.buildinfo) release/
-	cd build/gcc && $(MAKE) -f dfu.mk flash-full-single
-	cd release && find . -name *.hex -type f -printf "%f" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512'
-	ls release
+	$(MAKE) firmware -j12 HW_REV=$(HW_REV)
+	cd build/gcc && $(MAKE) -f dfu.mk firmware.hex
+	cd build/gcc && $(MAKE) -f dfu.mk all.hex
+	cp $(shell readlink -f $(BUILD_DIR)/last.hex) $(shell readlink -f $(BUILD_DIR)/last_update.hex) $(shell readlink -f $(BUILD_DIR)/last.buildinfo) release/
+	cd release && find . -name "*.hex" -type f -printf "%f\0" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512'
+	ls -lh release
 
 .PHONY: gdbserver
 gdbserver:
@@ -59,7 +64,6 @@ gdbserver:
 ocdtelnet:
 	telnet localhost 4444
 
-HW_REV?=4
 .PHONY: devloop
 devloop: | clean
 	$(MAKE) firmware -j12 BUILD_DEBUG=1 HW_REV=$(HW_REV)
