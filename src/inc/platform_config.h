@@ -92,7 +92,9 @@
 
 // USART3/APB1, GPIOB+GPIOD/APB2, data: PB10-12, power: PB4 PD2
 
+#if BUILD_DEBUG == 1
 #define DEBUG_BOOT_LEDS
+#endif
 
 #ifndef HW_REV
 #error "HW_REV not specified"
