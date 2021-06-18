@@ -97,6 +97,9 @@ void Test1(void) {
 
 int main(void) {
 
+  // Check if the right firmware is used first
+  exec_bootloader_if_wrong_hardware();
+
   USB_SetDeviceConfiguration(STICK_STATE_SMARTCARD);
 
   setjmp (jmpRestartUSB); // entrypoint for the changed USB device
@@ -113,10 +116,23 @@ int main(void) {
   check_backups();
   SmartCardInitInterface();
 
-  USB_Start();
+#ifdef DEBUG_BOOT_LEDS
+  SwitchSmartcardLED(ENABLE);
+  SwitchOATHLED(ENABLE);
+#endif
+    USB_Start();
+#ifdef DEBUG_BOOT_LEDS
+  SwitchSmartcardLED(DISABLE);
+  SwitchOATHLED(DISABLE);
+#endif
 
   StartupCheck_u8();
 
+#ifdef DEBUG_BOOT_LEDS
+  VerifyBlinkCorrect(9999);
+#endif
+
+    device_status = STATUS_READY;
   /* Endless loop after USB startup */
   while (1) {
     if (device_status == STATUS_RECEIVED_REPORT) {

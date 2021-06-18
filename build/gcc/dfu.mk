@@ -2,8 +2,8 @@
 
 WORKSPACE=~/work
 BOOTLOADER=$(WORKSPACE)/dapboot/build/dapboot-nkpro.bin
-FIRMWARE=nitrokey-pro-firmware.elf 
-FIRMWAREBIN=nitrokey-pro-firmware.bin 
+FIRMWARE=last.elf
+FIRMWAREBIN=last.bin
 
 .PHONY: flash-bootloader
 flash-bootloader: $(BOOTLOADER)
@@ -33,8 +33,10 @@ firmware.hex: $(FIRMWAREBIN)
 	ls -lh $@
 	srec_info $@ -i
 
+FIRMWARE_FILE_NAME=nitrokey-pro-firmware-$(shell git describe --long)-to_flash.hex
 all.hex: bootloader.hex firmware.hex
 	srec_cat bootloader.hex -Intel firmware.hex -Intel -Output $@ -Intel
+	cp $@ $(FIRMWARE_FILE_NAME)
 	ls -lh $@
 	srec_info $@ -i
 

@@ -1020,6 +1020,7 @@ typedef struct
 #define SPI1                ((SPI_TypeDef *) SPI1_BASE)
 #define TIM8                ((TIM_TypeDef *) TIM8_BASE)
 #define USART1              ((USART_TypeDef *) USART1_BASE)
+#define USART3              ((USART_TypeDef *) USART3_BASE)
 #define ADC3                ((ADC_TypeDef *) ADC3_BASE)
 #define SDIO                ((SDIO_TypeDef *) SDIO_BASE)
 #define DMA1                ((DMA_TypeDef *) DMA1_BASE)

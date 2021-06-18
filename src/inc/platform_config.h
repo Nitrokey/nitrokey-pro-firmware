@@ -43,6 +43,7 @@
 	activate the 4 Bit DMA SD card interface
 
 ******************************************************************************/
+// FIXME check and remove if not needed (SD card communication?)
 #define USB_4BIT_SD_CARD_INTERFACE  // only RC CPU !!!!
 
 
@@ -55,39 +56,183 @@
 #define RCC_APB2Periph_GPIO_DISCONNECT    RCC_APB2Periph_GPIOA
 
 
-// smartcard power supply
-#define SMARTCARD_POWER_PORT              GPIOB // change SC_PortSource in
-                                                // smartcard.h too
-#define SMARTCARD_POWER_PIN_1            	GPIO_Pin_4  // change
-                                                        // SC_PinSource in
-                                                        // smartcard.h too
-#define SMARTCARD_POWER_PIN_2            	GPIO_Pin_5  // change
-                                                        // SC_PinSource in
-                                                        // smartcard.h too
+/* Smartcard Inteface GPIO pins */
+//Table 50. Vector table for STM32F100xx device, Doc ID16188 Rev 5, 8.1.2 Interrupt and exception vectors
+#define EXTI9_5_IRQChannel           ((unsigned char)0x17)  /* External Line [9:5] Ipterrupts */
+#define EXTI15_10_IRQChannel           ((unsigned char)0x28)  /* EXTI Line[15:10] Ipterrupts */
+#define USART1_IRQChannel            ((unsigned char)0x25)  /* USART1 global Interrupt */
+#define USART3_IRQChannel            ((unsigned char)0x27)  /* USART3 global Interrupt */
+
+// Old hardware pins
+// SCCLK PA8
+// SCSDA PB6
+/* Disable JTAG to be able to use PB3 */
+// SCRST PB3
+// SCVCC PB4 PB5
 
 
-// for disabling download firmware pins, used parallel to usb
-#define FIRMWARE_DL_PERIPH							 	RCC_APB2Periph_GPIOC
-#define FIRMWARE_DL_PIN_PORT							GPIOC
-#define FIRMWARE_DL_PIN_1									GPIO_Pin_1
-#define FIRMWARE_DL_PIN_2									GPIO_Pin_2
+// for the new hardware
+// move from USART1 to USART3
+// USART3 no remap, 7.3.5 USART alternate function remapping, Doc ID16188 Rev 5
+// USART3_TX PB10
+// USART3_RX PB11
+// USART3_CK PB12
+
+// correct DMA to use USART3, both DMA1 controller, channels:
+// USART1_TX 4 USART1_RX 5 (old)
+// USART3_TX 2 USART3_RX 3 (new)
+
+// ports
+// USART1 APB2 (old)
+// USART3 APB1 (new)
+
+// clocks
+// USART1 CLK2 APB2
+// USART3 CLK1 APB1
+
+// USART3/APB1, GPIOB+GPIOD/APB2, data: PB10-12, power: PB4 PD2
+
+#if BUILD_DEBUG == 1
+#define DEBUG_BOOT_LEDS
+#endif
+
+#ifndef HW_REV
+#error "HW_REV not specified"
+#endif
+
+#define NK_HW_REV3_ID   (0xA5)
+#define NK_HW_REV4_ID   (0x5A)
+
+#if HW_REV <= 3
+#pragma message "Selecting hardware revision 3"
+
+#define NK_HW_REV_ID    NK_HW_REV3_ID
+
+#define DISABLE_FW_PORT 1
+#define ENABLE_BUTTON 1
+#define NVIC_IRQ 1
+
+#define SMARTCARD_USART                     USART1
+#define SMARTCARD_USART_ClockCmd            RCC_APB2PeriphClockCmd
+#define SMARTCARD_USART_Periph              RCC_APB2Periph_USART1
+#define SMARTCARD_USART_Periph_POWER_1      RCC_APB2Periph_GPIOB
+#define SMARTCARD_USART_Periph_POWER_2      RCC_APB2Periph_GPIOB
+#define SMARTCARD_USART_AFIO                RCC_APB2Periph_AFIO
+#define SMARTCARD_USART_REMAP               AFIO_MAPR_USART1_REMAP
+#define SMARTCARD_USART_REMAP_VALUE         (ENABLE)
+
+#define SMARTCARD_POWER_PORT                GPIOB
+#define SMARTCARD_POWER_PIN_1            	GPIO_Pin_4
+#define SMARTCARD_POWER_PORT_2              GPIOB
+#define SMARTCARD_POWER_PIN_2            	GPIO_Pin_5
+
+#define SMARTCARD_PCLK_STATUS_FREQ          RCC_ClocksStatus.PCLK2_Frequency
+#define SMARTCARD_PCLK1_DIV                 RCC_HCLK_Div2
+#define SMARTCARD_PCLK2_DIV                 RCC_HCLK_Div1
+
+#define SMARTCARD_SCCLK_PORT                GPIOA
+#define SMARTCARD_SCCLK_PIN                 GPIO_Pin_8
+#define SMARTCARD_SCCLK_MODE                GPIO_Mode_AF_PP
+// SCSDA PB6  SCRST PB3
+#define SMARTCARD_SCSDA_PORT                GPIOB
+#define SMARTCARD_SCSDA_PIN                 GPIO_Pin_6
+#define SMARTCARD_SCSDA_MODE                GPIO_Mode_AF_OD
+#define SMARTCARD_SCRST_PORT                GPIOB
+#define SMARTCARD_SCRST_PIN                 GPIO_Pin_3
+#define SMARTCARD_SCRST_PERI                RCC_APB2Periph_GPIOB
+#define SMARTCARD_SCRST_MODE                GPIO_Mode_Out_PP
+#define SMARTCARD_PRESCALER                 20/2
+
+#define SMARTCARD_USART_IRQChannel          USART1_IRQChannel
+#define SC_EXTI_IRQ                         EXTI9_5_IRQChannel
 
 // port for possible smartcard LED
-
-
-#define SMARTCARD_LED_PERIPH						RCC_APB2Periph_GPIOA
-#define SMARTCARD_LED_PIN_PORT						GPIOA
-#define SMARTCARD_LED_PIN						GPIO_Pin_7
-
-#define OATH_LED_PERIPH							RCC_APB2Periph_GPIOB
-#define OATH_LED_PIN_PORT						GPIOB
-#define OATH_LED_PIN							GPIO_Pin_0
-
-#endif /* USE_STM3210B_EVAL */
+#define SMARTCARD_LED_PERIPH				RCC_APB2Periph_GPIOA
+#define SMARTCARD_LED_PIN_PORT				GPIOA
+#define SMARTCARD_LED_PIN					GPIO_Pin_7
+#define OATH_LED_PERIPH						RCC_APB2Periph_GPIOB
+#define OATH_LED_PIN_PORT					GPIOB
+#define OATH_LED_PIN						GPIO_Pin_0
 
 #define BUTTON_PERIPH						RCC_APB2Periph_GPIOA
 #define BUTTON_PIN_PORT						GPIOA
-#define BUTTON_PIN						GPIO_Pin_0
+#define BUTTON_PIN						    GPIO_Pin_0
+// for disabling download firmware pins, used parallel to usb
+#define FIRMWARE_DL_PERIPH                  RCC_APB2Periph_GPIOC
+#define FIRMWARE_DL_PIN_PORT                GPIOC
+#define FIRMWARE_DL_PIN_1                   GPIO_Pin_4
+#define FIRMWARE_DL_PIN_2                   GPIO_Pin_5
+
+
+#elif HW_REV == 4
+#pragma message "Selecting hardware revision 4"
+
+#define NK_HW_REV_ID    NK_HW_REV4_ID
+
+#define DISABLE_FW_PORT 0
+#define ENABLE_BUTTON 0
+#define NVIC_IRQ 0
+
+#define FIRMWARE_DL_PERIPH                  RCC_APB2Periph_GPIOC
+#define FIRMWARE_DL_PIN_PORT                GPIOC
+#define FIRMWARE_DL_PIN_1                   GPIO_Pin_4
+#define FIRMWARE_DL_PIN_2                   GPIO_Pin_5
+
+#define SMARTCARD_PRESCALER                 10/2
+#define SMARTCARD_USART                     USART3
+#define SMARTCARD_USART_ClockCmd            RCC_APB1PeriphClockCmd
+#define SMARTCARD_USART_Periph              RCC_APB1Periph_USART3
+#define SMARTCARD_USART_Periph_POWER_1      RCC_APB2Periph_GPIOB
+#define SMARTCARD_USART_Periph_POWER_2      RCC_APB2Periph_GPIOD
+#define SMARTCARD_USART_AFIO                RCC_APB2Periph_AFIO
+#define SMARTCARD_USART_REMAP               AFIO_MAPR_USART3_REMAP
+#define SMARTCARD_USART_REMAP_VALUE         AFIO_MAPR_USART3_REMAP_NOREMAP
+
+
+// smartcard power supply
+// move power port2 to PD2
+#define SMARTCARD_POWER_PORT                GPIOB
+#define SMARTCARD_POWER_PIN_1            	GPIO_Pin_4
+#define SMARTCARD_POWER_PORT_2              GPIOD
+#define SMARTCARD_POWER_PIN_2            	GPIO_Pin_2
+
+
+#define SMARTCARD_PCLK_STATUS_FREQ          RCC_ClocksStatus.PCLK1_Frequency
+#define SMARTCARD_PCLK1_DIV                 RCC_HCLK_Div2
+#define SMARTCARD_PCLK2_DIV                 RCC_HCLK_Div1
+
+#define SC_EXTI_IRQ                         EXTI15_10_IRQChannel
+#define SMARTCARD_USART_IRQChannel          USART3_IRQChannel
+//* PB12 -> clock pin
+#define SMARTCARD_SCCLK_PORT                GPIOB
+#define SMARTCARD_SCCLK_PIN                 GPIO_Pin_12
+#define SMARTCARD_SCCLK_MODE                GPIO_Mode_AF_PP
+//* move PB10 -> data pin
+#define SMARTCARD_SCSDA_PORT                GPIOB
+#define SMARTCARD_SCSDA_PIN                 GPIO_Pin_10
+#define SMARTCARD_SCSDA_MODE                GPIO_Mode_AF_OD
+//* move PB11 -> reset
+#define SMARTCARD_SCRST_PORT                GPIOB
+#define SMARTCARD_SCRST_PIN                 GPIO_Pin_3
+#define SMARTCARD_SCRST_MODE                GPIO_Mode_Out_PP
+#define SMARTCARD_SCRST_PERI                RCC_APB2Periph_GPIOB
+
+
+// port for possible smartcard LED
+#define SMARTCARD_LED_PERIPH				RCC_APB2Periph_GPIOA
+#define SMARTCARD_LED_PIN_PORT				GPIOA
+#define SMARTCARD_LED_PIN					GPIO_Pin_4
+#define OATH_LED_PERIPH						RCC_APB2Periph_GPIOA
+#define OATH_LED_PIN_PORT					GPIOA
+#define OATH_LED_PIN						GPIO_Pin_7
+
+#else
+#error "Invalid hardware revision selected"
+#endif // HW_REV
+
+
+#endif /* USE_STM3210B_EVAL */
+
 
 
 /**** Definitions for global stickstate ****/
@@ -106,3 +251,42 @@ extern int nGlobalStickState;
 /* Exported functions ------------------------------------------------------- */
 
 #endif /* __PLATFORM_CONFIG_H */
+
+/**
+ *
+ * Hardware rev4 (BGA):
+ * use USART3 instead of USART1
+ * move PB10 -> data pin
+ * PB12 -> clock pin
+ *
+ * Set ALL of these to input
+ * (verify default setting of the pins - current assumption: set to default on reset)
+ *
+ * Current state:
+ * shorted to ground:
+ * C15
+ * B7
+ *
+ * shorted to power:
+ * C0
+ * C7
+ * C8
+ *
+ * shorted to BOOT:
+ * C5
+ * B9
+ *
+ * connected to smart card data pin:
+ * B13
+ *
+ * Check the hardware revision with the following:
+ * 1. set B7 to input-pull up
+ * 2. check if its high - low -> new hardware, high -> old hardware
+ */
+
+/**
+* 5.1 Avoid floating unused pinDo not leave unused pin floating. Connect it either to ground or to supply on the PCB, or use PU / PD. Noise on non-connected input pin is a source of extra consumption by making the input buffer switch randomly.If the application is sensitive to ESD, prefer a connection to ground or define the pin as PP output and drive it to low.
+ * AN4899GPIO hardware guideline DocID029601 Rev 123/31
+ *
+ * 6.1 Configure unused GPIO input as analog input GPIO always have an input channel, which can be either digital or analog.If it is not necessary to read the GPIO data, prefer the configuration as analog input. This saves the consumption of the input Schmitt trigger.
+*/

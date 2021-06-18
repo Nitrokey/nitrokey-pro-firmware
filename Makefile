@@ -9,7 +9,7 @@ DEPS=gcc-arm-none-eabi
 
 firmware:
 	cd $(BUILD_DIR) && \
-	make && \
+	$(MAKE) && \
 	cd -
 #	mv $(BUILD_DIR)/crypto.elf .
 
@@ -44,8 +44,34 @@ deps:
 	sudo apt-get install ${DEPS}
 
 release: firmware
-	mkdir -p release && \
-	cd release && \
-	cp $(BUILD_DIR)/nitrokey-pro-firmware.elf $(BUILD_DIR)/nitrokey-pro-firmware.hex . && \
-	find . -name *.elf -type f -printf "%f" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512; md5sum -b {} > {}.md5' && \
-    find . -name *.hex -type f -printf "%f" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512; md5sum -b {} > {}.md5'
+	mkdir -p release
+	-rm -r release/*.*
+	cp $(shell readlink -f $(BUILD_DIR)/last.hex) $(shell readlink -f $(BUILD_DIR)/last.buildinfo) release/
+	cd build/gcc && $(MAKE) -f dfu.mk flash-full-single
+	cd release && find . -name *.hex -type f -printf "%f" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512'
+	ls release
+
+.PHONY: gdbserver
+gdbserver:
+	openocd -f interface/stlink-v2.cfg  -f target/stm32f1x.cfg
+
+.PHONY: ocdtelnet
+ocdtelnet:
+	telnet localhost 4444
+
+HW_REV?=4
+.PHONY: devloop
+devloop: | clean
+	$(MAKE) firmware -j12 BUILD_DEBUG=1 HW_REV=$(HW_REV)
+	-# killall telnet
+	- killall openocd
+	cd build/gcc && $(MAKE) -f dfu.mk flash-full-single
+	$(MAKE) gdbserver > /dev/null &
+	sleep 1
+	$(MAKE) ocdtelnet
+
+.PHONY: devloop-release
+devloop-release: | clean
+	$(MAKE) firmware -j12 HW_REV=$(HW_REV)
+	- killall openocd
+	cd build/gcc && $(MAKE) -f dfu.mk flash-full-single

@@ -35,7 +35,8 @@
 # Cmd interface paramenters
 VID?=0x20a0
 PID?=0x4108
-
+HW_REV?=4
+BUILD_DEBUG?=0
 
 ###########################################
 # THUMB, RAM_RUN and Remapping currently
@@ -66,7 +67,7 @@ RUN_MODE=ROM_RUN
 
 
 # Target file name (without extension).
-TARGET = nitrokey-pro-firmware
+TARGET = nitrokey-pro-firmware-hw$(HW_REV)
 
 # List C source files here. (C dependencies are automatically generated.)
 # use file-extension c for "c-only"-files
@@ -132,6 +133,7 @@ SRC = 		../../src/main.c                                         \
 			../../src/pwd-safe/FlashStorage.c	\
 			../../src/pwd-safe/HandleAesStorageKey.c	\
 			../../src/pwd-safe/password_safe.c	\
+			../../src/hw_config_rev4.c	\
 
 			
 # List C source files here which must be compiled in ARM-Mode.
@@ -174,8 +176,13 @@ FORMAT = ihex
 # Optimization level, can be [0, 1, 2, 3, s]. 
 # 0 = turn off optimization. s = optimize for size.
 # (Note: 3 is not always the best optimization level. See avr-libc FAQ.)
+
+ifeq ($(BUILD_DEBUG), 1)
+$(warning "Running development build")
+OPT = 0
+else
 OPT = 2
-#OPT = 0
+endif
 
 # Debugging format.
 # Native formats for AVR-GCC's -g are stabs [default], or dwarf-2.
@@ -206,7 +213,7 @@ EXTRA_LIBDIRS =
 CSTANDARD = -std=gnu99
 
 # Place -D or -U options for C here
-CDEFS =  -D$(RUN_MODE) -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD -DUSE_STM3210E_EVAL -DGLOBAL_VID=$(VID) -DGLOBAL_PID=$(PID)
+CDEFS =  -D$(RUN_MODE) -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD -DUSE_STM3210E_EVAL -DGLOBAL_VID=$(VID) -DGLOBAL_PID=$(PID) -DHW_REV=$(HW_REV) -DBUILD_DEBUG=$(BUILD_DEBUG)
 #CDEFS =  -D$(RUN_MODE) -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD -DUSE_BOARD_STICK_V12
 # Place -I options here
 CINCS =
@@ -253,6 +260,16 @@ CONLYFLAGS += -Wmissing-declarations
 endif
 
 CFLAGS += -Wno-cast-qual
+# extra diagnostic
+#CFLAGS += -Wconversion -fno-common -Wdouble-promotion -Wshadow -Wpadded
+#CFLAGS += -fstack-usage & -Wstack-usage=
+ifeq ($(BUILD_DEBUG), 1)
+#CFLAGS += -fdata-sections # makes CCID not working
+CFLAGS += -ffunction-sections
+#CFLAGS += -fstack-protector-all
+endif
+#CFLAGS += -funwind-tables
+#CFLAGS += -fno-unwind-tables -fno-exceptions
 
 
 # flags only for C++ (arm-elf-g++)
@@ -295,6 +312,12 @@ LDFLAGS += -lrdimon
 LDFLAGS += $(CPLUSPLUS_LIB)
 LDFLAGS += $(patsubst %,-L%,$(EXTRA_LIBDIRS))
 LDFLAGS += $(patsubst %,-l%,$(EXTRA_LIBS))
+LDFLAGS += -Wl,--print-memory-usage
+LDFLAGS += -Wl,--print-gc-sections
+
+ifeq ($(BUILD_DEBUG), 1)
+LDFLAGS += -Wl,--gc-sections
+endif
 
 # Set Linker-Script Depending On Selected Memory and Controller
 LDFLAGS +=-Tstm32.ld
@@ -304,6 +327,11 @@ LDFLAGS +=-Tstm32.ld
 #LDFLAGS +=-T$(SUBMDL)-ROM.ld
 #endif
 
+ifeq ($(BUILD_DEBUG), 1)
+LDFLAGS +=-TSTM32_SEC_FLASH-debug.ld
+else
+LDFLAGS +=-TSTM32_SEC_FLASH.ld
+endif
 
 # ---------------------------------------------------------------------------
 # Flash-Programming support using lpc21isp by Martin Maurer 
@@ -408,7 +436,7 @@ $(error "$(MSG_FORMATERROR) $(FORMAT)")
 endif
 endif
 
-elf: $(TARGET).elf
+elf: $(TARGET).elf $(TARGET).buildinfo
 lss: $(TARGET).lss 
 sym: $(TARGET).sym
 
@@ -462,12 +490,14 @@ endif
 	@echo
 	@echo $(MSG_FLASH) $@
 	$(OBJCOPY) -O $(FORMAT) $< $@
+	ln -sf $@ last.hex
 	
 # Create final output file (.bin) from ELF output file.
 %.bin: %.elf
 	@echo
 	@echo $(MSG_FLASH) $@
 	$(OBJCOPY) -O $(FORMAT) $< $@
+	ln -sf $@ last.bin
 
 
 # Create extended listing file from ELF output file.
@@ -476,6 +506,7 @@ endif
 	@echo
 	@echo $(MSG_EXTENDED_LISTING) $@
 	$(OBJDUMP) -h -S -C $< > $@
+	ln -sf $@ last.lss
 
 
 # Create a symbol table from ELF output file.
@@ -483,6 +514,7 @@ endif
 	@echo
 	@echo $(MSG_SYMBOL_TABLE) $@
 	$(NM) -n $< > $@
+	ln -sf $@ last.sym
 
 
 # Link: create ELF output file from object files.
@@ -492,7 +524,27 @@ endif
 	@echo
 	@echo $(MSG_LINKING) $@
 	$(CC) $(THUMB) $(ALL_CFLAGS) $(AOBJARM) $(AOBJ) $(COBJARM) $(COBJ) $(CPPOBJ) $(CPPOBJARM) --output $@ $(LDFLAGS)
+	ln -sf $@ last.elf
+
 #	$(CPP) $(THUMB) $(ALL_CFLAGS) $(AOBJARM) $(AOBJ) $(COBJARM) $(COBJ) $(CPPOBJ) $(CPPOBJARM) --output $@ $(LDFLAGS)
+
+$(TARGET).buildinfo:
+	date > $@
+	$(CC) --version >> $@
+	-git describe --long >> $@
+	-git describe --long --all >> $@
+	@echo CC=$(CC) >> $@
+	@echo THUMB=$(THUMB) >> $@
+	@echo ALL_CFLAGS=$(ALL_CFLAGS) >> $@
+	@echo AOBJARM=$(AOBJARM) >> $@
+	@echo AOBJ=$(AOBJ) >> $@
+	@echo COBJARM=$(COBJARM) >> $@
+	@echo COBJ=$(COBJ) >> $@
+	@echo CPPOBJ=$(CPPOBJ) >> $@
+	@echo CPPOBJARM=$(CPPOBJARM) >> $@
+	@echo LDFLAGS=$(LDFLAGS) >> $@
+	@echo "Writing build information to $@"
+	ln -sf $@ last.buildinfo
 
 # Compile: create object files from C source files. ARM/Thumb
 # Use CFLAGS_OUR_SRC flags only for our source code (all except located in Libraries dir)
@@ -550,7 +602,7 @@ clean_list :
 	$(REMOVE) $(TARGET).hex
 	$(REMOVE) $(TARGET).bin
 	$(REMOVE) $(TARGET).obj
-	$(REMOVE) $(TARGET).elf
+	$(REMOVE) $(TARGET).elf $(TARGET).buildinfo
 	$(REMOVE) $(TARGET).map
 	$(REMOVE) $(TARGET).obj
 	$(REMOVE) $(TARGET).a90

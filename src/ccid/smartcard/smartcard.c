@@ -119,11 +119,11 @@ static void RCC_Configuration (void)
         /* HCLK = SYSCLK */
         RCC_HCLKConfig (RCC_SYSCLK_Div1);
 
-        /* PCLK2 = HCLK */
-        RCC_PCLK2Config (RCC_HCLK_Div1);
+        /* PCLK2 = HCLK/2 */
+        RCC_PCLK2Config (SMARTCARD_PCLK2_DIV);
 
-        /* PCLK1 = HCLK/2 */
-        RCC_PCLK1Config (RCC_HCLK_Div2);
+        /* PCLK1 = HCLK */
+        RCC_PCLK1Config (SMARTCARD_PCLK1_DIV);
 
         /* PLLCLK = 8MHz * 9 = 72 MHz */
         RCC_PLLConfig (RCC_PLLSource_HSE_Div1, RCC_PLLMul_6);   // RB
@@ -158,8 +158,6 @@ static void RCC_Configuration (void)
 *******************************************************************************/
 static void NVIC_Configuration (void)
 {
-    NVIC_InitTypeDef NVIC_InitStructure;
-
 #ifdef  VECT_TAB_RAM
     /* Set the Vector Table base location at 0x20000000 */
     NVIC_SetVectorTable (NVIC_VectTab_RAM, 0x0);
@@ -173,17 +171,19 @@ static void NVIC_Configuration (void)
 
     /* Clear the SC_EXTI_IRQ Pending Bit */
     // NVIC_ClearIRQChannelPendingBit(SC_EXTI_IRQ);
-
+#if NVIC_IRQ == 1
+    NVIC_InitTypeDef NVIC_InitStructure;
     NVIC_InitStructure.NVIC_IRQChannel = SC_EXTI_IRQ;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init (&NVIC_InitStructure);
 
-    /* Enable the USART1 Interrupt */
-    NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQChannel;
+    /* Enable the USART Interrupt */
+    NVIC_InitStructure.NVIC_IRQChannel = SMARTCARD_USART_IRQChannel;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
     NVIC_Init (&NVIC_InitStructure);
+#endif
 }
 
 /*******************************************************************************
@@ -203,10 +203,21 @@ void GPIO_Configuration_Smartcard (void)
     // already done
 
     /* Configure SMARTCARD_POWER_PINs as output push-pull */
-    GPIO_InitStructure.GPIO_Pin = SMARTCARD_POWER_PIN_1 | SMARTCARD_POWER_PIN_2;
+    GPIO_InitStructure.GPIO_Pin = SMARTCARD_POWER_PIN_1;
+    if (SMARTCARD_POWER_PORT == SMARTCARD_POWER_PORT_2) {
+        GPIO_InitStructure.GPIO_Pin = SMARTCARD_POWER_PIN_1 | SMARTCARD_POWER_PIN_2;
+    }
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init (SMARTCARD_POWER_PORT, &GPIO_InitStructure);
+
+    if (SMARTCARD_POWER_PORT != SMARTCARD_POWER_PORT_2) {
+        /* Configure SMARTCARD_POWER_PINs as output push-pull */
+        GPIO_InitStructure.GPIO_Pin = SMARTCARD_POWER_PIN_2;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+        GPIO_Init(SMARTCARD_POWER_PORT_2, &GPIO_InitStructure);
+    }
 
 }
 
@@ -219,7 +230,7 @@ void GPIO_Configuration_Smartcard (void)
 void SmartcardOn (void)
 {
     GPIO_SetBits (SMARTCARD_POWER_PORT, SMARTCARD_POWER_PIN_1);
-    GPIO_SetBits (SMARTCARD_POWER_PORT, SMARTCARD_POWER_PIN_2);
+    GPIO_SetBits (SMARTCARD_POWER_PORT_2, SMARTCARD_POWER_PIN_2);
 }
 
 /*******************************************************************************
@@ -231,7 +242,7 @@ void SmartcardOn (void)
 void SmartcardOff (void)
 {
     GPIO_ResetBits (SMARTCARD_POWER_PORT, SMARTCARD_POWER_PIN_1);
-    GPIO_ResetBits (SMARTCARD_POWER_PORT, SMARTCARD_POWER_PIN_2);
+    GPIO_ResetBits (SMARTCARD_POWER_PORT_2, SMARTCARD_POWER_PIN_2);
 }
 
 /*******************************************************************************
@@ -392,14 +403,14 @@ void SC_PowerCmd (FunctionalState NewState)
     if (NewState != DISABLE)
     {
         GPIO_SetBits (SMARTCARD_POWER_PORT, SMARTCARD_POWER_PIN_1);
-        GPIO_SetBits (SMARTCARD_POWER_PORT, SMARTCARD_POWER_PIN_2);
-        USART_SmartCardCmd (USART1, ENABLE);
+        GPIO_SetBits (SMARTCARD_POWER_PORT_2, SMARTCARD_POWER_PIN_2);
+        USART_SmartCardCmd (SMARTCARD_USART, ENABLE);
     }
     else
     {
-        USART_SmartCardCmd (USART1, DISABLE);   // card is always on
+        USART_SmartCardCmd (SMARTCARD_USART, DISABLE);   // card is always on
         GPIO_ResetBits (SMARTCARD_POWER_PORT, SMARTCARD_POWER_PIN_1);
-        GPIO_ResetBits (SMARTCARD_POWER_PORT, SMARTCARD_POWER_PIN_2);
+        GPIO_ResetBits (SMARTCARD_POWER_PORT_2, SMARTCARD_POWER_PIN_2);
     }
 }
 
@@ -416,7 +427,7 @@ void SC_PowerCmd (FunctionalState NewState)
 *******************************************************************************/
 void SC_Reset (BitAction ResetState)
 {
-    GPIO_WriteBit (GPIO_RESET, SC_RESET, ResetState);
+    GPIO_WriteBit (SMARTCARD_SCRST_PORT, SMARTCARD_SCRST_PIN, ResetState);
 }
 
 /*******************************************************************************
@@ -429,13 +440,13 @@ void SC_Reset (BitAction ResetState)
 *******************************************************************************/
 void SC_ParityErrorHandler (void)
 {
-    USART_SendData (USART1, SCData);
-    while (USART_GetFlagStatus (USART1, USART_FLAG_TC) == RESET)
+    USART_SendData (SMARTCARD_USART, SCData);
+    while (USART_GetFlagStatus (SMARTCARD_USART, USART_FLAG_TC) == RESET)
     {
     }
 }
 
-
+#if 0
 void SC_SetHwParams (u8 cBaudrateIndex, u8 cConversion, u8 Guardtime, u8 Waitingtime)
 {
 RCC_ClocksTypeDef RCC_ClocksStatus;
@@ -449,8 +460,8 @@ USART_InitTypeDef USART_InitStructure;
     /* Reconfigure the USART Baud Rate ------------------------------------------- */
     RCC_GetClocksFreq (&RCC_ClocksStatus);
 
-    apbclock = RCC_ClocksStatus.PCLK2_Frequency;
-    apbclock /= ((USART1->GTPR & (u16) 0x00FF) * 2);
+    apbclock = SMARTCARD_PCLK_STATUS_FREQ;
+    apbclock /= ((SMARTCARD_USART->GTPR & (u16) 0x00FF) * 2);
 
     workingbaudrate = apbclock * D_Table[(cBaudrateIndex & (u8) 0x0F)];
     workingbaudrate /= F_Table[((cBaudrateIndex >> 4) & (u8) 0x0F)];
@@ -461,13 +472,14 @@ USART_InitTypeDef USART_InitStructure;
     USART_InitStructure.USART_Parity = USART_Parity_Even;
     USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
     USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-    USART_Init (USART1, &USART_InitStructure);
+    USART_Init (SMARTCARD_USART, &USART_InitStructure);
 
     /* USART Guard Time set to 16 Bit */
-    USART_SetGuardTime (USART1, 12 + Guardtime);
+    USART_SetGuardTime (SMARTCARD_USART, 12 + Guardtime);
 
 
 }
+#endif
 
 /*******************************************************************************
 * Function Name  : SC_PTSConfig
@@ -476,7 +488,7 @@ USART_InitTypeDef USART_InitStructure;
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void SC_PTSConfig (void)
+int SC_PTSConfig (void)
 {
     RCC_ClocksTypeDef RCC_ClocksStatus;
 
@@ -491,10 +503,10 @@ void SC_PTSConfig (void)
     /* Reconfigure the USART Baud Rate ------------------------------------------- */
     RCC_GetClocksFreq (&RCC_ClocksStatus);
 
-    apbclock = RCC_ClocksStatus.PCLK2_Frequency;
-    apbclock /= ((USART1->GTPR & (u16) 0x00FF) * 2);
+    apbclock = SMARTCARD_PCLK_STATUS_FREQ;
+    apbclock /= ((SMARTCARD_USART->GTPR & (u16) 0x00FF) * 2);
     /* Enable the DMA Receive (Set DMAR bit only) to enable interrupt generation in case of a framing error FE */
-    USART_DMACmd (USART1, USART_DMAReq_Rx, ENABLE);
+    USART_DMACmd (SMARTCARD_USART, USART_DMAReq_Rx, ENABLE);
 
     // SC_A2R.T0 = 0x11; // for slow serial testing
     // SC_A2R.T[0] = 0x11;
@@ -505,8 +517,8 @@ void SC_PTSConfig (void)
         {
             /* Send PTSS */
             SCData = 0xFF;
-            USART_SendData (USART1, SCData);
-            while (USART_GetFlagStatus (USART1, USART_FLAG_TC) == RESET)
+            USART_SendData (SMARTCARD_USART, SCData);
+            while (USART_GetFlagStatus (SMARTCARD_USART, USART_FLAG_TC) == RESET)
             {
             }
 
@@ -520,8 +532,8 @@ void SC_PTSConfig (void)
 
             /* Send PTS0 */
             SCData = 0x11;
-            USART_SendData (USART1, SCData);
-            while (USART_GetFlagStatus (USART1, USART_FLAG_TC) == RESET)
+            USART_SendData (SMARTCARD_USART, SCData);
+            while (USART_GetFlagStatus (SMARTCARD_USART, USART_FLAG_TC) == RESET)
             {
             }
 
@@ -534,8 +546,8 @@ void SC_PTSConfig (void)
             }
             /* Send PTS1 */
             SCData = SC_A2R.T[0];   // 0x13
-            USART_SendData (USART1, SCData);
-            while (USART_GetFlagStatus (USART1, USART_FLAG_TC) == RESET)
+            USART_SendData (SMARTCARD_USART, SCData);
+            while (USART_GetFlagStatus (SMARTCARD_USART, USART_FLAG_TC) == RESET)
             {
             }
 
@@ -550,8 +562,8 @@ void SC_PTSConfig (void)
             /* Send PCK */
 
             SCData = (u8) 0xFF ^ (u8) 0x11 ^ (u8) SC_A2R.T[0];
-            USART_SendData (USART1, SCData);
-            while (USART_GetFlagStatus (USART1, USART_FLAG_TC) == RESET)
+            USART_SendData (SMARTCARD_USART, SCData);
+            while (USART_GetFlagStatus (SMARTCARD_USART, USART_FLAG_TC) == RESET)
             {
             }
 
@@ -615,7 +627,7 @@ void SC_PTSConfig (void)
 
             // GET************* END
 
-            USART_DMACmd (USART1, USART_DMAReq_Rx, DISABLE);
+            USART_DMACmd (SMARTCARD_USART, USART_DMAReq_Rx, DISABLE);
 
             /* PTS Confirm */
             if (PTSConfirmStatus == 0x01)
@@ -627,7 +639,7 @@ void SC_PTSConfig (void)
                 USART_ClockInitStructure.USART_CPOL = USART_CPOL_Low;
                 USART_ClockInitStructure.USART_CPHA = USART_CPHA_1Edge;
                 USART_ClockInitStructure.USART_LastBit = USART_LastBit_Enable;
-                USART_ClockInit (USART1, &USART_ClockInitStructure);
+                USART_ClockInit (SMARTCARD_USART, &USART_ClockInitStructure);
 
                 USART_InitStructure.USART_BaudRate = workingbaudrate;
                 USART_InitStructure.USART_WordLength = USART_WordLength_9b;
@@ -635,10 +647,14 @@ void SC_PTSConfig (void)
                 USART_InitStructure.USART_Parity = USART_Parity_Even;
                 USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
                 USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-                USART_Init (USART1, &USART_InitStructure);
+                USART_Init (SMARTCARD_USART, &USART_InitStructure);
+                USART_SetGuardTime (SMARTCARD_USART, 16); // RB 16
+
+                return TRUE;
             }
         }
     }
+    return FALSE;
 }
 
 /*******************************************************************************
@@ -673,9 +689,9 @@ s32 uRec;
 u32 Counter = 0;
 
 
-    USART_SendData (USART1, uData);
+    USART_SendData (SMARTCARD_USART, uData);
 
-    while (USART_GetFlagStatus (USART1, USART_FLAG_TC) == RESET)
+    while (USART_GetFlagStatus (SMARTCARD_USART, USART_FLAG_TC) == RESET)
     {
         Counter++;
         if (10000L < Counter)
@@ -771,7 +787,7 @@ u8 locData = 0;
     SC_ResponceStatus->SW2 = 0;
 
     /* Enable the DMA Receive (Set DMAR bit only) to enable interrupt generation in case of a framing error FE */
-    USART_DMACmd (USART1, USART_DMAReq_Rx, ENABLE);
+    USART_DMACmd (SMARTCARD_USART, USART_DMAReq_Rx, ENABLE);
 
     /* Send header ------------------------------------------------------------- */
     SendDatabyte (SC_ADPU->Header.CLA);
@@ -791,7 +807,7 @@ u8 locData = 0;
 
 
     /* Flush the USART1 DR */
-    (void) USART_ReceiveData (USART1);
+    (void) USART_ReceiveData (SMARTCARD_USART);
 
     if (SC_GET_NO_STATUS != CheckForSCStatus (SC_ADPU, SC_ResponceStatus))
     {
@@ -809,10 +825,10 @@ u8 locData = 0;
                 SendDatabyte (SC_ADPU->Body.Data[i]);
             }
             /* Flush the USART1 DR */
-            (void) USART_ReceiveData (USART1);
+            (void) USART_ReceiveData (SMARTCARD_USART);
 
             /* Disable the DMA Receive (Reset DMAR bit only) */
-            USART_DMACmd (USART1, USART_DMAReq_Rx, DISABLE);
+            USART_DMACmd (SMARTCARD_USART, USART_DMAReq_Rx, DISABLE);
 
         }
 
@@ -1020,6 +1036,9 @@ u32 i = 0, flag = 0, buf = 0, protocol = 0;
     return (u8) protocol;
 }
 
+#include "platform_config.h"
+void hard_delay(int);
+
 /*******************************************************************************
 * Function Name  : SC_Init
 * Description    : Initializes all peripheral used for Smartcard interface.
@@ -1030,45 +1049,46 @@ u32 i = 0, flag = 0, buf = 0, protocol = 0;
 void SC_Init (void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
-
     USART_InitTypeDef USART_InitStructure;
-
     USART_ClockInitTypeDef USART_ClockInitStructure;
-
     static int nStartFlag = TRUE;
 
     /* Enable GPIO_3_5V, GPIORESET and GPIO_CMDVCC clocks */
-    RCC_APB2PeriphClockCmd (RCC_APB2Periph_RESET, ENABLE);
+    RCC_APB2PeriphClockCmd (SMARTCARD_USART_Periph_POWER_1, ENABLE);
+    if (SMARTCARD_USART_Periph_POWER_1 != SMARTCARD_USART_Periph_POWER_2) {
+        RCC_APB2PeriphClockCmd (SMARTCARD_USART_Periph_POWER_2, ENABLE);
+    }
 
-    /* Enable USART1 clock */
-    RCC_APB2PeriphClockCmd (RCC_APB2Periph_USART1, ENABLE);
-    RCC_APB2PeriphClockCmd (RCC_APB2Periph_AFIO, ENABLE);
-    GPIO_PinRemapConfig (AFIO_MAPR_USART1_REMAP, ENABLE);
-
-    /* Configure USART1 CK(PB.12) as alternate function push-pull */
+    /* Enable USART clock */
+    SMARTCARD_USART_ClockCmd (SMARTCARD_USART_Periph, ENABLE);
+    RCC_APB2PeriphClockCmd (SMARTCARD_USART_AFIO, ENABLE);
+    GPIO_PinRemapConfig (SMARTCARD_USART_REMAP, SMARTCARD_USART_REMAP_VALUE);
 
     if (TRUE == nStartFlag)
     {
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+        // SCCLK
+        /* Configure USART CK as alternate function push-pull */
+        GPIO_InitStructure.GPIO_Pin = SMARTCARD_SCCLK_PIN;
+        GPIO_InitStructure.GPIO_Mode = SMARTCARD_SCCLK_MODE;
         GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-        GPIO_Init (GPIOA, &GPIO_InitStructure);
+        GPIO_Init (SMARTCARD_SCCLK_PORT, &GPIO_InitStructure);
 
-        /* Configure USART1 Tx (PB.10) as alternate function open-drain */
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
+        // SCSDA
+        /* Configure USART Tx as alternate function open-drain */
+        GPIO_InitStructure.GPIO_Pin = SMARTCARD_SCSDA_PIN;
+        GPIO_InitStructure.GPIO_Mode = SMARTCARD_SCSDA_MODE;
+        GPIO_Init (SMARTCARD_SCSDA_PORT, &GPIO_InitStructure);
 
-        GPIO_Init (GPIOB, &GPIO_InitStructure);
-
+        // TODO check if this is optional
         /* Disable JTAG to be able to use PB3 */
         GPIO_PinRemapConfig (GPIO_Remap_SWJ_NoJTRST, ENABLE);
         GPIO_PinRemapConfig (GPIO_Remap_SWJ_JTAGDisable, ENABLE);
 
         /* Configure Smartcard Reset */
-        GPIO_InitStructure.GPIO_Pin = SC_RESET;
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-        GPIO_Init (GPIO_RESET, &GPIO_InitStructure);
-
+        // SCRST
+        GPIO_InitStructure.GPIO_Pin = SMARTCARD_SCRST_PIN;
+        GPIO_InitStructure.GPIO_Mode = SMARTCARD_SCRST_MODE;
+        GPIO_Init (SMARTCARD_SCRST_PORT, &GPIO_InitStructure);
 
         /* Configure Smartcard CMDVCC */
         GPIO_Configuration_Smartcard ();
@@ -1079,40 +1099,44 @@ void SC_Init (void)
        and CTS signals) - Tx and Rx enabled - USART Clock enabled */
 
     /* USART Clock set to 3.6 MHz (PCLK1 (36 MHZ) / 10) */
-    USART_SetPrescaler (USART1, 0x0a);  // RB0x05
+    // 5 bits - 2-64 (values 1-32)
+    // USART1 CLK2 72  -> 72/20 = 3.6
+    // USART3 CLK1 36  -> 36/10 = 3.6
+    USART_SetPrescaler (SMARTCARD_USART, SMARTCARD_PRESCALER);
 
     /* USART Guard Time set to 16 Bit */
-    USART_SetGuardTime (USART1, 1); // RB 16
+    USART_SetGuardTime (SMARTCARD_USART, 1); // RB 16
 
     USART_ClockInitStructure.USART_Clock = USART_Clock_Enable;
     USART_ClockInitStructure.USART_CPOL = USART_CPOL_Low;
     USART_ClockInitStructure.USART_CPHA = USART_CPHA_1Edge;
     USART_ClockInitStructure.USART_LastBit = USART_LastBit_Enable;
-    USART_ClockInit (USART1, &USART_ClockInitStructure);
+    USART_ClockInit (SMARTCARD_USART, &USART_ClockInitStructure);
 
-
+    // 3,6e6 / 372 ~= 9677
+    // 3e6 / 372 ~= 8064
     USART_InitStructure.USART_BaudRate = 9677;
     USART_InitStructure.USART_WordLength = USART_WordLength_9b;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_Parity = USART_Parity_Even;
     USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
     USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-    USART_Init (USART1, &USART_InitStructure);
+    USART_Init (SMARTCARD_USART, &USART_InitStructure);
 
     /* Enable the USART1 Parity Error Interrupt */
-    USART_ITConfig (USART1, USART_IT_PE, ENABLE);
+    USART_ITConfig (SMARTCARD_USART, USART_IT_PE, ENABLE);
 
     /* Enable the USART1 Framing Error Interrupt */
-    USART_ITConfig (USART1, USART_IT_ERR, ENABLE);
+    USART_ITConfig (SMARTCARD_USART, USART_IT_ERR, ENABLE);
 
     /* Enable USART1 */
-    USART_Cmd (USART1, ENABLE);
+    USART_Cmd (SMARTCARD_USART, ENABLE);
 
     /* Enable the NACK Transmission */
-    USART_SmartCardNACKCmd (USART1, ENABLE);
+    USART_SmartCardNACKCmd (SMARTCARD_USART, ENABLE);
 
     /* Enable the Smartcard Interface */
-    USART_SmartCardCmd (USART1, ENABLE);
+    USART_SmartCardCmd (SMARTCARD_USART, ENABLE);
 
     /* Set RSTIN HIGH */
     // SC_Reset(Bit_SET); org
@@ -1122,47 +1146,19 @@ void SC_Init (void)
     SC_PowerCmd (DISABLE);
 
     // Hard wait
-    {
-    unsigned int i;
+    // FIXME check if it is really required, as it was optimized out in Os and still working anyway
+    hard_delay(7);
+}
 
-        for (i = 0; i < 50000; i++);
+void hard_delay(const int times){
+    int j;
+    for (j = 0; j < times; j++){
+        unsigned int i;
+        for (i = 0; i < 50000; i++){
+            __asm__ __volatile__("");
+        }
     };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
- /**/}
+}
 
 /*******************************************************************************
 * Function Name  : SC_DeInit
@@ -1179,83 +1175,24 @@ static void SC_DeInit (void)
     SC_PowerCmd (DISABLE);
     /* Delay (5); */
     // Hard wait
-    {
-    unsigned int i;
+    hard_delay(6);
 
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-
-    /* Deinitializes the USART1 */
-    USART_DeInit (USART1);
+    /* Deinitializes the USART */
+    USART_DeInit (SMARTCARD_USART);
 
     /* Deinitializes the GPIO_RESET */
     // GPIO_DeInit(GPIO_RESET);
 
     /* Disable GPIO_3_5V, GPIO_RESET and GPIO_CMDVCC clocks */
-    RCC_APB2PeriphClockCmd (RCC_APB2Periph_RESET, DISABLE);
+    RCC_APB2PeriphClockCmd (SMARTCARD_SCRST_PERI, DISABLE);
 
-    /* Disable USART1 clock */
-    RCC_APB2PeriphClockCmd (RCC_APB2Periph_USART1, DISABLE);
+    /* Disable USART clock */
+    SMARTCARD_USART_ClockCmd (SMARTCARD_USART_Periph, DISABLE);
     /*
        Delay (5); */
 
     // Hard wait
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-
+    hard_delay(6);
 }
 
 
@@ -1276,14 +1213,14 @@ static ErrorStatus USART_ByteReceive (u8 * Data, u32 TimeOut)
 {
 u32 Counter = 0;
 
-    while ((USART_GetFlagStatus (USART1, USART_FLAG_RXNE) == RESET) && (Counter != TimeOut))
+    while ((USART_GetFlagStatus (SMARTCARD_USART, USART_FLAG_RXNE) == RESET) && (Counter != TimeOut))
     {
         Counter++;
     }
 
     if (Counter != TimeOut)
     {
-        *Data = (u8) USART_ReceiveData (USART1);
+        *Data = (u8) USART_ReceiveData (SMARTCARD_USART);
         return SUCCESS;
     }
     else
@@ -1397,7 +1334,7 @@ int CRD_SendCommand (unsigned char* pTransmitBuffer, unsigned int nCommandSize, 
     }
 
     /* Flush the USART1 DR */
-    (void) USART_ReceiveData (USART1);
+    (void) USART_ReceiveData (SMARTCARD_USART);
 
     for (i = 0; i < ICC_MESSAGE_BUFFER_MAX_LENGTH - USB_MESSAGE_HEADER_SIZE; i++)
     {
@@ -1625,8 +1562,10 @@ char RestartSmartcard (void)
 
 void SmartCardInitInterface (void)
 {
+#ifdef DEBUG_BOOT_LEDS
+    VerifyBlinkError(9999);
+#endif
     initSCHardware ();
-
 
     while (FALSE == WaitForATR ())
     {
@@ -1640,6 +1579,7 @@ void SmartCardInitInterface (void)
     Delay_noUSBCheck (40);
 
     /* Smartcard is ready to work */
-    SwitchSmartcardLED (DISABLE);
-
+#ifdef DEBUG_BOOT_LEDS
+    ClearAllBlinking();
+#endif
 }

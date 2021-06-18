@@ -9,10 +9,15 @@ build-*-Debug
 *.orig
 *tags
 
-build/gcc/nitrokey-pro-firmware.elf
-build/gcc/nitrokey-pro-firmware.sym
-build/gcc/nitrokey-pro-firmware.hex
-build/gcc/nitrokey-pro-firmware.lss
-build/gcc/nitrokey-pro-firmware.map
-build/gcc/nitrokey-pro-firmware.hex
-build/gcc/nitrokey-pro-firmware.sym
+*.elf
+*.lss
+*.map
+*.hex
+*.sym
+*.bin
+*.sig
+*.sha256
+*.zip
+cmake-build-debug
+CMakeLists.txt
+tmp

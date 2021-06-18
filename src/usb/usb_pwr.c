@@ -243,10 +243,11 @@ void USB_Start (void)
     USB_Interrupts_Config ();
 
     USB_Init ();
-
+#ifndef DISABLE_USB_WAIT
     while (bDeviceState != CONFIGURED)
     {
     }
+#endif
 
 
 }
