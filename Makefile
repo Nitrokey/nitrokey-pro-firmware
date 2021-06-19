@@ -5,7 +5,7 @@ OPENOCD_BIN?=
 
 # Set version to anything required; real version will be provided in the .buildinfo anyway
 VERSION=$(shell git describe)
-PROJECT=nitrokey-pro-firmware
+PROJECT=nitrokey-hsm-firmware
 ARCHIVE_NAME=$(PROJECT)-$(VERSION).tar.gz
 
 # Set to "1" to run GPG signing on the hash files with the default key
