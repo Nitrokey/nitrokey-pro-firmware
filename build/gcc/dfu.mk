@@ -29,7 +29,7 @@ bootloader.hex: $(BOOTLOADER)
 	srec_info $@ -i
 
 VERSION=$(shell git describe)
-FIRMWARE_FILE_NAME_UPDATE=nitrokey-pro-firmware-$(VERSION)-to_update.hex
+FIRMWARE_FILE_NAME_UPDATE=nitrokey-hsm-firmware-$(VERSION)-to_update.hex
 firmware.hex: $(FIRMWAREBIN)
 	srec_cat $< -Binary -offset 0x8002000 -Output $@ -Intel 
 	cp $@ $(FIRMWARE_FILE_NAME_UPDATE)
@@ -37,7 +37,7 @@ firmware.hex: $(FIRMWAREBIN)
 	ls -lh $@
 	srec_info $@ -i
 
-FIRMWARE_FILE_NAME=nitrokey-pro-firmware-$(VERSION)-to_flash.hex
+FIRMWARE_FILE_NAME=nitrokey-hsm-firmware-$(VERSION)-to_flash.hex
 all.hex: bootloader.hex firmware.hex
 	srec_cat bootloader.hex -Intel firmware.hex -Intel -Output $@ -Intel
 	cp $@ $(FIRMWARE_FILE_NAME)
