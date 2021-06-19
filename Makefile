@@ -41,11 +41,12 @@ flash-versaloon:
 clean:
 	cd $(BUILD_DIR) && \
 	make clean
+	-rm nitrokey-*-firmware-hw*.tar.gz
 
 deps:
 	sudo apt-get install ${DEPS}
 
-.PHONY: release
+.PHONY: release release-all
 release: | clean
 	mkdir -p release
 	-rm -r release/*.*
@@ -56,6 +57,15 @@ release: | clean
 	cd release && find . -name "*.hex" -type f -printf "%f\0" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512'
 	ls -lh release
 	tar -czvf nitrokey-pro-firmware-hw$(HW_REV).tar.gz -C release .
+
+release-all:
+	mkdir -p release-all
+	-rm -r release-all/*.*
+	$(MAKE) release HW_REV=3
+	mv *tar.gz release-all
+	$(MAKE) release HW_REV=4
+	mv *tar.gz release-all
+	ls -lh release-all/
 
 .PHONY: gdbserver
 gdbserver:
