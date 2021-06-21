@@ -74,19 +74,31 @@ The SWD pins are as follows:
 
 For SWD programming, connect the SWDIO, SWDCLK and GND pads to the respective pins of your ST-Link programmer. The device should be powered externally through USB or a 5V power supply during programming.
 
+### Software
+
+1. To get STM32_Programmer_CLI see:
+    - https://www.st.com/en/development-tools/stm32cubeprog.html (2021-06)
+
+    OpenOCD can be used instead.
+  
+2. `srec_*` tools are part of the `srecord` package (Fedora 32+; see `setup-fedora` recipe)
+3. Bootloader activation is at the moment available only through libnitrokey test suite, soon to be through pynitrokey.
+4. `dfu-util` should be available as a `dfu-util` package (Fedora 32+; see `setup-fedora` recipe)
+5. `arm-none-eabi-objcopy` is a part of the GCC ARM suite
+
 ### Flashing
+To make a release build and flash it:
+```bash
+make devloop-release HW_REV=4
+```
 
-1. `export OPENOCD_BIN=\<path-to-openocd-bin-folder\> && ./flash_versaloon.sh`
-   or edit the script directly to contain `OPENOCD_BIN=\<path-to-openocd-bin-folder\>`
-2. `make flash-vesaloon`
+where `HW_REV=4` specifies the revision 4 of the hardware.
 
-(TODO: For now it has a bug. Run it once, then kill it with Ctrl-C, then re-run it and it should flash the image)
-
-A proper OpenOCD (patched for SWD) seems to be this one:
-https://github.com/snowcap-electronics/OpenOCD-SWD
-
-or this one which is configured for automake 1.14:
-https://github.com/ggkitsas/OpenOCD-SWD
+For the development build:
+```bash
+make devloop HW_REV=4
+```
+This will run the GDB server, and a telnet client connected to it.
 
 ## DFU
 

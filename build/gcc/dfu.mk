@@ -1,5 +1,13 @@
 #!/usr/bin/env -S make 
 
+# 1. To get STM32_Programmer_CLI see:
+# - https://www.st.com/en/development-tools/stm32cubeprog.html (2021-06)
+#	OpenOCD can be used instead.
+# 2. srec_* tools are part of the srecord package (Fedora 32+; see setup-fedora recipe)
+# 3. Bootloader activation is at the moment available only through libnitrokey test suite, soon to be through pynitrokey.
+# 4. dfu-util should be available as a dfu-util package (Fedora 32+; see setup-fedora recipe)
+# 5. arm-none-eabi-objcopy is a part of the GCC ARM suite
+
 WORKSPACE=~/work
 BOOTLOADER=$(WORKSPACE)/dapboot/build/dapboot-nkpro.bin
 FIRMWARE=last.elf
@@ -58,3 +66,7 @@ activate-bootloader:
 .PHONY: reset
 reset:
 	STM32_Programmer_CLI -c port=swd -rst
+
+.PHONY: setup-fedora
+setup-fedora:
+	sudo dnf install srecord dfu-util
