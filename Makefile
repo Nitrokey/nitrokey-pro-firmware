@@ -3,39 +3,21 @@ BUILD_DIR=$(ROOT_DIR)/build/gcc
 SCRIPT_DIR=$(ROOT_DIR)/scripts
 OPENOCD_BIN?=
 
+# Set version to anything required; real version will be provided in the .buildinfo anyway
+VERSION=$(shell git describe)
+PROJECT=nitrokey-pro-firmware
+ARCHIVE_NAME=$(PROJECT)-$(VERSION).tar.gz
+
+# Set to "1" to run GPG signing on the hash files with the default key
+SIGN=0
+
 DEPS=gcc-arm-none-eabi
 
 .PHONY: firmware flash-versaloon clean release
 
 firmware:
-	cd $(BUILD_DIR) && \
-	$(MAKE) && \
-	cd -
-#	mv $(BUILD_DIR)/crypto.elf .
+	cd $(BUILD_DIR) && $(MAKE)
 
-#Reminder:	export OPENOCD_BIN=$(OPENOCD_BIN) 
-flash-versaloon:
-	cd scripts && \
-	./flash-versaloon.sh
-
-#flash-versaloon:
-#	sudo $(OPENOCD_BIN)/openocd gdb_memory_map disable 			\
-								-f interface/vsllink-swd.cfg 	\
-								-f target/stm32f1x.cfg 			\
-								-c init -c reset -c halt 		\
-								-c "stm32f1x unlock 0"			\
-								-c shutdown						\
-								-c exit							
-#	sudo $(OPENOCD_BIN)/openocd gdb_memory_map disable 			\
-								-f interface/vsllink-swd.cfg 	\
-								-f target/stm32f1x.cfg			\
-								-c init -c reset -c halt		\
-								-c "flash write_image erase crypto.elf" \
-								-c "verify_image crypto.elf" 			\
-								-c "reset run"							\
-								-c exit
-	#sudo $(OPENOCD_BIN)/openocd gdb_memory_map disable -f interface/vsllink-swd.cfg -f target/stm32f1x.cfg -f $(SCRIPT_DIR)/write.tcl
-	
 clean:
 	cd $(BUILD_DIR) && \
 	make clean
@@ -49,12 +31,14 @@ release: | clean
 	mkdir -p release
 	-rm -r release/*.*
 	$(MAKE) firmware -j12
-	cd build/gcc && $(MAKE) -f dfu.mk firmware.hex
-	cd build/gcc && $(MAKE) -f dfu.mk all.hex
-	cp `readlink -f $(BUILD_DIR)/last.hex` `readlink -f $(BUILD_DIR)/last_update.hex` `readlink -f $(BUILD_DIR)/last.buildinfo` release/
+	cd $(BUILD_DIR) && $(MAKE) -f dfu.mk firmware.hex VERSION=$(VERSION)
+	cd $(BUILD_DIR) && $(MAKE) -f dfu.mk all.hex VERSION=$(VERSION)
+	cp `readlink -f $(BUILD_DIR)/last_to_flash.hex` `readlink -f $(BUILD_DIR)/last_update.hex` `readlink -f $(BUILD_DIR)/last.buildinfo` release/
 	cd release && find . -name "*.hex" -type f -printf "%f\0" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512'
+	-[ $(SIGN) == 1 ] && cd release && ls -1 *.sha* | xargs -n1 gpg2 --detach-sign
+	-[ $(SIGN) == 1 ] && cd release && ls -1 *.sig | xargs -n1 gpg2 --verify
 	ls -lh release
-	tar -czvf nitrokey-pro-firmware.tar.gz -C release .
+	tar -czvf $(ARCHIVE_NAME) -C release . | sort
 
 release-all:
 	mkdir -p release-all
