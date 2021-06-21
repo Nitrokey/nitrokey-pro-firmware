@@ -47,58 +47,8 @@ void init_BGA_hardware(void) {
 }
 
 
-typedef uint32_t Peripheral_t;
-typedef uint32_t Remap_t;
-typedef uint16_t Pin_t;
-typedef void (*ClockCmd_t)(uint32_t, FunctionalState);
 
-typedef struct PinDefinition{
-    GPIO_TypeDef * port;
-    Pin_t pin_number;
-    GPIOMode_TypeDef mode;
-} PinDefinition;
-
-typedef enum MapClock{
-    MAP_CLK_UNSET = 0,
-    MAP_CLK_PCLK1 = 1,
-    MAP_CLK_PCLK2 = 2
-} MapClock;
-
-typedef uint8_t PrescalerValue;
-typedef uint8_t InterruptValue;
-
-struct HardwareDefinition{
-    struct {
-        USART_TypeDef* USART;
-        ClockCmd_t clock_cmd;
-        Peripheral_t usart_peripheral;
-        Peripheral_t afio_peripheral;
-        Remap_t remap_mapping;
-        Remap_t remap_mapping_value;
-    } usart;
-    struct {
-        PinDefinition power_port_1;
-        PinDefinition power_port_2;
-        PinDefinition sc_clk;
-        PinDefinition sc_sda;
-        PinDefinition sc_rst;
-    } pins;
-    struct {
-        MapClock map_clock;
-        PrescalerValue prescaler_value;
-    } clock;
-    struct {
-        InterruptValue usart;
-        InterruptValue exti;
-    } interrupts;
-
-    struct {
-        PinDefinition smartcard;
-        PinDefinition oath;
-    } led;
-};
-
-const struct HardwareDefinition HW3 = {
+static const struct HardwareDefinition HW3 = {
         .usart = {
                 .USART = USART1,
                 .clock_cmd = RCC_APB2PeriphClockCmd,
@@ -156,7 +106,7 @@ const struct HardwareDefinition HW3 = {
         }
 };
 
-const struct HardwareDefinition HW4 = {
+static const struct HardwareDefinition HW4 = {
         .usart = {
                 .USART = USART3,
                 .clock_cmd = RCC_APB1PeriphClockCmd,
@@ -214,3 +164,31 @@ const struct HardwareDefinition HW4 = {
         }
 };
 
+
+static struct HardwareDefinition const * g_current_hardware = NULL;
+HardwareDefinitionPtr detect_hardware(void) {
+    /*
+    * Check the hardware revision with the following:
+    * 1. set B7 to input-pull up
+    * 2. check if its high - low -> new hardware (rev4), high -> old hardware (rev3)
+    */
+
+    if (g_current_hardware != NULL) {
+        return g_current_hardware;
+    }
+
+    RCC_APB2PeriphClockCmd (RCC_APB2Periph_GPIOB, ENABLE);
+//    GPIO_InitTypeDef GPIO_InitStructure;
+//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//    GPIO_Init (GPIOB, &GPIO_InitStructure);
+
+    const uint8_t state = GPIO_ReadInputDataBit (GPIOB, GPIO_Pin_7);
+    if (state == 0) {
+        g_current_hardware = &HW4;
+    } else{
+        g_current_hardware = &HW3;
+    }
+    return g_current_hardware;
+}
