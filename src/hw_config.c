@@ -287,19 +287,19 @@ void reset_to_bootloader(void) {
     NVIC_SystemReset();
 }
 
-/*******************************************************************************
-* Function Name  : Set_System
-* Description    : Configures Main system clocks & power
-* Input          : None.
-* Return         : None.
-*******************************************************************************/
-
 void exec_bootloader_if_wrong_hardware(void){
     const bool execute_bootloader = detect_hardware() == NULL;
     if (execute_bootloader) {
         reset_to_bootloader();
     }
 }
+
+/*******************************************************************************
+* Function Name  : Set_System
+* Description    : Configures Main system clocks & power
+* Input          : None.
+* Return         : None.
+*******************************************************************************/
 
 void Set_System (void)
 {
