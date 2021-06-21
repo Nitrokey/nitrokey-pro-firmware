@@ -115,8 +115,8 @@
 #define SMARTCARD_USART                     USART1
 #define SMARTCARD_USART_ClockCmd            RCC_APB2PeriphClockCmd
 #define SMARTCARD_USART_Periph              RCC_APB2Periph_USART1
-#define SMARTCARD_USART_Periph_POWER_1      RCC_APB2Periph_GPIOB
-#define SMARTCARD_USART_Periph_POWER_2      RCC_APB2Periph_GPIOB
+#define SMARTCARD_USART_Periph_POWER_1      RCC_APB2Periph_GPIOB // TODO
+#define SMARTCARD_USART_Periph_POWER_2      RCC_APB2Periph_GPIOB // TODO
 #define SMARTCARD_USART_AFIO                RCC_APB2Periph_AFIO
 #define SMARTCARD_USART_REMAP               AFIO_MAPR_USART1_REMAP
 #define SMARTCARD_USART_REMAP_VALUE         (ENABLE)
@@ -139,7 +139,7 @@
 #define SMARTCARD_SCSDA_MODE                GPIO_Mode_AF_OD
 #define SMARTCARD_SCRST_PORT                GPIOB
 #define SMARTCARD_SCRST_PIN                 GPIO_Pin_3
-#define SMARTCARD_SCRST_PERI                RCC_APB2Periph_GPIOB
+#define SMARTCARD_SCRST_PERI                RCC_APB2Periph_GPIOB    // TODO
 #define SMARTCARD_SCRST_MODE                GPIO_Mode_Out_PP
 #define SMARTCARD_PRESCALER                 20/2
 
@@ -147,10 +147,10 @@
 #define SC_EXTI_IRQ                         EXTI9_5_IRQChannel
 
 // port for possible smartcard LED
-#define SMARTCARD_LED_PERIPH				RCC_APB2Periph_GPIOA
+#define SMARTCARD_LED_PERIPH				RCC_APB2Periph_GPIOA    // TODO
 #define SMARTCARD_LED_PIN_PORT				GPIOA
 #define SMARTCARD_LED_PIN					GPIO_Pin_7
-#define OATH_LED_PERIPH						RCC_APB2Periph_GPIOB
+#define OATH_LED_PERIPH						RCC_APB2Periph_GPIOB    // TODO
 #define OATH_LED_PIN_PORT					GPIOB
 #define OATH_LED_PIN						GPIO_Pin_0
 
@@ -182,8 +182,8 @@
 #define SMARTCARD_USART                     USART3
 #define SMARTCARD_USART_ClockCmd            RCC_APB1PeriphClockCmd
 #define SMARTCARD_USART_Periph              RCC_APB1Periph_USART3
-#define SMARTCARD_USART_Periph_POWER_1      RCC_APB2Periph_GPIOB
-#define SMARTCARD_USART_Periph_POWER_2      RCC_APB2Periph_GPIOD
+#define SMARTCARD_USART_Periph_POWER_1      RCC_APB2Periph_GPIOB    // TODO
+#define SMARTCARD_USART_Periph_POWER_2      RCC_APB2Periph_GPIOD    // TODO
 #define SMARTCARD_USART_AFIO                RCC_APB2Periph_AFIO
 #define SMARTCARD_USART_REMAP               AFIO_MAPR_USART3_REMAP
 #define SMARTCARD_USART_REMAP_VALUE         AFIO_MAPR_USART3_REMAP_NOREMAP
@@ -215,14 +215,14 @@
 #define SMARTCARD_SCRST_PORT                GPIOB
 #define SMARTCARD_SCRST_PIN                 GPIO_Pin_3
 #define SMARTCARD_SCRST_MODE                GPIO_Mode_Out_PP
-#define SMARTCARD_SCRST_PERI                RCC_APB2Periph_GPIOB
+#define SMARTCARD_SCRST_PERI                RCC_APB2Periph_GPIOB    // TODO
 
 
 // port for possible smartcard LED
-#define SMARTCARD_LED_PERIPH				RCC_APB2Periph_GPIOA
+#define SMARTCARD_LED_PERIPH				RCC_APB2Periph_GPIOA    // TODO
 #define SMARTCARD_LED_PIN_PORT				GPIOA
 #define SMARTCARD_LED_PIN					GPIO_Pin_4
-#define OATH_LED_PERIPH						RCC_APB2Periph_GPIOA
+#define OATH_LED_PERIPH						RCC_APB2Periph_GPIOA    // TODO
 #define OATH_LED_PIN_PORT					GPIOA
 #define OATH_LED_PIN						GPIO_Pin_7
 
