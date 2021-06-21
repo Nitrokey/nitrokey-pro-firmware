@@ -87,7 +87,10 @@ vu8 IMSI_Content[9] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 // SC_State SCState = SC_POWER_OFF;
 
-
+static struct HardwareDefinition const * l_sc_current_hardware = NULL;
+void set_hardware_for_smartcard(void){
+    l_sc_current_hardware = detect_hardware();
+}
 
 /*******************************************************************************
 * Function Name  : RCC_Configuration

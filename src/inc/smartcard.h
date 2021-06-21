@@ -176,4 +176,6 @@ int WaitForATR (void);
 
 extern SC_ATR SC_A2R;
 
+void set_hardware_for_smartcard(void);
+
 #endif /* __SMARTCARD_H */

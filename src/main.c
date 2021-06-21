@@ -99,6 +99,7 @@ int main(void) {
 
   // Check if the right firmware is used first
   exec_bootloader_if_wrong_hardware();
+  set_hardware_for_smartcard();
 
   USB_SetDeviceConfiguration(STICK_STATE_SMARTCARD);
 
