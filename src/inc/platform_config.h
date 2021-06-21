@@ -97,9 +97,9 @@
 #endif
 
 // TODO
-#define DISABLE_FW_PORT 1
-#define ENABLE_BUTTON 1
-#define NVIC_IRQ 1
+#define DISABLE_FW_PORT 0
+#define ENABLE_BUTTON 0
+#define NVIC_IRQ 0
 
 // COMMON
 #define SMARTCARD_PCLK1_DIV                 RCC_HCLK_Div2
