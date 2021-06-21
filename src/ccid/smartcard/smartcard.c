@@ -28,6 +28,7 @@
 #include "CCID_Global.h"
 #include "CCID_usb.h"
 #include "hw_config.h"
+#include "hw_config_rev4.h"
 
 /* Private typedef ----------------------------------------------------------- */
 /* Private define ------------------------------------------------------------ */
@@ -503,7 +504,7 @@ int SC_PTSConfig (void)
     /* Reconfigure the USART Baud Rate ------------------------------------------- */
     RCC_GetClocksFreq (&RCC_ClocksStatus);
 
-    apbclock = SMARTCARD_PCLK_STATUS_FREQ;
+    apbclock = SMARTCARD_PCLK_STATUS_FREQ(&RCC_ClocksStatus);
     apbclock /= ((SMARTCARD_USART->GTPR & (u16) 0x00FF) * 2);
     /* Enable the DMA Receive (Set DMAR bit only) to enable interrupt generation in case of a framing error FE */
     USART_DMACmd (SMARTCARD_USART, USART_DMAReq_Rx, ENABLE);

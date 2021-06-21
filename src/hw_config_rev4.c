@@ -10,13 +10,32 @@ struct PortPin {
     uint16_t pin;
 };
 
-uint32_t get_peripheral_for_port(GPIO_TypeDef *port) {
+void abort(void);
+void abort(void){
+    while (1);
+}
+
+Peripheral_t get_peripheral_for_port(GPIO_TypeDef *port) {
     if (port == GPIOA) return RCC_APB2Periph_GPIOA;
     if (port == GPIOB) return RCC_APB2Periph_GPIOB;
     if (port == GPIOC) return RCC_APB2Periph_GPIOC;
     if (port == GPIOD) return RCC_APB2Periph_GPIOD;
-    // FIXME report error for invalid argument
-    return RCC_APB2Periph_GPIOA;
+    abort();
+    return 0;
+}
+
+uint32_t get_clock_for_map(RCC_ClocksTypeDef* status, MapClock clock) {
+    switch (clock) {
+        case MAP_CLK_PCLK1:
+            return status->PCLK1_Frequency;
+        case MAP_CLK_PCLK2:
+            return status->PCLK2_Frequency;
+        case MAP_CLK_UNSET:
+        default:
+            break;
+    }
+    abort();
+    return 0;
 }
 
 #define ARR_LEN(x)      (sizeof(x)/sizeof((x)[0]))

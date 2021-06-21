@@ -1,11 +1,9 @@
 #ifndef NITROKEY_PRO_FIRMWARE_HW_CONFIG_REV4_H
 #define NITROKEY_PRO_FIRMWARE_HW_CONFIG_REV4_H
 
+#include <stm32f10x_rcc.h>
+#include "stm32f10x_gpio.h"
 #include "stddef.h"
-
-uint32_t get_peripheral_for_port(GPIO_TypeDef *port);
-void init_BGA_hardware(void);
-
 
 typedef uint32_t Peripheral_t;
 typedef uint32_t Remap_t;
@@ -60,5 +58,10 @@ struct HardwareDefinition{
 
 typedef struct HardwareDefinition const * const HardwareDefinitionPtr;
 HardwareDefinitionPtr detect_hardware(void);
+
+uint32_t get_clock_for_map(RCC_ClocksTypeDef* status, MapClock clock);
+Peripheral_t get_peripheral_for_port(GPIO_TypeDef *port);
+void init_BGA_hardware(void);
+
 
 #endif //NITROKEY_PRO_FIRMWARE_HW_CONFIG_REV4_H

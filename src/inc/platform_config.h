@@ -96,52 +96,14 @@
 #define DEBUG_BOOT_LEDS
 #endif
 
+// TODO
 #define DISABLE_FW_PORT 1
 #define ENABLE_BUTTON 1
 #define NVIC_IRQ 1
 
-#define SMARTCARD_USART                     USART1
-#define SMARTCARD_USART_ClockCmd            RCC_APB2PeriphClockCmd
-#define SMARTCARD_USART_Periph              RCC_APB2Periph_USART1
-#define SMARTCARD_USART_Periph_POWER_1      RCC_APB2Periph_GPIOB // TODO
-#define SMARTCARD_USART_Periph_POWER_2      RCC_APB2Periph_GPIOB // TODO
-#define SMARTCARD_USART_AFIO                RCC_APB2Periph_AFIO
-#define SMARTCARD_USART_REMAP               AFIO_MAPR_USART1_REMAP
-#define SMARTCARD_USART_REMAP_VALUE         (ENABLE)
-
-#define SMARTCARD_POWER_PORT                GPIOB
-#define SMARTCARD_POWER_PIN_1            	GPIO_Pin_4
-#define SMARTCARD_POWER_PORT_2              GPIOB
-#define SMARTCARD_POWER_PIN_2            	GPIO_Pin_5
-
-#define SMARTCARD_PCLK_STATUS_FREQ          RCC_ClocksStatus.PCLK2_Frequency
+// COMMON
 #define SMARTCARD_PCLK1_DIV                 RCC_HCLK_Div2
 #define SMARTCARD_PCLK2_DIV                 RCC_HCLK_Div1
-
-#define SMARTCARD_SCCLK_PORT                GPIOA
-#define SMARTCARD_SCCLK_PIN                 GPIO_Pin_8
-#define SMARTCARD_SCCLK_MODE                GPIO_Mode_AF_PP
-// SCSDA PB6  SCRST PB3
-#define SMARTCARD_SCSDA_PORT                GPIOB
-#define SMARTCARD_SCSDA_PIN                 GPIO_Pin_6
-#define SMARTCARD_SCSDA_MODE                GPIO_Mode_AF_OD
-#define SMARTCARD_SCRST_PORT                GPIOB
-#define SMARTCARD_SCRST_PIN                 GPIO_Pin_3
-#define SMARTCARD_SCRST_PERI                RCC_APB2Periph_GPIOB    // TODO
-#define SMARTCARD_SCRST_MODE                GPIO_Mode_Out_PP
-#define SMARTCARD_PRESCALER                 20/2
-
-#define SMARTCARD_USART_IRQChannel          USART1_IRQChannel
-#define SC_EXTI_IRQ                         EXTI9_5_IRQChannel
-
-// port for possible smartcard LED
-#define SMARTCARD_LED_PERIPH				RCC_APB2Periph_GPIOA    // TODO
-#define SMARTCARD_LED_PIN_PORT				GPIOA
-#define SMARTCARD_LED_PIN					GPIO_Pin_7
-#define OATH_LED_PERIPH						RCC_APB2Periph_GPIOB    // TODO
-#define OATH_LED_PIN_PORT					GPIOB
-#define OATH_LED_PIN						GPIO_Pin_0
-
 #define BUTTON_PERIPH						RCC_APB2Periph_GPIOA
 #define BUTTON_PIN_PORT						GPIOA
 #define BUTTON_PIN						    GPIO_Pin_0
@@ -151,6 +113,45 @@
 #define FIRMWARE_DL_PIN_1                   GPIO_Pin_4
 #define FIRMWARE_DL_PIN_2                   GPIO_Pin_5
 
+
+#define SMARTCARD_USART                     (detect_hardware()->usart.USART)
+#define SMARTCARD_USART_ClockCmd            (detect_hardware()->usart.clock_cmd)
+#define SMARTCARD_USART_Periph              (detect_hardware()->usart.usart_peripheral)
+#define SMARTCARD_USART_AFIO                (detect_hardware()->usart.afio_peripheral)
+#define SMARTCARD_USART_REMAP               (detect_hardware()->usart.remap_mapping)
+#define SMARTCARD_USART_REMAP_VALUE         (detect_hardware()->usart.remap_mapping_value)
+
+#define SMARTCARD_POWER_PORT                (detect_hardware()->pins.power_port_1.port)
+#define SMARTCARD_POWER_PIN_1            	(detect_hardware()->pins.power_port_1.pin_number)
+#define SMARTCARD_POWER_PORT_2              (detect_hardware()->pins.power_port_2.port)
+#define SMARTCARD_POWER_PIN_2            	(detect_hardware()->pins.power_port_2.pin_number)
+#define SMARTCARD_USART_Periph_POWER_1      (get_peripheral_for_port(SMARTCARD_POWER_PORT))
+#define SMARTCARD_USART_Periph_POWER_2      (get_peripheral_for_port(SMARTCARD_POWER_PORT_2))
+
+#define SMARTCARD_PCLK_STATUS_FREQ(RCC_CLOCK_STATUS_PTR)          (get_clock_for_map(RCC_CLOCK_STATUS_PTR, detect_hardware()->clock.map_clock))
+
+#define SMARTCARD_SCCLK_PORT                (detect_hardware()->pins.sc_clk.port)
+#define SMARTCARD_SCCLK_PIN                 (detect_hardware()->pins.sc_clk.pin_number)
+#define SMARTCARD_SCCLK_MODE                (detect_hardware()->pins.sc_clk.mode)
+#define SMARTCARD_SCSDA_PORT                (detect_hardware()->pins.sc_sda.port)
+#define SMARTCARD_SCSDA_PIN                 (detect_hardware()->pins.sc_sda.pin_number)
+#define SMARTCARD_SCSDA_MODE                (detect_hardware()->pins.sc_sda.mode)
+#define SMARTCARD_SCRST_PORT                (detect_hardware()->pins.sc_rst.port)
+#define SMARTCARD_SCRST_PIN                 (detect_hardware()->pins.sc_rst.pin_number)
+#define SMARTCARD_SCRST_PERI                (get_peripheral_for_port(SMARTCARD_SCRST_PORT))
+#define SMARTCARD_SCRST_MODE                (detect_hardware()->pins.sc_rst.mode)
+#define SMARTCARD_PRESCALER                 (detect_hardware()->clock.prescaler_value)
+
+#define SMARTCARD_USART_IRQChannel          (detect_hardware()->interrupts.usart)
+#define SC_EXTI_IRQ                         (detect_hardware()->interrupts.exti)
+
+// port for possible smartcard LED
+#define SMARTCARD_LED_PERIPH				(get_peripheral_for_port(SMARTCARD_LED_PIN_PORT))
+#define SMARTCARD_LED_PIN_PORT				(detect_hardware()->led.smartcard.port)
+#define SMARTCARD_LED_PIN					(detect_hardware()->led.smartcard.pin_number)
+#define OATH_LED_PERIPH						(get_peripheral_for_port(OATH_LED_PIN_PORT))
+#define OATH_LED_PIN_PORT					(detect_hardware()->led.oath.port)
+#define OATH_LED_PIN						(detect_hardware()->led.oath.pin_number)
 
 
 #endif /* USE_STM3210B_EVAL */
