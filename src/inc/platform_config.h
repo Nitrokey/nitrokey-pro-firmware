@@ -96,18 +96,6 @@
 #define DEBUG_BOOT_LEDS
 #endif
 
-#ifndef HW_REV
-#error "HW_REV not specified"
-#endif
-
-#define NK_HW_REV3_ID   (0xA5)
-#define NK_HW_REV4_ID   (0x5A)
-
-#if HW_REV <= 3
-#pragma message "Selecting hardware revision 3"
-
-#define NK_HW_REV_ID    NK_HW_REV3_ID
-
 #define DISABLE_FW_PORT 1
 #define ENABLE_BUTTON 1
 #define NVIC_IRQ 1
@@ -163,72 +151,6 @@
 #define FIRMWARE_DL_PIN_1                   GPIO_Pin_4
 #define FIRMWARE_DL_PIN_2                   GPIO_Pin_5
 
-
-#elif HW_REV == 4
-#pragma message "Selecting hardware revision 4"
-
-#define NK_HW_REV_ID    NK_HW_REV4_ID
-
-#define DISABLE_FW_PORT 0
-#define ENABLE_BUTTON 0
-#define NVIC_IRQ 0
-
-#define FIRMWARE_DL_PERIPH                  RCC_APB2Periph_GPIOC
-#define FIRMWARE_DL_PIN_PORT                GPIOC
-#define FIRMWARE_DL_PIN_1                   GPIO_Pin_4
-#define FIRMWARE_DL_PIN_2                   GPIO_Pin_5
-
-#define SMARTCARD_PRESCALER                 10/2
-#define SMARTCARD_USART                     USART3
-#define SMARTCARD_USART_ClockCmd            RCC_APB1PeriphClockCmd
-#define SMARTCARD_USART_Periph              RCC_APB1Periph_USART3
-#define SMARTCARD_USART_Periph_POWER_1      RCC_APB2Periph_GPIOB    // TODO
-#define SMARTCARD_USART_Periph_POWER_2      RCC_APB2Periph_GPIOD    // TODO
-#define SMARTCARD_USART_AFIO                RCC_APB2Periph_AFIO
-#define SMARTCARD_USART_REMAP               AFIO_MAPR_USART3_REMAP
-#define SMARTCARD_USART_REMAP_VALUE         AFIO_MAPR_USART3_REMAP_NOREMAP
-
-
-// smartcard power supply
-// move power port2 to PD2
-#define SMARTCARD_POWER_PORT                GPIOB
-#define SMARTCARD_POWER_PIN_1            	GPIO_Pin_4
-#define SMARTCARD_POWER_PORT_2              GPIOD
-#define SMARTCARD_POWER_PIN_2            	GPIO_Pin_2
-
-
-#define SMARTCARD_PCLK_STATUS_FREQ          RCC_ClocksStatus.PCLK1_Frequency
-#define SMARTCARD_PCLK1_DIV                 RCC_HCLK_Div2
-#define SMARTCARD_PCLK2_DIV                 RCC_HCLK_Div1
-
-#define SC_EXTI_IRQ                         EXTI15_10_IRQChannel
-#define SMARTCARD_USART_IRQChannel          USART3_IRQChannel
-//* PB12 -> clock pin
-#define SMARTCARD_SCCLK_PORT                GPIOB
-#define SMARTCARD_SCCLK_PIN                 GPIO_Pin_12
-#define SMARTCARD_SCCLK_MODE                GPIO_Mode_AF_PP
-//* move PB10 -> data pin
-#define SMARTCARD_SCSDA_PORT                GPIOB
-#define SMARTCARD_SCSDA_PIN                 GPIO_Pin_10
-#define SMARTCARD_SCSDA_MODE                GPIO_Mode_AF_OD
-//* move PB11 -> reset
-#define SMARTCARD_SCRST_PORT                GPIOB
-#define SMARTCARD_SCRST_PIN                 GPIO_Pin_3
-#define SMARTCARD_SCRST_MODE                GPIO_Mode_Out_PP
-#define SMARTCARD_SCRST_PERI                RCC_APB2Periph_GPIOB    // TODO
-
-
-// port for possible smartcard LED
-#define SMARTCARD_LED_PERIPH				RCC_APB2Periph_GPIOA    // TODO
-#define SMARTCARD_LED_PIN_PORT				GPIOA
-#define SMARTCARD_LED_PIN					GPIO_Pin_4
-#define OATH_LED_PERIPH						RCC_APB2Periph_GPIOA    // TODO
-#define OATH_LED_PIN_PORT					GPIOA
-#define OATH_LED_PIN						GPIO_Pin_7
-
-#else
-#error "Invalid hardware revision selected"
-#endif // HW_REV
 
 
 #endif /* USE_STM3210B_EVAL */
