@@ -4,11 +4,6 @@
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_gpio.h"
 
-// TODO "compress" the structure by using local ids instead of the full 32-bit GPIO pointers, e.g. map A => GPIOA separately
-struct PortPin {
-    GPIO_TypeDef * port;
-    uint16_t pin;
-};
 
 void abort(void);
 void abort(void){
@@ -39,6 +34,11 @@ uint32_t get_clock_for_map(RCC_ClocksTypeDef* status, MapClock clock) {
 }
 
 #if HW_SWITCH_TO_INPUT_BGA_PINS == 1
+// TODO "compress" the structure by using local ids instead of the full 32-bit GPIO pointers, e.g. map A => GPIOA separately
+struct PortPin {
+    GPIO_TypeDef * port;
+    uint16_t pin;
+};
 #define ARR_LEN(x)      (sizeof(x)/sizeof((x)[0]))
 void init_BGA_hardware(void) {
 
