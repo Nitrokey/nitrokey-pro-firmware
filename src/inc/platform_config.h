@@ -100,6 +100,7 @@
 #define DISABLE_FW_PORT 0
 #define ENABLE_BUTTON 0
 #define NVIC_IRQ 0
+#define HW_SWITCH_TO_INPUT_BGA_PINS 0
 
 // COMMON
 #define SMARTCARD_PCLK1_DIV                 RCC_HCLK_Div2

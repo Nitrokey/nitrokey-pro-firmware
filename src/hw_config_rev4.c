@@ -38,6 +38,7 @@ uint32_t get_clock_for_map(RCC_ClocksTypeDef* status, MapClock clock) {
     return 0;
 }
 
+#if HW_SWITCH_TO_INPUT_BGA_PINS == 1
 #define ARR_LEN(x)      (sizeof(x)/sizeof((x)[0]))
 void init_BGA_hardware(void) {
 
@@ -64,7 +65,7 @@ void init_BGA_hardware(void) {
         GPIO_Init ( pins_to_input[i].port, &GPIO_InitStructure);
     }
 }
-
+#endif
 
 
 static const struct HardwareDefinition HW3 = {
