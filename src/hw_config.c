@@ -40,6 +40,7 @@
 #include "RAMDISK_usb_desc.h"
 
 #include "CcidLocalAccess.h"
+#include "hw_config_rev4.h"
 
 /* Private typedef ----------------------------------------------------------- */
 /* Private define ------------------------------------------------------------ */
@@ -72,12 +73,6 @@ void DisableFirmwareDownloadPort (void)
 }
 #endif
 
-enum Hardware {
-    HW_UNKNOWN = 0,
-    HW_NON_BGA_REV3 = NK_HW_REV3_ID,
-    HW_BGA_REV4 = NK_HW_REV4_ID
-};
-enum Hardware detect_hardware(void);
 /*******************************************************************************
 
   DisableSmartcardLED
@@ -292,21 +287,19 @@ void reset_to_bootloader(void) {
     NVIC_SystemReset();
 }
 
+void exec_bootloader_if_wrong_hardware(void){
+    const bool execute_bootloader = detect_hardware() == NULL;
+    if (execute_bootloader) {
+        reset_to_bootloader();
+    }
+}
+
 /*******************************************************************************
 * Function Name  : Set_System
 * Description    : Configures Main system clocks & power
 * Input          : None.
 * Return         : None.
 *******************************************************************************/
-
-void exec_bootloader_if_wrong_hardware(void){
-    const enum Hardware hardware = detect_hardware();
-    const bool execute_bootloader = NK_HW_REV_ID != hardware;
-
-    if (execute_bootloader) {
-        reset_to_bootloader();
-    }
-}
 
 void Set_System (void)
 {
@@ -563,34 +556,6 @@ void RCC_Config (void)
 
 }
 
-enum Hardware g_current_hardware = HW_UNKNOWN;
-
-enum Hardware detect_hardware(void) {
-    /*
-    * Check the hardware revision with the following:
-    * 1. set B7 to input-pull up
-    * 2. check if its high - low -> new hardware, high -> old hardware
-    */
-
-    if (g_current_hardware != HW_UNKNOWN) {
-        return g_current_hardware;
-    }
-
-    RCC_APB2PeriphClockCmd (RCC_APB2Periph_GPIOB, ENABLE);
-//    GPIO_InitTypeDef GPIO_InitStructure;
-//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
-//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//    GPIO_Init (GPIOB, &GPIO_InitStructure);
-
-    const uint8_t state = GPIO_ReadInputDataBit (GPIOB, GPIO_Pin_7);
-    if (state == 0) {
-        g_current_hardware = HW_BGA_REV4;
-    } else{
-        g_current_hardware = HW_NON_BGA_REV3;
-    }
-    return g_current_hardware;
-}
 
 /*******************************************************************************
 * Function Name  : MAL_Config

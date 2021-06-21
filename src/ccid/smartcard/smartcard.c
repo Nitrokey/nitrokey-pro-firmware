@@ -28,6 +28,7 @@
 #include "CCID_Global.h"
 #include "CCID_usb.h"
 #include "hw_config.h"
+#include "hw_config_rev4.h"
 
 /* Private typedef ----------------------------------------------------------- */
 /* Private define ------------------------------------------------------------ */
@@ -86,7 +87,10 @@ vu8 IMSI_Content[9] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 // SC_State SCState = SC_POWER_OFF;
 
-
+static struct HardwareDefinition const * l_sc_current_hardware = NULL;
+void set_hardware_for_smartcard(void){
+    l_sc_current_hardware = detect_hardware();
+}
 
 /*******************************************************************************
 * Function Name  : RCC_Configuration
@@ -503,7 +507,7 @@ int SC_PTSConfig (void)
     /* Reconfigure the USART Baud Rate ------------------------------------------- */
     RCC_GetClocksFreq (&RCC_ClocksStatus);
 
-    apbclock = SMARTCARD_PCLK_STATUS_FREQ;
+    apbclock = SMARTCARD_PCLK_STATUS_FREQ(&RCC_ClocksStatus);
     apbclock /= ((SMARTCARD_USART->GTPR & (u16) 0x00FF) * 2);
     /* Enable the DMA Receive (Set DMAR bit only) to enable interrupt generation in case of a framing error FE */
     USART_DMACmd (SMARTCARD_USART, USART_DMAReq_Rx, ENABLE);

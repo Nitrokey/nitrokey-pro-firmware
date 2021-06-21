@@ -35,7 +35,6 @@
 # Cmd interface paramenters
 VID?=0x20a0
 PID?=0x4108
-HW_REV?=4
 BUILD_DEBUG?=0
 
 ###########################################
@@ -67,7 +66,7 @@ RUN_MODE=ROM_RUN
 
 
 # Target file name (without extension).
-TARGET = nitrokey-pro-firmware-hw$(HW_REV)
+TARGET = nitrokey-pro-firmware
 
 # List C source files here. (C dependencies are automatically generated.)
 # use file-extension c for "c-only"-files
@@ -213,7 +212,7 @@ EXTRA_LIBDIRS =
 CSTANDARD = -std=gnu99
 
 # Place -D or -U options for C here
-CDEFS =  -D$(RUN_MODE) -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD -DUSE_STM3210E_EVAL -DGLOBAL_VID=$(VID) -DGLOBAL_PID=$(PID) -DHW_REV=$(HW_REV) -DBUILD_DEBUG=$(BUILD_DEBUG)
+CDEFS =  -D$(RUN_MODE) -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD -DUSE_STM3210E_EVAL -DGLOBAL_VID=$(VID) -DGLOBAL_PID=$(PID) -DBUILD_DEBUG=$(BUILD_DEBUG)
 #CDEFS =  -D$(RUN_MODE) -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD -DUSE_BOARD_STICK_V12
 # Place -I options here
 CINCS =

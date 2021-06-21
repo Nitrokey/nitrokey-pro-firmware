@@ -96,64 +96,14 @@
 #define DEBUG_BOOT_LEDS
 #endif
 
-#ifndef HW_REV
-#error "HW_REV not specified"
-#endif
+#define DISABLE_FW_PORT 0
+#define ENABLE_BUTTON 0
+#define NVIC_IRQ 0
+#define HW_SWITCH_TO_INPUT_BGA_PINS 0
 
-#define NK_HW_REV3_ID   (0xA5)
-#define NK_HW_REV4_ID   (0x5A)
-
-#if HW_REV <= 3
-#pragma message "Selecting hardware revision 3"
-
-#define NK_HW_REV_ID    NK_HW_REV3_ID
-
-#define DISABLE_FW_PORT 1
-#define ENABLE_BUTTON 1
-#define NVIC_IRQ 1
-
-#define SMARTCARD_USART                     USART1
-#define SMARTCARD_USART_ClockCmd            RCC_APB2PeriphClockCmd
-#define SMARTCARD_USART_Periph              RCC_APB2Periph_USART1
-#define SMARTCARD_USART_Periph_POWER_1      RCC_APB2Periph_GPIOB
-#define SMARTCARD_USART_Periph_POWER_2      RCC_APB2Periph_GPIOB
-#define SMARTCARD_USART_AFIO                RCC_APB2Periph_AFIO
-#define SMARTCARD_USART_REMAP               AFIO_MAPR_USART1_REMAP
-#define SMARTCARD_USART_REMAP_VALUE         (ENABLE)
-
-#define SMARTCARD_POWER_PORT                GPIOB
-#define SMARTCARD_POWER_PIN_1            	GPIO_Pin_4
-#define SMARTCARD_POWER_PORT_2              GPIOB
-#define SMARTCARD_POWER_PIN_2            	GPIO_Pin_5
-
-#define SMARTCARD_PCLK_STATUS_FREQ          RCC_ClocksStatus.PCLK2_Frequency
+// COMMON
 #define SMARTCARD_PCLK1_DIV                 RCC_HCLK_Div2
 #define SMARTCARD_PCLK2_DIV                 RCC_HCLK_Div1
-
-#define SMARTCARD_SCCLK_PORT                GPIOA
-#define SMARTCARD_SCCLK_PIN                 GPIO_Pin_8
-#define SMARTCARD_SCCLK_MODE                GPIO_Mode_AF_PP
-// SCSDA PB6  SCRST PB3
-#define SMARTCARD_SCSDA_PORT                GPIOB
-#define SMARTCARD_SCSDA_PIN                 GPIO_Pin_6
-#define SMARTCARD_SCSDA_MODE                GPIO_Mode_AF_OD
-#define SMARTCARD_SCRST_PORT                GPIOB
-#define SMARTCARD_SCRST_PIN                 GPIO_Pin_3
-#define SMARTCARD_SCRST_PERI                RCC_APB2Periph_GPIOB
-#define SMARTCARD_SCRST_MODE                GPIO_Mode_Out_PP
-#define SMARTCARD_PRESCALER                 20/2
-
-#define SMARTCARD_USART_IRQChannel          USART1_IRQChannel
-#define SC_EXTI_IRQ                         EXTI9_5_IRQChannel
-
-// port for possible smartcard LED
-#define SMARTCARD_LED_PERIPH				RCC_APB2Periph_GPIOA
-#define SMARTCARD_LED_PIN_PORT				GPIOA
-#define SMARTCARD_LED_PIN					GPIO_Pin_7
-#define OATH_LED_PERIPH						RCC_APB2Periph_GPIOB
-#define OATH_LED_PIN_PORT					GPIOB
-#define OATH_LED_PIN						GPIO_Pin_0
-
 #define BUTTON_PERIPH						RCC_APB2Periph_GPIOA
 #define BUTTON_PIN_PORT						GPIOA
 #define BUTTON_PIN						    GPIO_Pin_0
@@ -164,71 +114,44 @@
 #define FIRMWARE_DL_PIN_2                   GPIO_Pin_5
 
 
-#elif HW_REV == 4
-#pragma message "Selecting hardware revision 4"
+#define SMARTCARD_USART                     (l_sc_current_hardware->usart.usart)
+#define SMARTCARD_USART_ClockCmd            (l_sc_current_hardware->usart.clock_cmd)
+#define SMARTCARD_USART_Periph              (l_sc_current_hardware->usart.usart_peripheral)
+#define SMARTCARD_USART_AFIO                (l_sc_current_hardware->usart.afio_peripheral)
+#define SMARTCARD_USART_REMAP               (l_sc_current_hardware->usart.remap_mapping)
+#define SMARTCARD_USART_REMAP_VALUE         (l_sc_current_hardware->usart.remap_mapping_value)
 
-#define NK_HW_REV_ID    NK_HW_REV4_ID
+#define SMARTCARD_POWER_PORT                (l_sc_current_hardware->pins.power_port_1.port)
+#define SMARTCARD_POWER_PIN_1            	(l_sc_current_hardware->pins.power_port_1.pin_number)
+#define SMARTCARD_POWER_PORT_2              (l_sc_current_hardware->pins.power_port_2.port)
+#define SMARTCARD_POWER_PIN_2            	(l_sc_current_hardware->pins.power_port_2.pin_number)
+#define SMARTCARD_USART_Periph_POWER_1      (get_peripheral_for_port(SMARTCARD_POWER_PORT))
+#define SMARTCARD_USART_Periph_POWER_2      (get_peripheral_for_port(SMARTCARD_POWER_PORT_2))
 
-#define DISABLE_FW_PORT 0
-#define ENABLE_BUTTON 0
-#define NVIC_IRQ 0
+#define SMARTCARD_PCLK_STATUS_FREQ(RCC_CLOCK_STATUS_PTR)          (get_clock_for_map(RCC_CLOCK_STATUS_PTR, l_sc_current_hardware->clock.map_clock))
 
-#define FIRMWARE_DL_PERIPH                  RCC_APB2Periph_GPIOC
-#define FIRMWARE_DL_PIN_PORT                GPIOC
-#define FIRMWARE_DL_PIN_1                   GPIO_Pin_4
-#define FIRMWARE_DL_PIN_2                   GPIO_Pin_5
+#define SMARTCARD_SCCLK_PORT                (l_sc_current_hardware->pins.sc_clk.port)
+#define SMARTCARD_SCCLK_PIN                 (l_sc_current_hardware->pins.sc_clk.pin_number)
+#define SMARTCARD_SCCLK_MODE                (l_sc_current_hardware->pins.sc_clk.mode)
+#define SMARTCARD_SCSDA_PORT                (l_sc_current_hardware->pins.sc_sda.port)
+#define SMARTCARD_SCSDA_PIN                 (l_sc_current_hardware->pins.sc_sda.pin_number)
+#define SMARTCARD_SCSDA_MODE                (l_sc_current_hardware->pins.sc_sda.mode)
+#define SMARTCARD_SCRST_PORT                (l_sc_current_hardware->pins.sc_rst.port)
+#define SMARTCARD_SCRST_PIN                 (l_sc_current_hardware->pins.sc_rst.pin_number)
+#define SMARTCARD_SCRST_PERI                (get_peripheral_for_port(SMARTCARD_SCRST_PORT))
+#define SMARTCARD_SCRST_MODE                (l_sc_current_hardware->pins.sc_rst.mode)
+#define SMARTCARD_PRESCALER                 (l_sc_current_hardware->clock.prescaler_value)
 
-#define SMARTCARD_PRESCALER                 10/2
-#define SMARTCARD_USART                     USART3
-#define SMARTCARD_USART_ClockCmd            RCC_APB1PeriphClockCmd
-#define SMARTCARD_USART_Periph              RCC_APB1Periph_USART3
-#define SMARTCARD_USART_Periph_POWER_1      RCC_APB2Periph_GPIOB
-#define SMARTCARD_USART_Periph_POWER_2      RCC_APB2Periph_GPIOD
-#define SMARTCARD_USART_AFIO                RCC_APB2Periph_AFIO
-#define SMARTCARD_USART_REMAP               AFIO_MAPR_USART3_REMAP
-#define SMARTCARD_USART_REMAP_VALUE         AFIO_MAPR_USART3_REMAP_NOREMAP
-
-
-// smartcard power supply
-// move power port2 to PD2
-#define SMARTCARD_POWER_PORT                GPIOB
-#define SMARTCARD_POWER_PIN_1            	GPIO_Pin_4
-#define SMARTCARD_POWER_PORT_2              GPIOD
-#define SMARTCARD_POWER_PIN_2            	GPIO_Pin_2
-
-
-#define SMARTCARD_PCLK_STATUS_FREQ          RCC_ClocksStatus.PCLK1_Frequency
-#define SMARTCARD_PCLK1_DIV                 RCC_HCLK_Div2
-#define SMARTCARD_PCLK2_DIV                 RCC_HCLK_Div1
-
-#define SC_EXTI_IRQ                         EXTI15_10_IRQChannel
-#define SMARTCARD_USART_IRQChannel          USART3_IRQChannel
-//* PB12 -> clock pin
-#define SMARTCARD_SCCLK_PORT                GPIOB
-#define SMARTCARD_SCCLK_PIN                 GPIO_Pin_12
-#define SMARTCARD_SCCLK_MODE                GPIO_Mode_AF_PP
-//* move PB10 -> data pin
-#define SMARTCARD_SCSDA_PORT                GPIOB
-#define SMARTCARD_SCSDA_PIN                 GPIO_Pin_10
-#define SMARTCARD_SCSDA_MODE                GPIO_Mode_AF_OD
-//* move PB11 -> reset
-#define SMARTCARD_SCRST_PORT                GPIOB
-#define SMARTCARD_SCRST_PIN                 GPIO_Pin_3
-#define SMARTCARD_SCRST_MODE                GPIO_Mode_Out_PP
-#define SMARTCARD_SCRST_PERI                RCC_APB2Periph_GPIOB
-
+#define SMARTCARD_USART_IRQChannel          (l_sc_current_hardware->interrupts.usart)
+#define SC_EXTI_IRQ                         (l_sc_current_hardware->interrupts.exti)
 
 // port for possible smartcard LED
-#define SMARTCARD_LED_PERIPH				RCC_APB2Periph_GPIOA
-#define SMARTCARD_LED_PIN_PORT				GPIOA
-#define SMARTCARD_LED_PIN					GPIO_Pin_4
-#define OATH_LED_PERIPH						RCC_APB2Periph_GPIOA
-#define OATH_LED_PIN_PORT					GPIOA
-#define OATH_LED_PIN						GPIO_Pin_7
-
-#else
-#error "Invalid hardware revision selected"
-#endif // HW_REV
+#define SMARTCARD_LED_PERIPH				(get_peripheral_for_port(SMARTCARD_LED_PIN_PORT))
+#define SMARTCARD_LED_PIN_PORT				(detect_hardware()->led.smartcard.port)
+#define SMARTCARD_LED_PIN					(detect_hardware()->led.smartcard.pin_number)
+#define OATH_LED_PERIPH						(get_peripheral_for_port(OATH_LED_PIN_PORT))
+#define OATH_LED_PIN_PORT					(detect_hardware()->led.oath.port)
+#define OATH_LED_PIN						(detect_hardware()->led.oath.pin_number)
 
 
 #endif /* USE_STM3210B_EVAL */
