@@ -69,7 +69,7 @@ void init_BGA_hardware(void) {
 
 static const struct HardwareDefinition HW3 = {
         .usart = {
-                .USART = USART1,
+                .usart = USART1,
                 .clock_cmd = RCC_APB2PeriphClockCmd,
                 .usart_peripheral = RCC_APB2Periph_USART1,
                 .afio_peripheral = RCC_APB2Periph_AFIO,
@@ -127,7 +127,7 @@ static const struct HardwareDefinition HW3 = {
 
 static const struct HardwareDefinition HW4 = {
         .usart = {
-                .USART = USART3,
+                .usart = USART3,
                 .clock_cmd = RCC_APB1PeriphClockCmd,
                 .usart_peripheral = RCC_APB1Periph_USART3,
                 .afio_peripheral = RCC_APB2Periph_AFIO,

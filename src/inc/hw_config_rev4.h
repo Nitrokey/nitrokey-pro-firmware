@@ -27,7 +27,7 @@ typedef uint8_t InterruptValue;
 
 struct HardwareDefinition{
     struct {
-        USART_TypeDef* USART;
+        USART_TypeDef* usart;
         ClockCmd_t clock_cmd;
         Peripheral_t usart_peripheral;
         Peripheral_t afio_peripheral;

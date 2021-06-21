@@ -114,7 +114,7 @@
 #define FIRMWARE_DL_PIN_2                   GPIO_Pin_5
 
 
-#define SMARTCARD_USART                     (detect_hardware()->usart.USART)
+#define SMARTCARD_USART                     (detect_hardware()->usart.usart)
 #define SMARTCARD_USART_ClockCmd            (detect_hardware()->usart.clock_cmd)
 #define SMARTCARD_USART_Periph              (detect_hardware()->usart.usart_peripheral)
 #define SMARTCARD_USART_AFIO                (detect_hardware()->usart.afio_peripheral)
