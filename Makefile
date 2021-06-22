@@ -33,7 +33,7 @@ release: | clean
 	$(MAKE) firmware -j12
 	cd $(BUILD_DIR) && $(MAKE) -f dfu.mk firmware.hex VERSION=$(VERSION)
 	cd $(BUILD_DIR) && $(MAKE) -f dfu.mk all.hex VERSION=$(VERSION)
-	cp `readlink -f $(BUILD_DIR)/last_to_flash.hex` `readlink -f $(BUILD_DIR)/last_update.hex` `readlink -f $(BUILD_DIR)/last.buildinfo` release/
+	cp `readlink -f $(BUILD_DIR)/last_to_flash.hex` `readlink -f $(BUILD_DIR)/last.buildinfo` release/
 	cd release && find . -name "*.hex" -type f -printf "%f\0" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512'
 	-[ $(SIGN) == 1 ] && cd release && ls -1 *.sha* | xargs -n1 gpg2 --detach-sign
 	-[ $(SIGN) == 1 ] && cd release && ls -1 *.sig | xargs -n1 gpg2 --verify
