@@ -34,27 +34,30 @@
 /*-------------------------------------------------------------*/
 /* buffer table base address */
 
-#define BTABLE_ADDRESS      (0x00)
+#define BTABLE_ADDRESS           (0x00)
 
-/* EP0 */
-/* rx/tx buffer base address */
-#define CCID_ENDP0_RXADDR        (0x18)
-#define CCID_ENDP0_TXADDR        (0x58)
+// Entries in the Buffer Description Table describe each endpoint buffer location and size:
 
-/* EP1 */
-/* tx buffer base address */
-#define CCID_ENDP1_TXADDR        (0x98)
+// BTABLE_ADDRESS + EPn * 8 + 0: USB_ADDRn_TX  (TX buffer address inside the PMA)
+// BTABLE_ADDRESS + EPn * 8 + 2: USB_COUNTn_TX (bytes present in the TX buffer)
+// BTABLE_ADDRESS + EPn * 8 + 4: USB_ADDRn_RX  (RX buffer address inside the PMA)
+// BTABLE_ADDRESS + EPn * 8 + 6: USB_COUNTn_RX (bytes available/present for the RX buffer)
 
-/* EP2 */
-/* Rx buffer base address */
-#define CCID_ENDP2_RXADDR        (0xD8)
-/* Tx buffer base address */
-#define CCID_ENDP2_TXADDR        (0x118)
+// EP0, size = 64
+#define CCID_ENDP0_RXADDR        (0x40) // BTABLE_ADDRESS + BTABLE max size (64)
+#define CCID_ENDP0_TXADDR        (0x80)
 
-/* EP3 */
-/* tx buffer base address */
-// #define ENDP3_TXADDR (0x158)
-#define ENDP4_TXADDR        (0x19C)
+// EP1, size = 64 (needs to be checked, found nothing using over 4 bytes in code)
+#define CCID_ENDP1_TXADDR        (0xC0)
+
+// EP2, size = 64
+#define CCID_ENDP2_RXADDR        (0x100)
+#define CCID_ENDP2_TXADDR        (0x140)
+
+// EP4, size = 8
+#define CCID_ENDP4_TXADDR        (0x180)
+
+// PMA size is 512 bytes, last buffer address + size must be < 0x200
 
 /* ISTR events */
 /* IMR_MSK */
