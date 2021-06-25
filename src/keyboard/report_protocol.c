@@ -26,7 +26,7 @@
 #include "usb_lib.h"
 #include "hw_config.h"
 #include "usb_pwr.h"
-#include "CCID_usb.h"
+#include "CCIDHID_usb.h"
 #include "keyboard.h"
 #include "AccessInterface.h"
 #include "hotp.h"

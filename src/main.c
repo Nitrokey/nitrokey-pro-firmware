@@ -24,7 +24,7 @@
 #include "usb_lib.h"
 #include "hw_config.h"
 #include "usb_pwr.h"
-#include "CCID_usb.h"
+#include "CCIDHID_usb.h"
 #include "smartcard.h"
 #include "ramdisk.h"
 #include "keyboard.h"
