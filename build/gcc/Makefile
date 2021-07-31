@@ -262,10 +262,10 @@ CFLAGS += -Wno-cast-qual
 # extra diagnostic
 #CFLAGS += -Wconversion -fno-common -Wdouble-promotion -Wshadow -Wpadded
 #CFLAGS += -fstack-usage & -Wstack-usage=
+CFLAGS += -fstack-protector-all
 ifeq ($(BUILD_DEBUG), 1)
 #CFLAGS += -fdata-sections # makes CCID not working
 CFLAGS += -ffunction-sections
-#CFLAGS += -fstack-protector-all
 endif
 #CFLAGS += -funwind-tables
 #CFLAGS += -fno-unwind-tables -fno-exceptions

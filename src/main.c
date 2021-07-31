@@ -94,6 +94,19 @@ void Test1(void) {
 
 *******************************************************************************/
 
+void __stack_chk_fail(void);
+
+//set stack protection
+__attribute__((unused)) void *__stack_chk_guard = (void *)0xdeadbeef;
+
+__attribute__((unused))
+void __stack_chk_fail(void)
+{
+    //    Stack smashing detected
+    while(1){
+        // TODO set blinking
+    }
+}
 
 int main(void) {
 
