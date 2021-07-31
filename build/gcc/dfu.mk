@@ -16,9 +16,14 @@ flash-bootloader: $(BOOTLOADER)
 	date
 	ls -lh $<
 
+NITROKEY_VID := 20a0
+BOOTLOADER_PID := 42b4
+OPERATION_PID := 4108
+
 .PHONY: flash-dfu
-flash-dfu: $(FIRMWAREBIN)
-	sudo dfu-util -D $<
+flash-dfu: | $(FIRMWAREBIN) device_update
+	sudo dfu-util -D $(FIRMWAREBIN)
+	sleep 1
 
 .PHONY: flash-full
 flash-full: | flash-bootloader flash-dfu
@@ -55,8 +60,27 @@ flash-full-single: $(SINGLE_FW)
 	# STM32_Programmer_CLI -c port=SWD -halt  -u 0x8000000 64000 clear-check.hex
 	STM32_Programmer_CLI -c port=swd -e all -w $< 0x8000000 -v -rst
 
+.PHONY: update
+update: | activate-bootloader flash-dfu run_quick_test
+
+.PHONY: device_operation
+device_operation:
+	lsusb | grep ${NITROKEY_VID}:${OPERATION_PID} || sleep 1
+	lsusb | grep ${NITROKEY_VID}:${OPERATION_PID} || sleep 1
+	lsusb | grep ${NITROKEY_VID}:${OPERATION_PID} || sleep 1
+
+.PHONY: device_update
+device_update:
+	lsusb | grep ${NITROKEY_VID}:${BOOTLOADER_PID} || sleep 1
+	lsusb | grep ${NITROKEY_VID}:${BOOTLOADER_PID} || sleep 1
+	lsusb | grep ${NITROKEY_VID}:${BOOTLOADER_PID} || sleep 1
+
+.PHONY: run_quick_test
+run_quick_test: | device_operation
+	cd $(WORKSPACE)/libnitrokey/unittest && pytest test_pro.py  -k get_status -vx
+
 .PHONY: activate-bootloader
-activate-bootloader:
+activate-bootloader: device_operation
 	cd $(WORKSPACE)/libnitrokey/unittest && pytest test_pro_bootloader.py  -k test_bootloader_run_pro_real -svx --run-skipped
 
 .PHONY: reset

@@ -71,3 +71,8 @@ devloop-release: | clean
 	$(MAKE) firmware -j12
 	- killall openocd
 	cd build/gcc && $(MAKE) -f dfu.mk flash-full-single
+
+.PHONY: devloop-update
+devloop-update: | clean
+	$(MAKE) firmware -j12
+	cd build/gcc && $(MAKE) -f dfu.mk update
