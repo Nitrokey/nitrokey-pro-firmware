@@ -23,7 +23,7 @@ OPERATION_PID := 4108
 .PHONY: flash-dfu
 flash-dfu: | $(FIRMWAREBIN) device_update
 	sudo dfu-util -D $(FIRMWAREBIN)
-	sleep 1
+	sleep 2
 
 .PHONY: flash-full
 flash-full: | flash-bootloader flash-dfu
