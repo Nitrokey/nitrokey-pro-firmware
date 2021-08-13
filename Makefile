@@ -19,8 +19,7 @@ firmware:
 	cd $(BUILD_DIR) && $(MAKE)
 
 clean:
-	cd $(BUILD_DIR) && \
-	make clean
+	cd $(BUILD_DIR) && make clean
 	-rm nitrokey-*-firmware*.tar.gz
 
 deps:
