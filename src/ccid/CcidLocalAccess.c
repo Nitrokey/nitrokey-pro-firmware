@@ -460,7 +460,7 @@ unsigned short CcidGetChallenge (const size_t dest_size, unsigned char* dest)
     const size_t total_data_buffer_size = sizeof(tSCT.cAPDU) - header_size;
     const int sizeToCopySrc = MIN(total_data_buffer_size, total_received_data_size);   // clamp to source data size
     const int sizeToCopyFinal = MIN(dest_size, sizeToCopySrc);                         // clamp to target buffer size
-    if (sizeToCopyFinal > 0) {
+    if (cRet == APDU_ANSWER_COMMAND_CORRECT && sizeToCopyFinal > 0) {
         memcpy (dest, &(tSCT.cAPDU[CCID_DATA]), sizeToCopyFinal);
     }
 
