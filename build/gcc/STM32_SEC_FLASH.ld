@@ -5,6 +5,9 @@ Copyright RAISONANCE 2005
 You can use, modify and distribute thisfile freely, but without any waranty.
 */
 
+GROUP (
+  libnosys.a
+)
 
 
 /* Sections Definitions */

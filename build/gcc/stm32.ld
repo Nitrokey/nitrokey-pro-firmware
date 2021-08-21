@@ -5,6 +5,9 @@ You can use, copy and distribute this file freely, but without any waranty.
 Configure memory sizes, end of stack and boot mode for your project here.
 */
 
+GROUP (
+  libnosys.a
+)
 
 /* include the common STM32F10x sub-script */
 INCLUDE "./STM32_COMMON.ld"

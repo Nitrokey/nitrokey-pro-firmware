@@ -1,5 +1,5 @@
 
-//#define DEFINE_CUSTOM_STACK_CHK_GUARD
+#define DEFINE_CUSTOM_STACK_CHK_GUARD
 #ifdef DEFINE_CUSTOM_STACK_CHK_GUARD
 
 typedef long long int uintptr_t;

@@ -297,7 +297,7 @@ EXTRA_LIBS =
 #Support for newlibc-lpc (file: libnewlibc-lpc.a)
 #NEWLIBLPC = -lnewlib-lpc
 
-MATH_LIB = -lm
+#MATH_LIB = -lm
 
 # CPLUSPLUS_LIB = -lstdc++
 
@@ -306,17 +306,19 @@ MATH_LIB = -lm
 #  -Wl,...:     tell GCC to pass this to linker.
 #    -Map:      create map file
 #    --cref:    add cross reference to  map file
-LDFLAGS = -nostartfiles -Wl,-Map=$(TARGET).map,--cref
-LDFLAGS += -lc
-LDFLAGS += $(NEWLIBLPC) $(MATH_LIB)
-LDFLAGS += -lc -lgcc 
-LDFLAGS += -lrdimon
-LDFLAGS += $(CPLUSPLUS_LIB)
-LDFLAGS += $(patsubst %,-L%,$(EXTRA_LIBDIRS))
-LDFLAGS += $(patsubst %,-l%,$(EXTRA_LIBS))
+LDFLAGS =
+LDFLAGS += -Wl,-nostdlib -Wl,-nodefaultlibs -specs=nosys.specs -lnosys
+LDFLAGS += -Wl,-Map=$(TARGET).map,--cref
+#LDFLAGS += -lc
+#LDFLAGS += $(NEWLIBLPC) $(MATH_LIB)
+#LDFLAGS += -lc -lgcc
+#LDFLAGS += -lrdimon
+#LDFLAGS += $(CPLUSPLUS_LIB)
+#LDFLAGS += $(patsubst %,-L%,$(EXTRA_LIBDIRS))
+#LDFLAGS += $(patsubst %,-l%,$(EXTRA_LIBS))
 LDFLAGS += -Wl,--print-memory-usage
 LDFLAGS += -Wl,--print-gc-sections
-LDFLAGS += -Wl,-nostdlib
+#LDFLAGS += -Wl,-nostdlib -Wl,-nodefaultlibs -specs=nosys.specs -lnosys
 
 ifeq ($(BUILD_DEBUG), 1)
 LDFLAGS += -Wl,--gc-sections
