@@ -60,6 +60,12 @@ flash-full-single: $(SINGLE_FW)
 	# STM32_Programmer_CLI -c port=SWD -halt  -u 0x8000000 64000 clear-check.hex
 	STM32_Programmer_CLI -c port=swd -e all -w $< 0x8000000 -v -rst
 
+DOWNLOAD=download.hex
+PHONY: download-image
+download-image:
+	STM32_Programmer_CLI -c port=SWD -halt  -u 0x8000000 $$((128*1024)) $(DOWNLOAD)
+	ls -lh $(DOWNLOAD)
+
 .PHONY: update
 update: | activate-bootloader flash-dfu run_quick_test
 
