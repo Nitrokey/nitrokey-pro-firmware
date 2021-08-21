@@ -614,7 +614,9 @@ u8 CheckUpdatePin (u8 * Password_pu8, u32 PasswordLen_u32)
     if (FALSE == UpdateSaltInit)
     {
         // Initialize Update Pin with default value
-        StoreNewUpdatePinHashInFlash ((u8 *) "12345678", 8);
+        if(!StoreNewUpdatePinHashInFlash((u8 *) "12345678", 8)){
+          return FALSE;
+        }
         ReadUpdatePinSaltFromFlash (UpdatePinSalt_u8);
     }
 
@@ -658,7 +660,9 @@ u8 StoreNewUpdatePinHashInFlash (u8 * Password_pu8, u32 PasswordLen_u32)
     }
 
     // Generate new salt
-    getRandomNumber (UPDATE_PIN_SALT_SIZE, UpdatePinSalt_u8);
+    if (getRandomNumber(UPDATE_PIN_SALT_SIZE, UpdatePinSalt_u8) == FALSE) {
+        return FALSE;
+    }
 
     WriteUpdatePinSaltToFlash (UpdatePinSalt_u8);
 

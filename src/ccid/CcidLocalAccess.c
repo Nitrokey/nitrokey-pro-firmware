@@ -618,7 +618,9 @@ u32 getRandomNumber (u32 Size_u32, u8 * Data_pu8)
     }
 
     // Get a random number from smartcard
-    CcidGetChallenge (Size_u32, Data_pu8);
+    if (CcidGetChallenge(Size_u32, Data_pu8) != APDU_ANSWER_COMMAND_CORRECT) {
+      return FALSE;
+    }
 
 #ifdef GENERATE_RANDOM_NUMBER_WITH_2ND_SOURCE
     // FIXME check does this actually add entropy?
