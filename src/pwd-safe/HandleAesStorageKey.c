@@ -195,13 +195,15 @@ u32 BuildNewAesMasterKey_u32 (u8 * AdminPW_pu8, u8 * MasterKey_pu8)
     RestartSmartcard ();
 
     // Wait for next smartcard cmd
-    DelayMs (10);
+    DelayMs (20);
 
     // Get a random number for the master key
     if (FALSE == getRandomNumber (AES_KEYSIZE_256_BIT / 2, MasterKey_pu8))
     {
         return (FALSE);
     }
+
+    DelayMs (100);
 
     // Get a random number for the master key
     if (FALSE == getRandomNumber (AES_KEYSIZE_256_BIT / 2, &MasterKey_pu8[AES_KEYSIZE_256_BIT / 2]))
@@ -210,7 +212,7 @@ u32 BuildNewAesMasterKey_u32 (u8 * AdminPW_pu8, u8 * MasterKey_pu8)
     }
 
     // Wait for next smartcard cmd
-    DelayMs (10);
+    DelayMs (20);
 
     // Unlock smartcard for sending master key
     if (FALSE == cardAuthenticate (AdminPW_pu8))
@@ -219,10 +221,10 @@ u32 BuildNewAesMasterKey_u32 (u8 * AdminPW_pu8, u8 * MasterKey_pu8)
     }
 
     // Wait for next smartcard cmd
-    DelayMs (10);
+    DelayMs (20);
 
     // Store master key in smartcard
-int ret = sendAESMasterKey (AES_KEYSIZE_256_BIT, MasterKey_pu8);
+    int ret = sendAESMasterKey (AES_KEYSIZE_256_BIT, MasterKey_pu8);
 
     if (TRUE != ret)
     {
