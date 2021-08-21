@@ -72,6 +72,7 @@ TARGET = nitrokey-pro-firmware
 # use file-extension c for "c-only"-files
 SRC = 		../../src/main.c                                         \
 			../../src/hw_config.c                                         \
+			../../src/stack_protector.c                                         \
 			../../src/test_code.c                                         \
 			../../src/utils/delays.c	\
 			../../src/utils/memory_ops.c			\
@@ -262,10 +263,12 @@ CFLAGS += -Wno-cast-qual
 # extra diagnostic
 #CFLAGS += -Wconversion -fno-common -Wdouble-promotion -Wshadow -Wpadded
 #CFLAGS += -fstack-usage & -Wstack-usage=
+CFLAGS += -fstack-protector-all
+CFLAGS += -nostdlib -nodefaultlibs
 ifeq ($(BUILD_DEBUG), 1)
 #CFLAGS += -fdata-sections # makes CCID not working
 CFLAGS += -ffunction-sections
-#CFLAGS += -fstack-protector-all
+CFLAGS += -mno-unaligned-access
 endif
 #CFLAGS += -funwind-tables
 #CFLAGS += -fno-unwind-tables -fno-exceptions
@@ -313,6 +316,7 @@ LDFLAGS += $(patsubst %,-L%,$(EXTRA_LIBDIRS))
 LDFLAGS += $(patsubst %,-l%,$(EXTRA_LIBS))
 LDFLAGS += -Wl,--print-memory-usage
 LDFLAGS += -Wl,--print-gc-sections
+LDFLAGS += -Wl,-nostdlib
 
 ifeq ($(BUILD_DEBUG), 1)
 LDFLAGS += -Wl,--gc-sections

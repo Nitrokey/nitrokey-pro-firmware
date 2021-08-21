@@ -94,7 +94,6 @@ void Test1(void) {
 
 *******************************************************************************/
 
-
 int main(void) {
 
   // Check if the right firmware is used first
