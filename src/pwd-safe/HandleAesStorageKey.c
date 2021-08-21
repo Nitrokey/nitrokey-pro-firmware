@@ -200,7 +200,7 @@ u32 BuildNewAesMasterKey_u32 (u8 * AdminPW_pu8, u8 * MasterKey_pu8)
     // Get a random number for the master key
     if (FALSE == getRandomNumber (AES_KEYSIZE_256_BIT / 2, MasterKey_pu8))
     {
-        return (FALSE);
+        return (CMD_STATUS_AES_CREATE_KEY_FAILED);
     }
 
     DelayMs (100);
@@ -208,7 +208,7 @@ u32 BuildNewAesMasterKey_u32 (u8 * AdminPW_pu8, u8 * MasterKey_pu8)
     // Get a random number for the master key
     if (FALSE == getRandomNumber (AES_KEYSIZE_256_BIT / 2, &MasterKey_pu8[AES_KEYSIZE_256_BIT / 2]))
     {
-        return (FALSE);
+        return (CMD_STATUS_AES_CREATE_KEY_FAILED);
     }
 
     // Wait for next smartcard cmd
