@@ -22,6 +22,7 @@
 
 
 #include <FlashStorage.h>
+#include <sys/param.h>
 #include "stm32f10x.h"
 #include "platform_config.h"
 #include "hw_config.h"
@@ -429,12 +430,8 @@ unsigned short CcidDecipher (unsigned char* nRetSize)
 
 *******************************************************************************/
 
-unsigned short CcidGetChallenge (int nReceiveLength, unsigned char* nReceiveData)
+unsigned short CcidGetChallenge (const size_t dest_size, unsigned char* dest)
 {
-    int cRet;
-
-    int n;
-
     // Command
     tSCT.cAPDU[CCID_CLA] = 0x00;
     tSCT.cAPDU[CCID_INS] = 0x84;
@@ -443,28 +440,29 @@ unsigned short CcidGetChallenge (int nReceiveLength, unsigned char* nReceiveData
 
     tSCT.cAPDU[CCID_LC] = 0;
 
-    // Something to receive
-    // tSCT.cAPDU.nLe = nReceiveLength; // nReceiveLength;
-
     // Encode Le
-    if (nReceiveLength > 255)
+    if (dest_size > 255)
     {
         tSCT.cAPDU[CCID_DATA] = 0;
-        tSCT.cAPDU[CCID_DATA + 1] = (unsigned char) nReceiveLength >> 8;
-        tSCT.cAPDU[CCID_DATA + 2] = (unsigned char) (nReceiveLength & 0xFF);
+        tSCT.cAPDU[CCID_DATA + 1] = (unsigned char) dest_size >> 8;
+        tSCT.cAPDU[CCID_DATA + 2] = (unsigned char) (dest_size & 0xFF);
     }
     else
-        tSCT.cAPDU[CCID_DATA] = nReceiveLength;
+        tSCT.cAPDU[CCID_DATA] = dest_size;
 
-    cRet = SendAPDU (&tSCT);
+    int cRet = SendAPDU (&tSCT);
 
-    n = tSCT.cAPDUAnswerLength;
-    if (n < nReceiveLength)
-    {
-        n = nReceiveLength;
+    // clamp to the received data size, and requested length
+    // if response is shorter than requested, the bytes in the target buffer are not touched at all
+    const int received_data_size_total = tSCT.cAPDUAnswerLength;
+    const int header_size = CCID_DATA;
+    const int total_received_data_size = received_data_size_total - header_size;
+    const size_t total_data_buffer_size = sizeof(tSCT.cAPDU) - header_size;
+    const int sizeToCopySrc = MIN(total_data_buffer_size, total_received_data_size);   // clamp to source data size
+    const int sizeToCopyFinal = MIN(dest_size, sizeToCopySrc);                         // clamp to target buffer size
+    if (cRet == APDU_ANSWER_COMMAND_CORRECT && sizeToCopyFinal > 0) {
+        memcpy (dest, &(tSCT.cAPDU[CCID_DATA]), sizeToCopyFinal);
     }
-
-    memcpy (nReceiveData, &(tSCT.cAPDU[CCID_DATA]), n - CCID_DATA);
 
     return cRet;
 }
@@ -618,7 +616,13 @@ u32 getRandomNumber (u32 Size_u32, u8 * Data_pu8)
     }
 
     // Get a random number from smartcard
-    CcidGetChallenge (Size_u32, Data_pu8);
+    for (int i = 0; i < 10; ++i) {
+        if (CcidGetChallenge(Size_u32, Data_pu8) == APDU_ANSWER_COMMAND_CORRECT) {
+            return TRUE;
+        }
+        Delay_noUSBCheck(1);
+    }
+    return (FALSE);
 
 #ifdef GENERATE_RANDOM_NUMBER_WITH_2ND_SOURCE
     // FIXME check does this actually add entropy?

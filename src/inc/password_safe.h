@@ -170,6 +170,7 @@ u32 BuildPasswordSafeKey_u32 (void);
 u8 PWS_WriteSlot (u8 Slot_u8, typePasswordSafeSlot_st * Slot_st);
 u8 PWS_ReadSlot (u8 Slot_u8, typePasswordSafeSlot_st * Slot_st);
 
+u32 IsBufferEmpty_u32(const u8 * buffer, size_t buffer_len);
 
 
 #endif /* PASSWORD_SAFE_H_ */

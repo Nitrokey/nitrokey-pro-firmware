@@ -21,6 +21,7 @@
 #define CCID_LOCAL_ACCESS
 
 #include "stm32f10x.h"
+#include <stddef.h>
 
 // #ifdef NOT_USED
 #define APDU_ANSWER_T0_COMMAND_CORRECT          0x6100  /* Command correct, xx bytes available in response (normally used under T=0 or for commands
@@ -142,7 +143,7 @@ unsigned short CcidChangePin (unsigned char cPinNr, const uint8_t* szPin, const 
 unsigned short CcidVerifyPin (unsigned char cPinNr, const uint8_t* szPin);
 unsigned short CcidUnblockPin(uint8_t *new_pin);
 unsigned short CcidDecipher (unsigned char* nRetSize);
-unsigned short CcidGetChallenge (int nReceiveLength, unsigned char* nReceiveData);
+unsigned short CcidGetChallenge (size_t dest_size, unsigned char* dest);
 unsigned short CcidPutAesKey (unsigned int cKeyLen, unsigned char* pcAES_Key);
 int CcidAesDecSub (int nSendLength, unsigned char* cSendData, int nReceiveLength, unsigned char* cReceiveData);
 int CcidAesDec (int nSendLength, unsigned char* cSendData, int nReceiveLength, unsigned char* cReceiveData);

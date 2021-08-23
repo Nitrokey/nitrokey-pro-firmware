@@ -628,6 +628,19 @@ u8 Key_au8[AES_KEYSIZE_256_BIT];
     return (TRUE);
 }
 
+u32 IsBufferEmpty_u32(const u8 * buffer, size_t buffer_len){
+    // check if buffer is filled with zeroes or 0xFFs
+    int diff = 0, i, diff_FF = 0xFF;
+    for (i = 0; i < buffer_len; ++i) {
+        diff |= buffer[i];
+        diff_FF &= buffer[i];
+    }
+    if (diff == 0 || diff_FF == 0xFF) {
+        return (TRUE);
+    }
+
+    return (FALSE);
+}
 
 /*******************************************************************************
 
@@ -651,14 +664,24 @@ u8 PWS_DecryptedPasswordSafeKey (void)
 
     CI_LocalPrintf ("Decrypt password safe key\r\n");
 
-    // Get the encrypted hidden volume slots key
+    // Get the encrypted password safe key
     ReadPasswordSafeKey (DecryptedPasswordSafeKey_au8);
 
-    // Decrypt the slots key of the hidden volumes
+    const size_t halfKeySize = sizeof DecryptedPasswordSafeKey_au8 / 2;
+    if ( IsBufferEmpty_u32(DecryptedPasswordSafeKey_au8, halfKeySize)
+        || IsBufferEmpty_u32(DecryptedPasswordSafeKey_au8 + halfKeySize, halfKeySize)) {
+        return FALSE;
+    }
 
+    // Decrypt the slots key of the password safe
     if (FALSE == DecryptKeyViaSmartcard_u32 (DecryptedPasswordSafeKey_au8))
     {
         return (FALSE);
+    }
+
+    if ( IsBufferEmpty_u32(DecryptedPasswordSafeKey_au8, halfKeySize)
+    || IsBufferEmpty_u32(DecryptedPasswordSafeKey_au8 + halfKeySize, halfKeySize)) {
+        return FALSE;
     }
 
     // Key is ready

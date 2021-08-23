@@ -262,6 +262,10 @@ uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
         break;
 #endif // ADD_DEBUG_COMMANDS
 
+      case CMD_GET_RANDOM:
+        cmd_get_random(report, output);
+        break;
+
       case CMD_CHANGE_USER_PIN:
         cmd_change_user_pin(report, output);
         break;
@@ -295,6 +299,15 @@ uint8_t parse_report(uint8_t * const report, uint8_t * const output) {
   output[OUTPUT_CRC_OFFSET + 3] = (calculated_crc32 >> 24) & 0xFF;
 
   return 0;
+}
+
+uint8_t cmd_get_random(const uint8_t *const report, uint8_t *const output) {
+    const unsigned int size_requested = report[CMD_DATA_OFFSET];
+    const unsigned int size_clamped = s_min(size_requested, KEYBOARD_FEATURE_COUNT-OUTPUT_CMD_RESULT_OFFSET-2);
+    const unsigned int operation_success = getRandomNumber(size_clamped, &output[OUTPUT_CMD_RESULT_OFFSET + 2]);
+    output[OUTPUT_CMD_RESULT_OFFSET] = operation_success;
+    output[OUTPUT_CMD_RESULT_OFFSET+1] = size_clamped;
+    return 0;
 }
 
 bool is_user_PIN_protection_enabled(void) { return *((uint8_t *) (SLOTS_PAGE1_ADDRESS + GLOBAL_CONFIG_OFFSET + 3)) == 1; }

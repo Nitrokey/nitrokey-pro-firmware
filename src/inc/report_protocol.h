@@ -48,6 +48,7 @@
 #define CMD_VERIFY_OTP_CODE                 0x18
 #define CMD_FIRMWARE_UPDATE                 0x19
 #define CMD_CHANGE_FIRMWARE_PASSWORD        0x1A
+#define CMD_GET_RANDOM                      0x1B
 
 
 #define CMD_GET_PW_SAFE_SLOT_STATUS       0x60
@@ -235,6 +236,8 @@ uint8_t cmd_getProDebug (uint8_t * report, uint8_t * output);
 uint8_t cmd_enableFirmwareUpdate(uint8_t *report, uint8_t *output);
 
 uint8_t cmd_changeFirmwarePassword(uint8_t *report, uint8_t *output);
+
+uint8_t cmd_get_random(const uint8_t *const report, uint8_t *const output);
 
 
 // START - OTP Test Routine --------------------------------
