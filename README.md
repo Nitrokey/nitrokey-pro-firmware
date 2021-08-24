@@ -1,4 +1,4 @@
-Nitrokey Pro firmware [![Build Status](https://travis-ci.org/Nitrokey/nitrokey-pro-firmware.svg?branch=master)](https://travis-ci.org/Nitrokey/nitrokey-pro-firmware)  [![Code Health](https://landscape.io/github/Nitrokey/nitrokey-pro-firmware/master/landscape.svg?style=flat)](https://landscape.io/github/Nitrokey/nitrokey-pro-firmware/master) [![Coverity Scan Build](https://scan.coverity.com/projects/4745/badge.svg)](https://scan.coverity.com/projects/4745)
+Nitrokey Pro firmware 
 =====================
 
 The following information is about the firmware of the Nitrokey Pro. For information about the hardware
@@ -10,7 +10,7 @@ repo](https://github.com/Nitrokey/nitrokey-pro-hardware).
 * [Flashing](#flashing)
   * [SWD](#SWD)
     * [Requirements](#requirements)
-    * [Flashing](#flashing)
+    * [Flashing](#flashing-and-development-access)
   * [DFU](#DFU)
     * [Requirements](#dfu-requirements)
     * [Flashing](#flashing-via-dfu)
@@ -20,15 +20,15 @@ Nitrokey Pro, Start and HSM use the same hardware but different firmwares and di
 
 To develop the firmware of the Nitrokey Pro/Start/HSM you would need:
 * An original Nitrokey Pro/Start/HSM or better a development board such as the [Nucleo-F103RB] or the [Olimex STM32-H103]. Alternatively, get any other development board equipped with a STM32F103TB and 128KB flash. On request you can get a Nitrokey for development purposes from us.
-* An OpenPGP Card 2.1 available at [Kernel Concepts] or on request from us. (Of course, this is not necessary for Nitrokey Start which doesn't contain a smart card.)
-If you use it with original Nitrokey hardware, you would need to cut it to Micro-SIM size. This can be done by using a special SIM card cutter or even with a scissor.
+* An OpenPGP Card 3.4 available at [FLOSS Shop] or on request from us. (Of course, this is not necessary for Nitrokey Start which doesn't contain a smart card.)
+If you use it with original Nitrokey hardware, you would need to cut it to Micro-SIM size. This can be done by using a special SIM card cutter or even with scissors.
 If you use a development board, you may solder the OpenPGP Card to the board directly by using some wires or you get yourself a smart card jack which you solder to the dev board instead.
 * To compile the firmware we recommend [ARM's official GNU tools].
 
-[Kernel Concepts]: http://shop.kernelconcepts.de/
+[FLOSS Shop]: https://www.floss-shop.de/
 [Nucleo-F103RB]: https://www.st.com/en/evaluation-tools/nucleo-f103rb.html
 [Olimex STM32-H103]: https://www.olimex.com/Products/ARM/ST/STM32-H103/
-[ARM's official GNU tools]: https://launchpad.net/gcc-arm-embedded/
+[ARM's official GNU tools]: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm
 
 
 # Building
@@ -46,15 +46,15 @@ Parameters:
 |Any user data present on the device will be erased when flashing it. A backup is essential to prevent data loss.|
 
 The microcontroller can be flashed in one of the following ways, depending on your hardware version:
-* **all hardware versions:** [SWD](#SWD) is a STM-specific protocol and similar to JTAG allowing programming and debugging. Working adapters are Versaloon or any of the ST-Link V2 (clones). Under Linux you could give a patched OpenOCD a try but in the past it has been very troublesome. This approach requires to solder wires to the contact pads or to use an adapter with pogo pins and some kind of mounting (recommended).
-* **purchased before 04/04/2018:** [DFU](#DFU) is a simple protocol via serial port which allows programming but no debugging. On older Nitrokey versions, the appropriate pins are exposed over the USB connector (though it not is *not* USB).
+* **all hardware versions:** [SWD](#SWD) is a STM-specific protocol and similar to JTAG allowing programming and debugging. Working adapters are Versaloon or any of the ST-Link V2 (clones). Under Linux  the recent OpenOCD works quite well. This approach requires soldering wires to the contact pads or to use an adapter with pogo pins and some kind of mounting (recommended).
+* **purchased before 04/04/2018:** [DFU](#DFU) is a simple protocol via serial port which allows programming but no debugging. On older Nitrokey versions, the appropriate pins are exposed over the USB connector (though it is *not* USB, the pin is only shared between these two).
 
 ## SWD
 
 ### Requirements
 
 * Download the .hex file you want to flash e.g. look at the [releases section](https://github.com/Nitrokey/nitrokey-pro-firmware/releases) or build it yourself (see above).
-* Any SWD compatible programmer for ST microcontrollers. They come as part of ST's line of [Discovery] and [Nucleo] boards or can be bought seperately from [ST] as well as as [clones] for around $2 on eBay, Amazon or AliExpress (search for "ST-Link v2")
+* Any SWD compatible programmer for ST microcontrollers. They come as part of ST's line of [Discovery] and [Nucleo] boards or can be bought seperately from [ST] as well as as [clones] for around $5 on eBay, Amazon or AliExpress (search for "ST-Link v2")
 
 [Discovery]: https://www.st.com/en/evaluation-tools/stm32-discovery-kits.html
 [Nucleo]: https://www.st.com/en/evaluation-tools/stm32-nucleo-boards.html
@@ -74,19 +74,54 @@ The SWD pins are as follows:
 
 For SWD programming, connect the SWDIO, SWDCLK and GND pads to the respective pins of your ST-Link programmer. The device should be powered externally through USB or a 5V power supply during programming.
 
-### Flashing
+### Flashing and Development Access
 
-1. `export OPENOCD_BIN=\<path-to-openocd-bin-folder\> && ./flash_versaloon.sh`
-   or edit the script directly to contain `OPENOCD_BIN=\<path-to-openocd-bin-folder\>`
-2. `make flash-vesaloon`
+See the [Development Guide] for the current use.
 
-(TODO: For now it has a bug. Run it once, then kill it with Ctrl-C, then re-run it and it should flash the image)
+#### OpenOCD
 
-A proper OpenOCD (patched for SWD) seems to be this one:
-https://github.com/snowcap-electronics/OpenOCD-SWD
+Modern OpenOCD works quite well, if not better than the official tools (especially for the debugging). 
 
-or this one which is configured for automake 1.14:
-https://github.com/ggkitsas/OpenOCD-SWD
+##### GDB Server
+```bash
+  openocd -f interface/stlink-v2.cfg  -f target/stm32f1x.cfg
+```
+
+
+##### Reading MCU Flash
+Make sure the MCU is not memory protected, otherwise this operation will fail.
+
+```text
+$ cat <<END >stm32read.cfg 
+source [find interface/stlink.cfg]
+source [find target/stm32f1x.cfg]
+init
+flash read_bank 0 firmware.bin 0 0x20000
+exit
+END
+$ openocd -f stm32read.cfg
+```
+
+#### STM32 Official Tool
+
+Official tool is available at [stm32cubeprog].
+
+[stm32cubeprog]: https://www.st.com/en/development-tools/stm32cubeprog.html
+
+##### Flashing STM32
+
+```bash
+  STM32_Programmer_CLI -c port=SWD -halt  --readunprotect
+  STM32_Programmer_CLI -c port=swd -e all -w firmware.hex 0x8000000 -v -rst
+```
+
+##### GDB Server
+
+```text
+  st-util
+```
+
+[Development Guide]: ./DEVELOPMENT.md
 
 ## DFU
 
