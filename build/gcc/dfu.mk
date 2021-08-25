@@ -85,11 +85,11 @@ device_update:
 TESTS=get_status
 PYTEST_ARG=test_pro.py -k $(TESTS) -vx
 run_quick_test: | device_operation
-	cd $(WORKSPACE)/libnitrokey/unittest && pytest $(PYTEST_ARG)
+	cd $(WORKSPACE)/libnitrokey/unittest && pipenv run pytest $(PYTEST_ARG)
 
 .PHONY: activate-bootloader
 activate-bootloader: device_operation
-	cd $(WORKSPACE)/libnitrokey/unittest && pytest test_pro_bootloader.py  -k test_bootloader_run_pro_real -svx --run-skipped
+	cd $(WORKSPACE)/libnitrokey/unittest && pipenv run pytest test_pro_bootloader.py  -k test_bootloader_run_pro_real -svx --run-skipped
 
 .PHONY: reset
 reset:
