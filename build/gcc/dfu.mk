@@ -82,8 +82,10 @@ device_update:
 	lsusb | grep ${NITROKEY_VID}:${BOOTLOADER_PID} || sleep 1
 
 .PHONY: run_quick_test
+TESTS=get_status
+PYTEST_ARG=test_pro.py -k $(TESTS) -vx
 run_quick_test: | device_operation
-	cd $(WORKSPACE)/libnitrokey/unittest && pytest test_pro.py  -k get_status -vx
+	cd $(WORKSPACE)/libnitrokey/unittest && pytest $(PYTEST_ARG)
 
 .PHONY: activate-bootloader
 activate-bootloader: device_operation
