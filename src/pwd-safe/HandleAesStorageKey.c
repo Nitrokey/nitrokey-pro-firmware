@@ -56,6 +56,7 @@
 #define AES_KEYSIZE_256_BIT     32  // 32 * 8 = 256
 
 
+#ifdef AES_STORAGE_KEY
 /*******************************************************************************
 
   BuildNewAesStorageKey_u32
@@ -172,6 +173,7 @@ int i;
 
 }
 
+#endif
 
 /*******************************************************************************
 
@@ -359,12 +361,6 @@ u8 MasterKey_au8[AES_KEYSIZE_256_BIT];
     }
 
     Ret_u32 = BuildNewAesMasterKey_u32 (AdminPW_pu8, MasterKey_au8);
-    if (TRUE != Ret_u32)
-    {
-        return CMD_STATUS_AES_CREATE_KEY_FAILED;
-    }
-
-    Ret_u32 = BuildNewAesStorageKey_u32 (MasterKey_au8);
     if (FALSE == Ret_u32)
     {
         return CMD_STATUS_AES_CREATE_KEY_FAILED;
