@@ -361,7 +361,7 @@ u8 MasterKey_au8[AES_KEYSIZE_256_BIT];
     }
 
     Ret_u32 = BuildNewAesMasterKey_u32 (AdminPW_pu8, MasterKey_au8);
-    if (FALSE == Ret_u32)
+    if (CMD_STATUS_OK != Ret_u32)
     {
         return CMD_STATUS_AES_CREATE_KEY_FAILED;
     }
