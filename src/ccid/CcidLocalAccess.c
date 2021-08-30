@@ -202,7 +202,7 @@ unsigned short SendAPDU (typeSmartcardTransfer * _tSCT)
         // orror
         // ??
     {
-        return (_tSCT->cAPDUAnswerStatus);
+        return (_tSCT->cAPDUAnswerStatus); // FAIL
     }
 
     // Chained answer ?
@@ -217,11 +217,11 @@ unsigned short SendAPDU (typeSmartcardTransfer * _tSCT)
             // ??
             (APDU_ANSWER_COMMAND_CORRECT != _tSCT->cAPDUAnswerStatus))
         {
-            return (_tSCT->cAPDUAnswerStatus);
+            return (_tSCT->cAPDUAnswerStatus); // FAIL CHAINED
         }
     }
 
-    return (_tSCT->cAPDUAnswerStatus);
+    return (_tSCT->cAPDUAnswerStatus); // SUCCESS
 }
 
 /*******************************************************************************
