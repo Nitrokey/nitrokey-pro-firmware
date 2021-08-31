@@ -178,4 +178,13 @@ extern SC_ATR SC_A2R;
 
 void set_hardware_for_smartcard(void);
 
+typedef enum SC_REQ_SOURCE {
+    REQ_SRC_NOT_SET,
+    REQ_SRC_UNKNOWN,
+    REQ_SRC_INTERNAL,
+    REQ_SRC_CCID
+} SC_REQ_SOURCE;
+
+extern volatile SC_REQ_SOURCE g_scReqSource;
+
 #endif /* __SMARTCARD_H */

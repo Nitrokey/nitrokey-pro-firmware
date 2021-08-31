@@ -460,7 +460,9 @@ unsigned short CcidGetChallenge (const size_t dest_size, unsigned char* dest)
     else
         tSCT.cAPDU[CCID_DATA] = dest_size;
 
+    g_scReqSource = REQ_SRC_INTERNAL;
     int cRet = SendAPDU (&tSCT);
+    g_scReqSource = REQ_SRC_NOT_SET;
 
     // clamp to the received data size, and requested length
     // if response is shorter than requested, the bytes in the target buffer are not touched at all

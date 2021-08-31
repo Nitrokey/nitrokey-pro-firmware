@@ -37,6 +37,8 @@
 /* Global variables definition and initialization ---------------------------- */
 SC_ATR SC_A2R;
 
+volatile SC_REQ_SOURCE g_scReqSource = REQ_SRC_UNKNOWN;
+
 u8 SC_ATR_Table[40];
 
 u8 SC_ATR_Length = 0;
@@ -1356,7 +1358,7 @@ int CRD_SendCommand (unsigned char* pTransmitBuffer, unsigned int nCommandSize, 
         // checked)
     {
         nDelayTime = SC_Receive_Timeout;
-        if (0 == i)
+        if (0 == i && g_scReqSource != REQ_SRC_INTERNAL)
         {
             nDelayTime = SC_Receive_Timeout * 10000L;   // Long long wait for
             // first byte, allow
