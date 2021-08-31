@@ -196,10 +196,8 @@ unsigned short SendAPDU (typeSmartcardTransfer * _tSCT)
     GenerateTPDU (_tSCT);
     SendTPDU (_tSCT);
 
-    if (APDU_ANSWER_COMMAND_CORRECT != _tSCT->cAPDUAnswerStatus)   // return
-        // on
-        // orror
-        // ??
+    if ((APDU_ANSWER_CHAINED_DATA != _tSCT->cAPDUAnswerStatus) &&
+        (APDU_ANSWER_COMMAND_CORRECT != _tSCT->cAPDUAnswerStatus))
     {
         // return on error
         return (_tSCT->cAPDUAnswerStatus); // FAIL
