@@ -19,6 +19,9 @@
  */
 #pragma once
 
+#ifndef HOTP_H
+#define HOTP_H
+
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -92,8 +95,7 @@ typedef struct {
 
 extern __I uint32_t hotp_slot_counters[NUMBER_OF_HOTP_SLOTS];
 
-
-uint64_t current_time;
+extern uint64_t current_time;
 
 uint64_t endian_swap (uint64_t x);
 
@@ -134,3 +136,5 @@ extern uint32_t get_TOTP_slot_offset(int slot_count);
 extern uint32_t get_slot_offset(int slot_count);
 
 uint32_t crc (uint32_t time);
+
+#endif
