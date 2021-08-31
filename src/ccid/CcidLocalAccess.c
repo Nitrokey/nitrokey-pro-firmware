@@ -428,23 +428,27 @@ unsigned short CcidDecipher (unsigned char* nRetSize)
 
 unsigned short CcidGetChallenge (const size_t dest_size, unsigned char* dest)
 {
+    ClearSCTStruct(&tSCT);
+
     // Command
     tSCT.cAPDU[CCID_CLA] = 0x00;
     tSCT.cAPDU[CCID_INS] = 0x84;
     tSCT.cAPDU[CCID_P1] = 0x00;
     tSCT.cAPDU[CCID_P2] = 0x00;
-
-    tSCT.cAPDU[CCID_LC] = 0;
+    tSCT.cAPDULength = 4;
 
     // Encode Le
     if (dest_size > 255)
     {
+        tSCT.cAPDULength += 2;
         tSCT.cAPDU[CCID_DATA] = 0;
         tSCT.cAPDU[CCID_DATA + 1] = (unsigned char) dest_size >> 8;
         tSCT.cAPDU[CCID_DATA + 2] = (unsigned char) (dest_size & 0xFF);
     }
-    else
+    else {
+        tSCT.cAPDULength += 1;
         tSCT.cAPDU[CCID_DATA] = dest_size;
+    }
 
     g_scReqSource = REQ_SRC_INTERNAL;
     int cRet = SendAPDU (&tSCT);
