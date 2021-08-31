@@ -23,6 +23,7 @@
 
 #include <FlashStorage.h>
 #include <sys/param.h>
+#include <delays.h>
 #include "stm32f10x.h"
 #include "platform_config.h"
 #include "hw_config.h"
@@ -52,13 +53,22 @@ static typeSmartcardTransfer tSCT;
 
 *******************************************************************************/
 
-void InitSCTStruct (typeSmartcardTransfer * _tSCT)
+
+void ClearSCTStruct (typeSmartcardTransfer * _tSCT)
 {
+    memset(_tSCT->cAPDU, 0, sizeof _tSCT->cAPDU);
+    memset(_tSCT->cTPDU, 0, sizeof _tSCT->cTPDU);
     _tSCT->cAPDULength = 0;
     _tSCT->cAPDUAnswerLength = 0;
     _tSCT->cAPDUAnswerStatus = 0;
-    _tSCT->cTPDUSequence = 0;
 }
+
+void InitSCTStruct (typeSmartcardTransfer * _tSCT)
+{
+    _tSCT->cTPDUSequence = 0;
+    ClearSCTStruct(_tSCT);
+}
+
 
 /*******************************************************************************
 
