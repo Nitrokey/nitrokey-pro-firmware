@@ -128,9 +128,7 @@ void GenerateTPDU (typeSmartcardTransfer * _tSCT)
 void GenerateChainedTPDU (typeSmartcardTransfer * _tSCT)
 {
     _tSCT->cTPDU[CCID_TPDU_NAD] = 0; // Node Address (NAD)
-    _tSCT->cTPDU[CCID_TPDU_PCD] = ((_tSCT->cTPDUSequence & 1) << 4) + CCID_TPDU_R_BLOCK_FLAG; // Protocol
-    // Control
-    // Byte
+    _tSCT->cTPDU[CCID_TPDU_PCD] = ((_tSCT->cTPDUSequence & 1) << 4) + CCID_TPDU_R_BLOCK_FLAG; // Protocol Control Byte
     _tSCT->cTPDU[CCID_TPDU_LENGTH] = 0;
 
     _tSCT->cTPDULength = CCID_TPDU_OVERHEAD; // the length of the TPDU
@@ -157,15 +155,13 @@ unsigned char nOverhead = 0;
     CRD_SendCommand ((unsigned char *) _tSCT->cTPDU, _tSCT->cTPDULength, CCID_TRANSFER_BUFFER_MAX, (unsigned int *) &nAnswerLength);
 
 
-    if (CCID_TPDU_ANSWER_OVERHEAD > nAnswerLength)  // answer length
-        // incorrect
+    if (CCID_TPDU_ANSWER_OVERHEAD > nAnswerLength)  // answer length incorrect
     {
         _tSCT->cAPDUAnswerStatus = APDU_ANSWER_RECEIVE_INCORRECT;
         return (_tSCT->cAPDUAnswerStatus);
     }
 
-    if (0 != (_tSCT->cTPDU[CCID_TPDU_PCD] & CCID_TPDU_CHAINING_FLAG))    // chained
-        // data
+    if (0 != (_tSCT->cTPDU[CCID_TPDU_PCD] & CCID_TPDU_CHAINING_FLAG))    // chained data
     {
         nOverhead = CCID_TPDU_ANSWER_OVERHEAD - 2;  // no status data
         _tSCT->cAPDUAnswerStatus = APDU_ANSWER_CHAINED_DATA;
@@ -173,21 +169,16 @@ unsigned char nOverhead = 0;
     else
     {
         nOverhead = CCID_TPDU_ANSWER_OVERHEAD;
-        _tSCT->cAPDUAnswerStatus = _tSCT->cTPDU[nAnswerLength - 3] << 8;  // Statusbyte
-        // SW1
-        _tSCT->cAPDUAnswerStatus += _tSCT->cTPDU[nAnswerLength - 2];  // Statusbyte
-        // SW2
+        _tSCT->cAPDUAnswerStatus = _tSCT->cTPDU[nAnswerLength - 3] << 8;  // Statusbyte SW1
+        _tSCT->cAPDUAnswerStatus += _tSCT->cTPDU[nAnswerLength - 2];  // Statusbyte SW2
     }
 
-    memcpy (&_tSCT->cAPDU[_tSCT->cAPDUAnswerLength], &_tSCT->cTPDU[CCID_TPDU_DATASTART], nAnswerLength - nOverhead);   // add
-    // new
-    // data
-    // to
-    // receive
-    // data
+    // add new data to receive data
+    memcpy (&_tSCT->cAPDU[_tSCT->cAPDUAnswerLength],
+            &_tSCT->cTPDU[CCID_TPDU_DATASTART],
+            nAnswerLength - nOverhead);
 
-    _tSCT->cAPDUAnswerLength += nAnswerLength - nOverhead;   // add length of
-    // recieved data
+    _tSCT->cAPDUAnswerLength += nAnswerLength - nOverhead;   // add length of recieved data
 
     return (_tSCT->cAPDUAnswerStatus);
 }
@@ -202,9 +193,7 @@ unsigned char nOverhead = 0;
 unsigned short SendAPDU (typeSmartcardTransfer * _tSCT)
 {
     _tSCT->cAPDUAnswerLength = 0;
-
     GenerateTPDU (_tSCT);
-
     SendTPDU (_tSCT);
 
     if (APDU_ANSWER_COMMAND_CORRECT != _tSCT->cAPDUAnswerStatus)   // return
@@ -212,21 +201,20 @@ unsigned short SendAPDU (typeSmartcardTransfer * _tSCT)
         // orror
         // ??
     {
+        // return on error
         return (_tSCT->cAPDUAnswerStatus); // FAIL
     }
 
-    // Chained answer ?
+    // Chained answer check
     while (0 != (_tSCT->cTPDU[CCID_TPDU_PCD] & CCID_TPDU_CHAINING_FLAG))
     {
         GenerateChainedTPDU (_tSCT);
         SendTPDU (_tSCT);
 
-        if ((APDU_ANSWER_CHAINED_DATA != _tSCT->cAPDUAnswerStatus) &&    // return
-            // on
-            // error
-            // ??
+        if ((APDU_ANSWER_CHAINED_DATA != _tSCT->cAPDUAnswerStatus) &&
             (APDU_ANSWER_COMMAND_CORRECT != _tSCT->cAPDUAnswerStatus))
         {
+            // return on error
             return (_tSCT->cAPDUAnswerStatus); // FAIL CHAINED
         }
     }
