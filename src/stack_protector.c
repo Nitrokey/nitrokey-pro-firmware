@@ -1,5 +1,5 @@
 
-//#define DEFINE_CUSTOM_STACK_CHK_GUARD
+#define DEFINE_CUSTOM_STACK_CHK_GUARD
 #ifdef DEFINE_CUSTOM_STACK_CHK_GUARD
 
 typedef long long int uintptr_t;
@@ -12,7 +12,6 @@ uintptr_t __stack_chk_guard = 0;
 
 static void __attribute__((constructor,no_stack_protector)) __construct_stk_chk_guard(void);
 __attribute__((weak)) uintptr_t __stack_chk_guard_init(void);
-void __stack_chk_fail(void);
 
 
 static void __attribute__((constructor,no_stack_protector)) __construct_stk_chk_guard(void)
@@ -35,4 +34,15 @@ __attribute__((weak)) uintptr_t __stack_chk_guard_init(void)
 //    return 0xbeeffeeda5a5a5a5;
 //}
 
+__attribute__((noreturn)) void __stack_chk_fail(void)
+{
+    while(1);
+}
 #endif
+
+
+int rand (void);
+
+int rand (void){
+    return 0;
+}

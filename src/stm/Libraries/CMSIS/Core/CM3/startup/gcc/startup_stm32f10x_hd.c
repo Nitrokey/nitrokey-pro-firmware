@@ -320,6 +320,9 @@ void (*const g_pfnVectors[]) (void) =
  * @retval : None
 */
 
+//__attribute__((constructor,no_stack_protector))
+__attribute__((constructor))
+__attribute__((__optimize__ ("-fno-stack-protector")))
 void Reset_Handler (void)
 {
     /* FSMC Bank1 NOR/SRAM3 is used for the STM3210E-EVAL, if another Bank is required, then adjust the Register Addresses */
@@ -342,6 +345,8 @@ void Reset_Handler (void)
  * @retval : None
 */
 
+__attribute__((constructor))
+__attribute__((__optimize__ ("-fno-stack-protector")))
 void __Init_Data (void)
 {
     unsigned long* pulSrc,* pulDest;
