@@ -99,23 +99,15 @@ unsigned char GenerateCRC (unsigned char* pData, unsigned char cLength)
 void GenerateTPDU (typeSmartcardTransfer * _tSCT)
 {
     _tSCT->cTPDU[CCID_TPDU_NAD] = 0; // Node Address (NAD)
-    _tSCT->cTPDU[CCID_TPDU_PCD] = (_tSCT->cTPDUSequence & 1) << 6;    // Protocol
-    // Control
-    // Byte
+    _tSCT->cTPDU[CCID_TPDU_PCD] = (_tSCT->cTPDUSequence & 1) << 6;    // Protocol Control Byte
     _tSCT->cTPDU[CCID_TPDU_LENGTH] = _tSCT->cAPDULength;
 
-    _tSCT->cTPDULength = _tSCT->cAPDULength + CCID_TPDU_OVERHEAD; // the length
-    // of the
-    // TPDU
+    _tSCT->cTPDULength = _tSCT->cAPDULength + CCID_TPDU_OVERHEAD; // the length of the TPDU
     _tSCT->cTPDUSequence++;  // switch sequence
 
-    memcpy (&_tSCT->cTPDU[CCID_TPDU_DATASTART], _tSCT->cAPDU, _tSCT->cAPDULength); // copy
-    // APDU
-    // data
+    memcpy (&_tSCT->cTPDU[CCID_TPDU_DATASTART], _tSCT->cAPDU, _tSCT->cAPDULength); // copy APDU data
 
-    _tSCT->cTPDU[_tSCT->cAPDULength + CCID_TPDU_OVERHEAD - 1] =   // set CRC at
-        // end of
-        // data
+    _tSCT->cTPDU[_tSCT->cAPDULength + CCID_TPDU_OVERHEAD - 1] =   // set CRC at end of data
         GenerateCRC ((unsigned char *) &_tSCT->cTPDU, _tSCT->cAPDULength + CCID_TPDU_PROLOG);
 }
 
