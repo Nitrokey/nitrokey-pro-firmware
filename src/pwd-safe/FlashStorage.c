@@ -721,7 +721,10 @@ uint8_t page_buffer[FLASH_PAGE_SIZE];
     // flashc_erase_user_page (TRUE);
 
     // Set default values
-    InitStickConfigurationToUserPage_u8 ();
+    int res = InitStickConfigurationToUserPage_u8 ();
+    if (res != TRUE) {
+        return FALSE;
+    }
 
     // DFU_DisableFirmwareUpdate (); // Stick always starts in application
     // mode
