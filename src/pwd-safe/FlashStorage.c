@@ -588,9 +588,7 @@ u8 ReadUpdatePinSaltFromFlash (u8 * PIN_pu8)
 
 u8 CheckUpdatePin (u8 * Password_pu8, u32 PasswordLen_u32)
 {
-    u8 i;
-    u8 UpdateSaltInit;
-    u8 output_au8[64];
+    u8 output_au8[64]; // PBKDF2 requires 64 bytes buffer
     u8 UpdatePinSalt_u8[UPDATE_PIN_SALT_SIZE];
     u8 UpdatePinHash_u8[AES_KEYSIZE_256_BIT];
 
@@ -601,17 +599,9 @@ u8 CheckUpdatePin (u8 * Password_pu8, u32 PasswordLen_u32)
 
     ReadUpdatePinSaltFromFlash (UpdatePinSalt_u8);
 
-
     // Check if PIN is uninitialized after flashing
-    UpdateSaltInit = FALSE;
-    for (i=0;i<UPDATE_PIN_SALT_SIZE;i++)
-    {
-      if (0xFF != UpdatePinSalt_u8[i])
-      {
-        UpdateSaltInit = TRUE;
-      }
-    }
-    if (FALSE == UpdateSaltInit)
+    const u8 UpdateSaltInitialized = IsBufferEmpty_u32(UpdatePinSalt_u8, sizeof UpdatePinSalt_u8) == FALSE;
+    if (FALSE == UpdateSaltInitialized)
     {
         // Initialize Update Pin with default value
         if(!StoreNewUpdatePinHashInFlash((u8 *) "12345678", 8)){
