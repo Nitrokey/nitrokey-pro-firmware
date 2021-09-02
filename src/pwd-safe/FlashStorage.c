@@ -660,7 +660,7 @@ u8 StoreNewUpdatePinHashInFlash (u8 * Password_pu8, u32 PasswordLen_u32)
     }
 
     // Generate new salt
-    if (getRandomNumber(UPDATE_PIN_SALT_SIZE, UpdatePinSalt_u8) == FALSE) {
+    if (getRandomNumber(sizeof UpdatePinSalt_u8, UpdatePinSalt_u8) == FALSE) {
         return FALSE;
     }
 
