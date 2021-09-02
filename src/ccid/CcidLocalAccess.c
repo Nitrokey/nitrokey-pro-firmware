@@ -933,8 +933,19 @@ uint8_t slot_tmp[SLOT_SIZE];
         write_to_slot ((OTP_slot *) slot_tmp, get_TOTP_slot_offset(slot_no), SLOT_SIZE);
     }
 
+    // Clear USER_PAGE but leave update password intact
+    u8 UpdatePinHash_u8[32];
+    u8 UpdatePinSalt_u8[10];
+    ReadUpdatePinHashFromFlash(UpdatePinHash_u8);
+    ReadUpdatePinSaltFromFlash(UpdatePinSalt_u8);
+
     // Default flash memory
     EraseLocalFlashKeyValues_u32 ();
+
+    WriteUpdatePinHashToFlash (UpdatePinHash_u8);
+    WriteUpdatePinSaltToFlash (UpdatePinSalt_u8);
+    memset(UpdatePinHash_u8, 0, sizeof UpdatePinHash_u8);
+    memset(UpdatePinSalt_u8, 0, sizeof UpdatePinSalt_u8);
 
     return 0;
 }

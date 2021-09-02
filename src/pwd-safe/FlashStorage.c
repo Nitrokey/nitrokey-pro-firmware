@@ -260,8 +260,6 @@ u8 InitStickConfigurationToUserPage_u8 (void)
 
     WriteStickConfigurationToUserPage ();
 
-    StoreNewUpdatePinHashInFlash ((u8 *) "12345678", 8);
-
     return (TRUE);
 }
 
@@ -515,6 +513,9 @@ u8 WriteUpdatePinHashToFlash (u8 * PIN_Hash_pu8)
 
 *******************************************************************************/
 
+/**
+ * @param PIN_Hash_pu8 array 32 bytes
+ */
 u8 ReadUpdatePinHashFromFlash (u8 * PIN_Hash_pu8)
 {
     memcpy (PIN_Hash_pu8, (void *) (FLASHC_USER_PAGE + 210), 32);
@@ -565,6 +566,9 @@ u8 WriteUpdatePinSaltToFlash (u8 * PIN_pu8)
 
 *******************************************************************************/
 
+/**
+ * @param PIN_Hash_pu8 array 10 bytes
+ */
 u8 ReadUpdatePinSaltFromFlash (u8 * PIN_pu8)
 {
     memcpy (PIN_pu8, (void *) (FLASHC_USER_PAGE + 242), 10);
