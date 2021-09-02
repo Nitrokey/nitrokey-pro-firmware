@@ -613,7 +613,7 @@ u8 CheckUpdatePin (u8 * Password_pu8, u32 PasswordLen_u32)
     pbkdf2 (output_au8, Password_pu8, PasswordLen_u32, UpdatePinSalt_u8, UPDATE_PIN_SALT_SIZE);
     ReadUpdatePinHashFromFlash (UpdatePinHash_u8);
 
-    if (0 != memcmp (UpdatePinHash_u8, output_au8, AES_KEYSIZE_256_BIT))
+    if (0 != memcmp_safe(UpdatePinHash_u8, sizeof UpdatePinHash_u8, output_au8, sizeof UpdatePinHash_u8))
     {
         DelayMs (100);
         return (FALSE);
