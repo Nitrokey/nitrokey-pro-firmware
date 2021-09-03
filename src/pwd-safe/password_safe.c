@@ -642,6 +642,24 @@ u32 IsBufferEmpty_u32(const u8 * buffer, size_t buffer_len){
     return (FALSE);
 }
 
+// integration from Nitrokey Storage
+int memcmp_safe(const u8 *a, size_t a_len, const u8 *b, size_t b_len){
+    // constant time, buffer length checked compare
+    // returns  0 on the same content of both buffers
+    //          -1 on different buffer sizes
+    //          +a on xor calculated differences, 1..255
+    // NOT a drop-in replacement for memcmp
+    if (a_len != b_len) {
+        return -1;
+    }
+    int diff = 0, i;
+    for (i = 0; i < a_len; ++i) {
+        diff |= a[i] ^ b[i];
+    }
+    return diff;
+}
+
+
 /*******************************************************************************
 
   DecryptedPasswordSafeKey

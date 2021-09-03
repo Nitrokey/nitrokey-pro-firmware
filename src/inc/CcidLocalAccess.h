@@ -129,6 +129,7 @@ typedef struct
 } typeSmartcardTransfer;
 
 void InitSCTStruct (typeSmartcardTransfer * _tSCT);
+void ClearSCTStruct (typeSmartcardTransfer * _tSCT);
 unsigned char GenerateCRC (unsigned char* pData, unsigned char cLength);
 void GenerateTPDU (typeSmartcardTransfer * _tSCT);
 void GenerateChainedTPDU (typeSmartcardTransfer * _tSCT);
