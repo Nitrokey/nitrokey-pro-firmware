@@ -16,15 +16,22 @@
 ### Test list
 Firstly the automated tests should be executed, and after passing them the manual ones.
 
-1. libnitrokey - `test_pro.py`, any other `test_issue*.py` if needed
-2. GNUK tests for OpenPGP card -> NK Start /tests
+1. libnitrokey: 
+   - `test_pro.py` 
+   - `test_pro_bootloader.py` 
+   - `test_issues.py` if needed
+2. GNUK tests for OpenPGP card -> NK Start's `/tests`
 3. Firmware update tests:
-   - from S -> D (check if user data are retained)
-   - from D -> S (check rollback possibility)
+   - prepare device 
+     - populate device (e.g. by running tests)
+   - from S -> D (check if user's data are retained)
+     - test device, check for the retained data
    - from D -> D (check upgrade possibility for the future releases)
+   - from D -> S (check rollback possibility)
+     - test device, check for the retained data
   
    where:
-     - S is the current latest **S**table firmware
+     - S stands for the current latest **S**table firmware
      - D is the firmware under test and **D**evelopment
 4. Brief manual Nitrokey App test
 5. Other manual tests according to the test sheet
