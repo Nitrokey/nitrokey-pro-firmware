@@ -30,3 +30,11 @@ Both will prepare binaries using the default `arm-none-eabi-gcc` installed compi
 - `main.c`
 - `report_protocol.c`
 - `smartcard.c`
+
+## Run tests
+
+Assuming `WORKSPACE` is `~/work`. Can be changed by specifying in the call - see below. 
+```text
+$ make -f build/gcc/dfu.mk run_quick_test
+$ make -f build/gcc/dfu.mk run_quick_test PYTEST_ARG="test_pro.py -v --randomly-dont-reorganize" WORKSPACE=~/workspace
+```
