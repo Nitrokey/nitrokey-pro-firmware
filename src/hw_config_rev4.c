@@ -173,12 +173,12 @@ static const struct HardwareDefinition HW4 = {
         .led = {
                 .smartcard = {
                         .port = GPIOA,
-                        .pin_number = GPIO_Pin_4,
+                        .pin_number = GPIO_Pin_7,
                         .mode = GPIO_Mode_Out_PP
                 },
                 .oath = {
                         .port = GPIOA,
-                        .pin_number = GPIO_Pin_7,
+                        .pin_number = GPIO_Pin_4,
                         .mode = GPIO_Mode_Out_PP
                 }
         }
