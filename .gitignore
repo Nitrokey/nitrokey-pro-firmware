@@ -13,6 +13,7 @@ build-*-Debug
 *.lss
 *.map
 *.hex
+*.buildinfo
 *.sym
 *.bin
 *.sig
