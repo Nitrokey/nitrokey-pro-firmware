@@ -31,9 +31,6 @@
 /* Exported define ----------------------------------------------------------- */
 #define CCID_SIZ_DEVICE_DESC              18
 #define CCID_SIZ_CONFIG_DESC              (1*0x09 + 2*0x09+ 1*0x07+ 0x09 + 0x36+3*0x07)
-// #define CCID_SIZ_CONFIG_DESC (1*0x09 + 3*0x09 +0x36 + 4*0x07)
-// #define CCID_SIZ_CONFIG_DESC (3*0x09 +2*0x36 + 6*0x07)
-
 
 #define CCID_SIZ_STRING_LANGID            4
 #define CCID_SIZ_STRING_VENDOR            (38+14)
@@ -41,29 +38,12 @@
 #define CCID_SIZ_STRING_SERIAL            50
 #define CCID_SIZ_STRING_INTERFACE         16
 
-#define USB_DEVICE_DESCRIPTOR_TYPE              0x01
-#define USB_CONFIGURATION_DESCRIPTOR_TYPE       0x02
-#define USB_STRING_DESCRIPTOR_TYPE              0x03
-#define USB_INTERFACE_DESCRIPTOR_TYPE           0x04
-#define USB_ENDPOINT_DESCRIPTOR_TYPE            0x05
-
 #define HID_DESCRIPTOR_TYPE                     0x21
+
 #define KEYBOARD_SIZ_HID_DESC                   0x09
-// #define KEYBOARD_OFF_HID_DESC 0x66
 #define KEYBOARD_OFF_HID_DESC                   0x12
 
-
-#define JOYSTICK_SIZ_DEVICE_DESC                18
-#define JOYSTICK_SIZ_CONFIG_DESC                34
-// #define KEYBOARD_SIZ_REPORT_DESC 63+22
 #define KEYBOARD_SIZ_REPORT_DESC                (42)
-// #define KEYBOARD_SIZ_REPORT_DESC 74
-#define JOYSTICK_SIZ_STRING_LANGID              4
-#define JOYSTICK_SIZ_STRING_VENDOR              38
-#define JOYSTICK_SIZ_STRING_PRODUCT             30
-#define JOYSTICK_SIZ_STRING_SERIAL              26
-
-#define STANDARD_ENDPOINT_DESC_SIZE             0x09
 
 #define KEYBOARD_FEATURE_COUNT                64
 
