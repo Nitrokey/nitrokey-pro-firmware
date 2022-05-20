@@ -20,6 +20,7 @@ firmware:
 
 clean:
 	cd $(BUILD_DIR) && make clean
+	cd $(BUILD_DIR) && make -f dfu.mk clean
 	-rm nitrokey-*-firmware*.tar.gz
 
 deps:

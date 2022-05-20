@@ -10,7 +10,12 @@ $(DAPBOOT_DIR)/libopencm3/Makefile:
 	git submodule update --init --recursive
 
 $(BOOTLOADER):
-	cd $(DAPBOOT_DIR) && make clean && make -f release.Makefile
+	cd $(DAPBOOT_DIR) && make -f release.Makefile clean && make -f release.Makefile
+
+.PHONY: clean
+clean:
+	cd $(DAPBOOT_DIR) && make -f release.Makefile clean
+
 
 .PHONY: flash-bootloader
 flash-bootloader: $(BOOTLOADER)
