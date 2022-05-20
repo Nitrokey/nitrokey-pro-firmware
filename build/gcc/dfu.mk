@@ -1,9 +1,16 @@
 #!/usr/bin/env -S make 
 
 WORKSPACE=~/work
-BOOTLOADER=$(WORKSPACE)/dapboot/build/dapboot-nkpro.bin
+DAPBOOT_DIR=../../dapboot
+BOOTLOADER=$(DAPBOOT_DIR)/build/dapboot-nkpro.bin
 FIRMWARE=last.elf
 FIRMWAREBIN=last.bin
+
+$(DAPBOOT_DIR)/libopencm3/Makefile:
+	git submodule update --init --recursive
+
+$(BOOTLOADER):
+	cd $(DAPBOOT_DIR) && make clean && make -f release.Makefile
 
 .PHONY: flash-bootloader
 flash-bootloader: $(BOOTLOADER)
