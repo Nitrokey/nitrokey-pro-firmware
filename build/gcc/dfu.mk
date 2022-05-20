@@ -1,9 +1,21 @@
 #!/usr/bin/env -S make 
 
 WORKSPACE=~/work
-BOOTLOADER=$(WORKSPACE)/dapboot/build/dapboot-nkpro.bin
+DAPBOOT_DIR=../../dapboot
+BOOTLOADER=$(DAPBOOT_DIR)/build/dapboot-nkpro.bin
 FIRMWARE=last.elf
 FIRMWAREBIN=last.bin
+
+$(DAPBOOT_DIR)/libopencm3/Makefile:
+	git submodule update --init --recursive
+
+$(BOOTLOADER):
+	cd $(DAPBOOT_DIR) && make -f release.Makefile clean && make -f release.Makefile
+
+.PHONY: clean
+clean:
+	cd $(DAPBOOT_DIR) && make -f release.Makefile clean
+
 
 .PHONY: flash-bootloader
 flash-bootloader: $(BOOTLOADER)
@@ -32,6 +44,7 @@ bootloader.hex: $(BOOTLOADER)
 	srec_cat $< -Binary -offset 0x8000000 -Output $@ -Intel 
 	ls -lh $@
 	srec_info $@ -i
+	@echo $(realpath $@)
 
 VERSION=$(shell git describe)
 FIRMWARE_FILE_NAME_UPDATE=nitrokey-pro-firmware-$(VERSION)-to_update.bin
