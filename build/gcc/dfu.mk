@@ -1,6 +1,6 @@
 #!/usr/bin/env -S make 
 
-WORKSPACE=~/work
+WORKSPACE=../..
 BOOTLOADER=$(WORKSPACE)/dapboot/build/dapboot-nkpro.bin
 FIRMWARE=last.elf
 FIRMWAREBIN=last.bin
