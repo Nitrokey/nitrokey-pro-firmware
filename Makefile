@@ -13,7 +13,12 @@ SIGN=0
 
 DEPS=gcc-arm-none-eabi
 
-.PHONY: firmware flash-versaloon clean release
+.PHONY: firmware flash-versaloon clean release bootloader
+
+all: firmware bootloader
+
+bootloader:
+	cd $(BUILD_DIR) && $(MAKE) -f dfu.mk bootloader.hex
 
 firmware:
 	cd $(BUILD_DIR) && $(MAKE)

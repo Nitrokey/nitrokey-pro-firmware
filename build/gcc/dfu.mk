@@ -44,6 +44,7 @@ bootloader.hex: $(BOOTLOADER)
 	srec_cat $< -Binary -offset 0x8000000 -Output $@ -Intel 
 	ls -lh $@
 	srec_info $@ -i
+	@echo $(realpath $@)
 
 VERSION=$(shell git describe)
 FIRMWARE_FILE_NAME_UPDATE=nitrokey-pro-firmware-$(VERSION)-to_update.bin
