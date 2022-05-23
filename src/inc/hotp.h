@@ -93,7 +93,7 @@ typedef struct {
 extern __I uint32_t hotp_slot_counters[NUMBER_OF_HOTP_SLOTS];
 
 
-uint64_t current_time;
+extern uint64_t current_time;
 
 uint64_t endian_swap (uint64_t x);
 

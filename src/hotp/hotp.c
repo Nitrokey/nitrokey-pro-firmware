@@ -29,6 +29,7 @@
 #include "memory_ops.h"
 
 const int SECRET_LENGTH = SECRET_LENGTH_DEFINE;
+uint64_t current_time = 0;
 
 __I uint32_t hotp_slot_counters[NUMBER_OF_HOTP_SLOTS] = { SLOT1_COUNTER_ADDRESS,
     SLOT2_COUNTER_ADDRESS,
