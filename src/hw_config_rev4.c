@@ -204,10 +204,15 @@ HardwareDefinitionPtr detect_hardware(void) {
 //    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 //    GPIO_Init (GPIOB, &GPIO_InitStructure);
 
+    #define CPU_MODEL_GD32       (0x13030410)
+
     const uint8_t state = GPIO_ReadInputDataBit (GPIOB, GPIO_Pin_7);
-    if (state == 0) {
+    if (*((volatile uint32_t *)0xE0042000) == CPU_MODEL_GD32) {
+        g_current_hardware = &HW3;
+    } else if(state == 0){
         g_current_hardware = &HW4;
-    } else{
+    }
+    else{
         g_current_hardware = &HW3;
     }
     return g_current_hardware;
