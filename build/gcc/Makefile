@@ -240,7 +240,7 @@ CFLAGS += $(CDEFS) $(CINCS)
 CFLAGS += -O$(OPT)
 CFLAGS_OUR_SRC += -Werror
 # CFLAGS_OUR_SRC += -Wextra
-CFLAGS += -Wall -Wcast-align -Wimplicit
+CFLAGS += -Wall -Wcast-align -Wimplicit -Werror=no-array-bounds
 CFLAGS += -Wpointer-arith -Wswitch
 CFLAGS += -Wredundant-decls -Wreturn-type -Wshadow -Wunused
 CFLAGS += -Wa,-adhlns=$(subst $(suffix $<),.lst,$<)
