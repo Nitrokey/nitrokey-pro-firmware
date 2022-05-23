@@ -1,0 +1,3 @@
+[submodule "dapboot"]
+	path = dapboot
+	url = https://github.com/Nitrokey/dapboot.git
