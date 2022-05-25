@@ -203,10 +203,16 @@ HardwareDefinitionPtr detect_hardware(void) {
 //    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 //    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 //    GPIO_Init (GPIOB, &GPIO_InitStructure);
-    #define CPU_MODEL_GD32       (0x13030410)
-    
+#define CHIP_ID_REG     (0xE0042000)
+#define CPU_MODEL_GD32  (0x13030410)
+#define CHECK_GD32()    ( *((volatile uint32_t *)CHIP_ID_REG) == CPU_MODEL_GD32 )
+
+// hw_rev4 & hw_rev3 use different versions of STM32. 
+// To enable automatic detection, hw_rev4 has GPIOB7 pulled to GND.
+// hw_rev5 uses GD32 instead of STM32, therefore the CHIP_ID is different.
     const uint8_t state = GPIO_ReadInputDataBit (GPIOB, GPIO_Pin_7);
-    if (*((volatile uint32_t *)0xE0042000) == CPU_MODEL_GD32) {
+    if (CHECK_GD32()) {
+        // hw_rev3 & hw_rev5 share the same configuration 
         g_current_hardware = &HW3;
     } else if(state == 0){
         g_current_hardware = &HW4;
