@@ -146,7 +146,7 @@ void USB_CCID_init (void)
 {
 
     /* Update the serial number string descriptor with the data from the unique ID */
-    Get_SerialNum ();
+//    Get_SerialNum ();
 
     pInformation->Current_Configuration = 0;
 
