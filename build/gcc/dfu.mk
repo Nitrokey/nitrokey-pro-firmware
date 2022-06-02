@@ -6,6 +6,16 @@ BOOTLOADER=$(DAPBOOT_DIR)/build/dapboot-nkpro.bin
 FIRMWARE=last.elf
 FIRMWAREBIN=last.bin
 
+$(DAPBOOT_DIR)/libopencm3/Makefile:
+	git submodule update --init --recursive
+
+$(BOOTLOADER):
+	cd $(DAPBOOT_DIR) && make -f release.Makefile clean && make -f release.Makefile
+
+.PHONY: clean
+clean:
+	cd $(DAPBOOT_DIR) && make -f release.Makefile clean
+
 .PHONY: flash-bootloader
 flash-bootloader: $(BOOTLOADER)
 	STM32_Programmer_CLI -c port=SWD -halt  --readunprotect
