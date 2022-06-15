@@ -28,6 +28,8 @@
 #include "string.h"
 #include "memory_ops.h"
 
+uint64_t current_time = 0;
+
 __I uint32_t hotp_slots[NUMBER_OF_HOTP_SLOTS] = { SLOTS_PAGE1_ADDRESS + HOTP_SLOT1_OFFSET,
     SLOTS_PAGE1_ADDRESS + HOTP_SLOT2_OFFSET,
     SLOTS_PAGE1_ADDRESS + HOTP_SLOT3_OFFSET
