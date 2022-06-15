@@ -210,15 +210,17 @@ HardwareDefinitionPtr detect_hardware(void) {
 // hw_rev4 & hw_rev3 use different versions of STM32. 
 // To enable automatic detection, hw_rev4 has GPIOB7 pulled to GND.
 // hw_rev5 uses GD32 instead of STM32, therefore the CHIP_ID is different.
-    const uint8_t state = GPIO_ReadInputDataBit (GPIOB, GPIO_Pin_7);
-    if (CHECK_GD32()) {
-        // hw_rev3 & hw_rev5 share the same configuration 
-        g_current_hardware = &HW3;
-    } else if(state == 0){
-        g_current_hardware = &HW4;
-    }
-    else{
-        g_current_hardware = &HW3;
-    }
+
+//    const uint8_t state = GPIO_ReadInputDataBit (GPIOB, GPIO_Pin_7);
+//    if (CHECK_GD32()) {
+//        // hw_rev3 & hw_rev5 share the same configuration
+//        g_current_hardware = &HW3;
+//    } else if(state == 0){
+//        g_current_hardware = &HW4;
+//    }
+//    else{
+//        g_current_hardware = &HW3;
+//    }
+    g_current_hardware = &HW3;
     return g_current_hardware;
 }
