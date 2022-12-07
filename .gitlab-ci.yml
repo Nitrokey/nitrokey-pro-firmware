@@ -1,0 +1,38 @@
+include: 'https://raw.githubusercontent.com/Nitrokey/common-ci-jobs/master/common_jobs.yml'
+
+stages:
+  - pull-github
+  - build
+  - deploy
+
+variables:
+  #Repo for shared scripts (pull.sh release.sh, nightly_upload.sh):
+  GIT_STRATEGY: clone             #This seems to have no effect also set in webinterface
+  GIT_DEPTH: 0                    #This seems to have no effect also set in webinterface
+  GIT_SUBMODULE_STRATEGY: recursive #This seems to have no effect also set in webinterface
+  SCRIPTS_REPO: git@git.nitrokey.com:nitrokey/gitlab-ci.git
+  REPO_GROUP: nitrokey
+  REPO_NAME: nitrokey-pro-firmware
+  MAIN_BRANCH: master 
+  COMMON_PULL: "true"
+  COMMON_GITHUB_RELEASE: "true"
+  COMMON_UPLOAD_FILES: "false"
+
+build:
+  image: registry.git.nitrokey.com/nitrokey/nitrokey-pro-firmware/pro-build:latest
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+  tags:
+    - docker
+  stage: build
+  script:
+    - make release-all
+  after_script:
+    - mkdir -p artifacts
+    - cp -r release-all/* artifacts/
+    - wget $icon_server/checkmark/$CI_COMMIT_REF_NAME/$CI_COMMIT_SHA/$CI_JOB_NAME/$CI_JOB_STATUS/${CI_JOB_URL#*/*/*/}
+  artifacts:
+    paths:
+      - artifacts
