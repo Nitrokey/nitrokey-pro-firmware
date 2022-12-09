@@ -238,7 +238,7 @@ endif
 CFLAGS = -g$(DEBUG)
 CFLAGS += $(CDEFS) $(CINCS)
 CFLAGS += -O$(OPT)
-CFLAGS_OUR_SRC += -Werror
+# CFLAGS_OUR_SRC += -Werror
 # CFLAGS_OUR_SRC += -Wextra
 CFLAGS += -Wall -Wcast-align -Wimplicit
 CFLAGS += -Wpointer-arith -Wswitch
