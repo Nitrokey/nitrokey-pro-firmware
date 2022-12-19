@@ -96,12 +96,12 @@ void Test1(void) {
 
 
 int main(void) {
-
+   VerifyBlinkCorrect(9999)
   // Check if the right firmware is used first
   exec_bootloader_if_wrong_hardware();
   set_hardware_for_smartcard();
 
-  USB_SetDeviceConfiguration(STICK_STATE_SMARTCARD);
+  USB_SetDeviceConfiguration(STICK_STATE_SMARTCARD); //generic usb config 
 
   setjmp (jmpRestartUSB); // entrypoint for the changed USB device
 
