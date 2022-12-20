@@ -32,6 +32,7 @@ release: | clean
 	-rm -r release/*.*
 	$(MAKE) firmware -j12
 	cp $(BUILD_DIR)/*.hex  release
+	cp $(BUILD_DIR)/*.elf  release
 	cp $(BUILD_DIR)/*.buildinfo  release
 	#cd $(BUILD_DIR) && $(MAKE) -f dfu.mk firmware.hex VERSION=$(VERSION)
 	#cd $(BUILD_DIR) && $(MAKE) -f dfu.mk all.hex VERSION=$(VERSION)
