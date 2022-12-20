@@ -1571,6 +1571,7 @@ void SmartCardInitInterface (void)
 #endif
     initSCHardware ();
 
+    // infinite loop in case the smartcard is not inserted
     while (FALSE == WaitForATR ())
     {
         Delay_noUSBCheck (1);

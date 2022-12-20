@@ -99,7 +99,8 @@ int main(void) {
   // Check if the right firmware is used first
   exec_bootloader_if_wrong_hardware();
   set_hardware_for_smartcard();
-  
+
+//  smartcard init runs here, including CCID serial number getting
   USB_SetDeviceConfiguration(STICK_STATE_SMARTCARD); //generic usb config 
 
   setjmp (jmpRestartUSB); // entrypoint for the changed USB device
@@ -114,6 +115,7 @@ int main(void) {
   /* Setup before USB startup */
 
   check_backups();
+  // blocking, infinite loop in case the smartcard is not inserted
   SmartCardInitInterface();
 
 #ifdef DEBUG_BOOT_LEDS
