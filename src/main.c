@@ -116,7 +116,7 @@ int main(void) {
 
   check_backups();
   // blocking, infinite loop in case the smartcard is not inserted
-  SmartCardInitInterface();
+//  SmartCardInitInterface();
 
 #ifdef DEBUG_BOOT_LEDS
   SwitchSmartcardLED(ENABLE);
