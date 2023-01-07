@@ -53,7 +53,7 @@ $(FIRMWARE_FILE_NAME_UPDATE): $(FIRMWAREBIN)
 	ln -sf $(FIRMWARE_FILE_NAME_UPDATE) last_update.bin
 
 firmware.hex: $(FIRMWAREBIN)
-	srec_cat $< -Binary -offset 0x8002000 -Output $@ -Intel 
+	srec_cat $< -Binary -offset 0x8002000 -Output $@ -Intel
 	ls -lh $@
 	srec_info $@ -i
 
