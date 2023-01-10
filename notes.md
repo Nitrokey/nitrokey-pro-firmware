@@ -8,9 +8,9 @@ build/gcc/nitrokey-*-firmware.*
 build/gcc/stm32.ld
 # flash via openocd in container
 #   - the current dir is mounted at /app
-make -f podman.mk openocd-server FLASH=/app/release/nitrokey-pro-firmware.hex
+make -f docker.mk openocd-server FLASH=/app/release/nitrokey-pro-firmware.hex
 # run GDB server for debugging
-make -f podman.mk
+make -f docker.mk
 # build complete package for the release
 make release
 ```
@@ -84,7 +84,7 @@ Details at:
 
 - https://github.com/Nitrokey/dapboot/
 
-7. All the required tools should be reachable over the Docker image, available as well over Podman. See `podman.mk` for
+7. All the required tools should be reachable over the Docker image, available as well over Podman. See `docker.mk` for
    the details. Make sure that the proper Udev rules are installed to have access to the debug adapter for flashing.
 
 8. Nitrokey Pro firmware can be tested with the HSM smart card inserted. This is useful for debugging.
