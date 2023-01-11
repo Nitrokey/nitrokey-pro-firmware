@@ -115,7 +115,7 @@ int main(void) {
   /* Setup before USB startup */
 
   check_backups();
-  SmartCardInitInterface();
+  //SmartCardInitInterface();
 
 #ifdef DEBUG_BOOT_LEDS
   SwitchSmartcardLED(ENABLE);
