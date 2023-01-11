@@ -5,7 +5,7 @@ OPENOCD_BIN?=
 
 # Set version to anything required; real version will be provided in the .buildinfo anyway
 VERSION=$(shell git describe)
-PROJECT=nitrokey-hsm-firmware
+PROJECT=nitrokey-pro-firmware
 ARCHIVE_NAME=$(PROJECT)-$(VERSION).tar.gz
 
 # Set to "1" to run GPG signing on the hash files with the default key
@@ -13,14 +13,19 @@ SIGN=0
 
 DEPS=gcc-arm-none-eabi
 
-.PHONY: firmware flash-versaloon clean release
+.PHONY: firmware flash-versaloon clean release bootloader
+
+all: firmware bootloader
+
+bootloader:
+	cd $(BUILD_DIR) && $(MAKE) -f dfu.mk bootloader.hex
 
 firmware:
 	cd $(BUILD_DIR) && $(MAKE)
 
 clean:
-	cd $(BUILD_DIR) && \
-	make clean
+	cd $(BUILD_DIR) && make clean
+	cd $(BUILD_DIR) && make -f dfu.mk clean
 	-rm nitrokey-*-firmware*.tar.gz
 
 deps:
@@ -31,16 +36,14 @@ release: | clean
 	mkdir -p release
 	-rm -r release/*.*
 	$(MAKE) firmware -j12
-	cp $(BUILD_DIR)/*.hex  release
-	cp $(BUILD_DIR)/*.buildinfo  release
-	#cd $(BUILD_DIR) && $(MAKE) -f dfu.mk firmware.hex VERSION=$(VERSION)
-	#cd $(BUILD_DIR) && $(MAKE) -f dfu.mk all.hex VERSION=$(VERSION)
-	#cp `readlink -f $(BUILD_DIR)/last_to_flash.hex` `readlink -f $(BUILD_DIR)/last.buildinfo` release/
+	cd $(BUILD_DIR) && $(MAKE) -f dfu.mk firmware.hex VERSION=$(VERSION)
+	cd $(BUILD_DIR) && $(MAKE) -f dfu.mk all.hex VERSION=$(VERSION)
+	cp `readlink -f $(BUILD_DIR)/last_to_flash.hex` `readlink -f $(BUILD_DIR)/last_update.bin` `readlink -f $(BUILD_DIR)/last.buildinfo` release/
 	cd release && find . -name "*.hex" -type f -printf "%f\0" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512'
+	cd release && find . -name "*.bin" -type f -printf "%f\0" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512'
 	-[ $(SIGN) == 1 ] && cd release && ls -1 *.sha* | xargs -n1 gpg2 --detach-sign
 	-[ $(SIGN) == 1 ] && cd release && ls -1 *.sig | xargs -n1 gpg2 --verify
 	ls -lh release
-	cd release && rm last*
 	tar -czvf $(ARCHIVE_NAME) -C release . | sort
 
 release-all:
@@ -73,3 +76,8 @@ devloop-release: | clean
 	$(MAKE) firmware -j12
 	- killall openocd
 	cd build/gcc && $(MAKE) -f dfu.mk flash-full-single
+
+.PHONY: devloop-update
+devloop-update: | clean
+	$(MAKE) firmware -j12
+	cd build/gcc && $(MAKE) -f dfu.mk update
