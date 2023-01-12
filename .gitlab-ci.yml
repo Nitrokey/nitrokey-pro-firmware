@@ -19,7 +19,7 @@ variables:
   COMMON_UPLOAD_FILES: "false"
 
 build:
-  image: registry.git.nitrokey.com/nitrokey/nitrokey-pro-firmware/pro-build:latest
+  image: registry.git.nitrokey.com/nitrokey/nitrokey-pro-firmware/gcc-arm-8.2.1:latest
   rules:
     - if: '$CI_PIPELINE_SOURCE == "push"'
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
