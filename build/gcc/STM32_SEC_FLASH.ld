@@ -1,10 +1,10 @@
-/*
-Common part of the linker scripts for STR71x devices in FLASH mode
-(that is, the FLASH is seen at 0)
-Copyright RAISONANCE 2005
-You can use, modify and distribute thisfile freely, but without any waranty.
-*/
+/* Copyright RAISONANCE 2005 */
 
+/* SPDX-License-Identifier: GPL-3.0-only */
+/* Common part of the linker scripts for STR71x devices in FLASH mode */
+/* (that is, the FLASH is seen at 0) */
+
+ 
 
 
 /* Sections Definitions */
