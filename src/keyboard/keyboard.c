@@ -23,7 +23,7 @@
 #include "usb_lib.h"
 #include "hw_config.h"
 #include "usb_pwr.h"
-#include "CCID_usb.h"
+#include "CCIDHID_usb_conf.h"
 #include "keyboard.h"
 #include "AccessInterface.h"
 #include "hotp.h"
@@ -82,7 +82,7 @@ void sendKeys (uint8_t * buffer)
 
         PrevXferComplete = 0;
         /* Use the memory interface function to write to the selected endpoint */
-        UserToPMABufferCopy (buffer, ENDP4_TXADDR, 8);
+        UserToPMABufferCopy (buffer, CCID_ENDP4_TXADDR, 8);
 
         /* Update the data length in the control register */
         SetEPTxCount (ENDP4, 8);
