@@ -506,7 +506,7 @@ void SC_ParityErrorHandler (void)
 *******************************************************************************/
 void SC_PTSConfig (void)
 {
-//    return;
+    return;
 
     RCC_ClocksTypeDef RCC_ClocksStatus;
 
