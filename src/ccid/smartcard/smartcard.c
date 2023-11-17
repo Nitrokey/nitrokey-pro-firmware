@@ -506,6 +506,8 @@ void SC_ParityErrorHandler (void)
 *******************************************************************************/
 void SC_PTSConfig (void)
 {
+    return;
+
     RCC_ClocksTypeDef RCC_ClocksStatus;
 
     u32 workingbaudrate = 0, apbclock = 0;
