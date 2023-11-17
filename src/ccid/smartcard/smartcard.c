@@ -463,39 +463,39 @@ void SC_ParityErrorHandler (void)
     }
 }
 
-
-void SC_SetHwParams (u8 cBaudrateIndex, u8 cConversion, u8 Guardtime, u8 Waitingtime)
-{
-RCC_ClocksTypeDef RCC_ClocksStatus;
-
-u32 workingbaudrate = 0;
-
-u32 apbclock = 0;
-
-USART_InitTypeDef USART_InitStructure;
-
-    /* Reconfigure the USART Baud Rate ------------------------------------------- */
-    RCC_GetClocksFreq (&RCC_ClocksStatus);
-
-    apbclock = RCC_ClocksStatus.PCLK2_Frequency;
-    apbclock /= ((USART1->GTPR & (u16) 0x00FF) * 2);
-
-    workingbaudrate = apbclock * D_Table[(cBaudrateIndex & (u8) 0x0F)];
-    workingbaudrate /= F_Table[((cBaudrateIndex >> 4) & (u8) 0x0F)];
-
-    USART_InitStructure.USART_BaudRate = workingbaudrate;
-    USART_InitStructure.USART_WordLength = USART_WordLength_9b;
-    USART_InitStructure.USART_StopBits = USART_StopBits_1;
-    USART_InitStructure.USART_Parity = USART_Parity_Even;
-    USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-    USART_Init (USART1, &USART_InitStructure);
-
-    /* USART Guard Time set to 16 Bit */
-    USART_SetGuardTime (USART1, 12 + Guardtime);
-
-
-}
+// unused
+//void SC_SetHwParams (u8 cBaudrateIndex, u8 cConversion, u8 Guardtime, u8 Waitingtime)
+//{
+//RCC_ClocksTypeDef RCC_ClocksStatus;
+//
+//u32 workingbaudrate = 0;
+//
+//u32 apbclock = 0;
+//
+//USART_InitTypeDef USART_InitStructure;
+//
+//    /* Reconfigure the USART Baud Rate ------------------------------------------- */
+//    RCC_GetClocksFreq (&RCC_ClocksStatus);
+//
+//    apbclock = RCC_ClocksStatus.PCLK2_Frequency;
+//    apbclock /= ((USART1->GTPR & (u16) 0x00FF) * 2);
+//
+//    workingbaudrate = apbclock * D_Table[(cBaudrateIndex & (u8) 0x0F)];
+//    workingbaudrate /= F_Table[((cBaudrateIndex >> 4) & (u8) 0x0F)];
+//
+//    USART_InitStructure.USART_BaudRate = workingbaudrate;
+//    USART_InitStructure.USART_WordLength = USART_WordLength_9b;
+//    USART_InitStructure.USART_StopBits = USART_StopBits_1;
+//    USART_InitStructure.USART_Parity = USART_Parity_Even;
+//    USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+//    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+//    USART_Init (USART1, &USART_InitStructure);
+//
+//    /* USART Guard Time set to 16 Bit */
+//    USART_SetGuardTime (USART1, 12 + Guardtime);
+//
+//
+//}
 
 /*******************************************************************************
 * Function Name  : SC_PTSConfig
