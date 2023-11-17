@@ -652,6 +652,14 @@ void SC_PTSConfig (void)
             {
                 workingbaudrate = apbclock * D_Table[(SC_A2R.T[0] & (u8) 0x0F)];
                 workingbaudrate /= F_Table[((SC_A2R.T[0] >> 4) & (u8) 0x0F)];
+                //  35700000 / 372 = 9595
+                // The previous chips indicated in the ATR a F/D of 372/12, which translates to 9595 * 12 = 115140 bps.
+                // The new chip indicates F/D 512/32, meaning 35700000 / 512 * 32 = 223125 bps.
+                // The new chip indicates F/D 512/32, meaning 36000000 / 512 * 32 = 225000 bps.
+//                workingbaudrate = 116129; // calculated: 1161290
+                workingbaudrate = 9677; // calculated: 1161290
+                // dwDataRate: 9677 bps (0x000025CD)
+                // dwMaxDataRate: 116129 bps (0x0001C5A1)
 
                 USART_ClockInitStructure.USART_Clock = USART_Clock_Enable;
                 USART_ClockInitStructure.USART_CPOL = USART_CPOL_Low;
