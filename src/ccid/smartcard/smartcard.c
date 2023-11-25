@@ -41,10 +41,11 @@ u8 SC_ATR_Table[40];
 u8 SC_ATR_Length = 0;
 
 static vu8 SCData = 0;
-static u32 F_Table[16] = { 372, 372, 558, 744, 1116, 1488, 1860, 0, 0, 372, 768, 1024, 1536, 2048,
-    0, 0
+static u32 F_Table[16] = { 372, 372, 558, 744, 1116, 1488, 1860, 0,
+                           0, 512, 768, 1024, 1536, 2048, 0, 0
 };
-static u32 D_Table[16] = { 0, 1, 2, 4, 8, 16, 32, 0, 32, 20, 0, 0, 0, 0, 0, 0 };
+static u32 D_Table[16] = { 0, 1, 2, 4, 8, 16, 32, 64,
+                           12, 20, 0, 0, 0, 0, 0, 0 };
 
 /* Private function prototypes ----------------------------------------------- */
 /* Transport Layer ----------------------------------------------------------- */
@@ -507,13 +508,9 @@ void SC_ParityErrorHandler (void)
 void SC_PTSConfig (void)
 {
     RCC_ClocksTypeDef RCC_ClocksStatus;
-
     u32 workingbaudrate = 0, apbclock = 0;
-
     u8 locData = 0, PTSConfirmStatus = 1;
-
     USART_InitTypeDef USART_InitStructure;
-
     USART_ClockInitTypeDef USART_ClockInitStructure;
 
     /* Reconfigure the USART Baud Rate ------------------------------------------- */
@@ -1442,20 +1439,14 @@ int CRD_SendCommand (unsigned char* pTransmitBuffer, unsigned int nCommandSize, 
 
     /* Get answer */
     //
-    for (i = 0; i < ICC_MESSAGE_BUFFER_MAX_LENGTH - USB_MESSAGE_HEADER_SIZE; i++)   // max
-        // buffer
-        // size
-        // (had
-        // to
-        // be
-        // checked)
+    for (i = 0; i < ICC_MESSAGE_BUFFER_MAX_LENGTH - USB_MESSAGE_HEADER_SIZE; i++)
+        // max buffer size (had to be checked)
     {
         nDelayTime = SC_Receive_Timeout;
         if (0 == i)
         {
-            nDelayTime = SC_Receive_Timeout * 10000L;   // Long long wait for
-            // first byte, allow
-            // card to work
+            nDelayTime = SC_Receive_Timeout * 10000L;
+            // Long long wait for first byte, allow card to work
         }
 
         if ((USART_ByteReceive (&pTransmitBuffer[i], nDelayTime)) != SUCCESS)
