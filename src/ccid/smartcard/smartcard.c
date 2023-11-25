@@ -518,129 +518,45 @@ void SC_PTSConfig (void)
 
     apbclock = RCC_ClocksStatus.PCLK2_Frequency;
     apbclock /= ((USART1->GTPR & (u16) 0x00FF) * 2);
+
+
     /* Enable the DMA Receive (Set DMAR bit only) to enable interrupt generation in case of a framing error FE */
     USART_DMACmd (USART1, USART_DMAReq_Rx, ENABLE);
 
-    // SC_A2R.T0 = 0x11; // for slow serial testing
-    // SC_A2R.T[0] = 0x11;
+//     SC_A2R.T0 = 0x18;
+//     SC_A2R.T[0] = 0x18;
 
-    if ((SC_A2R.T0 & (u8) 0x10) == 0x10)
+    if ((SC_A2R.T0 & (u8) 0x10) == 0x10) // check if ATR is correct
     {
-        if (SC_A2R.T[0] != 0x11)
+        if (SC_A2R.T[0] != 0x11) // if not slow serial testing
         {
+            const uint8_t PCK = (u8) 0xFF ^ (u8) 0x11 ^ (u8) SC_A2R.T[0];
             /* Send PTSS */
-            SCData = 0xFF;
-            USART_SendData (USART1, SCData);
-            while (USART_GetFlagStatus (USART1, USART_FLAG_TC) == RESET)
-            {
-            }
+            uint8_t PPS_data[] = {
+                    0xFF,// PPSS
+                    0x11, // 0 001 0001 -> T=1, w/ PPS1
+                    SC_A2R.T[0],
+                    PCK
+            };
 
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != 0xFF)
+            for (int i = 0; i < sizeof PPS_data; ++i) {
+                SCData = PPS_data[i];
+                USART_SendData (USART1, SCData);
+                while (USART_GetFlagStatus (USART1, USART_FLAG_TC) == RESET)
                 {
-                    PTSConfirmStatus = 0x40;
+                }
+
+                if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
+                {
+                    if (locData != SCData)
+                    {
+                        // Failed setup
+                        return;
+                    }
                 }
             }
-
-            /* Send PTS0 */
-            SCData = 0x11;
-            USART_SendData (USART1, SCData);
-            while (USART_GetFlagStatus (USART1, USART_FLAG_TC) == RESET)
-            {
-            }
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != 0x11)
-                {
-                    PTSConfirmStatus = 0x30;
-                }
-            }
-            /* Send PTS1 */
-            SCData = SC_A2R.T[0];   // 0x13
-            USART_SendData (USART1, SCData);
-            while (USART_GetFlagStatus (USART1, USART_FLAG_TC) == RESET)
-            {
-            }
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != SC_A2R.T[0])
-                {
-                    PTSConfirmStatus = 0x20;
-                }
-            }
-
-            /* Send PCK */
-
-            SCData = (u8) 0xFF ^ (u8) 0x11 ^ (u8) SC_A2R.T[0];
-            USART_SendData (USART1, SCData);
-            while (USART_GetFlagStatus (USART1, USART_FLAG_TC) == RESET)
-            {
-            }
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != ((u8) 0xFF ^ (u8) 0x11 ^ (u8) SC_A2R.T[0]))
-                {
-                    PTSConfirmStatus = 0x10;
-                }
-            }
-
-            // GET*************
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != 0xFF)
-                {
-                    PTSConfirmStatus = 0x02;
-                }
-            }
-            else
-            {
-                PTSConfirmStatus = 0x03;
-            }
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != 0x11)
-                {
-                    PTSConfirmStatus = 0x04;
-                }
-            }
-            else
-            {
-                PTSConfirmStatus = 0x05;
-            }
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != SC_A2R.T[0])
-                {
-                    PTSConfirmStatus = 0x06;
-                }
-            }
-            else
-            {
-                PTSConfirmStatus = 0x07;
-            }
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != ((u8) 0xFF ^ (u8) 0x11 ^ (u8) SC_A2R.T[0]))
-                {
-                    PTSConfirmStatus = 0x08;
-                }
-            }
-            else
-            {
-                PTSConfirmStatus = 0x09;
-            }
-
-            // GET************* END
-
             USART_DMACmd (USART1, USART_DMAReq_Rx, DISABLE);
+
 
             /* PTS Confirm */
             if (PTSConfirmStatus == 0x01)
@@ -652,7 +568,7 @@ void SC_PTSConfig (void)
                 // The new chip indicates F/D 512/32, meaning 35700000 / 512 * 32 = 223125 bps.
                 // The new chip indicates F/D 512/32, meaning 36000000 / 512 * 32 = 225000 bps.
 //                workingbaudrate = 116129; // calculated: 1161290
-                workingbaudrate = 9677; // calculated: 1161290
+//                workingbaudrate = 9677; // calculated: 1161290
                 // dwDataRate: 9677 bps (0x000025CD)
                 // dwMaxDataRate: 116129 bps (0x0001C5A1)
 
