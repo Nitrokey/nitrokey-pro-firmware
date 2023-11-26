@@ -498,6 +498,8 @@ void SC_ParityErrorHandler (void)
 //
 //}
 
+uint8_t g_test_value = 0x1;
+
 /*******************************************************************************
 * Function Name  : SC_PTSConfig
 * Description    : Configures the IO speed (BaudRate) communication.
@@ -519,21 +521,22 @@ void SC_PTSConfig (void)
     apbclock = RCC_ClocksStatus.PCLK2_Frequency;
     apbclock /= ((USART1->GTPR & (u16) 0x00FF) * 2);
 
+//    return;
 
     /* Enable the DMA Receive (Set DMAR bit only) to enable interrupt generation in case of a framing error FE */
     USART_DMACmd (USART1, USART_DMAReq_Rx, ENABLE);
 
-//     SC_A2R.T0 = 0x18;
-//     SC_A2R.T[0] = 0x18;
+     SC_A2R.T0 = g_test_value;
+     SC_A2R.T[0] = g_test_value;
 
-    if ((SC_A2R.T0 & (u8) 0x10) == 0x10) // check if ATR is correct
+//    if ((SC_A2R.T0 & (u8) 0x10) == 0x10) // check if ATR is correct
     {
-        if (SC_A2R.T[0] != 0x11) // if not slow serial testing
+//        if (SC_A2R.T[0] != 0x11) // if not slow serial testing
         {
             const uint8_t PCK = (u8) 0xFF ^ (u8) 0x11 ^ (u8) SC_A2R.T[0];
             /* Send PTSS */
             uint8_t PPS_data[] = {
-                    0xFF,// PPSS
+                    0xFF, // PPSS
                     0x11, // 0 001 0001 -> T=1, w/ PPS1
                     SC_A2R.T[0],
                     PCK
