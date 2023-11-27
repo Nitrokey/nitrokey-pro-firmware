@@ -377,12 +377,16 @@ u32 i = 0;
                 {
                     SC_AnswerReq (SCState, &SC_ATR_Table[0], 40);   /* Check for answer to eeset */
                     // fake old ATR for tests
-                    uint8_t hsm2_ATR[] = "\x3b\xde\x18\xff\x81\x91\xfe\x1f\xc3\x80\x31\x81\x54\x48\x53\x4d\x31\x73\x80\x21\x40\x81\x07\x1c";
+//                    uint8_t hsm2_ATR[] = "\x3b\xde\x18\xff\x81\x91\xfe\x1f\xc3\x80\x31\x81\x54\x48\x53\x4d\x31\x73\x80\x21\x40\x81\x07\x1c";
 //                    hsm2_ATR[2] = 0x04; // works,  RSA4k 84.16 sec, 77419.3548387097 bps
-                    hsm2_ATR[2] = 0x39; // works,  RSA4k 47.75 secs, 96774.1935483871 bps
+//                    hsm2_ATR[2] = 0x39; // works,  RSA4k 47.75 secs, 96774.1935483871 bps
 //                    hsm2_ATR[2] = 0x99; // fails,  140625 bps
 //                    hsm2_ATR[2] = 0x95; // fails,  112500 bps
-                    memmove(SC_ATR_Table, hsm2_ATR, sizeof hsm2_ATR);
+//                    memmove(SC_ATR_Table, hsm2_ATR, sizeof hsm2_ATR);
+                    if (SC_ATR_Table[2] == 0x96){
+                        // patch PPS byte for HSM v4
+                        SC_ATR_Table[2]= 0x39;
+                    }
                 }
             }
             break;
