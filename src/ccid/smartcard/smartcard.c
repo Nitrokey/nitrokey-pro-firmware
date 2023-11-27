@@ -526,8 +526,8 @@ void SC_PTSConfig (void)
     /* Enable the DMA Receive (Set DMAR bit only) to enable interrupt generation in case of a framing error FE */
     USART_DMACmd (USART1, USART_DMAReq_Rx, ENABLE);
 
-     SC_A2R.T0 = g_test_value;
-     SC_A2R.T[0] = g_test_value;
+//     SC_A2R.T0 = g_test_value;
+//     SC_A2R.T[0] = 0x18;
 
     if ((SC_A2R.T0 & (u8) 0x10) == 0x10) // check if ATR is correct
     {
