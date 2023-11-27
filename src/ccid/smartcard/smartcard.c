@@ -376,6 +376,9 @@ u32 i = 0;
                 while (((*SCState) != SC_POWER_OFF) && ((*SCState) != SC_ACTIVE))
                 {
                     SC_AnswerReq (SCState, &SC_ATR_Table[0], 40);   /* Check for answer to eeset */
+                    // fake old ATR for tests
+                    const uint8_t hsm2_ATR[] = "\x3b\xde\x18\xff\x81\x91\xfe\x1f\xc3\x80\x31\x81\x54\x48\x53\x4d\x31\x73\x80\x21\x40\x81\x07\x1c";
+                    memmove(SC_ATR_Table, hsm2_ATR, sizeof hsm2_ATR);
                 }
             }
             break;
