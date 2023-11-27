@@ -1073,47 +1073,6 @@ void SC_Init (void)
     /* Disable CMDVCC */
     SC_PowerCmd (DISABLE);
 
-    // Hard wait
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
  /**/}
 
 /*******************************************************************************
