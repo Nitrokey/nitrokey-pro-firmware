@@ -1473,11 +1473,11 @@ int scTest (void)
     SC_PTSConfig ();
 
     /* Inserts delay(400ms) for Smartcard clock resynchronisation */
-    // Delay_noUSBCheck(40);
+     Delay_noUSBCheck(40);
 
 
     for (i = 0; i < 10000; i++);
-    // Delay_noUSBCheck(1);
+     Delay_noUSBCheck(1);
 
     // memcpy (pTransmitBuffer,szText_6f_0,5);
     // CRD_SendCommand (pTransmitBuffer,5,2,&nReceivedAnswerSize);
@@ -1529,7 +1529,7 @@ char RestartSmartcard (void)
     }
     SC_PTSConfig ();
 
-    // Delay_noUSBCheck (40);
+     Delay_noUSBCheck (40);
 
     return (TRUE);
 }
