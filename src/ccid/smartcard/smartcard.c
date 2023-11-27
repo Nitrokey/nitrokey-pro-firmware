@@ -533,14 +533,14 @@ void SC_PTSConfig (void)
     {
 //        if (SC_A2R.T[0] != 0x11) // if not slow serial testing
         {
-            const uint8_t PCK = (u8) 0xFF ^ (u8) 0x11 ^ (u8) SC_A2R.T[0];
             /* Send PTSS */
             uint8_t PPS_data[] = {
                     0xFF, // PPSS
                     0x11, // 0 001 0001 -> T=1, w/ PPS1
                     SC_A2R.T[0],
-                    PCK
+                    0xFF
             };
+            PPS_data[3] = (u8) PPS_data[0] ^ (u8) PPS_data[1] ^ (u8) PPS_data[2];
 
             for (int i = 0; i < sizeof PPS_data; ++i) {
                 SCData = PPS_data[i];
