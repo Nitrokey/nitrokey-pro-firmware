@@ -538,7 +538,7 @@ void SC_PTSConfig (void)
 
     if ((SC_A2R.T0 & (u8) 0x10) == 0x10) // check if ATR is correct
     {
-        if (SC_A2R.T[0] != 0x11) // if not slow serial testing
+//        if (SC_A2R.T[0] != 0x11) // if not slow serial testing
         {
             /* Send PTSS */
             uint8_t PPS_data[] = {
