@@ -41,10 +41,11 @@ u8 SC_ATR_Table[40];
 u8 SC_ATR_Length = 0;
 
 static vu8 SCData = 0;
-static u32 F_Table[16] = { 372, 372, 558, 744, 1116, 1488, 1860, 0, 0, 512, 768, 1024, 1536, 2048,
-    0, 0
+static u32 F_Table[16] = { 372, 372, 558, 744, 1116, 1488, 1860, 0,
+                           0, 512, 768, 1024, 1536, 2048, 0, 0
 };
-static u32 D_Table[16] = { 0, 1, 2, 4, 8, 16, 32, 0, 12, 20, 0, 0, 0, 0, 0, 0 };
+static u32 D_Table[16] = { 0, 1, 2, 4, 8, 16, 32, 64,
+                           12, 20, 0, 0, 0, 0, 0, 0 };
 
 /* Private function prototypes ----------------------------------------------- */
 /* Transport Layer ----------------------------------------------------------- */
@@ -375,6 +376,17 @@ u32 i = 0;
                 while (((*SCState) != SC_POWER_OFF) && ((*SCState) != SC_ACTIVE))
                 {
                     SC_AnswerReq (SCState, &SC_ATR_Table[0], 40);   /* Check for answer to eeset */
+                    // fake old ATR for tests
+//                    uint8_t hsm2_ATR[] = "\x3b\xde\x18\xff\x81\x91\xfe\x1f\xc3\x80\x31\x81\x54\x48\x53\x4d\x31\x73\x80\x21\x40\x81\x07\x1c";
+//                    hsm2_ATR[2] = 0x04; // works,  RSA4k 84.16 sec, 77419.3548387097 bps
+//                    hsm2_ATR[2] = 0x39; // works,  RSA4k 47.75 secs, 96774.1935483871 bps
+//                    hsm2_ATR[2] = 0x99; // fails,  140625 bps
+//                    hsm2_ATR[2] = 0x95; // fails,  112500 bps
+//                    memmove(SC_ATR_Table, hsm2_ATR, sizeof hsm2_ATR);
+                    if (SC_ATR_Table[2] == 0x96){
+                        // patch PPS byte for HSM v4
+                        SC_ATR_Table[2]= 0x39;
+                    }
                 }
             }
             break;
@@ -463,39 +475,41 @@ void SC_ParityErrorHandler (void)
     }
 }
 
+// unused
+//void SC_SetHwParams (u8 cBaudrateIndex, u8 cConversion, u8 Guardtime, u8 Waitingtime)
+//{
+//RCC_ClocksTypeDef RCC_ClocksStatus;
+//
+//u32 workingbaudrate = 0;
+//
+//u32 apbclock = 0;
+//
+//USART_InitTypeDef USART_InitStructure;
+//
+//    /* Reconfigure the USART Baud Rate ------------------------------------------- */
+//    RCC_GetClocksFreq (&RCC_ClocksStatus);
+//
+//    apbclock = RCC_ClocksStatus.PCLK2_Frequency;
+//    apbclock /= ((USART1->GTPR & (u16) 0x00FF) * 2);
+//
+//    workingbaudrate = apbclock * D_Table[(cBaudrateIndex & (u8) 0x0F)];
+//    workingbaudrate /= F_Table[((cBaudrateIndex >> 4) & (u8) 0x0F)];
+//
+//    USART_InitStructure.USART_BaudRate = workingbaudrate;
+//    USART_InitStructure.USART_WordLength = USART_WordLength_9b;
+//    USART_InitStructure.USART_StopBits = USART_StopBits_1;
+//    USART_InitStructure.USART_Parity = USART_Parity_Even;
+//    USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+//    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+//    USART_Init (USART1, &USART_InitStructure);
+//
+//    /* USART Guard Time set to 16 Bit */
+//    USART_SetGuardTime (USART1, 12 + Guardtime);
+//
+//
+//}
 
-void SC_SetHwParams (u8 cBaudrateIndex, u8 cConversion, u8 Guardtime, u8 Waitingtime)
-{
-RCC_ClocksTypeDef RCC_ClocksStatus;
-
-u32 workingbaudrate = 0;
-
-u32 apbclock = 0;
-
-USART_InitTypeDef USART_InitStructure;
-
-    /* Reconfigure the USART Baud Rate ------------------------------------------- */
-    RCC_GetClocksFreq (&RCC_ClocksStatus);
-
-    apbclock = RCC_ClocksStatus.PCLK2_Frequency;
-    apbclock /= ((USART1->GTPR & (u16) 0x00FF) * 2);
-
-    workingbaudrate = apbclock * D_Table[(cBaudrateIndex & (u8) 0x0F)];
-    workingbaudrate /= F_Table[((cBaudrateIndex >> 4) & (u8) 0x0F)];
-
-    USART_InitStructure.USART_BaudRate = workingbaudrate;
-    USART_InitStructure.USART_WordLength = USART_WordLength_9b;
-    USART_InitStructure.USART_StopBits = USART_StopBits_1;
-    USART_InitStructure.USART_Parity = USART_Parity_Even;
-    USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-    USART_Init (USART1, &USART_InitStructure);
-
-    /* USART Guard Time set to 16 Bit */
-    USART_SetGuardTime (USART1, 12 + Guardtime);
-
-
-}
+uint8_t g_test_value = 0x1;
 
 /*******************************************************************************
 * Function Name  : SC_PTSConfig
@@ -507,13 +521,9 @@ USART_InitTypeDef USART_InitStructure;
 void SC_PTSConfig (void)
 {
     RCC_ClocksTypeDef RCC_ClocksStatus;
-
     u32 workingbaudrate = 0, apbclock = 0;
-
     u8 locData = 0, PTSConfirmStatus = 1;
-
     USART_InitTypeDef USART_InitStructure;
-
     USART_ClockInitTypeDef USART_ClockInitStructure;
 
     /* Reconfigure the USART Baud Rate ------------------------------------------- */
@@ -521,135 +531,65 @@ void SC_PTSConfig (void)
 
     apbclock = RCC_ClocksStatus.PCLK2_Frequency;
     apbclock /= ((USART1->GTPR & (u16) 0x00FF) * 2);
+
+//    return;
+
     /* Enable the DMA Receive (Set DMAR bit only) to enable interrupt generation in case of a framing error FE */
     USART_DMACmd (USART1, USART_DMAReq_Rx, ENABLE);
 
-    // SC_A2R.T0 = 0x11; // for slow serial testing
-    // SC_A2R.T[0] = 0x11;
+//     SC_A2R.T0 = g_test_value;
+//     SC_A2R.T[0] = 0x18;
 
-    if ((SC_A2R.T0 & (u8) 0x10) == 0x10)
+    if ((SC_A2R.T0 & (u8) 0x10) == 0x10) // check if ATR is correct
     {
-        if (SC_A2R.T[0] != 0x11)
+//        if (SC_A2R.T[0] != 0x11) // if not slow serial testing
         {
             /* Send PTSS */
-            SCData = 0xFF;
-            USART_SendData (USART1, SCData);
-            while (USART_GetFlagStatus (USART1, USART_FLAG_TC) == RESET)
-            {
-            }
+            uint8_t PPS_data[] = {
+                    0xFF, // PPSS
+                    0x11, // 0 001 0001 -> T=1, w/ PPS1
+                    SC_A2R.T[0],
+                    0xFF
+            };
+            PPS_data[3] = (u8) PPS_data[0] ^ (u8) PPS_data[1] ^ (u8) PPS_data[2];
 
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != 0xFF)
+            for (int i = 0; i < sizeof PPS_data; ++i) {
+                SCData = PPS_data[i];
+                USART_SendData (USART1, SCData);
+                while (USART_GetFlagStatus (USART1, USART_FLAG_TC) == RESET)
                 {
-                    PTSConfirmStatus = 0x40;
+                }
+
+                if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
+                {
+                    if (locData != SCData)
+                    {
+                        // Failed setup
+                        return;
+                    }
                 }
             }
 
-            /* Send PTS0 */
-            SCData = 0x11;
-            USART_SendData (USART1, SCData);
-            while (USART_GetFlagStatus (USART1, USART_FLAG_TC) == RESET)
-            {
+            for (int i = 0; i < 50; ++i) {
+                (USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS;
             }
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != 0x11)
-                {
-                    PTSConfirmStatus = 0x30;
-                }
-            }
-            /* Send PTS1 */
-            SCData = SC_A2R.T[0];   // 0x13
-            USART_SendData (USART1, SCData);
-            while (USART_GetFlagStatus (USART1, USART_FLAG_TC) == RESET)
-            {
-            }
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != SC_A2R.T[0])
-                {
-                    PTSConfirmStatus = 0x20;
-                }
-            }
-
-            /* Send PCK */
-
-            SCData = (u8) 0xFF ^ (u8) 0x11 ^ (u8) SC_A2R.T[0];
-            USART_SendData (USART1, SCData);
-            while (USART_GetFlagStatus (USART1, USART_FLAG_TC) == RESET)
-            {
-            }
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != ((u8) 0xFF ^ (u8) 0x11 ^ (u8) SC_A2R.T[0]))
-                {
-                    PTSConfirmStatus = 0x10;
-                }
-            }
-
-            // GET*************
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != 0xFF)
-                {
-                    PTSConfirmStatus = 0x02;
-                }
-            }
-            else
-            {
-                PTSConfirmStatus = 0x03;
-            }
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != 0x11)
-                {
-                    PTSConfirmStatus = 0x04;
-                }
-            }
-            else
-            {
-                PTSConfirmStatus = 0x05;
-            }
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != SC_A2R.T[0])
-                {
-                    PTSConfirmStatus = 0x06;
-                }
-            }
-            else
-            {
-                PTSConfirmStatus = 0x07;
-            }
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != ((u8) 0xFF ^ (u8) 0x11 ^ (u8) SC_A2R.T[0]))
-                {
-                    PTSConfirmStatus = 0x08;
-                }
-            }
-            else
-            {
-                PTSConfirmStatus = 0x09;
-            }
-
-            // GET************* END
 
             USART_DMACmd (USART1, USART_DMAReq_Rx, DISABLE);
+
 
             /* PTS Confirm */
             if (PTSConfirmStatus == 0x01)
             {
                 workingbaudrate = apbclock * D_Table[(SC_A2R.T[0] & (u8) 0x0F)];
                 workingbaudrate /= F_Table[((SC_A2R.T[0] >> 4) & (u8) 0x0F)];
+                //  35700000 / 372 = 9595
+                // The previous chips indicated in the ATR a F/D of 372/12, which translates to 9595 * 12 = 115140 bps.
+                // The new chip indicates F/D 512/32, meaning 35700000 / 512 * 32 = 223125 bps.
+                // The new chip indicates F/D 512/32, meaning 36000000 / 512 * 32 = 225000 bps.
+//                workingbaudrate = 116129; // calculated: 1161290
+//                workingbaudrate = 9677; // calculated: 1161290
+                // dwDataRate: 9677 bps (0x000025CD)
+                // dwMaxDataRate: 116129 bps (0x0001C5A1)
 
                 USART_ClockInitStructure.USART_Clock = USART_Clock_Enable;
                 USART_ClockInitStructure.USART_CPOL = USART_CPOL_Low;
@@ -1149,47 +1089,6 @@ void SC_Init (void)
     /* Disable CMDVCC */
     SC_PowerCmd (DISABLE);
 
-    // Hard wait
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
-    {
-    unsigned int i;
-
-        for (i = 0; i < 50000; i++);
-    };
  /**/}
 
 /*******************************************************************************
@@ -1434,20 +1333,14 @@ int CRD_SendCommand (unsigned char* pTransmitBuffer, unsigned int nCommandSize, 
 
     /* Get answer */
     //
-    for (i = 0; i < ICC_MESSAGE_BUFFER_MAX_LENGTH - USB_MESSAGE_HEADER_SIZE; i++)   // max
-        // buffer
-        // size
-        // (had
-        // to
-        // be
-        // checked)
+    for (i = 0; i < ICC_MESSAGE_BUFFER_MAX_LENGTH - USB_MESSAGE_HEADER_SIZE; i++)
+        // max buffer size (had to be checked)
     {
         nDelayTime = SC_Receive_Timeout;
         if (0 == i)
         {
-            nDelayTime = SC_Receive_Timeout * 10000L;   // Long long wait for
-            // first byte, allow
-            // card to work
+            nDelayTime = SC_Receive_Timeout * 10000L;
+            // Long long wait for first byte, allow card to work
         }
 
         if ((USART_ByteReceive (&pTransmitBuffer[i], nDelayTime)) != SUCCESS)
@@ -1584,11 +1477,11 @@ int scTest (void)
     SC_PTSConfig ();
 
     /* Inserts delay(400ms) for Smartcard clock resynchronisation */
-    // Delay_noUSBCheck(40);
+     Delay_noUSBCheck(40);
 
 
     for (i = 0; i < 10000; i++);
-    // Delay_noUSBCheck(1);
+     Delay_noUSBCheck(1);
 
     // memcpy (pTransmitBuffer,szText_6f_0,5);
     // CRD_SendCommand (pTransmitBuffer,5,2,&nReceivedAnswerSize);
@@ -1640,7 +1533,7 @@ char RestartSmartcard (void)
     }
     SC_PTSConfig ();
 
-    // Delay_noUSBCheck (40);
+     Delay_noUSBCheck (40);
 
     return (TRUE);
 }

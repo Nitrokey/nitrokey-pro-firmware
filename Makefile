@@ -3,52 +3,81 @@ BUILD_DIR=$(ROOT_DIR)/build/gcc
 SCRIPT_DIR=$(ROOT_DIR)/scripts
 OPENOCD_BIN?=
 
+# Set version to anything required; real version will be provided in the .buildinfo anyway
+VERSION=$(shell git describe)
+PROJECT=nitrokey-pro-firmware
+ARCHIVE_NAME=$(PROJECT)-$(VERSION).tar.gz
+
+# Set to "1" to run GPG signing on the hash files with the default key
+SIGN=0
+
 DEPS=gcc-arm-none-eabi
 
-.PHONY: firmware flash-versaloon clean release
+.PHONY: firmware flash-versaloon clean release bootloader
+
+all: firmware bootloader
+
+bootloader:
+	cd $(BUILD_DIR) && $(MAKE) -f dfu.mk bootloader.hex
 
 firmware:
-	cd $(BUILD_DIR) && \
-	make && \
-	cd -
-#	mv $(BUILD_DIR)/crypto.elf .
+	cd $(BUILD_DIR) && $(MAKE)
 
-#Reminder:	export OPENOCD_BIN=$(OPENOCD_BIN) 
-flash-versaloon:
-	cd scripts && \
-	./flash-versaloon.sh
-
-#flash-versaloon:
-#	sudo $(OPENOCD_BIN)/openocd gdb_memory_map disable 			\
-								-f interface/vsllink-swd.cfg 	\
-								-f target/stm32f1x.cfg 			\
-								-c init -c reset -c halt 		\
-								-c "stm32f1x unlock 0"			\
-								-c shutdown						\
-								-c exit							
-#	sudo $(OPENOCD_BIN)/openocd gdb_memory_map disable 			\
-								-f interface/vsllink-swd.cfg 	\
-								-f target/stm32f1x.cfg			\
-								-c init -c reset -c halt		\
-								-c "flash write_image erase crypto.elf" \
-								-c "verify_image crypto.elf" 			\
-								-c "reset run"							\
-								-c exit
-	#sudo $(OPENOCD_BIN)/openocd gdb_memory_map disable -f interface/vsllink-swd.cfg -f target/stm32f1x.cfg -f $(SCRIPT_DIR)/write.tcl
-	
 clean:
-	cd $(BUILD_DIR) && \
-	make clean
+	cd $(BUILD_DIR) && make clean
+	cd $(BUILD_DIR) && make -f dfu.mk clean
+	-rm nitrokey-*-firmware*.tar.gz
 
 deps:
 	sudo apt-get install ${DEPS}
 
-release: firmware
-	mkdir -p release && \
-	rm release/* -v && \
-	cd release && \
-	cp $(BUILD_DIR)/nitrokey-hsm-firmware.elf $(BUILD_DIR)/nitrokey-hsm-firmware.hex . && \
-	find . -name *.elf -type f -printf "%f" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512; md5sum -b {} > {}.md5' && \
-    find . -name *.hex -type f -printf "%f" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512; md5sum -b {} > {}.md5' && \
-	zip nitrokey-hsm-`git describe`.zip nitrokey-hsm-firmware.hex* && \
-	ls -lh
+.PHONY: release release-all
+release: | clean
+	mkdir -p release
+	-rm -r release/*.*
+	$(MAKE) firmware -j12
+	cd $(BUILD_DIR) && $(MAKE) -f dfu.mk firmware.hex VERSION=$(VERSION)
+	cd $(BUILD_DIR) && $(MAKE) -f dfu.mk all.hex VERSION=$(VERSION)
+	cp `readlink -f $(BUILD_DIR)/last_to_flash.hex` `readlink -f $(BUILD_DIR)/last_update.bin` `readlink -f $(BUILD_DIR)/last.buildinfo` release/
+	cd release && find . -name "*.hex" -type f -printf "%f\0" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512'
+	cd release && find . -name "*.bin" -type f -printf "%f\0" | xargs -0 -n1 -I{} sh -c 'sha512sum -b {} > {}.sha512'
+	-[ $(SIGN) == 1 ] && cd release && ls -1 *.sha* | xargs -n1 gpg2 --detach-sign
+	-[ $(SIGN) == 1 ] && cd release && ls -1 *.sig | xargs -n1 gpg2 --verify
+	ls -lh release
+	tar -czvf $(ARCHIVE_NAME) -C release . | sort
+
+release-all:
+	mkdir -p release-all
+	-rm -r release-all/*.*
+	$(MAKE) release
+	mv *tar.gz release-all
+	ls -lh release-all/
+
+.PHONY: gdbserver
+gdbserver:
+	openocd -f interface/stlink-v2.cfg  -f target/stm32f1x.cfg
+
+.PHONY: ocdtelnet
+ocdtelnet:
+	telnet localhost 4444
+
+.PHONY: devloop
+devloop: | clean
+	$(MAKE) firmware -j12 BUILD_DEBUG=1
+	-# killall telnet
+	- killall openocd
+	cd build/gcc && $(MAKE) -f dfu.mk flash-full-single
+	$(MAKE) gdbserver > /dev/null &
+	sleep 1
+	$(MAKE) ocdtelnet
+
+.PHONY: devloop-release
+devloop-release: | clean
+	$(MAKE) firmware -j12
+	- killall openocd
+	cd build/gcc && $(MAKE) -f dfu.mk flash-full-single
+
+.PHONY: devloop-update
+devloop-update: | clean
+	$(MAKE) firmware -j12
+	cd build/gcc && $(MAKE) -f dfu.mk update
