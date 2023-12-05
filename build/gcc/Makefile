@@ -635,3 +635,10 @@ clean_list :
 .PHONY : all begin finish end sizebefore sizeafter gccversion \
 build elf hex bin lss sym clean clean_list program
 
+
+.PHONY: flash
+flash:
+	make clean
+	make -j12 BUILD_DEBUG=1
+	pyocd erase --target stm32f103rc --mass
+	pyocd load nitrokey-hsm-firmware.hex  --target stm32f103rc # --erase auto

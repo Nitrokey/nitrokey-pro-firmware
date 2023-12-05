@@ -42,10 +42,11 @@ u8 SC_ATR_Table[40];
 u8 SC_ATR_Length = 0;
 
 static vu8 SCData = 0;
-static u32 F_Table[16] = { 372, 372, 558, 744, 1116, 1488, 1860, 0, 0, 512, 768, 1024, 1536, 2048,
-    0, 0
+static u32 F_Table[16] = { 372, 372, 558, 744, 1116, 1488, 1860, 0,
+                           0, 512, 768, 1024, 1536, 2048, 0, 0
 };
-static u32 D_Table[16] = { 0, 1, 2, 4, 8, 16, 32, 0, 12, 20, 0, 0, 0, 0, 0, 0 };
+static u32 D_Table[16] = { 0, 1, 2, 4, 8, 16, 32, 64,
+                           12, 20, 0, 0, 0, 0, 0, 0 };
 
 /* Private function prototypes ----------------------------------------------- */
 /* Transport Layer ----------------------------------------------------------- */
@@ -362,6 +363,25 @@ u32 i = 0;
                 while (((*SCState) != SC_POWER_OFF) && ((*SCState) != SC_ACTIVE))
                 {
                     SC_AnswerReq (SCState, &SC_ATR_Table[0], 40);   /* Check for answer to eeset */
+                    if (SC_ATR_Table[2] == 0x96){
+                        // patch PPS byte for HSM v4
+                        //                    hsm2_ATR[2] = 0x04; // works,  RSA4k 84.16 sec, 77419.3548387097 bps
+                        // hsm2_ATR[2] = 0x39; // works,  RSA4k 47.75 secs, 96774.1935483871 bps
+                        // hsm2_ATR[2] = 0x99; // fails,  140625 bps
+                        // hsm2_ATR[2] = 0x95; // fails,  112500 bps
+                        // SC_ATR_Table[2]= 0x39; // works on HW3, on v0.7-based firmware, but fails on HW4 for some reason
+                        // SC_ATR_Table[2]= 0x04; yes
+                        // SC_ATR_Table[2]= 0x11; yes
+                        // SC_ATR_Table[2]= 0xA9; nope
+                        // SC_ATR_Table[2]= 0xB9; //yes, 70,312.50
+                        SC_ATR_Table[2]= 0x98; //yes, 84,375.00
+                        // SC_ATR_Table[2]= 0xA9; //nope, 93,750.00
+                        // SC_ATR_Table[2]= 0xD7; //nope, 112,500.00
+                        // SC_ATR_Table[2]= 0x46; // nope, 103,225.81
+                        // SC_ATR_Table[2]= 0x39; //nope, 96,774.19
+                        // SC_ATR_Table[2]= 0x46; //nope, 103,225.81
+                        // SC_ATR_Table[2]= 0x28; //yes, 77,419.35
+                    }
                 }
             }
             break;
@@ -512,124 +532,39 @@ int SC_PTSConfig (void)
     /* Enable the DMA Receive (Set DMAR bit only) to enable interrupt generation in case of a framing error FE */
     USART_DMACmd (SMARTCARD_USART, USART_DMAReq_Rx, ENABLE);
 
-    // SC_A2R.T0 = 0x11; // for slow serial testing
-    // SC_A2R.T[0] = 0x11;
-
-    if ((SC_A2R.T0 & (u8) 0x10) == 0x10)
+    // if ((SC_A2R.T0 & (u8) 0x10) == 0x10)
     {
-        if (SC_A2R.T[0] != 0x11)
+        // if (SC_A2R.T[0] != 0x11)
         {
             /* Send PTSS */
-            SCData = 0xFF;
-            USART_SendData (SMARTCARD_USART, SCData);
-            while (USART_GetFlagStatus (SMARTCARD_USART, USART_FLAG_TC) == RESET)
-            {
-            }
+            uint8_t PPS_data[] = {
+                    0xFF, // PPSS
+                    0x11, // 0 001 0001 -> T=1, w/ PPS1
+                    SC_A2R.T[0],
+                    0xFF
+            };
+            PPS_data[3] = (u8) PPS_data[0] ^ (u8) PPS_data[1] ^ (u8) PPS_data[2];
 
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != 0xFF)
+            for (int i = 0; i < sizeof PPS_data; ++i) {
+                SCData = PPS_data[i];
+                USART_SendData (SMARTCARD_USART, SCData);
+                while (USART_GetFlagStatus (SMARTCARD_USART, USART_FLAG_TC) == RESET)
                 {
-                    PTSConfirmStatus = 0x40;
+                }
+
+                if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
+                {
+                    if (locData != SCData)
+                    {
+                        // Failed setup
+                        return;
+                    }
                 }
             }
 
-            /* Send PTS0 */
-            SCData = 0x11;
-            USART_SendData (SMARTCARD_USART, SCData);
-            while (USART_GetFlagStatus (SMARTCARD_USART, USART_FLAG_TC) == RESET)
-            {
+            for (int i = 0; i < 50; ++i) {
+                (USART_ByteReceive (&locData, SC_Receive_Timeout));
             }
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != 0x11)
-                {
-                    PTSConfirmStatus = 0x30;
-                }
-            }
-            /* Send PTS1 */
-            SCData = SC_A2R.T[0];   // 0x13
-            USART_SendData (SMARTCARD_USART, SCData);
-            while (USART_GetFlagStatus (SMARTCARD_USART, USART_FLAG_TC) == RESET)
-            {
-            }
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != SC_A2R.T[0])
-                {
-                    PTSConfirmStatus = 0x20;
-                }
-            }
-
-            /* Send PCK */
-
-            SCData = (u8) 0xFF ^ (u8) 0x11 ^ (u8) SC_A2R.T[0];
-            USART_SendData (SMARTCARD_USART, SCData);
-            while (USART_GetFlagStatus (SMARTCARD_USART, USART_FLAG_TC) == RESET)
-            {
-            }
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != ((u8) 0xFF ^ (u8) 0x11 ^ (u8) SC_A2R.T[0]))
-                {
-                    PTSConfirmStatus = 0x10;
-                }
-            }
-
-            // GET*************
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != 0xFF)
-                {
-                    PTSConfirmStatus = 0x02;
-                }
-            }
-            else
-            {
-                PTSConfirmStatus = 0x03;
-            }
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != 0x11)
-                {
-                    PTSConfirmStatus = 0x04;
-                }
-            }
-            else
-            {
-                PTSConfirmStatus = 0x05;
-            }
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != SC_A2R.T[0])
-                {
-                    PTSConfirmStatus = 0x06;
-                }
-            }
-            else
-            {
-                PTSConfirmStatus = 0x07;
-            }
-
-            if ((USART_ByteReceive (&locData, SC_Receive_Timeout)) == SUCCESS)
-            {
-                if (locData != ((u8) 0xFF ^ (u8) 0x11 ^ (u8) SC_A2R.T[0]))
-                {
-                    PTSConfirmStatus = 0x08;
-                }
-            }
-            else
-            {
-                PTSConfirmStatus = 0x09;
-            }
-
-            // GET************* END
 
             USART_DMACmd (SMARTCARD_USART, USART_DMAReq_Rx, DISABLE);
 
@@ -1553,7 +1488,7 @@ char RestartSmartcard (void)
     }
     SC_PTSConfig ();
 
-    // Delay_noUSBCheck (40);
+    Delay_noUSBCheck (40);
 
     return (TRUE);
 }

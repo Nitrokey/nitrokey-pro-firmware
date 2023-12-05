@@ -10,6 +10,7 @@ flash-bootloader: $(BOOTLOADER)
 	STM32_Programmer_CLI -c port=SWD -halt  --readunprotect
 	STM32_Programmer_CLI -c port=swd -e all -w $< 0x8000000 -v -rst
 	ls -lh $<
+	sleep 1
 
 %.bin: %.elf
 	arm-none-eabi-objcopy -O binary $< $@ 
