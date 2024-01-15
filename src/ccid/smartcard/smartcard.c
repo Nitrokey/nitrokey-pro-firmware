@@ -533,6 +533,11 @@ int SC_PTSConfig (void)
     /* Enable the DMA Receive (Set DMAR bit only) to enable interrupt generation in case of a framing error FE */
     USART_DMACmd (SMARTCARD_USART, USART_DMAReq_Rx, ENABLE);
 
+    uint8_t A2R_T0 = SC_A2R.T[0];
+    if (A2R_T0 == 0x96) {
+        A2R_T0 = 0x98; //yes, 84,375.00
+    }
+
     // if ((SC_A2R.T0 & (u8) 0x10) == 0x10)
     {
         // if (SC_A2R.T[0] != 0x11)
@@ -541,7 +546,7 @@ int SC_PTSConfig (void)
             uint8_t PPS_data[] = {
                     0xFF, // PPSS
                     0x11, // 0 001 0001 -> T=1, w/ PPS1
-                    SC_A2R.T[0],
+                    A2R_T0,
                     0xFF
             };
             PPS_data[3] = (u8) PPS_data[0] ^ (u8) PPS_data[1] ^ (u8) PPS_data[2];
@@ -572,8 +577,8 @@ int SC_PTSConfig (void)
             /* PTS Confirm */
             if (PTSConfirmStatus == 0x01)
             {
-                workingbaudrate = apbclock * D_Table[(SC_A2R.T[0] & (u8) 0x0F)];
-                workingbaudrate /= F_Table[((SC_A2R.T[0] >> 4) & (u8) 0x0F)];
+                workingbaudrate = apbclock * D_Table[(A2R_T0 & (u8) 0x0F)];
+                workingbaudrate /= F_Table[((A2R_T0 >> 4) & (u8) 0x0F)];
 
                 USART_ClockInitStructure.USART_Clock = USART_Clock_Enable;
                 USART_ClockInitStructure.USART_CPOL = USART_CPOL_Low;
