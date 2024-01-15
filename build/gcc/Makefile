@@ -638,6 +638,7 @@ build elf hex bin lss sym clean clean_list program
 
 .PHONY: flash
 flash:
+	exit 1
 	make clean
 	make -j12 BUILD_DEBUG=1
 	pyocd erase --target stm32f103rc --mass
