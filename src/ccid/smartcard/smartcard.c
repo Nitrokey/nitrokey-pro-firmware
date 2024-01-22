@@ -363,25 +363,6 @@ u32 i = 0;
                 while (((*SCState) != SC_POWER_OFF) && ((*SCState) != SC_ACTIVE))
                 {
                     SC_AnswerReq (SCState, &SC_ATR_Table[0], 40);   /* Check for answer to eeset */
-                    if (SC_ATR_Table[2] == 0x96){
-                        // patch PPS byte for HSM v4
-                        //                    hsm2_ATR[2] = 0x04; // works,  RSA4k 84.16 sec, 77419.3548387097 bps
-                        // hsm2_ATR[2] = 0x39; // works,  RSA4k 47.75 secs, 96774.1935483871 bps
-                        // hsm2_ATR[2] = 0x99; // fails,  140625 bps
-                        // hsm2_ATR[2] = 0x95; // fails,  112500 bps
-                        // SC_ATR_Table[2]= 0x39; // works on HW3, on v0.7-based firmware, but fails on HW4 for some reason
-                        // SC_ATR_Table[2]= 0x04; yes
-                        // SC_ATR_Table[2]= 0x11; yes
-                        // SC_ATR_Table[2]= 0xA9; nope
-                        // SC_ATR_Table[2]= 0xB9; //yes, 70,312.50
-//                        SC_ATR_Table[2]= 0x98; //yes, 84,375.00
-                        // SC_ATR_Table[2]= 0xA9; //nope, 93,750.00
-                        // SC_ATR_Table[2]= 0xD7; //nope, 112,500.00
-                        // SC_ATR_Table[2]= 0x46; // nope, 103,225.81
-                        // SC_ATR_Table[2]= 0x39; //nope, 96,774.19
-                        // SC_ATR_Table[2]= 0x46; //nope, 103,225.81
-                        // SC_ATR_Table[2]= 0x28; //yes, 77,419.35
-                    }
                 }
             }
             break;
