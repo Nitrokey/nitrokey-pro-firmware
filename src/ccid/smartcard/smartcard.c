@@ -514,7 +514,6 @@ USART_InitTypeDef USART_InitStructure;
 *******************************************************************************/
 int SC_PTSConfig (void)
 {
-    return;
     RCC_ClocksTypeDef RCC_ClocksStatus;
 
     u32 workingbaudrate = 0, apbclock = 0;
