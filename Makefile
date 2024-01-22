@@ -22,17 +22,18 @@ clean:
 	cd $(BUILD_DIR) && \
 	make clean
 	-rm nitrokey-*-firmware*.tar.gz
+	mv build/gcc/*hex tmp
 
 deps:
 	sudo apt-get install ${DEPS}
 
 .PHONY: release release-all
-release: | clean
+release: | devloop-release
 	mkdir -p release
 	-rm -r release/*.*
 	$(MAKE) firmware -j12
-	cp $(BUILD_DIR)/*.hex  release
-	cp $(BUILD_DIR)/*.buildinfo  release
+	cp $(BUILD_DIR)/nitrokey-hsm-*.hex  release
+	cp $(BUILD_DIR)/nitrokey-hsm-*.buildinfo  release
 	#cd $(BUILD_DIR) && $(MAKE) -f dfu.mk firmware.hex VERSION=$(VERSION)
 	#cd $(BUILD_DIR) && $(MAKE) -f dfu.mk all.hex VERSION=$(VERSION)
 	#cp `readlink -f $(BUILD_DIR)/last_to_flash.hex` `readlink -f $(BUILD_DIR)/last.buildinfo` release/
@@ -40,7 +41,7 @@ release: | clean
 	-[ $(SIGN) == 1 ] && cd release && ls -1 *.sha* | xargs -n1 gpg2 --detach-sign
 	-[ $(SIGN) == 1 ] && cd release && ls -1 *.sig | xargs -n1 gpg2 --verify
 	ls -lh release
-	cd release && rm last*
+	-cd release && rm last*
 	tar -czvf $(ARCHIVE_NAME) -C release . | sort
 
 release-all:
