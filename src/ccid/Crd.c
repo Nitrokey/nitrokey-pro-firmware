@@ -23,7 +23,6 @@
 #include "CCID_SlotErrorCode.h"
 #include "CCID_Crd.h"
 #include "CCID_Ifd_ccid.h"
-#include "CCID_usb.h"
 
 
 unsigned char* pCrdBuffer;

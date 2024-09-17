@@ -27,7 +27,7 @@
 #include "usb_mem.h"
 #include "usb_core.h"
 #include "CCIDHID_usb_prop.h"
-#include "CCIDHID_usb_conf.h"
+#include "usb_conf.h"
 #include "smartcard.h"
 #include "hw_config.h"
 #include "mass_mal.h"
@@ -63,7 +63,7 @@ extern uint32_t Mass_Block_Size[2];
 #include "CCID_Crd.h"
 #include "CCID_Macro.h"
 #include "CCID_Ifd_ccid.h"
-#include "CCID_usb.h"
+#include "CCIDHID_usb.h"
 #include "CCID_Ifd_protocol.h"
 
 
@@ -206,7 +206,7 @@ void CCID_Storage_Out (void)
 {
     Data_Len = GetEPRxCount (ENDP2);
 
-    PMAToUserBufferCopy (Bulk_Data_Buff, CCID_ENDP2_RXADDR, Data_Len);
+    PMAToUserBufferCopy (Bulk_Data_Buff, ENDP2_RXADDR, Data_Len);
 
     switch (Bot_State)
     {
@@ -244,7 +244,7 @@ void CCID_BulkOutMessage (void)
 
     /* Get Data into Buffer */
     cnt = GetEPRxCount (ENDP2);
-    PMAToUserBufferCopy (pUsbMessageBuffer, CCID_ENDP2_RXADDR, cnt);    // copy
+    PMAToUserBufferCopy (pUsbMessageBuffer, ENDP2_RXADDR, cnt);    // copy
     // data
     // in
     // USB
@@ -388,7 +388,7 @@ unsigned char CCID_BulkInMessage (void)
             if (UsbMessageLength >= USB_MAX_PACKET_SIZE)
             {
 
-                UserToPMABufferCopy ((uint8_t *) pUsbMessageBuffer, CCID_ENDP2_TXADDR, USB_MAX_PACKET_SIZE);
+                UserToPMABufferCopy ((uint8_t *) pUsbMessageBuffer, ENDP2_TXADDR, USB_MAX_PACKET_SIZE);
 
                 pUsbMessageBuffer += USB_MAX_PACKET_SIZE;
                 UsbMessageLength -= USB_MAX_PACKET_SIZE;
@@ -399,7 +399,7 @@ unsigned char CCID_BulkInMessage (void)
             }
             else
             {
-                UserToPMABufferCopy ((uint8_t *) pUsbMessageBuffer, CCID_ENDP2_TXADDR, UsbMessageLength);
+                UserToPMABufferCopy ((uint8_t *) pUsbMessageBuffer, ENDP2_TXADDR, UsbMessageLength);
                 BulkStatus = TRANSMIT_FINISHED;
                 SetEPTxCount (ENDP2, UsbMessageLength);
                 SetEPTxStatus (ENDP2, EP_TX_VALID);
@@ -411,7 +411,7 @@ unsigned char CCID_BulkInMessage (void)
             // Packet).
             if (UsbMessageLength >= USB_MAX_PACKET_SIZE)
             {
-                UserToPMABufferCopy ((uint8_t *) pUsbMessageBuffer, CCID_ENDP2_TXADDR, USB_MAX_PACKET_SIZE);
+                UserToPMABufferCopy ((uint8_t *) pUsbMessageBuffer, ENDP2_TXADDR, USB_MAX_PACKET_SIZE);
 
                 pUsbMessageBuffer += USB_MAX_PACKET_SIZE;
                 UsbMessageLength -= USB_MAX_PACKET_SIZE;
@@ -421,7 +421,7 @@ unsigned char CCID_BulkInMessage (void)
             }
             else
             {
-                UserToPMABufferCopy ((uint8_t *) pUsbMessageBuffer, CCID_ENDP2_TXADDR, UsbMessageLength);
+                UserToPMABufferCopy ((uint8_t *) pUsbMessageBuffer, ENDP2_TXADDR, UsbMessageLength);
 
                 pUsbMessageBuffer += UsbMessageLength;
                 BulkStatus = TRANSMIT_FINISHED;
@@ -547,7 +547,7 @@ void CCID_IntMessage (void)
         {
             if ((UsbIntMessageBuffer[OFFSET_INT_BMSLOTICCSTATE] == 0x02) && bPreviousSlotStateFlag)
             {
-                UserToPMABufferCopy ((uint8_t *) UsbIntMessageBuffer, CCID_ENDP1_TXADDR, MessageSize);
+                UserToPMABufferCopy ((uint8_t *) UsbIntMessageBuffer, ENDP1_TXADDR, MessageSize);
                 SetEPTxCount (ENDP1, MessageSize);
                 SetEPTxStatus (ENDP1, EP_TX_VALID);
                 // needed ?? if( USB_SendDataEP1(UsbIntMessageBuffer,
@@ -561,7 +561,7 @@ void CCID_IntMessage (void)
             {
                 if ((UsbIntMessageBuffer[OFFSET_INT_BMSLOTICCSTATE] == 0x03) && (!bPreviousSlotStateFlag))
                 {
-                    UserToPMABufferCopy ((uint8_t *) UsbIntMessageBuffer, CCID_ENDP1_TXADDR, MessageSize);
+                    UserToPMABufferCopy ((uint8_t *) UsbIntMessageBuffer, ENDP1_TXADDR, MessageSize);
                     SetEPTxCount (ENDP1, MessageSize);
                     SetEPTxStatus (ENDP1, EP_TX_VALID);
                     {
@@ -579,7 +579,7 @@ void CCID_IntMessage (void)
         {
             RDR_to_PC_NotifySlotChange ();
             MessageSize = 0x02;
-            UserToPMABufferCopy ((uint8_t *) UsbIntMessageBuffer, CCID_ENDP1_TXADDR, MessageSize);
+            UserToPMABufferCopy ((uint8_t *) UsbIntMessageBuffer, ENDP1_TXADDR, MessageSize);
             SetEPTxCount (ENDP1, MessageSize);
             SetEPTxStatus (ENDP1, EP_TX_VALID);
             Reset_bSlotChangedFlag;
@@ -590,7 +590,7 @@ void CCID_IntMessage (void)
     {
         RDR_to_PC_HardwareError ();
         MessageSize = 0x04;
-        UserToPMABufferCopy ((uint8_t *) UsbIntMessageBuffer, CCID_ENDP1_TXADDR, MessageSize);
+        UserToPMABufferCopy ((uint8_t *) UsbIntMessageBuffer, ENDP1_TXADDR, MessageSize);
         SetEPTxCount (ENDP1, MessageSize);
         SetEPTxStatus (ENDP1, EP_TX_VALID);
         {

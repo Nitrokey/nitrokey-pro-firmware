@@ -51,9 +51,8 @@
 /* Tx buffer base address */
 #define ENDP2_TXADDR        (0x118)
 
-/* EP3 */
-/* tx buffer base address */
-// #define ENDP3_TXADDR (0x158)
+/* EP4 */
+/* Tx generic HID */
 #define ENDP4_TXADDR        (0x19C)
 
 

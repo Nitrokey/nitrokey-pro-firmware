@@ -25,7 +25,7 @@
 #include "usb_istr.h"
 
 #include "platform_config.h"
-#include "CCID_usb.h"
+#include "CCIDHID_usb.h"
 
 /* Private typedef ----------------------------------------------------------- */
 /* Private define ------------------------------------------------------------ */
@@ -77,20 +77,6 @@ void EP2_IN_Callback (void)
 
     CCID_BulkInMessage ();
 
-}
-
-/*******************************************************************************
-* Function Name  : EP3_IN_Callback.
-* Description    : EP3 IN Callback Routine.
-* Input          : None.
-* Output         : None.
-* Return         : None.
-*******************************************************************************/
-void XEP3_IN_Callback (void)
-{
-    /* Set the transfer complete token to inform upper layer that the current transfer has been complete */
-    PrevXferComplete = 1;
-    // SwitchSmartcardLED(DISABLE);
 }
 
 void EP4_IN_Callback (void)

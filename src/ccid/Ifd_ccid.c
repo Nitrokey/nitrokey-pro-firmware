@@ -27,7 +27,7 @@
 #include "CCID_SlotErrorCode.h"
 #include "CCID_Ifd_protocol.h"
 #include "CCID_Ifd_ccid.h"
-#include "CCID_usb.h"
+#include "CCIDHID_usb.h"
 #include "CCID_Macro.h"
 
 /************************************************************************************/
