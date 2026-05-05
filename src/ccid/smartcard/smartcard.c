@@ -543,7 +543,7 @@ int SC_PTSConfig (void)
                     if (locData != SCData)
                     {
                         // Failed setup
-                        return;
+                        return FALSE;
                     }
                 }
             }
