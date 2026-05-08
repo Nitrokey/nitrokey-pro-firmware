@@ -187,28 +187,32 @@ static const struct HardwareDefinition HW4 = {
 
 static struct HardwareDefinition const * g_current_hardware = NULL;
 HardwareDefinitionPtr detect_hardware(void) {
-    /*
-    * Check the hardware revision with the following:
-    * 1. set B7 to input-pull up
-    * 2. check if its high - low -> new hardware (rev4), high -> old hardware (rev3)
-    */
-
+    
     if (g_current_hardware != NULL) {
         return g_current_hardware;
     }
 
-    RCC_APB2PeriphClockCmd (RCC_APB2Periph_GPIOB, ENABLE);
-//    GPIO_InitTypeDef GPIO_InitStructure;
-//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
-//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//    GPIO_Init (GPIOB, &GPIO_InitStructure);
+    /*
+    * Hardware revisions:
+    * hw_rev3 and hw_rev4 use different versions of STM32.
+    * hw_rev4 has GPIOB7 pulled to GND to allow automatic detection.
+    * Set B7 to input-pull up, if high -> hw_rev3, low -> hw_rev4
+    * hw_rev5 uses GD32 instead of STM32, therefore MCU_ID_REG has different value.
+    */
 
+    RCC_APB2PeriphClockCmd (RCC_APB2Periph_GPIOB, ENABLE);
+    #define MCU_ID_REG      (0xE0042000)
+    #define MCU_GD32        (0x13030410)
+    #define CHECK_GD32()    ( *((volatile uint32_t *)MCU_ID_REG) == MCU_GD32 )
     const uint8_t state = GPIO_ReadInputDataBit (GPIOB, GPIO_Pin_7);
-    if (state == 0) {
+
+    if (CHECK_GD32()) {
+        g_current_hardware = &HW3;
+    } else if (state == 0) {
         g_current_hardware = &HW4;
-    } else{
+    } else {
         g_current_hardware = &HW3;
     }
+
     return g_current_hardware;
 }
