@@ -9,6 +9,7 @@ build-*-Debug
 *.orig
 *tags
 
+*.buildinfo
 *.elf
 *.lss
 *.map
