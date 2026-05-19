@@ -599,10 +599,18 @@ clean: begin clean_list finished end
 clean_list :
 	@echo
 	@echo $(MSG_CLEANING)
+	$(REMOVE) all.hex
+	$(REMOVE) bootloader.hex
+	$(REMOVE) firmware.hex
+	$(REMOVE) last.bin
+	$(REMOVE) last.buildinfo
 	$(REMOVE) $(TARGET).hex
+	$(REMOVE) $(TARGET)-$(shell git describe)-to_flash.hex
+	$(REMOVE) $(TARGET)-$(shell git describe)-to_update.hex
 	$(REMOVE) $(TARGET).bin
 	$(REMOVE) $(TARGET).obj
-	$(REMOVE) $(TARGET).elf $(TARGET).buildinfo
+	$(REMOVE) $(TARGET).elf
+	$(REMOVE) $(TARGET).buildinfo
 	$(REMOVE) $(TARGET).map
 	$(REMOVE) $(TARGET).obj
 	$(REMOVE) $(TARGET).a90

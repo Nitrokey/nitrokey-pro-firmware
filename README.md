@@ -46,6 +46,15 @@ Parameters:
 * VID: Define Vendor ID
 * PID: Define Product ID
 
+## Building HSM
+
+1. Change to build directory with `cd build/gcc`.
+2. Make sure you have a clean build directory with `make clean`.
+3. Make sure the `WORKSPACE` variable in `dfu.mk` is correctly set so the `BOOTLOADER` variable can be resolved.
+   This requires the [dapboot-nkpro](https://github.com/nitrokey/dapboot) repository to be cloned and build.
+4. Afterwards, build the firmware with `make` and create the release with `make -f dfu.mk bootloader.hex && make -f dfu.mk firmware.hex && make -f dfu.mk all.hex`.
+   The resulting `*-to_flash.hex` and `*-to_update.hex` are the release files that can be flashed to a device.
+
 # Flashing
 
 |Note|
